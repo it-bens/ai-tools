@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2] - 2025-01-08
+
+### Fixed
+
+- Heredoc detection no longer triggers on `<<` appearing in command arguments or quoted strings
+- Added command boundary prefix `(^|;|&&)` to heredoc pattern to match other blocking rules
+
 ## [1.1.1] - 2025-01-08
 
 ### Fixed

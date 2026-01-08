@@ -158,7 +158,7 @@ check_and_block \
     'Use Write tool to create files.'
 
 check_and_block \
-    'cat\s*<<[^|]*($|>)' \
+    '(^|;|&&)\s*cat\s*<<[^|]*($|>)' \
     'Write tool' \
     'Use Write tool instead of heredoc for writing to files. Piping heredoc to commands is allowed.'
 

@@ -77,6 +77,18 @@ SCRIPT="check-native-tools.sh"
     assert_success
 }
 
+# bats test_tags=allow
+@test "allows << in printf argument (false positive fix)" {
+    run_hook "$SCRIPT" "printf '%s' 'text with cat << EOF inside'"
+    assert_success
+}
+
+# bats test_tags=allow
+@test "allows heredoc pattern in commit message" {
+    run_hook "$SCRIPT" "git commit -m 'fix: update regex from cat<<EOF to better pattern'"
+    assert_success
+}
+
 # bats test_tags=blocking
 @test "blocks sed → suggests Edit tool" {
     run_hook "$SCRIPT" "sed 's/foo/bar/' file.txt"
