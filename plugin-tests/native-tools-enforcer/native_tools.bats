@@ -89,6 +89,32 @@ SCRIPT="check-native-tools.sh"
     assert_success
 }
 
+# bats test_tags=allow
+@test "allows > in quoted printf argument" {
+    run_hook "$SCRIPT" "printf '%s' 'regex pattern (\$|>)' | pbcopy"
+    assert_success
+}
+
+# bats test_tags=allow
+@test "allows > in echo argument when followed by special char" {
+    run_hook "$SCRIPT" "echo 'regex: (\$|>)' && true"
+    assert_success
+}
+
+# bats test_tags=blocking
+@test "still blocks printf redirect to file" {
+    run_hook "$SCRIPT" "printf '%s' 'content' > output.txt"
+    assert_failure 2
+    assert_output --partial "Write tool"
+}
+
+# bats test_tags=blocking
+@test "still blocks echo redirect to file" {
+    run_hook "$SCRIPT" "echo content > file.txt"
+    assert_failure 2
+    assert_output --partial "Write tool"
+}
+
 # bats test_tags=blocking
 @test "blocks sed → suggests Edit tool" {
     run_hook "$SCRIPT" "sed 's/foo/bar/' file.txt"

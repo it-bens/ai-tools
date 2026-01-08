@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.3] - 2025-01-08
+
+### Fixed
+
+- Redirect patterns (`echo >`, `printf >`, `cat >`) no longer trigger on `>` inside quoted arguments
+- Changed filename detection from `[^&]` to `["'a-zA-Z0-9/~._$]` to match valid filename starters
+- Previously, commit messages containing `>` characters would cause false positives
+
 ## [1.1.2] - 2025-01-08
 
 ### Fixed

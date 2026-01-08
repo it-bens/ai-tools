@@ -143,17 +143,17 @@ check_and_block \
 # ============================================================================
 
 check_and_block \
-    'echo\s+.*>\s*[^&]' \
+    'echo\s+.*>\s*["'"'"'a-zA-Z0-9/~._$]' \
     'Write tool' \
     'Use Write tool to create or overwrite files. It handles content safely and tracks changes.'
 
 check_and_block \
-    'printf\s+.*>\s*[^&]' \
+    'printf\s+.*>\s*["'"'"'a-zA-Z0-9/~._$]' \
     'Write tool' \
     'Use Write tool to create or overwrite files.'
 
 check_and_block \
-    'cat\s*>\s*[^&]' \
+    'cat\s*>\s*["'"'"'a-zA-Z0-9/~._$]' \
     'Write tool' \
     'Use Write tool to create files.'
 
