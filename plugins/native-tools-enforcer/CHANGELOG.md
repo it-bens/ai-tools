@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1] - 2025-01-08
+
+### Fixed
+
+- Heredocs piped to commands (`cat << EOF | pbcopy`) are no longer blocked
+- Previously, all heredoc usage was blocked; now only heredocs writing to files are blocked
+
 ## [1.1.0] - 2024-12-22
 
 ### Added

@@ -59,6 +59,25 @@ SCRIPT="check-native-tools.sh"
 }
 
 # bats test_tags=blocking
+@test "blocks heredoc with file redirect → suggests Write tool" {
+    run_hook "$SCRIPT" "cat << EOF > file.txt"
+    assert_failure 2
+    assert_output --partial "Write tool"
+}
+
+# bats test_tags=allow
+@test "allows heredoc piped to command (clipboard)" {
+    run_hook "$SCRIPT" "cat << 'EOF' | pbcopy"
+    assert_success
+}
+
+# bats test_tags=allow
+@test "allows heredoc piped to jq" {
+    run_hook "$SCRIPT" "cat << EOF | jq .field"
+    assert_success
+}
+
+# bats test_tags=blocking
 @test "blocks sed → suggests Edit tool" {
     run_hook "$SCRIPT" "sed 's/foo/bar/' file.txt"
     assert_failure 2

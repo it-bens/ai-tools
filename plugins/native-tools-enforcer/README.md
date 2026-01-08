@@ -26,6 +26,8 @@ Enforces use of Claude Code native tools instead of bash equivalents via PreTool
 | `echo >`, `printf >`, `cat >`, `tee` | **Write** tool |
 | `sed`, `awk`, `perl -i` | **Edit** tool |
 
+> **Note:** Heredocs piped to commands (`cat << EOF | pbcopy`) are allowed since they don't write to files.
+
 ## Warned Commands (Not Blocked)
 
 | Bash Command | Suggestion | Why Not Blocked |
