@@ -9,6 +9,7 @@
 | Understand plugin purpose and usage | `README.md` |
 | Modify skill behavior or triggers | `skills/prompt-engineering/SKILL.md` |
 | Update core techniques or patterns | `skills/prompt-engineering/references/` |
+| Update GLM 4.7 adaptation guide | `skills/prompt-engineering/references/glm-47-guide.md` |
 | Add or modify example templates | `skills/prompt-engineering/examples/` |
 | Research prompting best practices | `docs/` |
 | Update Claude Web project | `project/system-prompt.md` |

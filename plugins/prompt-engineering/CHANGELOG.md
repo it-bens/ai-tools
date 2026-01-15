@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.0.0] - 2026-01-15
+
+Added GLM 4.7 (Z.ai) as target model. Claude-optimized prompts produce generic responses on GLM 4.7 due to instruction processing differences; this update provides adaptation techniques.
+
+### Added
+
+- `references/glm-47-guide.md` - Adaptation techniques, API config, troubleshooting
+- `examples/glm-47-adaptation.md` - Before/after transformation examples
+- Target model clarification in Phase 1 (when user mentions GLM/Z.ai)
+- GLM 4.7 output format with API configuration and adaptation rationale
+
+### Changed
+
+- Skill description and triggers updated for GLM 4.7
+- Claude Web project files support both models
+
 ## [1.2.0] - 2025-12-21
 
 Testing in Claude Web revealed the skill wasn't auto-activating. Root causes: skill description used meta-language instead of action-first pattern, and project system prompt's comprehensive inline content made Claude treat it as self-sufficient guidance, bypassing skill file reading entirely.

@@ -1,13 +1,13 @@
 ---
 name: prompt-engineering
-version: 1.2.0
-description: Create, optimize, and debug high-performing prompts for Claude 4 models with production-ready templates and evidence-based techniques. Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
+version: 2.0.0
+description: Create, optimize, and debug high-performing prompts for Claude 4 models and GLM 4.7 (Z.ai) with production-ready templates and evidence-based techniques. Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 allowed-tools: AskUserQuestion, Read, Grep, Glob, WebSearch, WebFetch
 ---
 
 # Prompt Engineering Lab
 
-Expert prompt engineering service for Claude 4 models. Transform requirements into high-performing, production-ready prompts through evidence-based techniques and systematic optimization.
+Expert prompt engineering service for Claude 4 models and GLM 4.7 (Z.ai). Transform requirements into high-performing, production-ready prompts through evidence-based techniques and systematic optimization.
 
 ## Core Mission
 
@@ -30,6 +30,7 @@ Before generating the prompt, understand its intended purpose. Gather informatio
 - Who will use this prompt (technical level, domain expertise)?
 - What makes the prompt successful (output quality, format, completeness)?
 - Target platform: Claude Web, Claude Desktop, or API?
+- Target model: Claude 4 (default) or GLM 4.7? (only ask if user mentions GLM, Z.ai, or model adaptation)
 
 **Clarify prompt ambiguities (stay at the prompt level, don't dive into subject matter):**
 - If variations might be beneficial, ask if user wants alternative prompt approaches
@@ -152,6 +153,57 @@ After receiving tool results, carefully reflect on their quality
 and determine optimal next steps before proceeding.
 ```
 
+## GLM 4.7 Adaptation (When Requested)
+
+When user explicitly requests GLM 4.7 as target model, apply these adaptations. GLM 4.7 treats polite, buried instructions as optional—causing generic responses.
+
+### Key Differences from Claude 4
+
+| Aspect | Claude 4 | GLM 4.7 |
+|--------|----------|---------|
+| Instruction positioning | Flexible | Prioritizes first 200 words |
+| Directive language | Responds to nuanced prompts | Requires firm directives (MUST/ALWAYS/NEVER) |
+| Output specificity | Natural context reference | Needs explicit reference requirements |
+| Few-shot examples | Often unnecessary | Critical for patterns |
+| Reasoning mode | Built-in | Requires API parameter |
+
+### Essential Adaptations
+
+**1. Front-load mandatory instructions** - Place ALL critical rules in first 200 words
+
+**2. Convert soft language to directives:**
+- "Please consider..." → "You MUST..."
+- "Try to avoid..." → "NEVER..."
+- "It would be helpful..." → "ALWAYS..."
+
+**3. Add explicit output templates** with concrete examples of desired format
+
+**4. Include FORBIDDEN patterns section** to prevent generic responses:
+```
+FORBIDDEN:
+- "This violates [principle]. Please follow [methodology]."
+- "Remember to [general advice]."
+- Any response that applies to ANY similar situation
+```
+
+**5. Add self-verification block:**
+```
+BEFORE RESPONDING, VERIFY:
+- Does your response name the specific file/function?
+- Would this response work for any similar question? (If yes, make it more specific)
+```
+
+**6. Add language control:** `ALWAYS respond in English. Reason in English.`
+
+### GLM 4.7 API Configuration
+
+Include when delivering API-targeted prompts:
+- Enable thinking: `thinking={"type": "enabled"}`
+- Temperature: 0.6-0.7 for consistent rule application
+- Stop tokens: `["<|endoftext|>", "<|user|>", "<|observation|>"]`
+
+For detailed patterns and examples, consult `references/glm-47-guide.md` and `examples/glm-47-adaptation.md`.
+
 ## Output Format
 
 Deliver all prompts using this structure:
@@ -170,7 +222,7 @@ Deliver all prompts using this structure:
 [Complete, ready-to-copy prompt in code block]
 
 ## Usage Notes
-- Target model: [Claude Opus 4 / Sonnet 4 / Haiku]
+- Target model: [Claude Opus 4 / Sonnet 4 / Haiku / GLM 4.7]
 - [Platform-specific notes if applicable]
 
 ## Testing Guide
@@ -195,6 +247,33 @@ For prompt chains, add:
 
 ## Integration Notes
 [How to connect the chain in practice]
+```
+
+For GLM 4.7 prompts, add:
+```markdown
+## API Configuration
+- Model: `glm-4.7`
+- Base URL: `https://api.z.ai/api/paas/v4/`
+- Thinking: `{"type": "enabled"}` (for complex prompts)
+- Temperature: 0.6-0.7
+- Stop tokens: `["<|endoftext|>", "<|user|>", "<|observation|>"]`
+
+## Adaptation Notes
+- [Key changes made from Claude-style prompting]
+- [Why specific patterns were applied]
+```
+
+For Claude-to-GLM adaptations, add:
+```markdown
+## Before (Claude 4)
+[Original prompt]
+
+## After (GLM 4.7)
+[Adapted prompt]
+
+## Adaptation Rationale
+- [Change 1]: [Reason]
+- [Change 2]: [Reason]
 ```
 
 ## Quality Checklist
@@ -248,12 +327,14 @@ Before I create this prompt, I have a few questions:
 Consult for detailed techniques and patterns:
 - **`references/techniques-detailed.md`** - Comprehensive prompting techniques
 - **`references/claude-4-guide.md`** - Claude 4 specific optimizations
+- **`references/glm-47-guide.md`** - GLM 4.7 adaptation techniques and API configuration
 - **`references/prompt-patterns.md`** - Reusable prompt templates and patterns
 
 ### Example Files
 - **`examples/system-prompt-template.md`** - Production-ready system prompt
 - **`examples/prompt-chain-template.md`** - Multi-step workflow template
 - **`examples/optimization-report.md`** - Prompt improvement documentation
+- **`examples/glm-47-adaptation.md`** - GLM 4.7 before/after transformation examples
 
 ## Success Metrics
 
