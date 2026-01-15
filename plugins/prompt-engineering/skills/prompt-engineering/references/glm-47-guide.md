@@ -153,6 +153,153 @@ Prevent language switching:
 ALWAYS respond in English. Reason in English. Output in English.
 ```
 
+## Decision-Making Prompts
+
+Standard adaptation techniques work for **output generation** prompts (code review, feedback, explanations). Decision-making prompts—where the model must make allow/block, yes/no, or categorical judgments—require additional patterns to prevent over-blocking or misapplied rules.
+
+### When to Use These Patterns
+
+Apply these patterns when the prompt requires:
+- Binary decisions (allow/block, valid/invalid, pass/fail)
+- Rule evaluation against input data
+- Categorical classification with edge cases
+- Enforcement or gating logic
+
+### Pattern 6: Critical Rule Isolation
+
+Place the single most important rule in its own top-level section BEFORE all other content. This rule should override or take precedence.
+
+```
+<critical_rule>
+ADDING EXACTLY ONE NEW TEST IS ALWAYS ALLOWED.
+This is the most important rule. Do not block single test additions.
+</critical_rule>
+
+[Rest of prompt follows...]
+```
+
+**Why it works:** GLM 4.7's start-bias means the first rule encountered has outsized influence. Isolating the critical rule ensures it isn't diluted by surrounding content.
+
+### Pattern 7: Explicit Comparison Algorithms
+
+When rules involve counting or comparisons, provide explicit formulas—not just descriptions.
+
+**Fails:**
+```
+Adding more than one test at once: decision = "block"
+```
+
+**Works:**
+```
+<counting_tests>
+To count new tests correctly:
+1. Identify test methods in Old Content
+2. Identify test methods in New Content
+3. NEW TESTS = tests in New Content that are NOT in Old Content
+4. If NEW TESTS == 1: ALWAYS ALLOWED (decision = null)
+5. If NEW TESTS >= 2: VIOLATION (decision = "block")
+
+IMPORTANT: The TOTAL number of tests does not matter.
+Only the DIFFERENCE between old and new content matters.
+</counting_tests>
+```
+
+**Why it works:** GLM 4.7 interprets ambiguous comparisons inconsistently. Explicit algorithms remove interpretation variance.
+
+### Pattern 8: Positive/Negative Rule Pairing
+
+For every list of violations, add a corresponding list of non-violations. This prevents over-blocking.
+
+```
+<violations>
+ONLY these patterns result in decision = "block":
+
+VIOLATION: MULTIPLE_TEST_ADDITION
+- Write adds TWO OR MORE new test methods
+- Count: (tests in New) - (tests in Old) >= 2
+
+VIOLATION: PREMATURE_IMPLEMENTATION
+- Implementation without failing test evidence
+</violations>
+
+<not_violations>
+NOT A VIOLATION (do not block):
+- Adding exactly ONE new test (always allowed)
+- Modifying an existing test (not adding a test)
+- Test file already has tests and you add ONE more (allowed)
+</not_violations>
+```
+
+**Why it works:** Without explicit "allowed" cases, GLM 4.7 may over-apply violation patterns to edge cases.
+
+### Pattern 9: Decision Chain Examples
+
+For decision prompts, show examples of correct REASONING—not just output format. Include input conditions, evaluation steps, and final decision.
+
+```
+<examples>
+EXAMPLE 1 - CORRECT DECISION (ALLOW):
+Old Content: 5 test methods
+New Content: 6 test methods (one new test added)
+New tests: 6 - 5 = 1
+Decision: null
+Reason: "RED phase: adding exactly one new test is always allowed"
+
+EXAMPLE 2 - CORRECT DECISION (BLOCK):
+Old Content: 2 test methods
+New Content: 5 test methods
+New tests: 5 - 2 = 3
+Decision: "block"
+Reason: "MULTIPLE_TEST_ADDITION: Adding 3 new tests. Add one test at a time."
+
+EXAMPLE 3 - CORRECT DECISION (ALLOW):
+Old Content: test with assert x == "old_value"
+New Content: same test with assert x == "new_value"
+New tests: 0 (modified existing test, not a new test)
+Decision: null
+Reason: "Modifying existing test assertion is allowed"
+</examples>
+```
+
+**Why it works:** GLM 4.7 needs concrete examples of correct reasoning to calibrate its decision logic.
+
+### Pattern 10: Critical Rule Repetition
+
+Repeat the most critical rule across multiple sections to reinforce it.
+
+```
+<critical_rule>
+ADDING EXACTLY ONE NEW TEST IS ALWAYS ALLOWED.
+</critical_rule>
+
+<tdd_cycle>
+PHASE: RED (Adding Tests)
+- Adding ONE new test: decision = null (ALWAYS ALLOWED)
+...
+</tdd_cycle>
+
+<violations>
+NOT A VIOLATION:
+- Adding exactly ONE new test (always allowed)
+</violations>
+
+<examples>
+EXAMPLE 1: ... Decision: null, Reason: "adding one test is always allowed"
+</examples>
+```
+
+**Why it works:** GLM 4.7 may "forget" rules encountered only once. Repetition reinforces priority.
+
+### Decision Prompt Adaptation Checklist
+
+Additional items for decision-making prompts:
+
+- [ ] Isolate the most critical rule in its own top-level section
+- [ ] Provide explicit algorithms for any counting/comparison logic
+- [ ] Pair every VIOLATION list with a NOT A VIOLATION list
+- [ ] Include 3-4 examples showing input → reasoning → decision
+- [ ] Repeat the critical rule in at least 3 different sections
+
 ## API Configuration
 
 ### Enable Thinking Mode
@@ -324,6 +471,19 @@ stop=["<|endoftext|>", "<|user|>", "<|observation|>"]
 ```
 Do not get stuck in thinking loops. Be concise in your reasoning.
 ```
+
+### Over-Blocking / Misapplied Rules
+
+**Symptom:** Model blocks valid actions, applies rules too aggressively, or makes incorrect decisions on edge cases.
+
+**Solution:**
+1. Isolate the most critical "allow" rule in its own top-level section
+2. Add explicit "NOT A VIOLATION" section alongside violations
+3. Provide algorithms for any counting/comparison logic
+4. Add 3-4 examples showing correct allow AND block decisions
+5. Repeat the critical rule in multiple sections
+
+See "Decision-Making Prompts" section for detailed patterns.
 
 ## Adaptation Quick Checklist
 

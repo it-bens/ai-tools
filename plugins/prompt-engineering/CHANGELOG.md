@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.0.1] - 2026-01-15
+
+Testing revealed standard GLM 4.7 techniques caused over-blocking in decision-making prompts (allow/block evaluations). Added patterns specifically for prompts requiring binary decisions.
+
+### Added
+
+- "Decision-Making Prompts" section with 5 new patterns (Patterns 6-10):
+  - Critical Rule Isolation, Explicit Comparison Algorithms, Positive/Negative Rule Pairing, Decision Chain Examples, Critical Rule Repetition
+- Troubleshooting entry "Over-Blocking / Misapplied Rules"
+- Example 5: TDD Guard decision prompt with failed v1 and successful v2 comparison
+
 ## [2.0.0] - 2026-01-15
 
 Added GLM 4.7 (Z.ai) as target model. Claude-optimized prompts produce generic responses on GLM 4.7 due to instruction processing differences; this update provides adaptation techniques.
