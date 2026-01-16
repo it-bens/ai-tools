@@ -1,6 +1,6 @@
 ---
 name: prompt-engineering
-version: 2.0.3
+version: 2.0.4
 description: Create, optimize, and debug high-performing prompts for Claude 4 models and GLM 4.7 (Z.ai) with production-ready templates and evidence-based techniques. Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 allowed-tools: AskUserQuestion, Read, Grep, Glob, WebSearch, WebFetch
 ---
@@ -64,8 +64,11 @@ Select appropriate techniques based on task complexity:
 
 **For complex tasks:**
 - Chain of thought prompting with XML structure
+  → See `references/techniques-detailed.md#3-chain-of-thought-prompting`
 - Multi-shot examples for consistency
+  → See `references/techniques-detailed.md#2-use-examples-multishot-prompting`
 - Prompt chaining for multi-step workflows
+  → See `references/techniques-detailed.md#7-prompt-chaining`
 
 **For optimization:**
 - Analyze current prompt structure and gaps
@@ -93,36 +96,42 @@ Deliver prompts as ready-to-copy markdown blocks optimized for the target platfo
 - Use numbered steps for sequential instructions
 - Specify exact output format requirements
 - Tell Claude what TO do, not what NOT to do
+→ Deep dive: `references/techniques-detailed.md#1-be-clear-and-direct`
 
 ### Use XML Tags
 - Separate prompt components: `<instructions>`, `<context>`, `<examples>`
 - Structure outputs: `<thinking>`, `<answer>`, `<analysis>`
 - Nest tags for hierarchical content
 - Be consistent with tag naming
+→ Deep dive: `references/techniques-detailed.md#4-use-xml-tags`
 
 ### Chain of Thought
 - Basic: "Think step-by-step"
 - Guided: Outline specific thinking steps
 - Structured: Use `<thinking>` and `<answer>` tags
 - Use for complex reasoning, analysis, or multi-step tasks
+→ Deep dive: `references/techniques-detailed.md#3-chain-of-thought-prompting`
 
 ### Multishot Prompting
 - Include 3-5 diverse, relevant examples
 - Wrap in `<examples>` tags with nested `<example>` tags
 - Cover edge cases and variations
 - Ensure examples match desired output format exactly
+→ Deep dive: `references/techniques-detailed.md#2-use-examples-multishot-prompting`
 
 ### Role Prompting
 - Define expertise and perspective
 - Add domain-specific context
 - Specify communication style and tone
 - More specific roles yield better results
+→ Deep dive: `references/techniques-detailed.md#5-give-claude-a-role`
 
 ### Prefilling (API only)
 - Start assistant response to enforce format
 - Skip preambles by prefilling `{` for JSON
 - Maintain character in roleplay scenarios
 - Cannot end with trailing whitespace
+→ Deep dive: `references/techniques-detailed.md#6-prefilling-api-only`
 
 ## Claude 4 Specific Optimizations
 
@@ -152,6 +161,8 @@ creating a workaround.
 After receiving tool results, carefully reflect on their quality
 and determine optimal next steps before proceeding.
 ```
+
+→ Full guide: `references/claude-4-guide.md`
 
 ## GLM 4.7 Adaptation (When Requested)
 
@@ -307,50 +318,43 @@ Before I create this prompt, I have a few questions:
 
 ### Software Development
 - Code generation: completeness, error handling, best practices
+  → See `references/prompt-patterns.md#code-generation-pattern`
 - Code review: structured criteria, actionable feedback
+  → See `references/prompt-patterns.md#code-review-pattern`
 - Architecture: systematic exploration, trade-off analysis
+  → See `references/prompt-patterns.md#comparative-analysis-pattern`
 - Debugging: methodical problem-solving, hypothesis testing
+  → See `references/prompt-patterns.md#root-cause-analysis-pattern`
 
 ### Business & Analysis
 - Data analysis: clear insights, visualization recommendations
+  → See `references/prompt-patterns.md#structured-analysis-pattern`
 - Report generation: professional formatting, executive summaries
+  → See `references/prompt-patterns.md#chain-patterns`
 - Decision support: structured options, risk assessment
+  → See `references/prompt-patterns.md#comparative-analysis-pattern`
 
 ### Creative & Content
 - Writing: tone consistency, audience adaptation
+  → See `references/prompt-patterns.md#structured-content-generation-pattern`
 - Documentation: technical accuracy, user-friendliness
+  → See `references/prompt-patterns.md#documentation-generation-pattern`
 - Marketing: brand voice, conversion optimization
+  → See `references/prompt-patterns.md#text-rewriting-pattern`
 
 ## Additional Resources
 
 ### Reference Files
-
-**`references/techniques-detailed.md`** - Comprehensive prompting techniques:
-- [Chain of Thought](#3-chain-of-thought-prompting) for complex reasoning
-- [Prefilling](#6-prefilling-api-only) for API format control
-- [Prompt Chaining](#7-prompt-chaining) for multi-step workflows
-- [Technique Selection Guide](#technique-selection-guide) for choosing approaches
-
-**`references/claude-4-guide.md`** - Claude 4 specific optimizations:
-- [Thinking Capabilities](#thinking-capabilities) for reasoning tasks
-- [Agentic Coding](#agentic-coding) for code generation
-- [Troubleshooting](#troubleshooting) for common issues
-
-**`references/glm-47-guide.md`** - GLM 4.7 adaptation:
-- [Adaptation Techniques](#adaptation-techniques) for prompt conversion
-- [Decision-Making Prompts](#decision-making-prompts) for allow/block logic
-- [API Configuration](#api-configuration) for thinking mode setup
-
-**`references/prompt-patterns.md`** - Reusable templates:
-- [Analysis Patterns](#analysis-patterns) for structured evaluation
-- [Generation Patterns](#generation-patterns) for content creation
-- [Chain Patterns](#chain-patterns) for multi-step workflows
+- **`references/techniques-detailed.md`** - Comprehensive prompting techniques
+- **`references/claude-4-guide.md`** - Claude 4 specific optimizations
+- **`references/glm-47-guide.md`** - GLM 4.7 adaptation techniques
+- **`references/prompt-patterns.md`** - Reusable prompt templates
 
 ### Example Files
 - **`examples/system-prompt-template.md`** - Production-ready system prompt
 - **`examples/prompt-chain-template.md`** - Multi-step workflow template
 - **`examples/optimization-report.md`** - Prompt improvement documentation
-- **`examples/glm-47-adaptation.md`** - GLM 4.7 before/after transformation examples
+- **`examples/glm-47-adaptation.md`** - GLM 4.7 transformation examples
 
 ## Success Metrics
 

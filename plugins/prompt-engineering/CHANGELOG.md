@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.0.4] - 2026-01-16
+
+Embedded contextual references throughout workflow phases for progressive disclosure instead of consolidating all references at the end.
+
+### Changed
+
+- Phase 2: Design Strategy now links to specific technique sections
+- Essential Techniques Reference sections include deep dive references
+- Claude 4 Specific Optimizations links to full guide
+- Specialized Domains links to relevant prompt patterns
+- Simplified Additional Resources section (removed sub-lists)
+
 ## [2.0.3] - 2026-01-16
 
 Added table of contents to all reference files and section-specific links in SKILL.md for easier navigation.
