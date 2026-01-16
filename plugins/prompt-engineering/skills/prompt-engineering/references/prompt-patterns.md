@@ -2,14 +2,15 @@
 
 Production-ready patterns for common prompt engineering scenarios.
 
-## Pattern Categories
+## Table of Contents
 
-1. [Analysis Patterns](#analysis-patterns)
-2. [Generation Patterns](#generation-patterns)
-3. [Transformation Patterns](#transformation-patterns)
-4. [Review Patterns](#review-patterns)
-5. [Chain Patterns](#chain-patterns)
-6. [Specialized Patterns](#specialized-patterns)
+- [Analysis Patterns](#analysis-patterns)
+- [Generation Patterns](#generation-patterns)
+- [Transformation Patterns](#transformation-patterns)
+- [Review Patterns](#review-patterns)
+- [Chain Patterns](#chain-patterns)
+- [Specialized Patterns](#specialized-patterns)
+- [Pattern Customization](#pattern-customization)
 
 ---
 

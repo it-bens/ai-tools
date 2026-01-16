@@ -2,6 +2,19 @@
 
 Detailed reference for all core prompting techniques, ordered from most broadly effective to specialized.
 
+## Table of Contents
+
+- [Be Clear and Direct](#1-be-clear-and-direct)
+- [Use Examples (Multishot Prompting)](#2-use-examples-multishot-prompting)
+- [Chain of Thought Prompting](#3-chain-of-thought-prompting)
+- [XML Tags for Structure](#4-xml-tags-for-structure)
+- [System Prompts and Role Prompting](#5-system-prompts-and-role-prompting)
+- [Prefilling (API Only)](#6-prefilling-api-only)
+- [Prompt Chaining](#7-prompt-chaining)
+- [Long Context Tips](#8-long-context-tips)
+- [Reduce Hallucinations](#9-reduce-hallucinations)
+- [Technique Selection Guide](#technique-selection-guide)
+
 ## 1. Be Clear and Direct
 
 Claude functions like a brilliant new employee with no prior context on norms, styles, or preferences. The more precisely instructions explain desired outcomes, the better the response.

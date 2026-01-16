@@ -2,6 +2,23 @@
 
 Specific optimizations and best practices for Claude 4 models (Opus 4, Sonnet 4, Haiku 4).
 
+## Table of Contents
+
+- [Key Differences from Previous Models](#key-differences-from-previous-models)
+- [General Principles](#general-principles)
+- [Controlling Output Format](#controlling-output-format)
+- [Thinking Capabilities](#thinking-capabilities)
+- [Parallel Tool Calling](#parallel-tool-calling)
+- [Agentic Coding](#agentic-coding)
+- [Advanced Reasoning](#advanced-reasoning)
+- [Iterative Prompt Refinement](#iterative-prompt-refinement)
+- [Preference-Aligned Task Design](#preference-aligned-task-design)
+- [Safety and Alignment](#safety-and-alignment)
+- [Model Selection](#model-selection)
+- [Performance Optimization](#performance-optimization)
+- [Troubleshooting](#troubleshooting)
+- [Quick Reference Templates](#quick-reference-templates)
+
 ## Key Differences from Previous Models
 
 Claude 4 models are trained for more precise instruction following. This means:

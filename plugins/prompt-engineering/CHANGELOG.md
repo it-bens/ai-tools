@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.0.3] - 2026-01-16
+
+Added table of contents to all reference files and section-specific links in SKILL.md for easier navigation.
+
+### Added
+
+- Table of contents in techniques-detailed.md, claude-4-guide.md, prompt-patterns.md, glm-47-guide.md
+- Section-specific references in SKILL.md Additional Resources section
+
 ## [2.0.2] - 2026-01-16
 
 Research revealed GLM-4.7's architecture separates hidden reasoning from visible output. Added patterns to force justification surfacing in decision prompts.

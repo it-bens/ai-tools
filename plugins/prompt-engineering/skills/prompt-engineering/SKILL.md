@@ -1,6 +1,6 @@
 ---
 name: prompt-engineering
-version: 2.0.2
+version: 2.0.3
 description: Create, optimize, and debug high-performing prompts for Claude 4 models and GLM 4.7 (Z.ai) with production-ready templates and evidence-based techniques. Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 allowed-tools: AskUserQuestion, Read, Grep, Glob, WebSearch, WebFetch
 ---
@@ -324,11 +324,27 @@ Before I create this prompt, I have a few questions:
 ## Additional Resources
 
 ### Reference Files
-Consult for detailed techniques and patterns:
-- **`references/techniques-detailed.md`** - Comprehensive prompting techniques
-- **`references/claude-4-guide.md`** - Claude 4 specific optimizations
-- **`references/glm-47-guide.md`** - GLM 4.7 adaptation techniques and API configuration
-- **`references/prompt-patterns.md`** - Reusable prompt templates and patterns
+
+**`references/techniques-detailed.md`** - Comprehensive prompting techniques:
+- [Chain of Thought](#3-chain-of-thought-prompting) for complex reasoning
+- [Prefilling](#6-prefilling-api-only) for API format control
+- [Prompt Chaining](#7-prompt-chaining) for multi-step workflows
+- [Technique Selection Guide](#technique-selection-guide) for choosing approaches
+
+**`references/claude-4-guide.md`** - Claude 4 specific optimizations:
+- [Thinking Capabilities](#thinking-capabilities) for reasoning tasks
+- [Agentic Coding](#agentic-coding) for code generation
+- [Troubleshooting](#troubleshooting) for common issues
+
+**`references/glm-47-guide.md`** - GLM 4.7 adaptation:
+- [Adaptation Techniques](#adaptation-techniques) for prompt conversion
+- [Decision-Making Prompts](#decision-making-prompts) for allow/block logic
+- [API Configuration](#api-configuration) for thinking mode setup
+
+**`references/prompt-patterns.md`** - Reusable templates:
+- [Analysis Patterns](#analysis-patterns) for structured evaluation
+- [Generation Patterns](#generation-patterns) for content creation
+- [Chain Patterns](#chain-patterns) for multi-step workflows
 
 ### Example Files
 - **`examples/system-prompt-template.md`** - Production-ready system prompt

@@ -2,6 +2,17 @@
 
 Techniques for adapting Claude 4 prompts to achieve reasoning and response parity on GLM 4.7 (Z.ai).
 
+## Table of Contents
+
+- [Core Differences: Claude 4 vs GLM 4.7](#core-differences-claude-4-vs-glm-47)
+- [Adaptation Techniques](#adaptation-techniques)
+- [Decision-Making Prompts](#decision-making-prompts)
+- [API Configuration](#api-configuration)
+- [Reusable Patterns](#reusable-patterns)
+- [Troubleshooting](#troubleshooting)
+- [Adaptation Quick Checklist](#adaptation-quick-checklist)
+- [Cost Comparison](#cost-comparison)
+
 ## Core Differences: Claude 4 vs GLM 4.7
 
 | Aspect | Claude 4 | GLM 4.7 | Adaptation Required |
