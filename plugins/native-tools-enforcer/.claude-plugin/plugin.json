@@ -1,6 +1,6 @@
 {
   "name": "native-tools-enforcer",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Enforces use of Claude Code native tools (Read, Glob, Grep, Edit, Write) instead of bash equivalents (cat, find, grep, sed, echo). Uses PreToolUse hook to intercept Bash commands and block those that should use native tools, providing helpful suggestions.",
   "author": {
     "name": "Martin Bens",

@@ -61,6 +61,37 @@ warn_about_native() {
     fi
 }
 
+# Check if command before pipe reads file contents (deny-list approach)
+# Returns 0 if it IS a file content command, 1 if NOT
+is_file_content_command() {
+    local cmd="$1"
+    local pre_pipe="${cmd%%|*}"
+
+    # Deny-list: commands that read file contents
+    # Text file viewers
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)cat[[:space:]]+ ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)head[[:space:]] ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)tail[[:space:]] ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)less[[:space:]] ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)more[[:space:]] ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)tac[[:space:]] ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)bat[[:space:]] ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)nl[[:space:]] ]] && return 0
+    # Binary inspectors
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)strings[[:space:]] ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)hexdump[[:space:]] ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)xxd[[:space:]] ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)od[[:space:]] ]] && return 0
+    # Compressed file viewers
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)zcat[[:space:]] ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)bzcat[[:space:]] ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)xzcat[[:space:]] ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)zless[[:space:]] ]] && return 0
+    [[ "$pre_pipe" =~ (^|[;\&][[:space:]]*)zmore[[:space:]] ]] && return 0
+
+    return 1  # NOT a file content command
+}
+
 # ============================================================================
 # FILE READING - Use Read tool
 # ============================================================================
@@ -108,25 +139,33 @@ check_and_block \
 # CONTENT SEARCHING - Use Grep tool
 # ============================================================================
 
+# Direct grep/rg on files is always blocked
 check_and_block \
     '(^|;|&&)\s*grep\s' \
     'Grep tool' \
     'Use Grep tool for content searching. It supports regex and provides better output formatting.'
 
 check_and_block \
-    '\|\s*grep\s' \
-    'Grep tool' \
-    'Use Grep tool for content searching instead of piping to grep.'
-
-check_and_block \
     '(^|;|&&)\s*rg\s' \
     'Grep tool' \
     'Use Grep tool which is built on ripgrep and provides native integration.'
 
-check_and_block \
-    '\|\s*rg\s' \
-    'Grep tool' \
-    'Use Grep tool instead of piping to ripgrep.'
+# Piped grep/rg: only block if source reads file contents
+# Commands like `unzip -l | grep`, `git log | grep`, `ps | grep` are ALLOWED
+# Commands like `cat file | grep`, `strings binary | grep` are BLOCKED
+if echo "$command" | grep -qE '\|\s*grep\s' && is_file_content_command "$command"; then
+    check_and_block \
+        '.*' \
+        'Grep tool' \
+        'Use Grep tool for content searching instead of piping file contents to grep.'
+fi
+
+if echo "$command" | grep -qE '\|\s*rg\s' && is_file_content_command "$command"; then
+    check_and_block \
+        '.*' \
+        'Grep tool' \
+        'Use Grep tool instead of piping file contents to ripgrep.'
+fi
 
 check_and_block \
     '(^|;|&&)\s*ag\s' \

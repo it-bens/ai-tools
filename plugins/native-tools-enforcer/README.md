@@ -28,6 +28,22 @@ Enforces use of Claude Code native tools instead of bash equivalents via PreTool
 
 > **Note:** Heredocs piped to commands (`cat << EOF | pbcopy`) are allowed since they don't write to files.
 
+### Piped grep/rg Behavior
+
+Piped grep is **selectively blocked** based on whether the source command reads file contents:
+
+| Source Command | Example | Blocked? | Reason |
+|----------------|---------|----------|--------|
+| File viewers | `cat file.txt \| grep pattern` | ✅ Yes | Use Grep tool |
+| Binary inspectors | `strings binary \| grep pattern` | ✅ Yes | Use Grep tool |
+| Compressed viewers | `zcat file.gz \| grep pattern` | ✅ Yes | Use Grep tool |
+| Archive listings | `unzip -l \| grep pattern` | ❌ No | Metadata, not file content |
+| Git commands | `git log \| grep feat` | ❌ No | Command output |
+| Process lists | `ps aux \| grep node` | ❌ No | System metadata |
+| Package managers | `npm ls \| grep lodash` | ❌ No | Command output |
+
+This distinction exists because the Grep tool searches files on disk—it cannot filter command output.
+
 ## Warned Commands (Not Blocked)
 
 | Bash Command | Suggestion | Why Not Blocked |

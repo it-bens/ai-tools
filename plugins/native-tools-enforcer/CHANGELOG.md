@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.2.0] - 2025-01-16
+
+### Changed
+
+- Piped grep/rg is now selectively blocked based on source command
+- Commands reading file contents (cat, head, tail, strings, zcat, etc.) piped to grep/rg are blocked
+- Commands outputting metadata/results (unzip -l, git log, ps, npm ls, etc.) piped to grep/rg are allowed
+
+### Added
+
+- `is_file_content_command()` function to distinguish file content commands from metadata/output commands
+- BATS tests for piped grep behavior covering allowed and blocked patterns
+- Documentation in README explaining piped grep behavior
+
+### Fixed
+
+- False positive: `unzip -l *.whl | grep dockerfile` was incorrectly blocked
+- The Grep tool can only search files on disk, not filter command output
+
 ## [1.1.3] - 2025-01-08
 
 ### Fixed

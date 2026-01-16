@@ -31,10 +31,10 @@ SCRIPT="check-native-tools.sh"
 }
 
 # bats test_tags=blocking
-@test "blocks piped grep → suggests Grep tool" {
-    run_hook "$SCRIPT" "ls | grep foo"
+@test "blocks piped grep from cat (file content)" {
+    run_hook "$SCRIPT" "cat file.txt | grep pattern"
     assert_failure 2
-    assert_output --partial "Grep tool"
+    # Blocked by cat check first (Read tool) - expected behavior
 }
 
 # bats test_tags=blocking
@@ -211,5 +211,98 @@ SCRIPT="check-native-tools.sh"
 # bats test_tags=input
 @test "allows missing command field" {
     run bash -c 'echo "{\"tool_input\": {}}" | bash "$1"' _ "${SCRIPTS_DIR}/check-native-tools.sh"
+    assert_success
+}
+
+# =============================================================================
+# PIPED GREP TESTS - Allowed vs Blocked based on source command
+# =============================================================================
+
+# bats test_tags=allow,piped-grep
+@test "allows piped grep from unzip -l (archive metadata)" {
+    run_hook "$SCRIPT" "unzip -l dist/*.whl | grep -i dockerfile"
+    assert_success
+}
+
+# bats test_tags=allow,piped-grep
+@test "allows piped grep from git log (command output)" {
+    run_hook "$SCRIPT" "git log --oneline | grep feat"
+    assert_success
+}
+
+# bats test_tags=allow,piped-grep
+@test "allows piped grep from docker ps (command output)" {
+    run_hook "$SCRIPT" "docker ps | grep running"
+    assert_success
+}
+
+# bats test_tags=allow,piped-grep
+@test "allows piped grep from npm ls (package listing)" {
+    run_hook "$SCRIPT" "npm ls | grep lodash"
+    assert_success
+}
+
+# bats test_tags=allow,piped-grep
+@test "allows piped grep from ps (process list)" {
+    run_hook "$SCRIPT" "ps aux | grep node"
+    assert_success
+}
+
+# bats test_tags=allow,piped-grep
+@test "allows piped grep from env (environment vars)" {
+    run_hook "$SCRIPT" "env | grep PATH"
+    assert_success
+}
+
+# bats test_tags=allow,piped-grep
+@test "allows piped grep from ls (directory listing)" {
+    run_hook "$SCRIPT" "ls | grep foo"
+    assert_success
+}
+
+# bats test_tags=allow,piped-grep
+@test "allows piped grep from tar -tf (archive listing)" {
+    run_hook "$SCRIPT" "tar -tf archive.tar.gz | grep config"
+    assert_success
+}
+
+# bats test_tags=blocking,piped-grep
+@test "blocks piped grep from strings (binary inspector)" {
+    run_hook "$SCRIPT" "strings binary | grep pattern"
+    assert_failure 2
+    assert_output --partial "Grep tool"
+}
+
+# bats test_tags=blocking,piped-grep
+@test "blocks piped grep from head (file content)" {
+    run_hook "$SCRIPT" "head -100 log.txt | grep error"
+    assert_failure 2
+    # Blocked by head check first (Read tool) - expected behavior
+}
+
+# bats test_tags=blocking,piped-grep
+@test "blocks piped grep from tail (file content)" {
+    run_hook "$SCRIPT" "tail -f log.txt | grep error"
+    assert_failure 2
+    # Blocked by tail check first (Read tool) - expected behavior
+}
+
+# bats test_tags=blocking,piped-grep
+@test "blocks piped grep from zcat (compressed file)" {
+    run_hook "$SCRIPT" "zcat file.gz | grep pattern"
+    assert_failure 2
+    assert_output --partial "Grep tool"
+}
+
+# bats test_tags=blocking,piped-grep
+@test "blocks piped rg from cat (file content)" {
+    run_hook "$SCRIPT" "cat file.txt | rg pattern"
+    assert_failure 2
+    # Blocked by cat check first (Read tool) - expected behavior
+}
+
+# bats test_tags=allow,piped-grep
+@test "allows piped rg from kubectl (k8s command)" {
+    run_hook "$SCRIPT" "kubectl get pods | rg running"
     assert_success
 }
