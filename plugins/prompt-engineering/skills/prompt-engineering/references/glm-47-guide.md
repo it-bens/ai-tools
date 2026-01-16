@@ -157,6 +157,10 @@ ALWAYS respond in English. Reason in English. Output in English.
 
 Standard adaptation techniques work for **output generation** prompts (code review, feedback, explanations). Decision-making prompts—where the model must make allow/block, yes/no, or categorical judgments—require additional patterns to prevent over-blocking or misapplied rules.
 
+### Why Decision Prompts Need Extra Scaffolding
+
+GLM-4.7's architecture separates reasoning (`reasoning_content`) from visible output (`content`). Thinking mode improves decision quality but doesn't automatically surface justifications—you must explicitly instruct the model to include reasoning in its response. Without this scaffolding, GLM-4.7 defaults to generic outputs like "This violates TDD principles" rather than specific directives like "You're adding `calculateDiscount()` without a failing test. Write a test first."
+
 ### When to Use These Patterns
 
 Apply these patterns when the prompt requires:
@@ -290,6 +294,62 @@ EXAMPLE 1: ... Decision: null, Reason: "adding one test is always allowed"
 
 **Why it works:** GLM 4.7 may "forget" rules encountered only once. Repetition reinforces priority.
 
+### Pattern 11: Decision + Because + Evidence Template
+
+Structure every decision response with three mandatory parts to force justification:
+
+```
+## OUTPUT FORMAT (MANDATORY)
+For every response, structure as:
+
+1. **DECISION**: [Specific action to take]
+2. **BECAUSE**: [Primary reasoning - 1-2 sentences]
+3. **EVIDENCE**: [Quote specific input that triggered this decision]
+
+EXAMPLE:
+DECISION: Write a test for `calculateDiscount()` first.
+BECAUSE: TDD requires a failing test before implementation to ensure the test validates the new behavior.
+EVIDENCE: "function calculateDiscount()" added at line 47 with no corresponding test.
+```
+
+**Why it works:** The three-part structure forces GLM-4.7 to surface reasoning that would otherwise stay in hidden `reasoning_content`. Each part serves a purpose: DECISION prevents vague advice, BECAUSE forces explanation, EVIDENCE forces citation.
+
+### Pattern 12: Labeled Input for Citation
+
+Structure dynamic input with labels so GLM-4.7 can reference specifics easily:
+
+```
+## INPUT (cite these labels in your response)
+[FILE]: src/pricing.js
+[LINES ADDED]: 12-24
+[FUNCTION]: calculateDiscount
+[TESTS MODIFIED]: None
+
+Your response MUST cite at least one [LABEL] when explaining your decision.
+```
+
+**Why it works:** Labels give GLM-4.7 concrete anchors for citation. Without labels, the model may struggle to identify what to quote from unstructured input.
+
+### Pattern 13: Rule Priority Levels
+
+For complex rule sets, assign explicit priority levels to prevent ambiguous enforcement:
+
+```
+## RULES (evaluate in priority order)
+
+R1 [CRITICAL]: No implementation without a failing test
+R2 [HIGH]: Test files must change with implementation files
+R3 [MEDIUM]: One assertion per test
+R4 [LOW]: Use descriptive test names
+
+## PRIORITY RESOLUTION
+- CRITICAL overrides all others
+- Same priority: apply rule listed FIRST
+- Report the highest-priority violation only
+```
+
+**Why it works:** Explicit priorities prevent GLM-4.7 from enforcing low-priority rules when high-priority violations exist, reducing noise in feedback.
+
 ### Decision Prompt Adaptation Checklist
 
 Additional items for decision-making prompts:
@@ -299,6 +359,9 @@ Additional items for decision-making prompts:
 - [ ] Pair every VIOLATION list with a NOT A VIOLATION list
 - [ ] Include 3-4 examples showing input → reasoning → decision
 - [ ] Repeat the critical rule in at least 3 different sections
+- [ ] Use Decision + Because + Evidence template for output format
+- [ ] Label input fields for easy citation ([FILE], [LINES], etc.)
+- [ ] Assign priority levels to rules ([CRITICAL], [HIGH], [MEDIUM])
 
 ## API Configuration
 
@@ -482,6 +545,18 @@ Do not get stuck in thinking loops. Be concise in your reasoning.
 3. Provide algorithms for any counting/comparison logic
 4. Add 3-4 examples showing correct allow AND block decisions
 5. Repeat the critical rule in multiple sections
+
+See "Decision-Making Prompts" section for detailed patterns.
+
+### Missing Justifications / Generic Reasoning
+
+**Symptom:** Model makes correct decisions but doesn't explain why, or gives abstract justifications like "This violates best practices."
+
+**Solution:**
+1. Add Decision + Because + Evidence template (Pattern 11)
+2. Label input fields for easy citation (Pattern 12)
+3. Include example showing expected justification depth
+4. Add "Your response MUST cite specific evidence from input"
 
 See "Decision-Making Prompts" section for detailed patterns.
 

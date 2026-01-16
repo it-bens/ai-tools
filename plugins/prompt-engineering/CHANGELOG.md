@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.0.2] - 2026-01-16
+
+Research revealed GLM-4.7's architecture separates hidden reasoning from visible output. Added patterns to force justification surfacing in decision prompts.
+
+### Added
+
+- Reasoning architecture explanation in Decision-Making section intro
+- Pattern 11: Decision + Because + Evidence Template
+- Pattern 12: Labeled Input for Citation
+- Pattern 13: Rule Priority Levels
+- Troubleshooting entry "Missing Justifications / Generic Reasoning"
+
 ## [2.0.1] - 2026-01-15
 
 Testing revealed standard GLM 4.7 techniques caused over-blocking in decision-making prompts (allow/block evaluations). Added patterns specifically for prompts requiring binary decisions.
