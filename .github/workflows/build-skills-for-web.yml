@@ -15,7 +15,7 @@ jobs:
       has_skills: ${{ steps.find-skills.outputs.has_skills }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Find web-enabled skills
         id: find-skills
@@ -60,7 +60,7 @@ jobs:
         skill: ${{ fromJson(needs.discover-skills.outputs.skills) }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install dependencies
         run: |
@@ -116,7 +116,7 @@ jobs:
           EOF
 
       - name: Create or update release
-        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2.2.2
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
         with:
           tag_name: latest
           name: Claude Web Skills
