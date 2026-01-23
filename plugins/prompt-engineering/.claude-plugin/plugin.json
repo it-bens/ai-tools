@@ -1,6 +1,6 @@
 {
   "name": "prompt-engineering",
-  "version": "2.0.4",
+  "version": "2.1.0",
   "description": "Expert prompt engineering for Claude 4 and GLM 4.7 (Z.ai) with production-ready templates",
   "author": {
     "name": "Martin Bens",

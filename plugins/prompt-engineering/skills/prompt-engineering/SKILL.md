@@ -1,7 +1,7 @@
 ---
 name: prompt-engineering
-version: 2.0.4
-description: Create, optimize, and debug high-performing prompts for Claude 4 models and GLM 4.7 (Z.ai) with production-ready templates and evidence-based techniques. Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
+version: 2.1.0
+description: Create, optimize, and debug high-performing prompts for Claude 4 models and GLM 4.7 (Z.ai) with production-ready templates and evidence-based techniques. Also optimize LLM-targeted content (skills, agents, instructions, documentation). Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 allowed-tools: AskUserQuestion, Read, Grep, Glob, WebSearch, WebFetch
 ---
 
@@ -19,9 +19,47 @@ Create, optimize, and debug prompts by:
 
 **Deliverable**: The output is always a prompt artifact—a ready-to-use prompt that users copy and use elsewhere. Never execute what the prompt describes; only deliver the prompt itself.
 
+## Prompt Recognition
+
+A prompt is any content containing information, context, or directives intended for LLM consumption. This includes:
+
+**Traditional prompts:**
+- System prompts, user prompts, prompt templates
+- Few-shot examples, prompt chains
+
+**LLM-targeted content:**
+- Skills, agents, commands (Claude Code, Cursor, etc.)
+- Project instructions and rules files
+- Documentation consumed by LLMs during tasks
+- Any file with imperative instructions for an LLM
+
+**Recognition signals:**
+- Frontmatter with fields like `description`, `tools`, `allowed-tools`
+- Imperative language: "You must", "Always", "Never"
+- Workflow steps, constraints, decision trees
+- References to LLM tools or capabilities
+- Content structured to guide LLM behavior
+
+**Optimization principle for LLM-targeted content:**
+
+These documents are created with clear scope and intention—often by an LLM—and contain everything required for their purpose. Optimization improves clarity, structure, and effectiveness WITHOUT removing information, context, or directives.
+
+Apply reasoning to understand:
+- What information is essential to the document's purpose
+- Which directives shape LLM behavior
+- What context enables correct interpretation
+
+Then optimize for clarity and impact while preserving all substantive content.
+
+**Workflow selection:**
+- **LLM-targeted content** → Skip to Phase 2 (Design Strategy), use streamlined output format
+- **Traditional prompts** → Follow full workflow starting at Phase 1
+
 ## Workflow
 
-### Phase 1: Prompt Scoping
+### Phase 1: Prompt Scoping (Traditional Prompts Only)
+
+*Skip this phase for LLM-targeted content—proceed directly to Phase 2.*
 
 Before generating the prompt, understand its intended purpose. Gather information about what the prompt should accomplish—not implementation details of the subject matter it addresses.
 
@@ -217,75 +255,16 @@ For detailed patterns and examples, consult `references/glm-47-guide.md` and `ex
 
 ## Output Format
 
-Deliver all prompts using this structure:
+Select the appropriate format based on prompt type:
 
-```markdown
-# [Prompt Title]
-
-## Purpose
-[Clear description of what this prompt accomplishes]
-
-## Best Used For
-[Specific scenarios and use cases]
-
-## Prompt
-
-[Complete, ready-to-copy prompt in code block]
-
-## Usage Notes
-- Target model: [Claude Opus 4 / Sonnet 4 / Haiku / GLM 4.7]
-- [Platform-specific notes if applicable]
-
-## Testing Guide
-[How to validate the prompt works correctly with example inputs]
-```
-
-For refinements, add after `## Prompt`:
-```markdown
-## Changes Made
-- [What was modified and the rationale]
-- [Key differences from previous version]
-```
-
-For prompt chains, add:
-```markdown
-## Chain Overview
-### Step 1: [Purpose]
-[Prompt with clear output format]
-
-### Step 2: [Purpose]
-[Prompt consuming Step 1 output]
-
-## Integration Notes
-[How to connect the chain in practice]
-```
-
-For GLM 4.7 prompts, add:
-```markdown
-## API Configuration
-- Model: `glm-4.7`
-- Base URL: `https://api.z.ai/api/paas/v4/`
-- Thinking: `{"type": "enabled"}` (for complex prompts)
-- Temperature: 0.6-0.7
-- Stop tokens: `["<|endoftext|>", "<|user|>", "<|observation|>"]`
-
-## Adaptation Notes
-- [Key changes made from Claude-style prompting]
-- [Why specific patterns were applied]
-```
-
-For Claude-to-GLM adaptations, add:
-```markdown
-## Before (Claude 4)
-[Original prompt]
-
-## After (GLM 4.7)
-[Adapted prompt]
-
-## Adaptation Rationale
-- [Change 1]: [Reason]
-- [Change 2]: [Reason]
-```
+| Type | Format | Reference |
+|------|--------|-----------|
+| Traditional prompts | Full wrapper (Purpose, Best Used For, etc.) | `references/output-formats.md#1-traditional-prompts` |
+| LLM-targeted content | Optimized content only, no wrapper | `references/output-formats.md#2-llm-targeted-content` |
+| Refinements | Add "Changes Made" section | `references/output-formats.md#3-refinements` |
+| Prompt chains | Chain Overview with steps | `references/output-formats.md#4-prompt-chains` |
+| GLM 4.7 prompts | Add API Configuration | `references/output-formats.md#5-glm-47-prompts` |
+| Claude-to-GLM adaptations | Before/After comparison | `references/output-formats.md#6-claude-to-glm-adaptations` |
 
 ## Quality Checklist
 
@@ -298,7 +277,7 @@ Before delivering any prompt, verify:
 
 ## When to Ask for Clarification
 
-Use the AskUserQuestion tool when:
+For **traditional prompts**, use the AskUserQuestion tool when:
 - Use case is ambiguous or too broad
 - Multiple valid approaches exist
 - Output format preferences are unclear
@@ -349,6 +328,7 @@ Before I create this prompt, I have a few questions:
 - **`references/claude-4-guide.md`** - Claude 4 specific optimizations
 - **`references/glm-47-guide.md`** - GLM 4.7 adaptation techniques
 - **`references/prompt-patterns.md`** - Reusable prompt templates
+- **`references/output-formats.md`** - Output format templates by prompt type
 
 ### Example Files
 - **`examples/system-prompt-template.md`** - Production-ready system prompt

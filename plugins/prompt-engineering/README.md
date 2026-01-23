@@ -10,11 +10,12 @@ This plugin provides comprehensive guidance for creating, optimizing, and debugg
 
 ### Prompt Engineering Lab
 
-**Triggers:** "create a prompt", "write a prompt", "optimize a prompt", "debug a prompt", "improve my prompt", "help with prompting", "build a prompt chain", "make a system prompt", "design a prompt", "adapt prompt for GLM", "convert to GLM 4.7"
+**Triggers:** "create a prompt", "write a prompt", "optimize a prompt", "debug a prompt", "improve my prompt", "help with prompting", "build a prompt chain", "make a system prompt", "design a prompt", "optimize this skill", "improve this agent", "adapt prompt for GLM", "convert to GLM 4.7"
 
 **Capabilities:**
 - Create new prompts from scratch for specific use cases
 - Optimize existing prompts for better performance
+- Optimize LLM-targeted content (skills, agents, instructions, documentation)
 - Debug problematic prompts and identify root causes
 - Build prompt chains for complex, multi-step workflows
 - Provide ready-to-copy prompts for Claude Web and Desktop
@@ -27,6 +28,8 @@ Once installed, simply ask Claude Code for help with prompts:
 ```
 "Help me create a prompt for code review"
 "Optimize this prompt: [your prompt]"
+"Optimize this SKILL.md"
+"Improve this agent definition"
 "Debug why my prompt isn't working"
 "Build a prompt chain for research-to-report workflow"
 "Adapt this Claude prompt for GLM 4.7"

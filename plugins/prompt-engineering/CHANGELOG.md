@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] - 2026-01-23
+
+Expanded scope to recognize and optimize LLM-targeted content (skills, agents, instructions) alongside traditional prompts. Added explicit workflow branching to prevent mixing contrary instructions.
+
+### Added
+
+- Prompt Recognition section defining traditional prompts vs LLM-targeted content
+- Recognition signals for identifying LLM-targeted content (frontmatter, imperative language, etc.)
+- Workflow selection with explicit branching based on prompt type
+- `references/output-formats.md` with TOC linking to 6 format templates
+
+### Changed
+
+- Phase 1 now marked "(Traditional Prompts Only)" with skip instruction for LLM-targeted content
+- Output Format section replaced with summary table referencing `output-formats.md`
+- "When to Ask for Clarification" qualified for traditional prompts only
+- Skill description updated to include LLM-targeted content optimization
+
 ## [2.0.4] - 2026-01-16
 
 Embedded contextual references throughout workflow phases for progressive disclosure instead of consolidating all references at the end.
