@@ -1,13 +1,13 @@
 ---
 name: prompt-engineering
 version: 2.1.0
-description: Create, optimize, and debug high-performing prompts for Claude 4 models and GLM 4.7 (Z.ai) with production-ready templates and evidence-based techniques. Also optimize LLM-targeted content (skills, agents, instructions, documentation). Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
+description: Create, optimize, and debug high-performing prompts for Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3 with production-ready templates and evidence-based techniques. Also optimize LLM-targeted content (skills, agents, instructions, documentation). Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, adapt a prompt for Gemini, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 allowed-tools: AskUserQuestion, Read, Grep, Glob, WebSearch, WebFetch
 ---
 
 # Prompt Engineering Lab
 
-Expert prompt engineering service for Claude 4 models and GLM 4.7 (Z.ai). Transform requirements into high-performing, production-ready prompts through evidence-based techniques and systematic optimization.
+Expert prompt engineering service for Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3. Transform requirements into high-performing, production-ready prompts through evidence-based techniques and systematic optimization.
 
 ## Core Mission
 
@@ -68,7 +68,7 @@ Before generating the prompt, understand its intended purpose. Gather informatio
 - Who will use this prompt (technical level, domain expertise)?
 - What makes the prompt successful (output quality, format, completeness)?
 - Target platform: Claude Web, Claude Desktop, or API?
-- Target model: Claude 4 (default) or GLM 4.7? (only ask if user mentions GLM, Z.ai, or model adaptation)
+- Target model: Claude 4 (default), GLM 4.7, or Gemini 3? (only ask if user mentions GLM, Z.ai, Gemini, or model adaptation)
 
 **Clarify prompt ambiguities (stay at the prompt level, don't dive into subject matter):**
 - If variations might be beneficial, ask if user wants alternative prompt approaches
@@ -253,6 +253,89 @@ Include when delivering API-targeted prompts:
 
 For detailed patterns and examples, consult `references/glm-47-guide.md` and `examples/glm-47-adaptation.md`.
 
+## Gemini 3 Adaptation (When Requested)
+
+When user explicitly requests Gemini 3 as target model, apply these adaptations. Gemini 3 defaults to minimal output and processes long context differently than Claude.
+
+### Key Differences from Claude 4
+
+| Aspect | Claude 4 | Gemini 3 |
+|--------|----------|----------|
+| Temperature | 0.7-1.0 typical | Keep at 1.0 (changing causes issues) |
+| Default verbosity | Moderate detail | Minimal (must explicitly request detail) |
+| Instruction position | Flexible | For long context: after data |
+| Few-shot examples | Often optional | Strongly recommended |
+| Response format control | Prefilling (API) | Prefix strings in prompt |
+| Constraint adherence | Flexible positioning | End of prompt for best adherence |
+
+### Essential Adaptations
+
+**1. Keep temperature at 1.0** - Adjusting temperature causes looping or degraded output
+
+**2. Place instructions after long context:**
+```
+<document>
+[Long content here]
+</document>
+
+Based on the document above, [your instruction].
+```
+
+**3. Request verbosity explicitly:**
+```
+Provide a detailed, comprehensive response. Include specific examples.
+Do not summarize briefly.
+```
+
+**4. Always include few-shot examples** - Show 2-3 examples of desired format
+
+**5. Use response prefixes for format control:**
+```
+Provide your analysis in the following format:
+
+JSON:
+{
+  "findings": [...],
+  "recommendations": [...]
+}
+```
+
+**6. Place constraints at prompt end:**
+```
+[Main instructions]
+
+CONSTRAINTS:
+- Maximum 500 words
+- Must include code examples
+- No introductory phrases
+```
+
+**7. Add self-verification block:**
+```
+VERIFICATION (complete before responding):
+- Does the response address all parts of the question?
+- Are all claims supported by the input data?
+- Does the format match the template?
+```
+
+### Gemini 3 Model Selection
+
+| Model | Best For | Notes |
+|-------|----------|-------|
+| Flash | Routine tasks, high volume, simple analysis | 15x cheaper, faster |
+| Pro | Complex reasoning, nuanced analysis, creative tasks | Better quality for hard problems |
+
+Both models use identical prompting techniques.
+
+### Gemini 3 API Configuration
+
+Include when delivering API-targeted prompts:
+- Temperature: 1.0 (always keep at default)
+- For JSON output: use `response_mime_type="application/json"` with schema
+- System instructions: use `system_instruction` parameter in model constructor
+
+For detailed patterns and examples, consult `references/gemini-3-guide.md` and `examples/gemini-3-adaptation.md`.
+
 ## Output Format
 
 Select the appropriate format based on prompt type:
@@ -265,6 +348,8 @@ Select the appropriate format based on prompt type:
 | Prompt chains | Chain Overview with steps | `references/output-formats.md#4-prompt-chains` |
 | GLM 4.7 prompts | Add API Configuration | `references/output-formats.md#5-glm-47-prompts` |
 | Claude-to-GLM adaptations | Before/After comparison | `references/output-formats.md#6-claude-to-glm-adaptations` |
+| Gemini 3 prompts | Add API Configuration | `references/output-formats.md#7-gemini-3-prompts` |
+| Claude-to-Gemini adaptations | Before/After comparison | `references/output-formats.md#8-claude-to-gemini-adaptations` |
 
 ## Quality Checklist
 
@@ -327,6 +412,7 @@ Before I create this prompt, I have a few questions:
 - **`references/techniques-detailed.md`** - Comprehensive prompting techniques
 - **`references/claude-4-guide.md`** - Claude 4 specific optimizations
 - **`references/glm-47-guide.md`** - GLM 4.7 adaptation techniques
+- **`references/gemini-3-guide.md`** - Gemini 3 adaptation techniques
 - **`references/prompt-patterns.md`** - Reusable prompt templates
 - **`references/output-formats.md`** - Output format templates by prompt type
 
@@ -335,6 +421,7 @@ Before I create this prompt, I have a few questions:
 - **`examples/prompt-chain-template.md`** - Multi-step workflow template
 - **`examples/optimization-report.md`** - Prompt improvement documentation
 - **`examples/glm-47-adaptation.md`** - GLM 4.7 transformation examples
+- **`examples/gemini-3-adaptation.md`** - Gemini 3 transformation examples
 
 ## Success Metrics
 

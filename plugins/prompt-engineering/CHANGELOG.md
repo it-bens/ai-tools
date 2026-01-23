@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.2.0] - 2026-01-23
+
+Added Gemini 3 (Flash/Pro) as target model. Gemini 3 defaults to minimal output and processes long context differently than Claude; this update provides adaptation techniques.
+
+### Added
+
+- `references/gemini-3-guide.md` - Adaptation techniques, API config, multimodal/agentic patterns
+- `examples/gemini-3-adaptation.md` - Before/after transformation examples
+- Target model clarification in Phase 1 (when user mentions Gemini)
+- Gemini 3 output format with API configuration and adaptation rationale
+
+### Changed
+
+- Skill description and triggers updated for Gemini 3
+- Claude Web project files support all three models
+
 ## [2.1.0] - 2026-01-23
 
 Expanded scope to recognize and optimize LLM-targeted content (skills, agents, instructions) alongside traditional prompts. Added explicit workflow branching to prevent mixing contrary instructions.
