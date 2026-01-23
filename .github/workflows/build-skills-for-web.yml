@@ -79,3 +79,47 @@ jobs:
           name: ${{ matrix.skill.name }}
           path: dist/*.zip
           if-no-files-found: error
+
+  create-release:
+    needs: [discover-skills, build-skill]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.discover-skills.outputs.has_skills == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          path: skills-dist
+
+      - name: Prepare release assets
+        id: prepare
+        run: |
+          mkdir -p release-assets
+          find skills-dist -name "*.zip" -exec cp {} release-assets/ \;
+
+          cat > release-body.md << 'EOF'
+          Download skill packages for use in Claude Web projects.
+
+          ## Available Skills
+          EOF
+
+          for zip in release-assets/*.zip; do
+            skill_name=$(basename "$zip" .zip)
+            echo "- **${skill_name}**" >> release-body.md
+          done
+
+          cat >> release-body.md << 'EOF'
+
+          ---
+          *Auto-built from skills with `.claude-web` markers.*
+          EOF
+
+      - name: Create or update release
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2.2.2
+        with:
+          tag_name: latest
+          name: Claude Web Skills
+          body_path: release-body.md
+          files: release-assets/*.zip
+          make_latest: true

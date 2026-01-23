@@ -106,6 +106,15 @@ According to [Claude Code Skills Documentation](https://code.claude.com/docs/en/
 
 Skills uploaded to Claude Web will ignore this field. The build script ensures clean ZIPs without unsupported fields.
 
+### Downloads
+
+| Skill | Download |
+|-------|----------|
+| prompt-engineering | [Download](https://github.com/it-bens/claude-code-plugins/releases/download/latest/prompt-engineering.zip) |
+| tandoor-recipe-conversion | [Download](https://github.com/it-bens/claude-code-plugins/releases/download/latest/tandoor-recipe-conversion.zip) |
+
+Or browse all downloads on the [Releases page](https://github.com/it-bens/claude-code-plugins/releases/latest).
+
 ## Contributing
 
 This is a personal marketplace, but suggestions and feedback are welcome via GitHub issues.
