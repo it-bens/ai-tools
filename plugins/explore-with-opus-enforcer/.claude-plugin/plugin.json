@@ -1,0 +1,11 @@
+{
+  "name": "explore-with-opus-enforcer",
+  "version": "1.0.0",
+  "description": "Blocks the Explore subagent unless using Opus model. Maximum accuracy for codebase exploration by requiring the strongest model.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["hooks", "explore", "subagent", "opus", "guardrails", "quality"]
+}

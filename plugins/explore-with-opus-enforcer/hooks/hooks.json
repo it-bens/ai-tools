@@ -1,0 +1,17 @@
+{
+  "description": "PreToolUse hook to block Explore subagent unless using Opus model",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/enforce-opus-explore.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

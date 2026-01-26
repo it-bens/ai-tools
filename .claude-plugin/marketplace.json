@@ -30,6 +30,16 @@
       "name": "tandoor-recipe-converter",
       "source": "./plugins/tandoor-recipe-converter",
       "category": "productivity"
+    },
+    {
+      "name": "explore-with-sonnet-enforcer",
+      "source": "./plugins/explore-with-sonnet-enforcer",
+      "category": "guardrails"
+    },
+    {
+      "name": "explore-with-opus-enforcer",
+      "source": "./plugins/explore-with-opus-enforcer",
+      "category": "guardrails"
     }
   ]
 }

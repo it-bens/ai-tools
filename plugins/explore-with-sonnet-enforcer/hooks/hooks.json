@@ -1,0 +1,17 @@
+{
+  "description": "PreToolUse hook to block Explore subagent unless using Sonnet or Opus model",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/enforce-sonnet-explore.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
