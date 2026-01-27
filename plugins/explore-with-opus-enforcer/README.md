@@ -27,7 +27,7 @@ This plugin enforces Opus for Explore, ensuring maximum accuracy.
 | `opus`          | Allowed  |
 | Everything else | Blocked  |
 
-When blocked, Claude receives guidance to retry with Opus or use Glob/Grep/Read directly.
+When blocked, Claude receives guidance to retry with Opus.
 
 ## How It Works
 

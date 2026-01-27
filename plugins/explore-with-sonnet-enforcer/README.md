@@ -27,7 +27,7 @@ This plugin enforces Sonnet for Explore, ensuring better results.
 | `sonnet`        | Allowed  |
 | Everything else | Blocked  |
 
-When blocked, Claude receives guidance to retry with Sonnet or use Glob/Grep/Read directly.
+When blocked, Claude receives guidance to retry with Sonnet.
 
 ## How It Works
 

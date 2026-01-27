@@ -32,11 +32,8 @@ cat >&2 << 'EOF'
 Blocked: Explore subagent requires Opus model.
 
 The default Haiku model produces lossy summaries that lose important context.
-Using Opus ensures the strongest reasoning during exploration.
 
-Alternatives:
-1. Retry with model: "opus" in the Task call
-2. Use tools directly: Glob, Grep, and Read provide full context
+Retry with model: "opus" in the Task call.
 EOF
 
 exit 2

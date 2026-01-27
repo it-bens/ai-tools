@@ -1,7 +1,7 @@
 {
   "name": "explore-with-sonnet-enforcer",
-  "version": "1.0.0",
-  "description": "Blocks the Explore subagent when using Haiku model. Allows Sonnet or Opus. Prevents lossy compression from weaker models during codebase exploration.",
+  "version": "1.0.1",
+  "description": "Enforces Sonnet model for the Explore subagent. Prevents lossy compression from Haiku during codebase exploration.",
   "author": {
     "name": "Martin Bens",
     "email": "martin.bens@it-bens.de"

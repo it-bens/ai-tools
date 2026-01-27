@@ -1,7 +1,7 @@
 {
   "name": "explore-with-opus-enforcer",
-  "version": "1.0.0",
-  "description": "Blocks the Explore subagent unless using Opus model. Maximum accuracy for codebase exploration by requiring the strongest model.",
+  "version": "1.0.1",
+  "description": "Enforces Opus model for the Explore subagent. Maximum accuracy for codebase exploration.",
   "author": {
     "name": "Martin Bens",
     "email": "martin.bens@it-bens.de"

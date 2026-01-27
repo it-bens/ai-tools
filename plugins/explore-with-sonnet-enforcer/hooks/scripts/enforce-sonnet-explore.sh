@@ -31,12 +31,9 @@ fi
 cat >&2 << 'EOF'
 Blocked: Explore subagent requires Sonnet model.
 
-The default Haiku model produces lossy summaries that lose important context
-the main model needs for accurate reasoning.
+The default Haiku model produces lossy summaries that lose important context.
 
-Alternatives:
-1. Retry with model: "sonnet" in the Task call
-2. Use tools directly: Glob, Grep, and Read provide full context
+Retry with model: "sonnet" in the Task call.
 EOF
 
 exit 2

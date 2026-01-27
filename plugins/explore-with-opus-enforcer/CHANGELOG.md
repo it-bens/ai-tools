@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1] - 2025-01-27
+
+### Changed
+
+- Removed native tools alternative from error message
+- Claude now only receives guidance to retry with Opus model
+
 ## [1.0.0] - 2025-01-26
 
 Initial release.
@@ -9,7 +16,7 @@ Initial release.
 - PreToolUse hook intercepting Task tool calls for Explore subagent
 - Blocks Explore when model is not `opus`
 - Allows non-Explore subagents (Plan, general-purpose, Bash, etc.)
-- Helpful error message guiding Claude to retry with Opus or use native tools
+- Error message guiding Claude to retry with Opus
 - BATS test suite with blocking, allow, and input validation tests
 
 ### References
