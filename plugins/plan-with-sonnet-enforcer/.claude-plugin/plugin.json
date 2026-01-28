@@ -1,0 +1,11 @@
+{
+  "name": "plan-with-sonnet-enforcer",
+  "version": "1.0.0",
+  "description": "Enforces Sonnet model for the Plan subagent. Ensures thorough architectural reasoning during plan mode.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["hooks", "plan", "subagent", "sonnet", "guardrails", "quality"]
+}

@@ -40,6 +40,16 @@
       "name": "explore-with-opus-enforcer",
       "source": "./plugins/explore-with-opus-enforcer",
       "category": "guardrails"
+    },
+    {
+      "name": "plan-with-sonnet-enforcer",
+      "source": "./plugins/plan-with-sonnet-enforcer",
+      "category": "guardrails"
+    },
+    {
+      "name": "plan-with-opus-enforcer",
+      "source": "./plugins/plan-with-opus-enforcer",
+      "category": "guardrails"
     }
   ]
 }

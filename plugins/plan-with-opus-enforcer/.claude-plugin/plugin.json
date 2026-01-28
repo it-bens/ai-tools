@@ -1,0 +1,11 @@
+{
+  "name": "plan-with-opus-enforcer",
+  "version": "1.0.0",
+  "description": "Enforces Opus model for the Plan subagent. Ensures maximum reasoning depth during plan mode.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["hooks", "plan", "subagent", "opus", "guardrails", "quality"]
+}

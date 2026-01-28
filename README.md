@@ -25,6 +25,8 @@ Then browse and install plugins:
 | [native-tools-enforcer](./plugins/native-tools-enforcer/) | Enforces use of Claude Code native tools instead of bash equivalents via PreToolUse hook (smart piped grep filtering) | Guardrails |
 | [explore-with-sonnet-enforcer](./plugins/explore-with-sonnet-enforcer/) | Enforces Sonnet model for Explore subagent to prevent lossy Haiku summaries | Guardrails |
 | [explore-with-opus-enforcer](./plugins/explore-with-opus-enforcer/) | Enforces Opus model for Explore subagent for maximum exploration accuracy | Guardrails |
+| [plan-with-sonnet-enforcer](./plugins/plan-with-sonnet-enforcer/) | Enforces Sonnet model for Plan subagent to ensure thorough architectural reasoning | Guardrails |
+| [plan-with-opus-enforcer](./plugins/plan-with-opus-enforcer/) | Enforces Opus model for Plan subagent for maximum reasoning depth | Guardrails |
 | [tandoor-recipe-converter](./plugins/tandoor-recipe-converter/) | Convert recipe images, PDFs, text, or URLs to Tandoor-compatible JSON with German output | Productivity |
 
 ## Structure
