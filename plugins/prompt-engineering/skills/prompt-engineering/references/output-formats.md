@@ -12,6 +12,7 @@ Templates for delivering prompts based on type and target.
 6. [Claude-to-GLM Adaptations](#6-claude-to-glm-adaptations)
 7. [Gemini 3 Prompts](#7-gemini-3-prompts)
 8. [Claude-to-Gemini Adaptations](#8-claude-to-gemini-adaptations)
+9. [Gemini Deep Research Prompts](#9-gemini-deep-research-prompts)
 
 ---
 
@@ -151,3 +152,45 @@ For converting existing Claude prompts to Gemini 3:
 - [Change 1]: [Reason]
 - [Change 2]: [Reason]
 ```
+
+---
+
+## 9. Gemini Deep Research Prompts
+
+For prompts targeting Gemini's Deep Research feature (autonomous multi-step research):
+
+```markdown
+# [Research Prompt Title]
+
+## Purpose
+[What research question this prompt addresses]
+
+## Best Used For
+[Research types: literature review, market analysis, technical comparison, etc.]
+
+## Prompt
+
+[Complete deep research prompt with:
+- Clear research objective
+- Explicit scope definition
+- Temporal constraints
+- Source preferences
+- Output format specification
+- Handling instructions for unknowns]
+
+## Deep Research Notes
+- Execution time: 5-20 minutes typical (up to 60 for complex topics)
+- Review the research plan before execution and adjust scope as needed
+- Verify citations—approximately 10% may contain errors
+- Follow up to drill into specific sections after initial report
+
+## Iteration Suggestions
+- [Potential follow-up question to expand findings]
+- [Potential follow-up to drill into specific section]
+- [Potential follow-up to verify specific claims]
+```
+
+**Key additions vs. standard Gemini prompts:**
+- Deep Research Notes section (execution expectations, verification reminders)
+- Iteration Suggestions section (prepared follow-up questions)
+- Prompt must include scope, temporal, source, and handling instructions

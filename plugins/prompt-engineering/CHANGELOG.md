@@ -4,20 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [2.2.0] - 2026-01-23
+## [2.2.0] - 2026-02-04
 
-Added Gemini 3 (Flash/Pro) as target model. Gemini 3 defaults to minimal output and processes long context differently than Claude; this update provides adaptation techniques.
+Added Gemini 3 (Flash/Pro) as target model with specialized Deep Research prompting. Gemini 3 defaults to minimal output and processes long context differently than Claude; this update provides adaptation techniques for both standard prompts and the autonomous Deep Research feature.
 
 ### Added
 
 - `references/gemini-3-guide.md` - Adaptation techniques, API config, multimodal/agentic patterns
+- `references/gemini-3-deep-research-guide.md` - Deep Research prompting (scope definition, temporal constraints, source preferences, handling unknowns)
 - `examples/gemini-3-adaptation.md` - Before/after transformation examples
+- `examples/gemini-3-deep-research.md` - Deep Research prompt templates (academic, technical, market, exploratory)
 - Target model clarification in Phase 1 (when user mentions Gemini)
 - Gemini 3 output format with API configuration and adaptation rationale
+- Deep Research output format with execution notes and iteration suggestions
+- Deep Research Mode subsection under Gemini 3 Adaptation with detection signals
 
 ### Changed
 
-- Skill description and triggers updated for Gemini 3
+- Skill description and triggers updated for Gemini 3 and Deep Research
 - Claude Web project files support all three models
 
 ## [2.1.0] - 2026-01-23

@@ -1,7 +1,7 @@
 ---
 name: prompt-engineering
-version: 2.1.0
-description: Create, optimize, and debug high-performing prompts for Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3 with production-ready templates and evidence-based techniques. Also optimize LLM-targeted content (skills, agents, instructions, documentation). Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, adapt a prompt for Gemini, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
+version: 2.2.0
+description: Create, optimize, and debug high-performing prompts for Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3 with production-ready templates and evidence-based techniques. Also optimize LLM-targeted content (skills, agents, instructions, documentation). Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, adapt a prompt for Gemini, create a Gemini deep research prompt, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 allowed-tools: AskUserQuestion, Read, Grep, Glob, WebSearch, WebFetch
 ---
 
@@ -257,6 +257,24 @@ For detailed patterns and examples, consult `references/glm-47-guide.md` and `ex
 
 When user explicitly requests Gemini 3 as target model, apply these adaptations. Gemini 3 defaults to minimal output and processes long context differently than Claude.
 
+### Deep Research Mode (Gemini Only)
+
+**Detection signals** — activate deep research prompting when Gemini is the target model AND user mentions:
+- "deep research", "Gemini Deep Research"
+- Comprehensive literature reviews with citations
+- Multi-source research synthesis
+- Tasks requiring extended autonomous web research
+
+When deep research detected, consult `references/gemini-3-deep-research-guide.md` for specialized prompting patterns and `examples/gemini-3-deep-research.md` for ready-to-adapt templates.
+
+**Key differences from standard Gemini prompts:**
+- Runs autonomously for 5-60 minutes (not immediate response)
+- User reviews research plan before execution
+- Generates structured reports with citations (~10% citation error rate)
+- Requires explicit scope, temporal, and source quality constraints
+
+For standard interactive Gemini prompts, continue with the adaptations below.
+
 ### Key Differences from Claude 4
 
 | Aspect | Claude 4 | Gemini 3 |
@@ -350,6 +368,7 @@ Select the appropriate format based on prompt type:
 | Claude-to-GLM adaptations | Before/After comparison | `references/output-formats.md#6-claude-to-glm-adaptations` |
 | Gemini 3 prompts | Add API Configuration | `references/output-formats.md#7-gemini-3-prompts` |
 | Claude-to-Gemini adaptations | Before/After comparison | `references/output-formats.md#8-claude-to-gemini-adaptations` |
+| Gemini Deep Research prompts | Add Deep Research Notes + Iteration Suggestions | `references/output-formats.md#9-gemini-deep-research-prompts` |
 
 ## Quality Checklist
 
@@ -413,6 +432,7 @@ Before I create this prompt, I have a few questions:
 - **`references/claude-4-guide.md`** - Claude 4 specific optimizations
 - **`references/glm-47-guide.md`** - GLM 4.7 adaptation techniques
 - **`references/gemini-3-guide.md`** - Gemini 3 adaptation techniques
+- **`references/gemini-3-deep-research-guide.md`** - Gemini Deep Research prompting
 - **`references/prompt-patterns.md`** - Reusable prompt templates
 - **`references/output-formats.md`** - Output format templates by prompt type
 
@@ -422,6 +442,7 @@ Before I create this prompt, I have a few questions:
 - **`examples/optimization-report.md`** - Prompt improvement documentation
 - **`examples/glm-47-adaptation.md`** - GLM 4.7 transformation examples
 - **`examples/gemini-3-adaptation.md`** - Gemini 3 transformation examples
+- **`examples/gemini-3-deep-research.md`** - Gemini Deep Research templates
 
 ## Success Metrics
 

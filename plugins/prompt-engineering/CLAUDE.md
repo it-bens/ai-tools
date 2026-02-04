@@ -12,6 +12,7 @@
 | Update output format templates | `skills/prompt-engineering/references/output-formats.md` |
 | Update GLM 4.7 adaptation guide | `skills/prompt-engineering/references/glm-47-guide.md` |
 | Update Gemini 3 adaptation guide | `skills/prompt-engineering/references/gemini-3-guide.md` |
+| Update Gemini Deep Research guide | `skills/prompt-engineering/references/gemini-3-deep-research-guide.md` |
 | Add or modify example templates | `skills/prompt-engineering/examples/` |
 | Research prompting best practices | `docs/` |
 | Update Claude Web project | `project/system-prompt.md` |

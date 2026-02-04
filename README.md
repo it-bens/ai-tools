@@ -20,7 +20,7 @@ Then browse and install plugins:
 
 | Plugin | Description | Category |
 |--------|-------------|----------|
-| [prompt-engineering](./plugins/prompt-engineering/) | Expert prompt engineering for Claude 4, GLM 4.7, and Gemini 3 with production-ready templates | Productivity |
+| [prompt-engineering](./plugins/prompt-engineering/) | Expert prompt engineering for Claude 4, GLM 4.7, and Gemini 3 (including Deep Research) with production-ready templates | Productivity |
 | [python-plan-optimizer](./plugins/python-plan-optimizer/) | Analyze Python code in planning documents for design principles and improvement opportunities | Development |
 | [native-tools-enforcer](./plugins/native-tools-enforcer/) | Enforces use of Claude Code native tools instead of bash equivalents via PreToolUse hook (smart piped grep filtering) | Guardrails |
 | [explore-with-sonnet-enforcer](./plugins/explore-with-sonnet-enforcer/) | Enforces Sonnet model for Explore subagent to prevent lossy Haiku summaries | Guardrails |
