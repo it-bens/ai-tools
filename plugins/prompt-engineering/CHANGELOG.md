@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.3.0] - 2026-02-04
+
+Added Content Editing skill for LLM-targeted content optimization.
+
+### Added
+
+- `skills/content-editing/SKILL.md` - Decision framework for evaluating additions vs corrections
+- Auto-invokes when editing SKILL.md, agent markdown, or command markdown files
+- Enforces "prefer corrections over additions" principle
+
 ## [2.2.0] - 2026-02-04
 
 Added Gemini 3 (Flash/Pro) as target model with specialized Deep Research prompting. Gemini 3 defaults to minimal output and processes long context differently than Claude; this update provides adaptation techniques for both standard prompts and the autonomous Deep Research feature.

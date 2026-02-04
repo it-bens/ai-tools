@@ -8,7 +8,7 @@ This plugin provides comprehensive guidance for creating, optimizing, and debugg
 
 ## Skills
 
-### Prompt Engineering Lab
+### Prompt Engineering
 
 **Triggers:** "create a prompt", "write a prompt", "optimize a prompt", "debug a prompt", "improve my prompt", "help with prompting", "build a prompt chain", "make a system prompt", "design a prompt", "optimize this skill", "improve this agent", "adapt prompt for GLM", "convert to GLM 4.7", "adapt prompt for Gemini", "convert to Gemini", "deep research prompt", "Gemini deep research"
 
@@ -22,6 +22,15 @@ This plugin provides comprehensive guidance for creating, optimizing, and debugg
 - Adapt Claude prompts for GLM 4.7 (Z.ai) with reasoning parity
 - Adapt Claude prompts for Gemini 3 (Flash/Pro) with quality parity
 - Create Gemini Deep Research prompts with scope, temporal, and source constraints
+
+### Content Editing
+
+**Triggers:** "is this too long", "content bloat", "should I add this", editing SKILL.md files, modifying agent markdown, expanding skill content
+
+**Capabilities:**
+- Evaluate proposed changes to LLM-targeted content
+- Guide toward corrections over additions
+- Enforce brevity and prevent content bloat
 
 ## Usage
 
@@ -74,6 +83,8 @@ prompt-engineering/
 │   └── plugin.json              # Plugin manifest
 ├── docs/                        # Source documentation (15 files)
 ├── skills/
+│   ├── content-editing/
+│   │   └── SKILL.md             # Content editing skill
 │   └── prompt-engineering/
 │       ├── SKILL.md             # Main skill definition
 │       ├── references/          # Skill-specific references

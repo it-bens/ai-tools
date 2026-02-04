@@ -8,6 +8,7 @@
 |---------------------|---------|
 | Understand plugin purpose and usage | `README.md` |
 | Modify skill behavior or triggers | `skills/prompt-engineering/SKILL.md` |
+| Modify content editing behavior | `skills/content-editing/SKILL.md` |
 | Update core techniques or patterns | `skills/prompt-engineering/references/` |
 | Update output format templates | `skills/prompt-engineering/references/output-formats.md` |
 | Update GLM 4.7 adaptation guide | `skills/prompt-engineering/references/glm-47-guide.md` |

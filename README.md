@@ -115,6 +115,7 @@ Skills uploaded to Claude Web will ignore this field. The build script ensures c
 | Skill | Download |
 |-------|----------|
 | prompt-engineering | [Download](https://github.com/it-bens/claude-code-plugins/releases/download/latest/prompt-engineering.zip) |
+| content-editing | [Download](https://github.com/it-bens/claude-code-plugins/releases/download/latest/content-editing.zip) |
 | tandoor-recipe-conversion | [Download](https://github.com/it-bens/claude-code-plugins/releases/download/latest/tandoor-recipe-conversion.zip) |
 
 Or browse all downloads on the [Releases page](https://github.com/it-bens/claude-code-plugins/releases/latest).
