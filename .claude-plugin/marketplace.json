@@ -50,6 +50,11 @@
       "name": "plan-with-opus-enforcer",
       "source": "./plugins/plan-with-opus-enforcer",
       "category": "guardrails"
+    },
+    {
+      "name": "codex-debugger",
+      "source": "./plugins/codex-debugger",
+      "category": "development"
     }
   ]
 }

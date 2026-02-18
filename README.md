@@ -28,6 +28,7 @@ Then browse and install plugins:
 | [plan-with-sonnet-enforcer](./plugins/plan-with-sonnet-enforcer/) | Enforces Sonnet model for Plan subagent to ensure thorough architectural reasoning | Guardrails |
 | [plan-with-opus-enforcer](./plugins/plan-with-opus-enforcer/) | Enforces Opus model for Plan subagent for maximum reasoning depth | Guardrails |
 | [tandoor-recipe-converter](./plugins/tandoor-recipe-converter/) | Convert recipe images, PDFs, text, or URLs to Tandoor-compatible JSON with German output | Productivity |
+| [codex-debugger](./plugins/codex-debugger/) | Automatic debugging escalation to OpenAI Codex (GPT-5) when stuck after three failed attempts | Development |
 
 ## Structure
 
