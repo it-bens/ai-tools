@@ -55,6 +55,11 @@
       "name": "codex-debugger",
       "source": "./plugins/codex-debugger",
       "category": "development"
+    },
+    {
+      "name": "commit-message-generator",
+      "source": "./plugins/commit-message-generator",
+      "category": "development"
     }
   ]
 }
