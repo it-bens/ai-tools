@@ -30,6 +30,7 @@ Then browse and install plugins:
 | [tandoor-recipe-converter](./plugins/tandoor-recipe-converter/) | Convert recipe images, PDFs, text, or URLs to Tandoor-compatible JSON with German output | Productivity |
 | [codex-debugger](./plugins/codex-debugger/) | Automatic debugging escalation to OpenAI Codex (GPT-5) when stuck after three failed attempts | Development |
 | [commit-message-generator](./plugins/commit-message-generator/) | Generate and validate conventional commit messages with automatic type/scope detection | Development |
+| [behavior-diagnostics](./plugins/behavior-diagnostics/) | Debug AI tooling behavior with root cause analysis and honest self-diagnosis across sessions | Development |
 
 ## Structure
 

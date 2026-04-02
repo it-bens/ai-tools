@@ -60,6 +60,11 @@
       "name": "commit-message-generator",
       "source": "./plugins/commit-message-generator",
       "category": "development"
+    },
+    {
+      "name": "behavior-diagnostics",
+      "source": "./plugins/behavior-diagnostics",
+      "category": "development"
     }
   ]
 }
