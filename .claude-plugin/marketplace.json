@@ -65,6 +65,11 @@
       "name": "behavior-diagnostics",
       "source": "./plugins/behavior-diagnostics",
       "category": "development"
+    },
+    {
+      "name": "redundant-read-blocker",
+      "source": "./plugins/redundant-read-blocker",
+      "category": "guardrails"
     }
   ]
 }

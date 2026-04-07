@@ -1,0 +1,11 @@
+{
+  "name": "redundant-read-blocker",
+  "version": "1.0.0",
+  "description": "Prevents wasteful re-reads of unchanged files by tracking what was already read and blocking redundant Read tool calls. Tracks line ranges, detects external file changes via mtime, invalidates on Edit/Write, and supports context decay thresholds.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["hooks", "read", "caching", "context", "guardrails", "optimization"]
+}
