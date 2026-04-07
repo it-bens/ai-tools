@@ -1,1 +1,0 @@
-Convert recipe images, PDFs, text, or URLs to Tandoor-compatible JSON with German output. Includes unit conversion, ingredient normalization, and quality validation.

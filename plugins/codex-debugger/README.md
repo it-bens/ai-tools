@@ -33,7 +33,7 @@ You'll need an OpenAI account with access to Codex (typically included with Chat
 ### Installation
 
 ```bash
-/plugin install codex-debugger@it-bens/claude-code-plugins
+/plugin install codex-debugger@it-bens/itb-ai-tools
 ```
 
 **IMPORTANT**: After installing the plugin, you MUST restart Claude Code for the MCP server to initialize.

@@ -1,13 +1,13 @@
-# IT Martin Bens - Claude Code Marketplace
+# ITB AI Tools
 
-A personal collection of skills, agents, MCP servers, hooks, and LSPs to enhance Claude Code with capabilities across software development and beyond.
+A collection of AI coding and productivity tools — skills, agents, hooks, and more — for Claude Code, Codex, and other AI coding assistants.
 
 ## Installation
 
 Add this marketplace to Claude Code:
 
 ```bash
-/plugin marketplace add it-bens/claude-code-plugins
+/plugin marketplace add it-bens/itb-ai-tools
 ```
 
 Then browse and install plugins:
@@ -18,25 +18,24 @@ Then browse and install plugins:
 
 ## Available Plugins
 
-| Plugin | Description | Category |
-|--------|-------------|----------|
-| [prompt-engineering](./plugins/prompt-engineering/) | Expert prompt engineering for Claude 4, GLM 4.7, and Gemini 3 (including Deep Research) with production-ready templates | Productivity |
-| [python-plan-optimizer](./plugins/python-plan-optimizer/) | Analyze Python code in planning documents for design principles and improvement opportunities | Development |
-| [native-tools-enforcer](./plugins/native-tools-enforcer/) | Enforces use of Claude Code native tools instead of bash equivalents via PreToolUse hook (smart piped grep filtering) | Guardrails |
-| [explore-with-sonnet-enforcer](./plugins/explore-with-sonnet-enforcer/) | Enforces Sonnet model for Explore subagent to prevent lossy Haiku summaries | Guardrails |
-| [explore-with-opus-enforcer](./plugins/explore-with-opus-enforcer/) | Enforces Opus model for Explore subagent for maximum exploration accuracy | Guardrails |
-| [plan-with-sonnet-enforcer](./plugins/plan-with-sonnet-enforcer/) | Enforces Sonnet model for Plan subagent to ensure thorough architectural reasoning | Guardrails |
-| [plan-with-opus-enforcer](./plugins/plan-with-opus-enforcer/) | Enforces Opus model for Plan subagent for maximum reasoning depth | Guardrails |
-| [redundant-read-blocker](./plugins/redundant-read-blocker/) | Prevent wasteful re-reads of unchanged files with smart range tracking and context decay | Guardrails |
-| [tandoor-recipe-converter](./plugins/tandoor-recipe-converter/) | Convert recipe images, PDFs, text, or URLs to Tandoor-compatible JSON with German output | Productivity |
-| [codex-debugger](./plugins/codex-debugger/) | Automatic debugging escalation to OpenAI Codex (GPT-5) when stuck after three failed attempts | Development |
-| [commit-message-generator](./plugins/commit-message-generator/) | Generate and validate conventional commit messages with automatic type/scope detection | Development |
-| [behavior-diagnostics](./plugins/behavior-diagnostics/) | Debug AI tooling behavior with root cause analysis and honest self-diagnosis across sessions | Development |
+| Plugin                                                                  | Description                                                                                                             | Category     |
+|-------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|--------------|
+| [prompt-engineering](./plugins/prompt-engineering/)                     | Expert prompt engineering for Claude 4, GLM 4.7, and Gemini 3 (including Deep Research) with production-ready templates | Productivity |
+| [python-plan-optimizer](./plugins/python-plan-optimizer/)               | Analyze Python code in planning documents for design principles and improvement opportunities                           | Development  |
+| [native-tools-enforcer](./plugins/native-tools-enforcer/)               | Enforces use of Claude Code native tools instead of bash equivalents via PreToolUse hook (smart piped grep filtering)   | Guardrails   |
+| [explore-with-sonnet-enforcer](./plugins/explore-with-sonnet-enforcer/) | Enforces Sonnet model for Explore subagent to prevent lossy Haiku summaries                                             | Guardrails   |
+| [explore-with-opus-enforcer](./plugins/explore-with-opus-enforcer/)     | Enforces Opus model for Explore subagent for maximum exploration accuracy                                               | Guardrails   |
+| [plan-with-sonnet-enforcer](./plugins/plan-with-sonnet-enforcer/)       | Enforces Sonnet model for Plan subagent to ensure thorough architectural reasoning                                      | Guardrails   |
+| [plan-with-opus-enforcer](./plugins/plan-with-opus-enforcer/)           | Enforces Opus model for Plan subagent for maximum reasoning depth                                                       | Guardrails   |
+| [redundant-read-blocker](./plugins/redundant-read-blocker/)             | Prevent wasteful re-reads of unchanged files with smart range tracking and context decay                                | Guardrails   |
+| [codex-debugger](./plugins/codex-debugger/)                             | Automatic debugging escalation to OpenAI Codex (GPT-5) when stuck after three failed attempts                           | Development  |
+| [commit-message-generator](./plugins/commit-message-generator/)         | Generate and validate conventional commit messages with automatic type/scope detection                                  | Development  |
+| [behavior-diagnostics](./plugins/behavior-diagnostics/)                 | Debug AI tooling behavior with root cause analysis and honest self-diagnosis across sessions                            | Development  |
 
 ## Structure
 
 ```
-claude-code-plugins/
+itb-ai-tools/
 ├── .claude-plugin/
 │   └── marketplace.json        # Marketplace registry
 ├── .github/
@@ -116,13 +115,12 @@ Skills uploaded to Claude Web will ignore this field. The build script ensures c
 
 ### Downloads
 
-| Skill | Download |
-|-------|----------|
-| prompt-engineering | [Download](https://github.com/it-bens/claude-code-plugins/releases/download/latest/prompt-engineering.zip) |
-| content-editing | [Download](https://github.com/it-bens/claude-code-plugins/releases/download/latest/content-editing.zip) |
-| tandoor-recipe-conversion | [Download](https://github.com/it-bens/claude-code-plugins/releases/download/latest/tandoor-recipe-conversion.zip) |
+| Skill              | Download                                                                                            |
+|--------------------|-----------------------------------------------------------------------------------------------------|
+| prompt-engineering | [Download](https://github.com/it-bens/itb-ai-tools/releases/download/latest/prompt-engineering.zip) |
+| content-editing    | [Download](https://github.com/it-bens/itb-ai-tools/releases/download/latest/content-editing.zip)    |
 
-Or browse all downloads on the [Releases page](https://github.com/it-bens/claude-code-plugins/releases/latest).
+Or browse all downloads on the [Releases page](https://github.com/it-bens/itb-ai-tools/releases/latest).
 
 ## Contributing
 

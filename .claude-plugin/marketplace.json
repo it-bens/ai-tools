@@ -1,13 +1,12 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "it-bens-claude-marketplace",
+  "name": "itb-ai-tools",
   "owner": {
     "name": "Martin Bens",
     "email": "martin.bens@it-bens.de"
   },
   "metadata": {
-    "description": "A personal collection of skills, agents, MCP servers, hooks, and LSPs to enhance Claude Code",
-    "version": "1.0.0",
+    "description": "A collection of AI coding and productivity tools — skills, agents, hooks, and more",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -25,11 +24,6 @@
       "name": "native-tools-enforcer",
       "source": "./plugins/native-tools-enforcer",
       "category": "guardrails"
-    },
-    {
-      "name": "tandoor-recipe-converter",
-      "source": "./plugins/tandoor-recipe-converter",
-      "category": "productivity"
     },
     {
       "name": "explore-with-sonnet-enforcer",

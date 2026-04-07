@@ -8,6 +8,6 @@
   },
   "license": "MIT",
   "keywords": ["debugging", "escalation", "codex", "gpt-5", "mcp", "openai", "error-handling"],
-  "homepage": "https://github.com/it-bens/claude-code-plugins/tree/main/plugins/codex-debugger",
-  "repository": "https://github.com/it-bens/claude-code-plugins"
+  "homepage": "https://github.com/it-bens/itb-ai-tools/tree/main/plugins/codex-debugger",
+  "repository": "https://github.com/it-bens/itb-ai-tools"
 }
