@@ -10,36 +10,43 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib.sh"
 
-INPUT=$(cat)
+input=$(cat)
 
-SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty')
-CWD=$(echo "$INPUT" | jq -r '.cwd // empty')
-FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+# Parse all input fields in a single jq invocation
+{
+    IFS= read -r session_id
+    IFS= read -r cwd
+    IFS= read -r file_path
+} < <(printf '%s' "$input" | jq -r '
+    (.session_id // ""),
+    (.cwd // ""),
+    (.tool_input.file_path // "")
+')
 
-if [[ -z "$SESSION_ID" || -z "$FILE_PATH" ]]; then
+if [[ -z "$session_id" || -z "$file_path" ]]; then
     exit 0
 fi
 
-load_config "$CWD"
+load_config "$cwd"
 
-SESSION_PATH=$(session_dir "$CLAUDE_PLUGIN_DATA" "$SESSION_ID")
+session_path=$(session_dir "$CLAUDE_PLUGIN_DATA" "$session_id")
 
-if [[ ! -d "$SESSION_PATH" ]]; then
+if [[ ! -d "$session_path" ]]; then
     exit 0
 fi
 
 # Remove file entry from all agent trackers in this session
-for tracker_file in "${SESSION_PATH}"/read-tracker-*.json; do
+for tracker_file in "${session_path}"/read-tracker-*.json; do
     [[ -f "$tracker_file" ]] || continue
 
-    TRACKER=$(cat "$tracker_file")
+    tracker=$(load_tracker "$tracker_file")
 
     # Check if file is tracked before writing
-    HAS_FILE=$(echo "$TRACKER" | jq --arg fp "$FILE_PATH" '.files | has($fp)')
-    if [[ "$HAS_FILE" == "true" ]]; then
-        UPDATED=$(echo "$TRACKER" | jq -c --arg fp "$FILE_PATH" 'del(.files[$fp])')
-        echo "$UPDATED" > "$tracker_file"
-        debug_log "INVALIDATE ${FILE_PATH} (Edit/Write) in $(basename "$tracker_file")"
+    has_file=$(printf '%s\n' "$tracker" | jq --arg fp "$file_path" '.files | has($fp)')
+    if [[ "$has_file" == "true" ]]; then
+        updated=$(printf '%s\n' "$tracker" | jq -c --arg fp "$file_path" 'del(.files[$fp])')
+        save_tracker "$tracker_file" "$updated"
+        debug_log "INVALIDATE ${file_path} (Edit/Write) in $(basename "$tracker_file")"
     fi
 done
 

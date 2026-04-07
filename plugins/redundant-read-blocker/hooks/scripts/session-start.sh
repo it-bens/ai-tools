@@ -10,24 +10,30 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib.sh"
 
-INPUT=$(cat)
+input=$(cat)
 
-SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty')
-CWD=$(echo "$INPUT" | jq -r '.cwd // empty')
+# Parse all input fields in a single jq invocation
+{
+    IFS= read -r session_id
+    IFS= read -r cwd
+} < <(printf '%s' "$input" | jq -r '
+    (.session_id // ""),
+    (.cwd // "")
+')
 
-if [[ -z "$SESSION_ID" ]]; then
+if [[ -z "$session_id" ]]; then
     exit 0
 fi
 
-load_config "$CWD"
+load_config "$cwd"
 
-SESSION_PATH=$(session_dir "$CLAUDE_PLUGIN_DATA" "$SESSION_ID")
+session_path=$(session_dir "$CLAUDE_PLUGIN_DATA" "$session_id")
 
-debug_log "SessionStart: wiping tracking files in ${SESSION_PATH}"
+debug_log "SessionStart: wiping tracking files in ${session_path}"
 
-# Delete all tracking files for this session
-if [[ -d "$SESSION_PATH" ]]; then
-    rm -f "${SESSION_PATH}"/read-tracker-*.json
+# Delete all tracking files and stale temp files for this session
+if [[ -d "$session_path" ]]; then
+    rm -f "${session_path}"/read-tracker-*.json "${session_path}"/.rrb-tmp.*
 fi
 
 exit 0

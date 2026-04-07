@@ -1,6 +1,10 @@
 #!/bin/bash
 # Shared functions for redundant-read-blocker hook scripts.
 # Sourced by all hook scripts — not executed directly.
+#
+# Naming convention:
+#   UPPERCASE  — env vars (CLAUDE_PLUGIN_DATA), config constants (RRB_*), SCRIPT_DIR
+#   lowercase  — all script-local and function-local variables
 
 # --- Config ---
 
@@ -34,27 +38,27 @@ load_config() {
 
 debug_log() {
     if [[ "$RRB_DEBUG" == "true" ]]; then
-        echo "[RRB] $1" >&2
+        printf '[RRB] %s\n' "$1" >&2
     fi
 }
 
 # --- Paths ---
 
 # Returns the path to the tracking file for the given agent.
-# Args: $1 = CLAUDE_PLUGIN_DATA, $2 = session_id, $3 = agent_id (or "main")
+# Args: $1 = data_dir, $2 = session_id, $3 = agent_id (or "main")
 tracker_path() {
     local data_dir="$1"
     local session_id="$2"
     local agent_id="$3"
-    echo "${data_dir}/${session_id}/read-tracker-${agent_id}.json"
+    printf '%s\n' "${data_dir}/${session_id}/read-tracker-${agent_id}.json"
 }
 
 # Returns the session directory path.
-# Args: $1 = CLAUDE_PLUGIN_DATA, $2 = session_id
+# Args: $1 = data_dir, $2 = session_id
 session_dir() {
     local data_dir="$1"
     local session_id="$2"
-    echo "${data_dir}/${session_id}"
+    printf '%s\n' "${data_dir}/${session_id}"
 }
 
 # --- Tracker I/O ---
@@ -63,32 +67,38 @@ session_dir() {
 load_tracker() {
     local path="$1"
     if [[ -f "$path" ]]; then
-        cat "$path"
+        cat -- "$path"
     else
-        echo '{"transcript_size":0,"files":{}}'
+        printf '%s\n' '{"transcript_size":0,"files":{}}'
     fi
 }
 
-# Save tracker JSON to path, creating parent directories.
+# Save tracker JSON to path atomically via tmp+mv.
 save_tracker() {
     local path="$1"
     local json="$2"
-    mkdir -p "$(dirname "$path")"
-    echo "$json" > "$path"
+    local dir
+    dir="$(dirname -- "$path")"
+    mkdir -p "$dir"
+    local tmp
+    tmp=$(mktemp "${dir}/.rrb-tmp.XXXXXX")
+    printf '%s\n' "$json" > "$tmp" && mv -- "$tmp" "$path"
 }
 
 # --- Transcript parsing ---
 
 # Get total context tokens from the latest assistant message in transcript.
-# Returns: integer (total tokens) or empty string if not found.
+# Returns: integer (total tokens), defaults to 0 on any failure.
 # Args: $1 = transcript_path
 get_latest_context_tokens() {
     local transcript_path="$1"
-    tail -20 "$transcript_path" 2>/dev/null | \
+    local result
+    result=$(tail -20 "$transcript_path" 2>/dev/null | \
         jq -r 'select(.message.usage != null) | .message.usage |
             ((.input_tokens // 0) + (.cache_creation_input_tokens // 0) +
              (.cache_read_input_tokens // 0) + (.output_tokens // 0))' 2>/dev/null | \
-        tail -1
+        tail -1) || true
+    printf '%s\n' "${result:-0}"
 }
 
 # --- Range operations ---
@@ -102,7 +112,7 @@ is_range_covered() {
     local req_start="$3"
     local req_end="$4"
 
-    echo "$tracker" | jq -e --arg fp "$file_path" \
+    printf '%s\n' "$tracker" | jq -e --arg fp "$file_path" \
         --argjson rs "$req_start" --argjson re "$req_end" '
         .files[$fp].ranges // [] | any(
             .start as $s | .end as $e |

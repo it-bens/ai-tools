@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.1] - 2026-04-07
+
+### Fixed
+
+- Pipeline crash in `get_latest_context_tokens` when transcript contains truncated JSON lines (`set -euo pipefail` + `pipefail` interaction)
+- Non-atomic tracker file writes that could corrupt JSON on timeout or signal interruption (now uses `mktemp` + `mv`)
+- `post-edit-write.sh` bypassing shared `load_tracker`/`save_tracker` functions
+- Range calculation asymmetry between `pre-read.sh` and `post-read.sh` when only offset or limit is provided
+- Missing POSIX trailing newlines on all files
+
+### Changed
+
+- Consolidated per-script jq input parsing from 5-8 separate invocations to a single call (reduced subprocess spawns per hook execution)
+- Applied lowercase variable naming convention for script-local variables (UPPERCASE reserved for env vars and config constants)
+- Replaced `echo` with `printf '%s\n'` for data output safety
+- Session cleanup now also removes stale atomic-write temp files (`.rrb-tmp.*`)
+
 ## [1.0.0] - 2026-04-07
 
 Initial release.

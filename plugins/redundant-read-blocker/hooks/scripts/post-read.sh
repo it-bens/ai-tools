@@ -9,73 +9,79 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib.sh"
 
-INPUT=$(cat)
+input=$(cat)
 
-SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty')
-AGENT_ID=$(echo "$INPUT" | jq -r '.agent_id // "main"')
-CWD=$(echo "$INPUT" | jq -r '.cwd // empty')
-TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path // empty')
+# Parse all input fields in a single jq invocation
+{
+    IFS= read -r session_id
+    IFS= read -r agent_id
+    IFS= read -r cwd
+    IFS= read -r transcript_path
+    IFS= read -r file_path
+    IFS= read -r offset
+    IFS= read -r limit
+    IFS= read -r start_line
+    IFS= read -r total_lines
+} < <(printf '%s' "$input" | jq -r '
+    (.session_id // ""),
+    (.agent_id // "main"),
+    (.cwd // ""),
+    (.transcript_path // ""),
+    (.tool_input.file_path // ""),
+    (.tool_input.offset // ""),
+    (.tool_input.limit // ""),
+    (.tool_response.file.startLine // ""),
+    (.tool_response.file.totalLines // "")
+')
 
-FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
-OFFSET=$(echo "$INPUT" | jq -r '.tool_input.offset // empty')
-LIMIT=$(echo "$INPUT" | jq -r '.tool_input.limit // empty')
-
-START_LINE=$(echo "$INPUT" | jq -r '.tool_response.file.startLine // empty')
-TOTAL_LINES=$(echo "$INPUT" | jq -r '.tool_response.file.totalLines // empty')
-
-if [[ -z "$SESSION_ID" || -z "$FILE_PATH" || -z "$START_LINE" || -z "$TOTAL_LINES" ]]; then
+if [[ -z "$session_id" || -z "$file_path" || -z "$start_line" || -z "$total_lines" ]]; then
     exit 0
 fi
 
-load_config "$CWD"
+load_config "$cwd"
 
-TRACKER_FILE=$(tracker_path "$CLAUDE_PLUGIN_DATA" "$SESSION_ID" "$AGENT_ID")
-TRACKER=$(load_tracker "$TRACKER_FILE")
+tracker_file=$(tracker_path "$CLAUDE_PLUGIN_DATA" "$session_id" "$agent_id")
+tracker=$(load_tracker "$tracker_file")
 
-# Compute new range
-if [[ -z "$OFFSET" && -z "$LIMIT" ]]; then
-    NEW_START=1
-    NEW_END="null"
+# Compute new range (match pre-read.sh: both offset AND limit required for bounded range)
+if [[ -n "$offset" && -n "$limit" ]]; then
+    new_start="$start_line"
+    new_end=$(( start_line + total_lines - 1 ))
 else
-    NEW_START="$START_LINE"
-    NEW_END=$(( START_LINE + TOTAL_LINES - 1 ))
+    new_start=1
+    new_end="null"
 fi
 
 # Get existing ranges or empty array
-EXISTING_RANGES=$(echo "$TRACKER" | jq -c --arg fp "$FILE_PATH" '.files[$fp].ranges // []')
+existing_ranges=$(printf '%s\n' "$tracker" | jq -c --arg fp "$file_path" '.files[$fp].ranges // []')
 
 # Append new range and merge
-MERGED_RANGES=$(echo "$EXISTING_RANGES" | jq -c --argjson s "$NEW_START" --argjson e "$NEW_END" \
+merged_ranges=$(printf '%s\n' "$existing_ranges" | jq -c --argjson s "$new_start" --argjson e "$new_end" \
     '. + [{start: $s, end: $e}]' | merge_ranges)
 
 # Get file mtime
-FILE_MTIME=$(stat -f %m "$FILE_PATH" 2>/dev/null || stat -c %Y "$FILE_PATH" 2>/dev/null || echo "0")
+file_mtime=$(stat -f %m "$file_path" 2>/dev/null || stat -c %Y "$file_path" 2>/dev/null || printf '%s' "0")
 
-# Get transcript size
-TRANSCRIPT_SIZE=0
-if [[ -n "$TRANSCRIPT_PATH" && -f "$TRANSCRIPT_PATH" ]]; then
-    TRANSCRIPT_SIZE=$(wc -c < "$TRANSCRIPT_PATH" | tr -d ' ')
-fi
-
-# Get context tokens
-CONTEXT_TOKENS=0
-if [[ -n "$TRANSCRIPT_PATH" && -f "$TRANSCRIPT_PATH" ]]; then
-    local_tokens=$(get_latest_context_tokens "$TRANSCRIPT_PATH")
-    [[ -n "$local_tokens" ]] && CONTEXT_TOKENS="$local_tokens"
+# Get transcript metadata
+transcript_size=0
+context_tokens=0
+if [[ -n "$transcript_path" && -f "$transcript_path" ]]; then
+    transcript_size=$(wc -c < "$transcript_path" | tr -d ' ')
+    context_tokens=$(get_latest_context_tokens "$transcript_path")
 fi
 
 # Update tracker
-TRACKER=$(echo "$TRACKER" | jq -c \
-    --arg fp "$FILE_PATH" \
-    --argjson ranges "$MERGED_RANGES" \
-    --argjson mtime "$FILE_MTIME" \
-    --argjson ts "$TRANSCRIPT_SIZE" \
-    --argjson ct "$CONTEXT_TOKENS" \
+tracker=$(printf '%s\n' "$tracker" | jq -c \
+    --arg fp "$file_path" \
+    --argjson ranges "$merged_ranges" \
+    --argjson mtime "$file_mtime" \
+    --argjson ts "$transcript_size" \
+    --argjson ct "$context_tokens" \
     '.transcript_size = $ts |
      .files[$fp] = {ranges: $ranges, mtime: $mtime, context_tokens: $ct}')
 
-save_tracker "$TRACKER_FILE" "$TRACKER"
+save_tracker "$tracker_file" "$tracker"
 
-debug_log "RECORD ${FILE_PATH}:${NEW_START}-${NEW_END} (tokens=${CONTEXT_TOKENS})"
+debug_log "RECORD ${file_path}:${new_start}-${new_end} (tokens=${context_tokens})"
 
 exit 0

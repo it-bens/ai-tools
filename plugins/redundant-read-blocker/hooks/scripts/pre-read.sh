@@ -10,118 +10,122 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib.sh"
 
-INPUT=$(cat)
+input=$(cat)
 
-SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty')
-AGENT_ID=$(echo "$INPUT" | jq -r '.agent_id // "main"')
-CWD=$(echo "$INPUT" | jq -r '.cwd // empty')
-TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path // empty')
+# Parse all input fields in a single jq invocation
+{
+    IFS= read -r session_id
+    IFS= read -r agent_id
+    IFS= read -r cwd
+    IFS= read -r transcript_path
+    IFS= read -r file_path
+    IFS= read -r offset
+    IFS= read -r limit
+} < <(printf '%s' "$input" | jq -r '
+    (.session_id // ""),
+    (.agent_id // "main"),
+    (.cwd // ""),
+    (.transcript_path // ""),
+    (.tool_input.file_path // ""),
+    (.tool_input.offset // ""),
+    (.tool_input.limit // "")
+')
 
-FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
-OFFSET=$(echo "$INPUT" | jq -r '.tool_input.offset // empty')
-LIMIT=$(echo "$INPUT" | jq -r '.tool_input.limit // empty')
-
-if [[ -z "$SESSION_ID" || -z "$FILE_PATH" ]]; then
+if [[ -z "$session_id" || -z "$file_path" ]]; then
     exit 0
 fi
 
-load_config "$CWD"
+load_config "$cwd"
 
-TRACKER_FILE=$(tracker_path "$CLAUDE_PLUGIN_DATA" "$SESSION_ID" "$AGENT_ID")
-TRACKER=$(load_tracker "$TRACKER_FILE")
+tracker_file=$(tracker_path "$CLAUDE_PLUGIN_DATA" "$session_id" "$agent_id")
+tracker=$(load_tracker "$tracker_file")
 
-# --- Step 5: Rewind detection ---
-if [[ -n "$TRANSCRIPT_PATH" && -f "$TRANSCRIPT_PATH" ]]; then
-    CURRENT_TRANSCRIPT_SIZE=$(wc -c < "$TRANSCRIPT_PATH" | tr -d ' ')
-    STORED_TRANSCRIPT_SIZE=$(echo "$TRACKER" | jq '.transcript_size // 0')
+# --- Rewind detection ---
+if [[ -n "$transcript_path" && -f "$transcript_path" ]]; then
+    current_transcript_size=$(wc -c < "$transcript_path" | tr -d ' ')
+    stored_transcript_size=$(printf '%s\n' "$tracker" | jq '.transcript_size // 0')
 
-    if [[ "$CURRENT_TRANSCRIPT_SIZE" -lt "$STORED_TRANSCRIPT_SIZE" ]]; then
-        debug_log "Rewind detected (transcript: ${CURRENT_TRANSCRIPT_SIZE} < ${STORED_TRANSCRIPT_SIZE})"
+    if [[ "$current_transcript_size" -lt "$stored_transcript_size" ]]; then
+        debug_log "Rewind detected (transcript: ${current_transcript_size} < ${stored_transcript_size})"
 
-        CURRENT_TOKENS=$(get_latest_context_tokens "$TRANSCRIPT_PATH")
-        CURRENT_TOKENS=${CURRENT_TOKENS:-0}
+        current_tokens=$(get_latest_context_tokens "$transcript_path")
 
         # Invalidate entries made after the rewind point
-        TRACKER=$(echo "$TRACKER" | jq -c --argjson ct "$CURRENT_TOKENS" \
+        tracker=$(printf '%s\n' "$tracker" | jq -c --argjson ct "$current_tokens" \
             '.files |= with_entries(select(.value.context_tokens <= $ct))')
 
         # Update transcript size
-        TRACKER=$(echo "$TRACKER" | jq -c --argjson ts "$CURRENT_TRANSCRIPT_SIZE" \
+        tracker=$(printf '%s\n' "$tracker" | jq -c --argjson ts "$current_transcript_size" \
             '.transcript_size = $ts')
 
-        save_tracker "$TRACKER_FILE" "$TRACKER"
+        save_tracker "$tracker_file" "$tracker"
     fi
 fi
 
-# --- Step 6: File lookup ---
-HAS_FILE=$(echo "$TRACKER" | jq --arg fp "$FILE_PATH" '.files | has($fp)')
-if [[ "$HAS_FILE" != "true" ]]; then
-    debug_log "ALLOW ${FILE_PATH} — not tracked"
+# --- File lookup ---
+has_file=$(printf '%s\n' "$tracker" | jq --arg fp "$file_path" '.files | has($fp)')
+if [[ "$has_file" != "true" ]]; then
+    debug_log "ALLOW ${file_path} — not tracked"
     exit 0
 fi
 
-# --- Step 7: External change detection ---
-TRACKED_MTIME=$(echo "$TRACKER" | jq --arg fp "$FILE_PATH" '.files[$fp].mtime')
-CURRENT_MTIME=$(stat -f %m "$FILE_PATH" 2>/dev/null || stat -c %Y "$FILE_PATH" 2>/dev/null || echo "0")
+# --- External change detection ---
+tracked_mtime=$(printf '%s\n' "$tracker" | jq --arg fp "$file_path" '.files[$fp].mtime')
+current_mtime=$(stat -f %m "$file_path" 2>/dev/null || stat -c %Y "$file_path" 2>/dev/null || printf '%s' "0")
 
-if [[ "$CURRENT_MTIME" != "$TRACKED_MTIME" ]]; then
-    # Invalidate and save
-    TRACKER=$(echo "$TRACKER" | jq -c --arg fp "$FILE_PATH" 'del(.files[$fp])')
-    save_tracker "$TRACKER_FILE" "$TRACKER"
-    debug_log "ALLOW ${FILE_PATH} — mtime changed (${TRACKED_MTIME} → ${CURRENT_MTIME})"
+if [[ "$current_mtime" != "$tracked_mtime" ]]; then
+    tracker=$(printf '%s\n' "$tracker" | jq -c --arg fp "$file_path" 'del(.files[$fp])')
+    save_tracker "$tracker_file" "$tracker"
+    debug_log "ALLOW ${file_path} — mtime changed (${tracked_mtime} -> ${current_mtime})"
     exit 0
 fi
 
-# --- Step 8: Context decay check ---
-if [[ -n "$TRANSCRIPT_PATH" && -f "$TRANSCRIPT_PATH" ]]; then
-    CURRENT_TOKENS=$(get_latest_context_tokens "$TRANSCRIPT_PATH")
-    CURRENT_TOKENS=${CURRENT_TOKENS:-0}
-    TRACKED_TOKENS=$(echo "$TRACKER" | jq --arg fp "$FILE_PATH" '.files[$fp].context_tokens // 0')
+# --- Context decay check ---
+if [[ -n "$transcript_path" && -f "$transcript_path" ]]; then
+    current_tokens=$(get_latest_context_tokens "$transcript_path")
+    tracked_tokens=$(printf '%s\n' "$tracker" | jq --arg fp "$file_path" '.files[$fp].context_tokens // 0')
 
-    DECAY_DELTA=$(( CURRENT_TOKENS - TRACKED_TOKENS ))
+    decay_delta=$(( current_tokens - tracked_tokens ))
 
-    if [[ "$DECAY_DELTA" -gt "$RRB_DECAY_THRESHOLD" ]]; then
-        # Invalidate and save
-        TRACKER=$(echo "$TRACKER" | jq -c --arg fp "$FILE_PATH" 'del(.files[$fp])')
-        save_tracker "$TRACKER_FILE" "$TRACKER"
-        debug_log "ALLOW ${FILE_PATH} — context decay exceeded (${DECAY_DELTA}/${RRB_DECAY_THRESHOLD})"
+    if [[ "$decay_delta" -gt "$RRB_DECAY_THRESHOLD" ]]; then
+        tracker=$(printf '%s\n' "$tracker" | jq -c --arg fp "$file_path" 'del(.files[$fp])')
+        save_tracker "$tracker_file" "$tracker"
+        debug_log "ALLOW ${file_path} — context decay exceeded (${decay_delta}/${RRB_DECAY_THRESHOLD})"
         exit 0
     fi
 fi
 
-# --- Step 9: Range coverage check ---
-if [[ -n "$OFFSET" && -n "$LIMIT" ]]; then
-    REQ_START="$OFFSET"
-    REQ_END=$(( OFFSET + LIMIT - 1 ))
+# --- Range coverage check ---
+if [[ -n "$offset" && -n "$limit" ]]; then
+    req_start="$offset"
+    req_end=$(( offset + limit - 1 ))
 else
-    REQ_START=1
-    REQ_END="null"
+    req_start=1
+    req_end="null"
 fi
 
-if is_range_covered "$TRACKER" "$FILE_PATH" "$REQ_START" "$REQ_END"; then
-    # Format range for message
-    if [[ "$REQ_END" == "null" ]]; then
-        RANGE_DESC="(full file)"
+if is_range_covered "$tracker" "$file_path" "$req_start" "$req_end"; then
+    if [[ "$req_end" == "null" ]]; then
+        range_desc="(full file)"
     else
-        RANGE_DESC="lines ${REQ_START}-${REQ_END}"
+        range_desc="lines ${req_start}-${req_end}"
     fi
 
-    debug_log "DENY ${FILE_PATH}:${REQ_START}-${REQ_END} — fully covered, mtime unchanged"
+    debug_log "DENY ${file_path}:${req_start}-${req_end} — fully covered, mtime unchanged"
 
-    # Build deny message
-    DENY_MSG="File ${FILE_PATH} ${RANGE_DESC} already read and unchanged."
+    deny_msg="File ${file_path} ${range_desc} already read and unchanged."
 
-    if [[ "$RRB_VERBOSE_DENY" == "true" && -n "${DECAY_DELTA:-}" ]]; then
-        DENY_MSG="${DENY_MSG}
-Context decay: ${DECAY_DELTA}/${RRB_DECAY_THRESHOLD} tokens since read. Mtime unchanged."
+    if [[ "$RRB_VERBOSE_DENY" == "true" && -n "${decay_delta:-}" ]]; then
+        deny_msg="${deny_msg}
+Context decay: ${decay_delta}/${RRB_DECAY_THRESHOLD} tokens since read. Mtime unchanged."
     fi
 
-    DENY_MSG="${DENY_MSG}
+    deny_msg="${deny_msg}
 If you need to re-read after edits, the file will be automatically unblocked."
 
-    echo "$DENY_MSG" >&2
+    printf '%s\n' "$deny_msg" >&2
     exit 2
 fi
 
-debug_log "ALLOW ${FILE_PATH}:${REQ_START}-${REQ_END} — partial coverage"
+debug_log "ALLOW ${file_path}:${req_start}-${req_end} — partial coverage"
 exit 0
