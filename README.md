@@ -28,7 +28,7 @@ Then browse and install plugins:
 | [plan-with-sonnet-enforcer](./plugins/plan-with-sonnet-enforcer/)       | Enforces Sonnet model for Plan subagent to ensure thorough architectural reasoning                                      | Guardrails   |
 | [plan-with-opus-enforcer](./plugins/plan-with-opus-enforcer/)           | Enforces Opus model for Plan subagent for maximum reasoning depth                                                       | Guardrails   |
 | [redundant-read-blocker](./plugins/redundant-read-blocker/)             | Prevent wasteful re-reads of unchanged files with smart range tracking and context decay                                | Guardrails   |
-| [codex-debugger](./plugins/codex-debugger/)                             | Automatic debugging escalation to OpenAI Codex (GPT-5) when stuck after three failed attempts                           | Development  |
+| [codex-integration](./plugins/codex-integration/)                       | Consult OpenAI Codex for fresh perspective — auto-escalation when stuck, on-demand second opinions, and web research    | Development  |
 | [commit-message-generator](./plugins/commit-message-generator/)         | Generate and validate conventional commit messages with automatic type/scope detection                                  | Development  |
 | [behavior-diagnostics](./plugins/behavior-diagnostics/)                 | Debug AI tooling behavior with root cause analysis and honest self-diagnosis across sessions                            | Development  |
 

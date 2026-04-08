@@ -1,5 +1,29 @@
 # Changelog
 
+## [2.0.0] - 2026-04-08
+
+### Changed
+
+- **Plugin renamed**: `codex-debugger` -> `codex-integration`
+- **MCP server**: Built-in `codex mcp-server` -> official `codex-mcp-server` npm package
+- **Architecture**: Agent-first -> skill-first with `context: fork` + `agent:` delegation
+- **Agent**: Full protocol -> thin frontmatter-only wrapper (skill owns protocol)
+- **Tool names**: `mcp__codex__*` -> `mcp__codex-cli__*`
+- **Session management**: `conversationId` + `codex-reply` -> `sessionId` parameter
+- **Default model**: `gpt-5` -> `gpt-5.2-codex`
+- **Pre-flight**: Test prompt -> `ping` tool
+
+### Added
+
+- `codex-consulting` skill: covers both auto-escalation and on-demand consultation
+- Web search capability via `mcp__codex-cli__websearch`
+- On-demand consultation mode (no 3-failure prerequisite)
+
+### Removed
+
+- `mcp__codex__codex-reply` tool (replaced by `sessionId`)
+- Agent protocol content (moved to skill)
+
 ## [1.1.0] - 2025-12-17
 
 ### Changed

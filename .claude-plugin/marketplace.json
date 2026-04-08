@@ -46,8 +46,8 @@
       "category": "guardrails"
     },
     {
-      "name": "codex-debugger",
-      "source": "./plugins/codex-debugger",
+      "name": "codex-integration",
+      "source": "./plugins/codex-integration",
       "category": "development"
     },
     {
