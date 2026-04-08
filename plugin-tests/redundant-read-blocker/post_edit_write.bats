@@ -9,7 +9,7 @@ load 'test_helper/common_setup'
 
 # bats test_tags=invalidate
 @test "removes edited file from main agent tracker" {
-    write_tracker "sess-1" "main" '{"transcript_size":100,"files":{"/a.txt":{"ranges":[{"start":1,"end":50}],"mtime":123,"context_tokens":1000},"/b.txt":{"ranges":[{"start":1,"end":null}],"mtime":456,"context_tokens":2000}}}'
+    write_tracker "sess-1" "main" '{"transcript_size":100,"files":{"/a.txt":{"ranges":[{"start":1,"end":50}],"hash":"abc123","context_tokens":1000},"/b.txt":{"ranges":[{"start":1,"end":null}],"hash":"def456","context_tokens":2000}}}'
 
     run_post_edit_write "sess-1" "/a.txt"
     assert_success
@@ -26,8 +26,8 @@ load 'test_helper/common_setup'
 
 # bats test_tags=invalidate
 @test "removes edited file from all agent trackers in session" {
-    write_tracker "sess-1" "main" '{"transcript_size":100,"files":{"/shared.txt":{"ranges":[{"start":1,"end":100}],"mtime":123,"context_tokens":1000}}}'
-    write_tracker "sess-1" "agent-abc" '{"transcript_size":100,"files":{"/shared.txt":{"ranges":[{"start":50,"end":200}],"mtime":123,"context_tokens":2000}}}'
+    write_tracker "sess-1" "main" '{"transcript_size":100,"files":{"/shared.txt":{"ranges":[{"start":1,"end":100}],"hash":"abc123","context_tokens":1000}}}'
+    write_tracker "sess-1" "agent-abc" '{"transcript_size":100,"files":{"/shared.txt":{"ranges":[{"start":50,"end":200}],"hash":"abc123","context_tokens":2000}}}'
 
     run_post_edit_write "sess-1" "/shared.txt"
     assert_success
@@ -46,8 +46,8 @@ load 'test_helper/common_setup'
 
 # bats test_tags=invalidate
 @test "does not affect other sessions" {
-    write_tracker "sess-1" "main" '{"transcript_size":100,"files":{"/x.txt":{"ranges":[{"start":1,"end":50}],"mtime":123,"context_tokens":1000}}}'
-    write_tracker "sess-2" "main" '{"transcript_size":100,"files":{"/x.txt":{"ranges":[{"start":1,"end":50}],"mtime":123,"context_tokens":1000}}}'
+    write_tracker "sess-1" "main" '{"transcript_size":100,"files":{"/x.txt":{"ranges":[{"start":1,"end":50}],"hash":"abc123","context_tokens":1000}}}'
+    write_tracker "sess-2" "main" '{"transcript_size":100,"files":{"/x.txt":{"ranges":[{"start":1,"end":50}],"hash":"abc123","context_tokens":1000}}}'
 
     run_post_edit_write "sess-1" "/x.txt"
     assert_success

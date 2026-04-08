@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.0] - 2026-04-08
+
+### Changed
+
+- Replaced mtime-based change detection with md5 content hashing — `touch` no longer bypasses the blocker; only actual content changes invalidate tracking
+- Added `file_fingerprint()` function to lib.sh for centralized cross-platform hashing (macOS `md5` with Linux `md5sum` fallback)
+- Hash failures fail open (allow the read) with a debug log warning
+- Tracker JSON field renamed from `mtime` (number) to `hash` (string)
+
 ## [1.0.1] - 2026-04-07
 
 ### Fixed

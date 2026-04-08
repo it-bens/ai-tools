@@ -42,6 +42,22 @@ debug_log() {
     fi
 }
 
+# --- File fingerprinting ---
+
+# Returns the md5 hash of a file's contents.
+# Cross-platform: md5 -q (macOS) with md5sum (Linux) fallback.
+# Returns empty string on failure (fail open).
+# Args: $1 = file_path
+file_fingerprint() {
+    local file_path="$1"
+    local hash
+    hash=$(md5 -q "$file_path" 2>/dev/null || md5sum "$file_path" 2>/dev/null | cut -d' ' -f1) || true
+    if [[ -z "$hash" ]]; then
+        debug_log "WARN: failed to hash ${file_path}"
+    fi
+    printf '%s\n' "${hash:-}"
+}
+
 # --- Paths ---
 
 # Returns the path to the tracking file for the given agent.

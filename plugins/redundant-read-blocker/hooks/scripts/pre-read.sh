@@ -69,14 +69,19 @@ if [[ "$has_file" != "true" ]]; then
     exit 0
 fi
 
-# --- External change detection ---
-tracked_mtime=$(printf '%s\n' "$tracker" | jq --arg fp "$file_path" '.files[$fp].mtime')
-current_mtime=$(stat -f %m "$file_path" 2>/dev/null || stat -c %Y "$file_path" 2>/dev/null || printf '%s' "0")
+# --- Content change detection ---
+tracked_hash=$(printf '%s\n' "$tracker" | jq -r --arg fp "$file_path" '.files[$fp].hash')
+current_hash=$(file_fingerprint "$file_path")
 
-if [[ "$current_mtime" != "$tracked_mtime" ]]; then
+if [[ -z "$current_hash" ]]; then
+    debug_log "ALLOW ${file_path} — hash failed (fail open)"
+    exit 0
+fi
+
+if [[ "$current_hash" != "$tracked_hash" ]]; then
     tracker=$(printf '%s\n' "$tracker" | jq -c --arg fp "$file_path" 'del(.files[$fp])')
     save_tracker "$tracker_file" "$tracker"
-    debug_log "ALLOW ${file_path} — mtime changed (${tracked_mtime} -> ${current_mtime})"
+    debug_log "ALLOW ${file_path} — content changed (hash ${tracked_hash} -> ${current_hash})"
     exit 0
 fi
 
@@ -111,13 +116,13 @@ if is_range_covered "$tracker" "$file_path" "$req_start" "$req_end"; then
         range_desc="lines ${req_start}-${req_end}"
     fi
 
-    debug_log "DENY ${file_path}:${req_start}-${req_end} — fully covered, mtime unchanged"
+    debug_log "DENY ${file_path}:${req_start}-${req_end} — fully covered, hash unchanged"
 
     deny_msg="File ${file_path} ${range_desc} already read and unchanged."
 
     if [[ "$RRB_VERBOSE_DENY" == "true" && -n "${decay_delta:-}" ]]; then
         deny_msg="${deny_msg}
-Context decay: ${decay_delta}/${RRB_DECAY_THRESHOLD} tokens since read. Mtime unchanged."
+Context decay: ${decay_delta}/${RRB_DECAY_THRESHOLD} tokens since read. Hash unchanged."
     fi
 
     deny_msg="${deny_msg}

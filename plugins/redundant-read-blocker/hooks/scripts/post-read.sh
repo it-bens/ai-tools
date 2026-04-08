@@ -59,8 +59,12 @@ existing_ranges=$(printf '%s\n' "$tracker" | jq -c --arg fp "$file_path" '.files
 merged_ranges=$(printf '%s\n' "$existing_ranges" | jq -c --argjson s "$new_start" --argjson e "$new_end" \
     '. + [{start: $s, end: $e}]' | merge_ranges)
 
-# Get file mtime
-file_mtime=$(stat -f %m "$file_path" 2>/dev/null || stat -c %Y "$file_path" 2>/dev/null || printf '%s' "0")
+# Get file content hash
+file_hash=$(file_fingerprint "$file_path")
+if [[ -z "$file_hash" ]]; then
+    debug_log "SKIP recording ${file_path} — hash failed"
+    exit 0
+fi
 
 # Get transcript metadata
 transcript_size=0
@@ -74,14 +78,14 @@ fi
 tracker=$(printf '%s\n' "$tracker" | jq -c \
     --arg fp "$file_path" \
     --argjson ranges "$merged_ranges" \
-    --argjson mtime "$file_mtime" \
+    --arg hash "$file_hash" \
     --argjson ts "$transcript_size" \
     --argjson ct "$context_tokens" \
     '.transcript_size = $ts |
-     .files[$fp] = {ranges: $ranges, mtime: $mtime, context_tokens: $ct}')
+     .files[$fp] = {ranges: $ranges, hash: $hash, context_tokens: $ct}')
 
 save_tracker "$tracker_file" "$tracker"
 
-debug_log "RECORD ${file_path}:${new_start}-${new_end} (tokens=${context_tokens})"
+debug_log "RECORD ${file_path}:${new_start}-${new_end} (hash=${file_hash}, tokens=${context_tokens})"
 
 exit 0

@@ -8,13 +8,13 @@ The plugin uses Claude Code hooks to track every file read, then blocks subseque
 
 **Blocking conditions** (all must be true):
 - File was previously read in this session
-- File has not been modified (mtime unchanged)
+- File content has not changed (md5 hash unchanged)
 - Context hasn't decayed past the threshold
 - Requested line range is fully covered by previous reads
 
 **Automatic unblocking:**
 - File is edited (via Edit or Write tool)
-- File is modified externally (detected via mtime)
+- File content changes (detected via md5 hash)
 - Context grows past the decay threshold
 - Session compacts or restarts
 - User rewinds conversation (Esc)
@@ -61,7 +61,11 @@ Set `"debug": true` to see all decisions:
 
 ```
 [RRB] ALLOW /src/main.ts:1-100 — not tracked
-[RRB] DENY /src/main.ts:1-50 — fully covered by 1-100, mtime unchanged
-[RRB] ALLOW /src/main.ts:1-100 — mtime changed (1712345678 → 1712345999)
+[RRB] DENY /src/main.ts:1-50 — fully covered, hash unchanged
+[RRB] ALLOW /src/main.ts:1-100 — content changed (hash d41d8cd9 -> a1b2c3d4)
 [RRB] ALLOW /src/main.ts:1-100 — context decay exceeded (85000/80000)
 ```
+
+## Future Improvements
+
+- **Range-specific hashing:** Currently the entire file is hashed on each check. A future version could hash only the previously-read line ranges for more precise invalidation — a change outside the tracked ranges would not trigger a re-read. This would require extracting and hashing the same line ranges on each check, with complexity around range merging.

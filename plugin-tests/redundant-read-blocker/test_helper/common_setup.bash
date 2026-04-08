@@ -166,6 +166,9 @@ run_post_read() {
         --argjson tr "$tool_response" \
         '. + {tool_input: $ti, tool_response: $tr}')
 
+    # Ensure the file exists so file_fingerprint() can hash it
+    [[ -f "$file_path" ]] || touch "$file_path"
+
     run bash -c 'echo "$1" | CLAUDE_PLUGIN_DATA="$2" bash "$3"' \
         _ "$stdin" "$CLAUDE_PLUGIN_DATA" "${SCRIPTS_DIR}/post-read.sh"
 }
