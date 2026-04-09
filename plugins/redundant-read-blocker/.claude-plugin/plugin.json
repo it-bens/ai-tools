@@ -1,7 +1,7 @@
 {
   "name": "redundant-read-blocker",
-  "version": "1.1.0",
-  "description": "Prevents wasteful re-reads of unchanged files by tracking what was already read and blocking redundant Read tool calls. Tracks line ranges, detects external file changes via mtime, invalidates on Edit/Write, and supports context decay thresholds.",
+  "version": "1.2.0",
+  "description": "Prevents wasteful re-reads of unchanged files by tracking what was already read and blocking redundant Read tool calls. Tracks line ranges, detects content changes via hash, invalidates on Edit/Write, supports context decay thresholds, and allows retry on second attempt for deadlock escape.",
   "author": {
     "name": "Martin Bens",
     "email": "martin.bens@it-bens.de"

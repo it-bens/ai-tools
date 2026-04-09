@@ -100,7 +100,7 @@ load 'test_helper/common_setup'
 }
 
 # bats test_tags=lifecycle
-@test "full lifecycle: read → touch (no content change) → re-read still blocked" {
+@test "full lifecycle: read → touch (no content change) → re-read blocked then retry allowed" {
     local test_file="${TEST_TEMP_DIR}/touch-lifecycle.txt"
     echo "stable content" > "$test_file"
 
@@ -110,7 +110,7 @@ load 'test_helper/common_setup'
     run_post_read "sess-1" "$test_file" 1 10
     assert_success
 
-    # 2. Re-read should be blocked
+    # 2. Re-read should be blocked (first block)
     run_pre_read "sess-1" "$test_file" 1 10
     assert_failure 2
 
@@ -118,8 +118,7 @@ load 'test_helper/common_setup'
     sleep 1
     touch "$test_file"
 
-    # 4. Re-read should STILL be blocked (content hash unchanged)
+    # 4. Re-read should be ALLOWED (second attempt after block = retry)
     run_pre_read "sess-1" "$test_file" 1 10
-    assert_failure 2
-    assert_output --partial "already read and unchanged"
+    assert_success
 }

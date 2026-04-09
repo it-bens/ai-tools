@@ -82,7 +82,7 @@ tracker=$(printf '%s\n' "$tracker" | jq -c \
     --argjson ts "$transcript_size" \
     --argjson ct "$context_tokens" \
     '.transcript_size = $ts |
-     .files[$fp] = {ranges: $ranges, hash: $hash, context_tokens: $ct}')
+     .files[$fp] = {ranges: $ranges, hash: $hash, context_tokens: $ct, was_blocked: false}')
 
 save_tracker "$tracker_file" "$tracker"
 

@@ -116,6 +116,18 @@ if is_range_covered "$tracker" "$file_path" "$req_start" "$req_end"; then
         range_desc="lines ${req_start}-${req_end}"
     fi
 
+    # Check if this is a second attempt after a previous block
+    was_blocked=$(printf '%s\n' "$tracker" | jq -r --arg fp "$file_path" '.files[$fp].was_blocked // false')
+
+    if [[ "$was_blocked" == "true" ]]; then
+        debug_log "ALLOW ${file_path}:${req_start}-${req_end} — forced re-read (second attempt after block)"
+        exit 0
+    fi
+
+    # First block: set was_blocked flag and deny
+    tracker=$(printf '%s\n' "$tracker" | jq -c --arg fp "$file_path" '.files[$fp].was_blocked = true')
+    save_tracker "$tracker_file" "$tracker"
+
     debug_log "DENY ${file_path}:${req_start}-${req_end} — fully covered, hash unchanged"
 
     deny_msg="File ${file_path} ${range_desc} already read and unchanged."
@@ -126,7 +138,7 @@ Context decay: ${decay_delta}/${RRB_DECAY_THRESHOLD} tokens since read. Hash unc
     fi
 
     deny_msg="${deny_msg}
-If you need to re-read after edits, the file will be automatically unblocked."
+If Write/Edit is blocked because the file was \"modified since read\", retry this read — a second attempt will be allowed."
 
     printf '%s\n' "$deny_msg" >&2
     exit 2

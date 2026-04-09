@@ -18,6 +18,7 @@ The plugin uses Claude Code hooks to track every file read, then blocks subseque
 - Context grows past the decay threshold
 - Session compacts or restarts
 - User rewinds conversation (Esc)
+- Second read attempt after a block (escape hatch for Edit/Write deadlocks)
 
 ## Installation
 

@@ -201,7 +201,8 @@ load 'test_helper/common_setup'
 
     run_pre_read "sess-1" "$test_file" 1 50
     assert_failure 2
-    assert_output --partial "automatically unblocked"
+    assert_output --partial "already read and unchanged"
+    assert_output --partial "second attempt will be allowed"
 }
 
 # bats test_tags=deny,message
@@ -306,4 +307,100 @@ load 'test_helper/common_setup'
     run_pre_read "sess-1" "$test_file"
     assert_failure 2
     assert_output --partial "already read and unchanged"
+}
+
+# =============================================================================
+# RETRY TESTS - Second attempt after block
+# =============================================================================
+
+# bats test_tags=retry
+@test "allows read on second attempt after block (was_blocked=true)" {
+    local test_file="${TEST_TEMP_DIR}/retry-test.txt"
+    echo "content" > "$test_file"
+    local hash
+    hash=$(md5 -q "$test_file" 2>/dev/null || md5sum "$test_file" 2>/dev/null | cut -d' ' -f1)
+
+    # Track with was_blocked: true (simulating previous block)
+    write_tracker "sess-1" "main" "$(jq -n -c \
+        --arg fp "$test_file" \
+        --arg h "$hash" \
+        '{transcript_size: 100, files: {($fp): {ranges: [{start: 1, end: null}], hash: $h, context_tokens: 1000, was_blocked: true}}}')"
+
+    append_assistant_message 2000 0 0 100
+
+    run_pre_read "sess-1" "$test_file"
+    assert_success
+}
+
+# bats test_tags=retry
+@test "first block sets was_blocked flag to true" {
+    local test_file="${TEST_TEMP_DIR}/first-block.txt"
+    echo "content" > "$test_file"
+    local hash
+    hash=$(md5 -q "$test_file" 2>/dev/null || md5sum "$test_file" 2>/dev/null | cut -d' ' -f1)
+
+    # Track with was_blocked: false
+    write_tracker "sess-1" "main" "$(jq -n -c \
+        --arg fp "$test_file" \
+        --arg h "$hash" \
+        '{transcript_size: 100, files: {($fp): {ranges: [{start: 1, end: null}], hash: $h, context_tokens: 1000, was_blocked: false}}}')"
+
+    append_assistant_message 2000 0 0 100
+
+    run_pre_read "sess-1" "$test_file"
+    assert_failure 2
+
+    # Check that was_blocked is now true
+    local tracker
+    tracker=$(read_tracker "sess-1")
+    local was_blocked
+    was_blocked=$(echo "$tracker" | jq --arg fp "$test_file" '.files[$fp].was_blocked')
+    [[ "$was_blocked" == "true" ]]
+}
+
+# bats test_tags=retry,message
+@test "first block deny message includes retry hint" {
+    local test_file="${TEST_TEMP_DIR}/hint-test.txt"
+    echo "content" > "$test_file"
+    local hash
+    hash=$(md5 -q "$test_file" 2>/dev/null || md5sum "$test_file" 2>/dev/null | cut -d' ' -f1)
+
+    write_tracker "sess-1" "main" "$(jq -n -c \
+        --arg fp "$test_file" \
+        --arg h "$hash" \
+        '{transcript_size: 100, files: {($fp): {ranges: [{start: 1, end: null}], hash: $h, context_tokens: 1000, was_blocked: false}}}')"
+
+    append_assistant_message 2000 0 0 100
+
+    run_pre_read "sess-1" "$test_file"
+    assert_failure 2
+    assert_output --partial "retry this read"
+    assert_output --partial "second attempt will be allowed"
+}
+
+# bats test_tags=retry,compat
+@test "missing was_blocked field treated as false (backwards compat)" {
+    local test_file="${TEST_TEMP_DIR}/compat-test.txt"
+    echo "content" > "$test_file"
+    local hash
+    hash=$(md5 -q "$test_file" 2>/dev/null || md5sum "$test_file" 2>/dev/null | cut -d' ' -f1)
+
+    # Old-style tracker entry without was_blocked field
+    write_tracker "sess-1" "main" "$(jq -n -c \
+        --arg fp "$test_file" \
+        --arg h "$hash" \
+        '{transcript_size: 100, files: {($fp): {ranges: [{start: 1, end: null}], hash: $h, context_tokens: 1000}}}')"
+
+    append_assistant_message 2000 0 0 100
+
+    # Should block (first attempt)
+    run_pre_read "sess-1" "$test_file"
+    assert_failure 2
+
+    # was_blocked should now be set
+    local tracker
+    tracker=$(read_tracker "sess-1")
+    local was_blocked
+    was_blocked=$(echo "$tracker" | jq --arg fp "$test_file" '.files[$fp].was_blocked')
+    [[ "$was_blocked" == "true" ]]
 }

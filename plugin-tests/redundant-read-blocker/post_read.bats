@@ -188,3 +188,22 @@ load 'test_helper/common_setup'
     [[ -f "${CLAUDE_PLUGIN_DATA}/sess-1/read-tracker-main.json" ]]
     [[ -f "${CLAUDE_PLUGIN_DATA}/sess-1/read-tracker-agent-xyz.json" ]]
 }
+
+# =============================================================================
+# WAS_BLOCKED FIELD TESTS
+# =============================================================================
+
+# bats test_tags=record
+@test "records was_blocked as false" {
+    append_assistant_message 10000 500 5000 200
+
+    run_post_read "sess-1" "/tmp/was-blocked-test.txt" 1 50 10 50
+    assert_success
+
+    local tracker
+    tracker=$(read_tracker "sess-1")
+    local was_blocked
+    was_blocked=$(echo "$tracker" | jq '.files["/tmp/was-blocked-test.txt"].was_blocked')
+
+    [[ "$was_blocked" == "false" ]]
+}

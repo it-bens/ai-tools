@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0] - 2026-04-09
+
+### Added
+
+- Second attempt retry: after a read is blocked, the next read attempt for the same file is allowed as an escape hatch for Edit/Write deadlocks
+- Deny message now hints at retry option when Write/Edit is blocked due to "modified since read"
+- `was_blocked` field in tracker entries to track block state
+
 ## [1.1.0] - 2026-04-08
 
 ### Changed
