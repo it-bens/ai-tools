@@ -65,7 +65,7 @@ Classify the likely cause(s) behind each violation or ambiguity:
 
 ### Phase 6: Generate Introspection Questions
 
-Invoke `prompt-engineering:prompt-engineering` with:
+Invoke `llm-author:prompt-engineering` with:
 - The violation/ambiguity pairs from Phase 4 (instruction passage + observed behavior)
 - The root cause classifications from Phase 5
 - The instruction to craft questions optimized for honest LLM self-reflection

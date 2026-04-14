@@ -1,6 +1,6 @@
 ---
 name: rule-file-writing
-version: 2.4.0
+version: 3.0.0
 description: Use when creating a new Claude Code rules file in ~/.claude/rules/ or a project's .claude/rules/, or when optimizing an existing rules file for per-token behavioral steering. Rules files are auto-loaded markdown files without frontmatter that shape Claude's behavior every session — they are NOT skills, agents, or commands. Trigger on "write a rule about X", "create a rules file", "optimize this rules file", "cut ballast from ~/.claude/rules/*.md", or any request to author or refine a file in a rules/ directory whose purpose is unconditional behavioral steering.
 allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
 ---

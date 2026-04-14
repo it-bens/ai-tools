@@ -1,0 +1,11 @@
+{
+  "name": "llm-author",
+  "version": "3.0.0",
+  "description": "Author LLM-targeted content — prompts, skills, agents, and rules files — for Claude 4, GLM 4.7 (Z.ai), and Gemini 3 (including Deep Research)",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["llm-author", "prompt-engineering", "content-editing", "rule-file-writing", "prompting", "templates", "claude-4", "glm-4.7", "z-ai", "gemini-3", "deep-research"]
+}

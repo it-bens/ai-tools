@@ -1,10 +1,10 @@
-# Prompt Engineering Plugin
+# LLM Author Plugin
 
-Expert prompt engineering for Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3 (including Deep Research) with production-ready templates.
+Author LLM-targeted content — prompts, skills, agents, and rules files — for Claude 4, GLM 4.7 (Z.ai), and Gemini 3 (including Deep Research).
 
 ## Overview
 
-This plugin provides comprehensive guidance for creating, optimizing, and debugging high-performing prompts for Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3. It transforms requirements into production-ready prompts through evidence-based techniques and systematic optimization. Also adapts existing Claude prompts for GLM 4.7 or Gemini 3 when requested, and supports specialized Gemini Deep Research prompts for autonomous multi-source research.
+This plugin bundles the craft of authoring LLM-targeted content: designing high-performing prompts for Claude 4, GLM 4.7 (Z.ai), and Gemini 3; editing skills and agents without bloat; and writing auto-loaded Claude Code rules files. It transforms requirements into production-ready artifacts through evidence-based techniques and systematic optimization. Also adapts existing Claude prompts for GLM 4.7 or Gemini 3 when requested, and supports specialized Gemini Deep Research prompts for autonomous multi-source research.
 
 ## Skills
 
@@ -88,7 +88,7 @@ These source materials are preserved for reference and can be used to update or 
 ## Contents
 
 ```
-prompt-engineering/
+llm-author/
 ├── .claude-plugin/
 │   └── plugin.json              # Plugin manifest
 ├── docs/                        # Source documentation (15 files)

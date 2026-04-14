@@ -11,8 +11,8 @@
   },
   "plugins": [
     {
-      "name": "prompt-engineering",
-      "source": "./plugins/prompt-engineering",
+      "name": "llm-author",
+      "source": "./plugins/llm-author",
       "category": "productivity"
     },
     {

@@ -14,8 +14,8 @@
 #   output-directory  Optional. Where to save the ZIP (default: current directory)
 #
 # Example:
-#   ./build-skill-for-web.sh ./plugins/prompt-engineering/skills/prompt-engineering
-#   ./build-skill-for-web.sh ./plugins/prompt-engineering/skills/prompt-engineering ./dist
+#   ./build-skill-for-web.sh ./plugins/llm-author/skills/prompt-engineering
+#   ./build-skill-for-web.sh ./plugins/llm-author/skills/prompt-engineering ./dist
 #
 
 set -euo pipefail

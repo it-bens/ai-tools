@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.0.0] - 2026-04-14
+
+Renamed plugin from `prompt-engineering` to `llm-author`. The previous name collided with the inner `prompt-engineering` skill during invocation — phrases like "use the prompt-engineering plugin" frequently routed to the wrong skill. The new name reflects the plugin's actual scope: authoring LLM-targeted content (prompts, skills, agents, rules files) rather than prompt engineering alone. Skill names are unchanged.
+
+### Changed
+
+- Plugin directory: `plugins/prompt-engineering/` → `plugins/llm-author/`
+- `plugin.json` name, description, and keywords updated to `llm-author`
+- Marketplace entry and main README table updated to the new name
+- Skill versions bumped to 3.0.0 to track the plugin major version
+- Cross-plugin references (`behavior-diagnostics`) updated to `llm-author:prompt-engineering`
+
 ## [2.4.0] - 2026-04-14
 
 Added Rule-File Writing skill for authoring and optimizing auto-loaded Claude Code rules files in `~/.claude/rules/` and project `.claude/rules/`.
