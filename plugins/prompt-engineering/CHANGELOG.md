@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.4.0] - 2026-04-14
+
+Added Rule-File Writing skill for authoring and optimizing auto-loaded Claude Code rules files in `~/.claude/rules/` and project `.claude/rules/`.
+
+### Added
+
+- `skills/rule-file-writing/SKILL.md` - Create/optimize branching, interview flow, two-pass optimization loop
+- `skills/rule-file-writing/assets/templates/rules-file-skeleton.md` - Canonical CRITICAL → Decision Test → body → Red Flags shell
+- `skills/rule-file-writing/references/` - Pass 1 essential-vs-ballast, Pass 2 techniques and three-angle pattern
+
 ## [2.3.0] - 2026-02-04
 
 Added Content Editing skill for LLM-targeted content optimization.

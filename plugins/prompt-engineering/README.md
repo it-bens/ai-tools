@@ -32,6 +32,16 @@ This plugin provides comprehensive guidance for creating, optimizing, and debugg
 - Guide toward corrections over additions
 - Enforce brevity and prevent content bloat
 
+### Rule-File Writing
+
+**Triggers:** "write a rule about X", "create a rules file", "optimize this rules file", "cut ballast from a rules file", edits or additions in `~/.claude/rules/` or a project's `.claude/rules/`
+
+**Capabilities:**
+- Create new Claude Code rules files from an interview or from mid-conversation context
+- Optimize existing rules files via a two-pass content-then-structure loop
+- Enforce the canonical family pattern (CRITICAL → Decision Test → body → Red Flags)
+- Report honest token-reduction trajectory without manufacturing cuts
+
 ## Usage
 
 Once installed, simply ask Claude Code for help with prompts:
@@ -85,6 +95,10 @@ prompt-engineering/
 ├── skills/
 │   ├── content-editing/
 │   │   └── SKILL.md             # Content editing skill
+│   ├── rule-file-writing/
+│   │   ├── SKILL.md             # Rule-file writing and optimization skill
+│   │   ├── assets/templates/    # Canonical rules-file skeleton
+│   │   └── references/          # On-demand depth for optimization passes
 │   └── prompt-engineering/
 │       ├── SKILL.md             # Main skill definition
 │       ├── references/          # Skill-specific references

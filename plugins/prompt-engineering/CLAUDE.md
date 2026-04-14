@@ -9,6 +9,10 @@
 | Understand plugin purpose and usage | `README.md` |
 | Modify skill behavior or triggers | `skills/prompt-engineering/SKILL.md` |
 | Modify content editing behavior | `skills/content-editing/SKILL.md` |
+| Modify rule-file writing behavior or triggers | `skills/rule-file-writing/SKILL.md` |
+| Update Pass 1 essential vs ballast reference | `skills/rule-file-writing/references/essential-vs-ballast.md` |
+| Update Pass 2 techniques or three-angle pattern | `skills/rule-file-writing/references/techniques.md`, `skills/rule-file-writing/references/three-angle-pattern.md` |
+| Update the rules-file skeleton template | `skills/rule-file-writing/assets/templates/rules-file-skeleton.md` |
 | Update core techniques or patterns | `skills/prompt-engineering/references/` |
 | Update output format templates | `skills/prompt-engineering/references/output-formats.md` |
 | Update GLM 4.7 adaptation guide | `skills/prompt-engineering/references/glm-47-guide.md` |
