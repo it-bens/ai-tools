@@ -36,7 +36,7 @@ You need an OpenAI account with Codex access (typically included with ChatGPT Pl
 ### Installation
 
 ```bash
-/plugin install codex-integration@it-bens/itb-ai-tools
+/plugin install codex-integration@itb-ai-tools
 ```
 
 **IMPORTANT**: Restart Claude Code after installation for the MCP server to initialize.

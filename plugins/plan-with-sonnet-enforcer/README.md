@@ -5,7 +5,7 @@ Enforces Sonnet model for the Plan subagent.
 ## Quick Start
 
 ```bash
-/plugin install plan-with-sonnet-enforcer@it-bens
+/plugin install plan-with-sonnet-enforcer@itb-ai-tools
 ```
 
 **Restart Claude Code** after installation for hooks to take effect.

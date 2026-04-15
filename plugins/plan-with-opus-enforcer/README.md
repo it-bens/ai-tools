@@ -5,7 +5,7 @@ Enforces Opus model for the Plan subagent.
 ## Quick Start
 
 ```bash
-/plugin install plan-with-opus-enforcer@it-bens
+/plugin install plan-with-opus-enforcer@itb-ai-tools
 ```
 
 **Restart Claude Code** after installation for hooks to take effect.

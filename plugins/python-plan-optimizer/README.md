@@ -19,7 +19,7 @@ This plugin provides **read-only analysis** of Python code blocks within plannin
 ### Installation
 
 ```bash
-/plugin install python-plan-optimizer@it-bens
+/plugin install python-plan-optimizer@itb-ai-tools
 ```
 
 ### Basic Usage

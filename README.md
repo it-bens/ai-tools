@@ -7,7 +7,7 @@ A collection of AI coding and productivity tools — skills, agents, hooks, and 
 Add this marketplace to Claude Code:
 
 ```bash
-/plugin marketplace add it-bens/itb-ai-tools
+/plugin marketplace add it-bens/ai-tools
 ```
 
 Then browse and install plugins:
@@ -117,10 +117,10 @@ Skills uploaded to Claude Web will ignore this field. The build script ensures c
 
 | Skill              | Download                                                                                            |
 |--------------------|-----------------------------------------------------------------------------------------------------|
-| prompt-engineering | [Download](https://github.com/it-bens/itb-ai-tools/releases/download/latest/prompt-engineering.zip) |
-| content-editing    | [Download](https://github.com/it-bens/itb-ai-tools/releases/download/latest/content-editing.zip)    |
+| prompt-engineering | [Download](https://github.com/it-bens/ai-tools/releases/download/latest/prompt-engineering.zip) |
+| content-editing    | [Download](https://github.com/it-bens/ai-tools/releases/download/latest/content-editing.zip)    |
 
-Or browse all downloads on the [Releases page](https://github.com/it-bens/itb-ai-tools/releases/latest).
+Or browse all downloads on the [Releases page](https://github.com/it-bens/ai-tools/releases/latest).
 
 ## Contributing
 

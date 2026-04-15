@@ -5,7 +5,7 @@ Enforces Sonnet model for the Explore subagent.
 ## Quick Start
 
 ```bash
-/plugin install explore-with-sonnet-enforcer@it-bens
+/plugin install explore-with-sonnet-enforcer@itb-ai-tools
 ```
 
 **Restart Claude Code** after installation for hooks to take effect.

@@ -23,7 +23,7 @@ The plugin uses Claude Code hooks to track every file read, then blocks subseque
 ## Installation
 
 ```bash
-/plugin install redundant-read-blocker
+/plugin install redundant-read-blocker@itb-ai-tools
 ```
 
 Requires `jq` to be installed.

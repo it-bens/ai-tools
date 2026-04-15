@@ -5,7 +5,7 @@ Enforces Opus model for the Explore subagent.
 ## Quick Start
 
 ```bash
-/plugin install explore-with-opus-enforcer@it-bens
+/plugin install explore-with-opus-enforcer@itb-ai-tools
 ```
 
 **Restart Claude Code** after installation for hooks to take effect.

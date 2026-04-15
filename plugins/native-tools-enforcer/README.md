@@ -5,7 +5,7 @@ Enforces use of Claude Code native tools instead of bash equivalents via PreTool
 ## Quick Start
 
 ```bash
-/plugin install native-tools-enforcer@it-bens
+/plugin install native-tools-enforcer@itb-ai-tools
 ```
 
 **Restart Claude Code** after installation for hooks to take effect.
