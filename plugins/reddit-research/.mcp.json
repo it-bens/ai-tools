@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "reddit-buddy": {
+      "command": "npx",
+      "args": ["-y", "reddit-mcp-buddy"],
+      "env": {}
+    }
+  }
+}

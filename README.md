@@ -31,6 +31,7 @@ Then browse and install plugins:
 | [codex-integration](./plugins/codex-integration/)                       | Consult OpenAI Codex for fresh perspective — auto-escalation when stuck, on-demand second opinions, and web research    | Development  |
 | [commit-message-generator](./plugins/commit-message-generator/)         | Generate and validate conventional commit messages with automatic type/scope detection                                  | Development  |
 | [behavior-diagnostics](./plugins/behavior-diagnostics/)                 | Debug AI tooling behavior with root cause analysis and honest self-diagnosis across sessions                            | Development  |
+| [reddit-research](./plugins/reddit-research/)                           | Disciplined Reddit research via reddit-buddy MCP — call budget, truncation awareness, query craft, proactive opt-in     | Development  |
 
 ## Structure
 

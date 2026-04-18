@@ -1,0 +1,13 @@
+{
+  "name": "reddit-research",
+  "version": "1.0.0",
+  "description": "Disciplined Reddit research via reddit-buddy MCP — call budget, truncation awareness, query craft, and proactive opt-in during general web research.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["reddit", "research", "mcp", "reddit-buddy", "workflow"],
+  "homepage": "https://github.com/it-bens/ai-tools/tree/main/plugins/reddit-research",
+  "repository": "https://github.com/it-bens/ai-tools"
+}

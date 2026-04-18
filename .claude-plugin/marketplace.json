@@ -64,6 +64,11 @@
       "name": "redundant-read-blocker",
       "source": "./plugins/redundant-read-blocker",
       "category": "guardrails"
+    },
+    {
+      "name": "reddit-research",
+      "source": "./plugins/reddit-research",
+      "category": "development"
     }
   ]
 }
