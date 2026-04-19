@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.1] - 2026-04-19
+
+### Changed
+
+- Skill description rewritten for more reliable triggering: leads with an imperative `MUST invoke` before any `mcp__plugin_reddit-research_reddit-buddy__*` tool call, enumerates canonical user-facing trigger phrases, and reframes the call budget as a methodology signal rather than a restriction. Addresses a failure mode where the skill was bypassed in favor of direct MCP calls.
+
 ## [1.0.0] - 2026-04-18
 
 Initial release.

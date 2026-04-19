@@ -1,11 +1,15 @@
 ---
 name: reddit-researching
+version: 1.0.1
 description: >
-  Reddit research, community opinions, or Reddit-sourced claims via reddit-buddy MCP.
-  Use when the user requests Reddit research, when reddit-buddy results already appear
-  in the conversation, or when web research is prompted (asks once whether to include
-  Reddit). Guides scoping, searching, drilling, and synthesizing findings as attributed
-  claims under a strict 3–6 call budget.
+  MUST invoke before any mcp__plugin_reddit-research_reddit-buddy__* tool call, when
+  the user asks to research, search, or investigate anything on Reddit (phrases like
+  "reddit research", "check reddit", "reddit says"), when reddit-buddy results already
+  appear in the conversation, or when web research is prompted (skill asks once whether
+  to include Reddit). Provides the structured scoping / search / drill / synthesis
+  workflow — a 3–6 call budget and truncation-aware interpretation are non-optional;
+  reddit-buddy primitives without this workflow produce noisy, over-truncated, or
+  misattributed findings.
 allowed-tools:
   - mcp__plugin_reddit-research_reddit-buddy__search_reddit
   - mcp__plugin_reddit-research_reddit-buddy__browse_subreddit

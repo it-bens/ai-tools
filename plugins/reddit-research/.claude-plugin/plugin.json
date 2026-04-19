@@ -1,6 +1,6 @@
 {
   "name": "reddit-research",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Disciplined Reddit research via reddit-buddy MCP — call budget, truncation awareness, query craft, and proactive opt-in during general web research.",
   "author": {
     "name": "Martin Bens",
