@@ -10,9 +10,13 @@ plugins/native-tools-enforcer/
 ├── .claude-plugin/
 │   └── plugin.json
 ├── hooks/
-│   ├── hooks.json                       # PreToolUse hook on Bash
+│   ├── hooks.json                       # SessionStart + PreToolUse hooks
+│   ├── prompts/
+│   │   ├── native-tools-new.md          # SessionStart directives (new mode)
+│   │   └── native-tools-classic.md      # SessionStart directives (classic mode)
 │   └── scripts/
-│       ├── check-native-tools.sh        # Hook entry — resolves mode, branches
+│       ├── session-start.sh             # SessionStart entry — picks prompt by mode
+│       ├── check-native-tools.sh        # PreToolUse entry — resolves mode, branches
 │       └── lib/
 │           └── detect-mode.sh           # nte_resolve_mode() — shared library
 └── skills/
@@ -42,6 +46,8 @@ Silent no-op when `NATIVE_TOOLS_ENFORCER_DEBUG` is unset. Appends one TSV line t
 |---|---|
 | Change detection cascade | `hooks/scripts/lib/detect-mode.sh` |
 | Change per-mode block messages | `hooks/scripts/check-native-tools.sh` — per-section mode-branches |
+| Change SessionStart injected directives | `hooks/prompts/native-tools-{new,classic}.md` |
+| Change SessionStart emit logic (drain, JSON wrap, pass-through) | `hooks/scripts/session-start.sh` |
 | Change probe JSON schema | `skills/setting-up/scripts/probe.sh` + `skills/setting-up/SKILL.md` (update field docs) |
 | Extend skill workflow | `skills/setting-up/SKILL.md` |
 | Adjust hook timeout | `hooks/hooks.json` |
@@ -62,6 +68,7 @@ BATS tests in `plugin-tests/native-tools-enforcer/`:
 .bats/bats-core/bin/bats --filter-tags messages-new plugin-tests/native-tools-enforcer/*.bats
 .bats/bats-core/bin/bats --filter-tags logging plugin-tests/native-tools-enforcer/*.bats
 .bats/bats-core/bin/bats --filter-tags probe   plugin-tests/native-tools-enforcer/*.bats
+.bats/bats-core/bin/bats --filter-tags session-start plugin-tests/native-tools-enforcer/*.bats
 ```
 
 ### Mocking

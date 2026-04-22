@@ -18,20 +18,20 @@ Then browse and install plugins:
 
 ## Available Plugins
 
-| Plugin                                                                  | Description                                                                                                             | Category     |
-|-------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|--------------|
-| [llm-author](./plugins/llm-author/)                                     | Author LLM-targeted content — prompts, skills, agents, and rules files — for Claude 4, GLM 4.7, and Gemini 3            | Productivity |
-| [python-plan-optimizer](./plugins/python-plan-optimizer/)               | Analyze Python code in planning documents for design principles and improvement opportunities                           | Development  |
-| [native-tools-enforcer](./plugins/native-tools-enforcer/)               | Enforces native search tools (Grep/Glob on classic builds, bfs/ugrep on native macOS/Linux) via PreToolUse hook; setup skill installs binaries and configures mode                                              | Guardrails   |
-| [explore-with-sonnet-enforcer](./plugins/explore-with-sonnet-enforcer/) | Enforces Sonnet model for Explore subagent to prevent lossy Haiku summaries                                             | Guardrails   |
-| [explore-with-opus-enforcer](./plugins/explore-with-opus-enforcer/)     | Enforces Opus model for Explore subagent for maximum exploration accuracy                                               | Guardrails   |
-| [plan-with-sonnet-enforcer](./plugins/plan-with-sonnet-enforcer/)       | Enforces Sonnet model for Plan subagent to ensure thorough architectural reasoning                                      | Guardrails   |
-| [plan-with-opus-enforcer](./plugins/plan-with-opus-enforcer/)           | Enforces Opus model for Plan subagent for maximum reasoning depth                                                       | Guardrails   |
-| [redundant-read-blocker](./plugins/redundant-read-blocker/)             | Prevent wasteful re-reads of unchanged files with smart range tracking and context decay                                | Guardrails   |
-| [codex-integration](./plugins/codex-integration/)                       | Consult OpenAI Codex for fresh perspective — auto-escalation when stuck, on-demand second opinions, and web research    | Development  |
-| [commit-message-generator](./plugins/commit-message-generator/)         | Generate and validate conventional commit messages with automatic type/scope detection                                  | Development  |
-| [behavior-diagnostics](./plugins/behavior-diagnostics/)                 | Debug AI tooling behavior with root cause analysis and honest self-diagnosis across sessions                            | Development  |
-| [reddit-research](./plugins/reddit-research/)                           | Disciplined Reddit research via reddit-buddy MCP — call budget, truncation awareness, query craft, proactive opt-in     | Development  |
+| Plugin                                                                  | Description                                                                                                                                                                                                                          | Category     |
+|-------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
+| [llm-author](./plugins/llm-author/)                                     | Author LLM-targeted content — prompts, skills, agents, and rules files — for Claude 4, GLM 4.7, and Gemini 3                                                                                                                         | Productivity |
+| [python-plan-optimizer](./plugins/python-plan-optimizer/)               | Analyze Python code in planning documents for design principles and improvement opportunities                                                                                                                                        | Development  |
+| [native-tools-enforcer](./plugins/native-tools-enforcer/)               | Enforces native search tools (Grep/Glob on classic builds, bfs/ugrep on native macOS/Linux) via PreToolUse hook; SessionStart hook primes Claude with mode-appropriate directives; setup skill installs binaries and configures mode | Guardrails   |
+| [explore-with-sonnet-enforcer](./plugins/explore-with-sonnet-enforcer/) | Enforces Sonnet model for Explore subagent to prevent lossy Haiku summaries                                                                                                                                                          | Guardrails   |
+| [explore-with-opus-enforcer](./plugins/explore-with-opus-enforcer/)     | Enforces Opus model for Explore subagent for maximum exploration accuracy                                                                                                                                                            | Guardrails   |
+| [plan-with-sonnet-enforcer](./plugins/plan-with-sonnet-enforcer/)       | Enforces Sonnet model for Plan subagent to ensure thorough architectural reasoning                                                                                                                                                   | Guardrails   |
+| [plan-with-opus-enforcer](./plugins/plan-with-opus-enforcer/)           | Enforces Opus model for Plan subagent for maximum reasoning depth                                                                                                                                                                    | Guardrails   |
+| [redundant-read-blocker](./plugins/redundant-read-blocker/)             | Prevent wasteful re-reads of unchanged files with smart range tracking and context decay                                                                                                                                             | Guardrails   |
+| [codex-integration](./plugins/codex-integration/)                       | Consult OpenAI Codex for fresh perspective — auto-escalation when stuck, on-demand second opinions, and web research                                                                                                                 | Development  |
+| [commit-message-generator](./plugins/commit-message-generator/)         | Generate and validate conventional commit messages with automatic type/scope detection                                                                                                                                               | Development  |
+| [behavior-diagnostics](./plugins/behavior-diagnostics/)                 | Debug AI tooling behavior with root cause analysis and honest self-diagnosis across sessions                                                                                                                                         | Development  |
+| [reddit-research](./plugins/reddit-research/)                           | Disciplined Reddit research via reddit-buddy MCP — call budget, truncation awareness, query craft, proactive opt-in                                                                                                                  | Development  |
 
 ## Structure
 
@@ -116,8 +116,8 @@ Skills uploaded to Claude Web will ignore this field. The build script ensures c
 
 ### Downloads
 
-| Skill              | Download                                                                                            |
-|--------------------|-----------------------------------------------------------------------------------------------------|
+| Skill              | Download                                                                                        |
+|--------------------|-------------------------------------------------------------------------------------------------|
 | prompt-engineering | [Download](https://github.com/it-bens/ai-tools/releases/download/latest/prompt-engineering.zip) |
 | content-editing    | [Download](https://github.com/it-bens/ai-tools/releases/download/latest/content-editing.zip)    |
 

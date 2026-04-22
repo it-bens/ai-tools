@@ -1,6 +1,6 @@
 # Native Tools Enforcer
 
-Enforces use of Claude Code's native search tools — the `Grep`/`Glob` tools on classic builds, and `ugrep`/`bfs` on native macOS/Linux builds — via a PreToolUse hook. Adapts to the detected build and passes through silently when neither toolchain is available.
+Enforces use of Claude Code's native search tools — the `Grep`/`Glob` tools on classic builds, and `ugrep`/`bfs` on native macOS/Linux builds — via a PreToolUse hook. A SessionStart hook primes Claude with mode-appropriate directives so it reaches for the right tool on the first try instead of being blocked. Adapts to the detected build and passes through silently when neither toolchain is available.
 
 ## Quick Start
 
@@ -21,6 +21,8 @@ The skill detects your OS, checks if `bfs` / `ugrep` are installed, and offers t
 | `new` | macOS/Linux with `bfs` + `ugrep` on PATH, **or** env var forced | Block `find`/`grep` family; suggest `bfs`/`ugrep` in Bash |
 | `classic` | Windows (Cygwin / MinGW / MSYS) | Block `find`/`grep` family; suggest `Glob`/`Grep` tools |
 | `pass` | macOS/Linux without `bfs`+`ugrep`; unknown OS | Hook exits 0, no block, no warning |
+
+In `new` and `classic` modes, the SessionStart hook also injects a short directive block listing the tool mappings for the detected mode. `pass` mode injects nothing.
 
 ## Blocked Commands
 

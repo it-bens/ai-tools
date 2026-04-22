@@ -1,6 +1,17 @@
 {
-  "description": "PreToolUse hooks to block bash CLI tools in favor of native Claude Code tools",
+  "description": "SessionStart hook injects native-tool usage directives. PreToolUse hook blocks Bash CLI tools in favor of Claude Code native tools (or bfs/ugrep on native builds).",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",

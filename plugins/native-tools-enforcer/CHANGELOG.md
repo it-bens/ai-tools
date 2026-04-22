@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.1.0] - 2026-04-22
+
+### Added
+
+- **SessionStart hook** (`hooks/scripts/session-start.sh`) injects a short directive block into every new session, listing which native tools or Bash helpers Claude should use for the detected mode. Primes the model before the first tool call, reducing the number of commands that would otherwise hit the PreToolUse blocker.
+- **Per-mode prompts** in `hooks/prompts/`:
+  - `native-tools-new.md` — directs Claude to Read/Write/Edit tools and `bfs`/`ugrep` in Bash.
+  - `native-tools-classic.md` — directs Claude to Read/Write/Edit, Glob, and Grep tools.
+- **Pass mode stays silent** — no injection when neither toolchain is available, matching the PreToolUse pass-through behavior.
+
+### Changed
+
+- `hooks/hooks.json` description updated to cover both hook stages.
+
 ## [2.0.0] - 2026-04-22
 
 ### Breaking
