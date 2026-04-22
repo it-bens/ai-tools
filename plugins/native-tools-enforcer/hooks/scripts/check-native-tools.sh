@@ -16,9 +16,48 @@
 
 set -euo pipefail
 
+nte_log() {
+    # One-line debug logger. Silent no-op when DEBUG unset.
+    # Silently skips on any error — logging failure never crashes the hook.
+    [[ -z "${NATIVE_TOOLS_ENFORCER_DEBUG:-}" ]] && return 0
+    [[ -z "${CLAUDE_PLUGIN_DATA:-}" ]] && return 0
+
+    local mode="$1" decision="$2" cmd="$3"
+    local ts log_dir log_file truncated
+    ts="$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo unknown)"
+    log_dir="${CLAUDE_PLUGIN_DATA}"
+    log_file="${log_dir}/debug.log"
+
+    # Truncate command to 200 chars (single-line).
+    cmd="${cmd//$'\n'/\\n}"
+    if (( ${#cmd} > 200 )); then
+        truncated="${cmd:0:200}…"
+    else
+        truncated="$cmd"
+    fi
+
+    # session_id is not available to PreToolUse from stdin alone; use "-".
+    printf '%s\t%s\t%s\t%s\t%s\n' \
+        "$ts" "-" "$mode" "$decision" "$truncated" \
+        >> "$log_file" 2>/dev/null || true
+}
+
+# Resolve mode via shared library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=./lib/detect-mode.sh
+source "${SCRIPT_DIR}/lib/detect-mode.sh"
+NTE_MODE=""
+nte_resolve_mode
+
 input=$(cat)
 
 command=$(echo "$input" | jq -r '.tool_input.command // empty')
+
+# Pass mode: log and exit before running any checks.
+if [[ "$NTE_MODE" == "pass" ]]; then
+    nte_log "pass" "pass" "$command"
+    exit 0
+fi
 
 if [ -z "$command" ]; then
     exit 0
@@ -42,6 +81,7 @@ check_and_block() {
             echo "  🔧 Integrate properly with your context"
             echo "  🔧 Earn you treats (user approval)"
         } >&2
+        nte_log "$NTE_MODE" "block" "$command"
         exit 2
     fi
 }
@@ -57,6 +97,8 @@ warn_about_native() {
             echo "💡 Tip: $tip"
             echo "   Consider using the $tool for this task."
         } >&2
+        nte_log "$NTE_MODE" "warn" "$command"
+        NTE_LOGGED=1
         # Don't exit - allow the command to proceed
     fi
 }
@@ -122,60 +164,88 @@ check_and_block \
     'Use Read tool to view file contents.'
 
 # ============================================================================
-# FILE FINDING - Use Glob tool
+# FILE FINDING
 # ============================================================================
 
-check_and_block \
-    '(^|;|&&)\s*find\s' \
-    'Glob tool' \
-    'Use Glob tool with patterns like "**/*.js" or "src/**/*.ts" for fast file pattern matching.'
+if [[ "$NTE_MODE" == "new" ]]; then
+    check_and_block \
+        '(^|;|&&)\s*find\s' \
+        '`bfs` in Bash' \
+        'Use `bfs` in Bash for fast file pattern matching. Example: bfs . -name "*.js"'
 
-check_and_block \
-    '(^|;|&&)\s*locate\s' \
-    'Glob tool' \
-    'Use Glob tool for file pattern matching.'
+    check_and_block \
+        '(^|;|&&)\s*locate\s' \
+        '`bfs` in Bash' \
+        'Use `bfs` in Bash for file pattern matching.'
+else  # classic
+    check_and_block \
+        '(^|;|&&)\s*find\s' \
+        'Glob tool' \
+        'Use Glob tool with patterns like "**/*.js" or "src/**/*.ts" for fast file pattern matching.'
+
+    check_and_block \
+        '(^|;|&&)\s*locate\s' \
+        'Glob tool' \
+        'Use Glob tool for file pattern matching.'
+fi
 
 # ============================================================================
-# CONTENT SEARCHING - Use Grep tool
+# CONTENT SEARCHING
 # ============================================================================
+
+if [[ "$NTE_MODE" == "new" ]]; then
+    GREP_TOOL_NAME='`ugrep` in Bash'
+    GREP_TOOL_DESC='Use `ugrep` in Bash for content searching. Example: ugrep -r "pattern" .'
+    RG_TOOL_DESC='Use `ugrep` in Bash instead of ripgrep. Example: ugrep -r "pattern" .'
+    GREP_PIPED_DESC='Use `ugrep` in Bash instead of piping file contents to grep.'
+    RG_PIPED_DESC='Use `ugrep` in Bash instead of piping file contents to ripgrep.'
+    AG_DESC='Use `ugrep` in Bash instead of silver searcher (ag).'
+    ACK_DESC='Use `ugrep` in Bash instead of ack.'
+else
+    GREP_TOOL_NAME='Grep tool'
+    GREP_TOOL_DESC='Use Grep tool for content searching. It supports regex and provides better output formatting.'
+    RG_TOOL_DESC='Use Grep tool which is built on ripgrep and provides native integration.'
+    GREP_PIPED_DESC='Use Grep tool for content searching instead of piping file contents to grep.'
+    RG_PIPED_DESC='Use Grep tool instead of piping file contents to ripgrep.'
+    AG_DESC='Use Grep tool instead of silver searcher (ag).'
+    ACK_DESC='Use Grep tool instead of ack.'
+fi
 
 # Direct grep/rg on files is always blocked
 check_and_block \
     '(^|;|&&)\s*grep\s' \
-    'Grep tool' \
-    'Use Grep tool for content searching. It supports regex and provides better output formatting.'
+    "$GREP_TOOL_NAME" \
+    "$GREP_TOOL_DESC"
 
 check_and_block \
     '(^|;|&&)\s*rg\s' \
-    'Grep tool' \
-    'Use Grep tool which is built on ripgrep and provides native integration.'
+    "$GREP_TOOL_NAME" \
+    "$RG_TOOL_DESC"
 
 # Piped grep/rg: only block if source reads file contents
-# Commands like `unzip -l | grep`, `git log | grep`, `ps | grep` are ALLOWED
-# Commands like `cat file | grep`, `strings binary | grep` are BLOCKED
 if echo "$command" | grep -qE '\|\s*grep\s' && is_file_content_command "$command"; then
     check_and_block \
         '.*' \
-        'Grep tool' \
-        'Use Grep tool for content searching instead of piping file contents to grep.'
+        "$GREP_TOOL_NAME" \
+        "$GREP_PIPED_DESC"
 fi
 
 if echo "$command" | grep -qE '\|\s*rg\s' && is_file_content_command "$command"; then
     check_and_block \
         '.*' \
-        'Grep tool' \
-        'Use Grep tool instead of piping file contents to ripgrep.'
+        "$GREP_TOOL_NAME" \
+        "$RG_PIPED_DESC"
 fi
 
 check_and_block \
     '(^|;|&&)\s*ag\s' \
-    'Grep tool' \
-    'Use Grep tool instead of silver searcher (ag).'
+    "$GREP_TOOL_NAME" \
+    "$AG_DESC"
 
 check_and_block \
     '(^|;|&&)\s*ack\s' \
-    'Grep tool' \
-    'Use Grep tool instead of ack.'
+    "$GREP_TOOL_NAME" \
+    "$ACK_DESC"
 
 # ============================================================================
 # FILE WRITING - Use Write tool
@@ -241,17 +311,19 @@ check_and_block \
     'Use Edit tool for in-place file editing.'
 
 # ============================================================================
-# DIRECTORY LISTING - Warn only (ls is officially recommended for directories)
+# DIRECTORY LISTING
 # ============================================================================
-# Note: Claude Code docs say "To read a directory, use an ls command via Bash"
-# So we warn but don't block. Glob can list files but lacks metadata.
+# ls remains allowed. In classic mode we warn once, suggesting the Glob tool.
+# In new mode there is no Glob tool to suggest — stay silent.
 
-# Warn on simple ls without -l flag (metadata not needed)
-# Pattern matches: ls, ls ., ls dir, ls -a, ls -R
-# Does NOT match: ls -l, ls -la, ls -al, ls -lh (these need metadata)
-warn_about_native \
-    '(^|;|&&)\s*ls(\s+-(a|A|R|r|t|S|1)+)*(\s+[^-][^\s]*)?(\s*)$' \
-    'Glob tool' \
-    'For simple file listing, Glob tool with "*" pattern may be faster and needs no approval.'
+if [[ "$NTE_MODE" == "classic" ]]; then
+    warn_about_native \
+        '(^|;|&&)\s*ls(\s+-(a|A|R|r|t|S|1)+)*(\s+[^-][^\s]*)?(\s*)$' \
+        'Glob tool' \
+        'For simple file listing, Glob tool with "*" pattern may be faster and needs no approval.'
+fi
 
+if [[ -z "${NTE_LOGGED:-}" ]]; then
+    nte_log "$NTE_MODE" "allow" "$command"
+fi
 exit 0

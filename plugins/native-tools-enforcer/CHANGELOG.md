@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.0.0] - 2026-04-22
+
+### Breaking
+
+- On macOS/Linux **without** `bfs`/`ugrep` installed, the hook now **passes through** (no block, no warning) instead of redirecting to the `Glob`/`Grep` tools. This avoids a block loop on native Claude Code builds that no longer ship the `Glob`/`Grep` tools. Users who still want enforcement in this state should install `bfs` + `ugrep` (the new `setting-up` skill assists with this).
+
+### Added
+
+- **Mode detection** in `hooks/scripts/lib/detect-mode.sh`. Resolves to `new`, `classic`, or `pass` based on:
+  1. `NATIVE_TOOLS_ENFORCER_FORCE_NEW` env var (binary override),
+  2. OS (`uname -s`),
+  3. `command -v bfs && command -v ugrep` probe.
+- **`native-tools-enforcer:setting-up` skill** — detects OS + package manager + binary state, offers install assistance (`brew install` on macOS; prints the`sudo` command on Linux), and writes `NATIVE_TOOLS_ENFORCER_FORCE_NEW` to `~/.claude/settings.json` when the user wants to pin behavior.
+- **Opt-in debug logging** via `NATIVE_TOOLS_ENFORCER_DEBUG=1`. Writes one TSV line per hook invocation to `$CLAUDE_PLUGIN_DATA/debug.log`. Unset = zero I/O.
+
+### Changed
+
+- Block messages for the `find`/`locate` family now suggest `bfs` in Bash when the resolved mode is `new`; otherwise they suggest the Glob tool as before.
+- Block messages for the `grep`/`rg`/`ag`/`ack` family and piped-grep variants now suggest `ugrep` in Bash in `new` mode; Grep tool in `classic`.
+- The `ls` warning is suppressed in `new` mode (no `Glob` tool to suggest).
+
+### Unchanged
+
+- `Read`/`Edit`/`Write` tool redirects for `cat`, `head`, `tail`, `sed`, `awk`, `echo >`, `tee`, etc. These tools exist on every build.
+- Allow-list for piped grep from command-output sources (`git log | grep`, `ps aux | grep`, etc.).
+
 ## [1.2.0] - 2025-01-16
 
 ### Changed

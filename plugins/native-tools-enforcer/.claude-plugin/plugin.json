@@ -1,11 +1,11 @@
 {
   "name": "native-tools-enforcer",
-  "version": "1.2.0",
-  "description": "Enforces use of Claude Code native tools (Read, Glob, Grep, Edit, Write) instead of bash equivalents (cat, find, grep, sed, echo). Uses PreToolUse hook to intercept Bash commands and block those that should use native tools, providing helpful suggestions.",
+  "version": "2.0.0",
+  "description": "Enforces use of Claude Code native tools / native-build bfs & ugrep instead of bash equivalents (cat, find, grep, sed, echo). Adapts messages to the detected build: new mode (macOS/Linux native with bfs/ugrep), classic mode (Windows, or older builds with Glob/Grep tools), or pass-through when neither toolchain is available.",
   "author": {
     "name": "Martin Bens",
     "email": "martin.bens@it-bens.de"
   },
   "license": "MIT",
-  "keywords": ["hooks", "tools", "bash", "enforcement", "native-tools", "best-practices", "guardrails"]
+  "keywords": ["hooks", "tools", "bash", "enforcement", "native-tools", "best-practices", "guardrails", "bfs", "ugrep"]
 }

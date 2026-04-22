@@ -1,6 +1,6 @@
 # Native Tools Enforcer
 
-Enforces use of Claude Code native tools instead of bash equivalents via PreToolUse hook.
+Enforces use of Claude Code's native search tools — the `Grep`/`Glob` tools on classic builds, and `ugrep`/`bfs` on native macOS/Linux builds — via a PreToolUse hook. Adapts to the detected build and passes through silently when neither toolchain is available.
 
 ## Quick Start
 
@@ -8,64 +8,82 @@ Enforces use of Claude Code native tools instead of bash equivalents via PreTool
 /plugin install native-tools-enforcer@itb-ai-tools
 ```
 
-**Restart Claude Code** after installation for hooks to take effect.
+**Restart Claude Code** after installation for the hook to take effect. Then optionally run the setup skill:
 
-## Features
+> Set up native-tools-enforcer
 
-- **PreToolUse Hook** - Intercepts Bash tool calls before execution
-- **Pattern Matching** - Blocks commands that should use native tools
-- **Helpful Messages** - Suggests correct native tool with explanation
+The skill detects your OS, checks if `bfs` / `ugrep` are installed, and offers to install them if missing.
+
+## Modes
+
+| Mode | When | Blocking behavior |
+|---|---|---|
+| `new` | macOS/Linux with `bfs` + `ugrep` on PATH, **or** env var forced | Block `find`/`grep` family; suggest `bfs`/`ugrep` in Bash |
+| `classic` | Windows (Cygwin / MinGW / MSYS) | Block `find`/`grep` family; suggest `Glob`/`Grep` tools |
+| `pass` | macOS/Linux without `bfs`+`ugrep`; unknown OS | Hook exits 0, no block, no warning |
 
 ## Blocked Commands
 
-| Bash Command | Native Alternative |
-|--------------|-------------------|
-| `cat`, `head`, `tail`, `less`, `more` | **Read** tool |
-| `find`, `locate` | **Glob** tool |
-| `grep`, `rg`, `ag`, `ack` | **Grep** tool |
-| `echo >`, `printf >`, `cat >`, `tee` | **Write** tool |
-| `sed`, `awk`, `perl -i` | **Edit** tool |
+| Bash Command | New-mode redirect | Classic-mode redirect |
+|---|---|---|
+| `cat`, `head`, `tail`, `less`, `more` | **Read** tool | **Read** tool |
+| `find`, `locate` | **`bfs`** in Bash | **Glob** tool |
+| `grep`, `rg`, `ag`, `ack` | **`ugrep`** in Bash | **Grep** tool |
+| `echo >`, `printf >`, `cat >`, `| tee` | **Write** tool | **Write** tool |
+| `sed`, `awk`, `perl -i` | **Edit** tool | **Edit** tool |
 
-> **Note:** Heredocs piped to commands (`cat << EOF | pbcopy`) are allowed since they don't write to files.
+Heredocs piped to commands (`cat << EOF | pbcopy`) are allowed.
 
 ### Piped grep/rg Behavior
 
 Piped grep is **selectively blocked** based on whether the source command reads file contents:
 
-| Source Command | Example | Blocked? | Reason |
-|----------------|---------|----------|--------|
-| File viewers | `cat file.txt \| grep pattern` | ✅ Yes | Use Grep tool |
-| Binary inspectors | `strings binary \| grep pattern` | ✅ Yes | Use Grep tool |
-| Compressed viewers | `zcat file.gz \| grep pattern` | ✅ Yes | Use Grep tool |
-| Archive listings | `unzip -l \| grep pattern` | ❌ No | Metadata, not file content |
-| Git commands | `git log \| grep feat` | ❌ No | Command output |
-| Process lists | `ps aux \| grep node` | ❌ No | System metadata |
-| Package managers | `npm ls \| grep lodash` | ❌ No | Command output |
+| Source | Example | Blocked? |
+|---|---|---|
+| File viewers | `cat file.txt \| grep pattern` | ✅ Yes (Read caught first) |
+| Binary inspectors | `strings bin \| grep pattern` | ✅ Yes |
+| Compressed viewers | `zcat file.gz \| grep pattern` | ✅ Yes |
+| Archive listings | `unzip -l \| grep pattern` | ❌ No |
+| Command output | `git log \| grep feat`, `ps \| grep node` | ❌ No |
 
-This distinction exists because the Grep tool searches files on disk—it cannot filter command output.
+## Warned Commands
 
-## Warned Commands (Not Blocked)
+| Bash Command | New mode | Classic mode |
+|---|---|---|
+| `ls`, `ls -a`, `ls -R` | No warning (no tool to suggest) | Warn: suggest Glob |
+| `ls -l`, `ls -la` | No warning | No warning (needs metadata) |
 
-| Bash Command | Suggestion | Why Not Blocked |
-|--------------|------------|-----------------|
-| `ls`, `ls -a`, `ls -R` | **Glob** tool | Claude Code docs recommend `ls` for directories |
-| `ls -l`, `ls -la` | (none) | Native tools can't provide file metadata |
+## Configuration
 
-Simple `ls` commands trigger a tip suggesting Glob, but are allowed because Claude Code's own documentation recommends `ls` for directory operations.
+### Environment variables
 
-## Why This Plugin
+| Name | Value | Effect |
+|---|---|---|
+| `NATIVE_TOOLS_ENFORCER_FORCE_NEW` | any non-empty value | Forces `new` mode regardless of OS or binary availability. User is responsible for ensuring `bfs`/`ugrep` are installed — otherwise the hook will suggest tools that do not exist. Values like `"false"` or `"0"` are treated as **set** (any non-empty string); use the empty string or unset the variable to turn the override off. |
+| `NATIVE_TOOLS_ENFORCER_DEBUG` | any non-empty value | Enables debug logging to `$CLAUDE_PLUGIN_DATA/debug.log`. TSV lines: `<timestamp> <session_id or "-"> <mode> <decision> <command truncated to 200 chars>`. Commands are logged verbatim — remove the log file if privacy is a concern. |
 
-- Native tools don't require approval; bash commands do
-- Native tools integrate better with Claude Code context
-- Agents via Task tool respect hooks but may ignore CLAUDE.md rules ([#10056](https://github.com/anthropics/claude-code/issues/10056))
+Set them in `~/.claude/settings.json`:
+
+```json
+{
+  "env": {
+    "NATIVE_TOOLS_ENFORCER_FORCE_NEW": "1"
+  }
+}
+```
+
+The `setting-up` skill automates this.
 
 ## Requirements
 
-- `jq` (usually pre-installed)
+- `jq` (pre-installed on most systems).
+- `bfs` and `ugrep` only needed for `new` mode. Not bundled with Claude Code.
+  The setup skill can install them via `brew` (macOS) or print the right
+  `sudo <pkg-mgr> install` line (Linux).
 
 ## Developer Guide
 
-See `CLAUDE.md` for plugin architecture and modification guidance.
+See `CLAUDE.md`.
 
 ## License
 

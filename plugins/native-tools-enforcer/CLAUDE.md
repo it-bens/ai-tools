@@ -9,84 +9,79 @@ plugins/native-tools-enforcer/
 ├── CHANGELOG.md
 ├── .claude-plugin/
 │   └── plugin.json
-└── hooks/
-    ├── hooks.json                    # PreToolUse hook configuration
-    └── scripts/
-        └── check-native-tools.sh     # Pattern matching & blocking logic
+├── hooks/
+│   ├── hooks.json                       # PreToolUse hook on Bash
+│   └── scripts/
+│       ├── check-native-tools.sh        # Hook entry — resolves mode, branches
+│       └── lib/
+│           └── detect-mode.sh           # nte_resolve_mode() — shared library
+└── skills/
+    └── setting-up/
+        ├── SKILL.md                     # LLM-facing instructions
+        └── scripts/
+            └── probe.sh                 # Environment probe (JSON out)
 ```
-
-## Component Overview
-
-This plugin provides:
-- **PreToolUse Hook** (`hooks/hooks.json`) - Intercepts Bash tool calls
-- **Validation Script** (`hooks/scripts/check-native-tools.sh`) - Blocks/warns commands with native tool suggestions
-
-**No commands, agents, skills, or MCP servers** - hooks-only plugin.
 
 ## Key Functions
 
-### `check_and_block(pattern, tool, description)`
-Blocks command execution (exit 2) if pattern matches. Used for commands where native tools fully replace bash equivalents.
+### `nte_resolve_mode()` (in `lib/detect-mode.sh`)
+Sets `NTE_MODE` to one of `new|classic|pass` from env var + `uname -s` + `command -v bfs`/`ugrep`. Pure function.
+
+### `check_and_block(pattern, tool, description)` (in `check-native-tools.sh`)
+Exits 2 with a formatted message if `$command` matches `$pattern`. Calls `nte_log` before exit.
 
 ### `warn_about_native(pattern, tool, tip)`
-Shows warning but allows execution (exit 0). Used for commands where native tools can help but aren't full replacements (e.g., `ls` - Glob can list files but can't show permissions/sizes).
+Writes a tip to stderr but exits 0. Calls `nte_log` before returning.
 
-## Key Navigation Points
+### `nte_log(mode, decision, command)`
+Silent no-op when `NATIVE_TOOLS_ENFORCER_DEBUG` is unset. Appends one TSV line to `$CLAUDE_PLUGIN_DATA/debug.log`.
 
-| Task | Primary File | Key Concepts |
-|------|--------------|--------------|
-| Add blocked command | `check-native-tools.sh` | Add `check_and_block` call in category section |
-| Add warned command | `check-native-tools.sh` | Add `warn_about_native` call |
-| Change block message | `check-native-tools.sh` | Edit `check_and_block()` function output |
-| Adjust hook timeout | `hooks.json` | `timeout` field (default: 5s) |
-| Update pattern regex | `check-native-tools.sh` | First argument to `check_and_block` |
+## Navigation
 
-## When to Modify What
-
-**Adding new blocked command** → Add `check_and_block` call in appropriate category section of `check-native-tools.sh`
-
-**Adding warned command** → Add `warn_about_native` call (for commands where native tools help but aren't full replacements)
-
-**Changing message format** → Edit function body in `check-native-tools.sh`
-
-**Adjusting pattern sensitivity** → Modify regex (first arg); use `(^|;|&&)` to avoid false positives
-
-## Integration Points
-
-- **jq** dependency for JSON parsing
-- Affects all Bash invocations (main conversation + agents)
-- Requires Claude Code restart after installation
+| Task | File |
+|---|---|
+| Change detection cascade | `hooks/scripts/lib/detect-mode.sh` |
+| Change per-mode block messages | `hooks/scripts/check-native-tools.sh` — per-section mode-branches |
+| Change probe JSON schema | `skills/setting-up/scripts/probe.sh` + `skills/setting-up/SKILL.md` (update field docs) |
+| Extend skill workflow | `skills/setting-up/SKILL.md` |
+| Adjust hook timeout | `hooks/hooks.json` |
 
 ## Testing
 
-BATS tests are located in `plugin-tests/native-tools-enforcer/`:
+BATS tests in `plugin-tests/native-tools-enforcer/`:
 
 ```bash
 # Setup (first time only)
 ./.github/scripts/setup-bats.sh
 
-# Run tests
+# Run all tests
 .bats/bats-core/bin/bats plugin-tests/native-tools-enforcer/*.bats
 
 # Filter by tag
-.bats/bats-core/bin/bats --filter-tags blocking plugin-tests/native-tools-enforcer/
-.bats/bats-core/bin/bats --filter-tags warning plugin-tests/native-tools-enforcer/
+.bats/bats-core/bin/bats --filter-tags detect   plugin-tests/native-tools-enforcer/*.bats
+.bats/bats-core/bin/bats --filter-tags messages-new plugin-tests/native-tools-enforcer/*.bats
+.bats/bats-core/bin/bats --filter-tags logging plugin-tests/native-tools-enforcer/*.bats
+.bats/bats-core/bin/bats --filter-tags probe   plugin-tests/native-tools-enforcer/*.bats
 ```
 
-### Manual Testing
+### Mocking
 
-```bash
-# Should block (exit 2)
-echo '{"tool_input": {"command": "grep foo"}}' | ./hooks/scripts/check-native-tools.sh
+`plugin-tests/native-tools-enforcer/test_helper/mode_setup.bash` provides `mode_set os=... bfs=1 ugrep=1 force_new=0 debug=0` for PATH-based mocking. Call `mode_setup_init` in `setup()` and `mode_setup_cleanup` in `teardown()`.
 
-# Should warn (exit 0, with output)
-echo '{"tool_input": {"command": "ls"}}' | ./hooks/scripts/check-native-tools.sh
+## Manual Test Checklist for the Skill
 
-# Should allow (exit 0, no output)
-echo '{"tool_input": {"command": "git status"}}' | ./hooks/scripts/check-native-tools.sh
-```
+Run the `setting-up` skill and walk each path:
 
-## Related Documentation
+- [ ] Fresh macOS with no bfs/ugrep → skill offers `brew install bfs ugrep`, runs on confirmation, re-probes, reports ready.
+- [ ] macOS with bfs+ugrep already installed → skill reports ready, no config needed.
+- [ ] User asks to pin force-new when ready → skill writes env var, shows diff, `jq` validates.
+- [ ] Linux (any distro) with apt/dnf/pacman → skill prints install command, does not run sudo.
+- [ ] Windows (detected) → skill reports classic mode, advises not to set env var.
+- [ ] Malformed `~/.claude/settings.json` → skill reports jq error, makes no changes.
+- [ ] User asks to unset env var → skill runs `jq 'del(...)'`, cleans up empty `.env`.
 
-- [Official hook example](https://github.com/anthropics/claude-code/blob/main/examples/hooks/bash_command_validator_example.py)
-- Related issues: [#1386](https://github.com/anthropics/claude-code/issues/1386), [#10056](https://github.com/anthropics/claude-code/issues/10056), [#5892](https://github.com/anthropics/claude-code/issues/5892)
+## Related Issues
+
+- https://github.com/anthropics/claude-code/issues/1386
+- https://github.com/anthropics/claude-code/issues/10056
+- Claude Code 2.1.117 changelog: native macOS/Linux builds use embedded bfs/ugrep via Bash.
