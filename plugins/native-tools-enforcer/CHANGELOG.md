@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.1] - 2026-04-22
+
+### Changed
+
+- `setting-up` skill now runs on Haiku (`model: haiku` in frontmatter). The skill is deterministic — run the probe, branch on JSON fields, run the matching case — so the smaller model is sufficient and cheaper for the configuration workflow.
+
 ## [2.1.0] - 2026-04-22
 
 ### Added

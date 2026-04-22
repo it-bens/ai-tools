@@ -1,7 +1,8 @@
 ---
 name: setting-up
-version: 2.0.0
+version: 2.1.1
 description: Configure the native-tools-enforcer plugin on this machine. Detects OS, package manager, and whether bfs/ugrep are installed. Offers to install missing binaries (brew on macOS; prints the sudo install command on Linux). Persists a setting so the plugin always enforces native tools, on request. Use when the user says "set up native-tools-enforcer", "install bfs ugrep", "configure native tools enforcer", or "why is native-tools-enforcer not blocking find/grep".
+model: haiku
 ---
 
 # Setting Up native-tools-enforcer

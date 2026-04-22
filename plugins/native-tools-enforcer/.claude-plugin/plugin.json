@@ -1,6 +1,6 @@
 {
   "name": "native-tools-enforcer",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Enforces use of Claude Code native tools / native-build bfs & ugrep instead of bash equivalents (cat, find, grep, sed, echo). Adapts messages to the detected build: new mode (macOS/Linux native with bfs/ugrep), classic mode (Windows, or older builds with Glob/Grep tools), or pass-through when neither toolchain is available.",
   "author": {
     "name": "Martin Bens",
