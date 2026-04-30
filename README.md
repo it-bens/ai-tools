@@ -32,6 +32,7 @@ Then browse and install plugins:
 | [commit-message-generator](./plugins/commit-message-generator/)         | Generate and validate conventional commit messages with automatic type/scope detection                                                                                                                                               | Development  |
 | [behavior-diagnostics](./plugins/behavior-diagnostics/)                 | Debug AI tooling behavior with root cause analysis and honest self-diagnosis across sessions                                                                                                                                         | Development  |
 | [reddit-research](./plugins/reddit-research/)                           | Disciplined Reddit research via reddit-buddy MCP — call budget, truncation awareness, query craft, proactive opt-in                                                                                                                  | Development  |
+| [project-communication](./plugins/project-communication/)               | Turn repository activity into platform-formatted posts — currently ships changelog-summarizing for Discord and Slack with scope grouping and anti-AI-slop validation                                                                 | Productivity |
 
 ## Structure
 
