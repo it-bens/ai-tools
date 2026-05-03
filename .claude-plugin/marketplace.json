@@ -74,6 +74,16 @@
       "name": "project-communication",
       "source": "./plugins/project-communication",
       "category": "productivity"
+    },
+    {
+      "name": "superpowers-additions",
+      "source": "./plugins/superpowers-additions",
+      "category": "development"
+    },
+    {
+      "name": "reviewing-plans-with-opus-enforcer",
+      "source": "./plugins/reviewing-plans-with-opus-enforcer",
+      "category": "guardrails"
     }
   ]
 }

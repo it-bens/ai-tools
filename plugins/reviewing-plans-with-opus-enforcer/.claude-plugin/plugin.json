@@ -1,0 +1,11 @@
+{
+  "name": "reviewing-plans-with-opus-enforcer",
+  "version": "1.0.0",
+  "description": "Enforces Opus model for the reviewing-plans skill (from superpowers-additions). Blocks invocation when the active session is not running Opus.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["hooks", "reviewing-plans", "skill", "opus", "guardrails", "quality", "superpowers"]
+}

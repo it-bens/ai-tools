@@ -1,0 +1,11 @@
+{
+  "name": "superpowers-additions",
+  "version": "1.0.0",
+  "description": "Additions to the superpowers plugin. Currently ships reviewing-plans — a critical, multi-lens audit of an implementation plan against its spec, project posture, and current code.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["superpowers", "plan-review", "plan", "spec", "audit", "skills"]
+}
