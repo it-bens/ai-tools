@@ -17,6 +17,8 @@ The plan's author is not present. You owe the plan neither defence nor courtesy.
 
 ## Workflow
 
+Project overlays may extend this workflow with additional digraph nodes at named positions (`Pre-Step-N`, `Post-Step-N` — for example `Pre-Step-4`, `Post-Step-1b`). Treat overlay-supplied digraph fragments as authoritative additions to the workflow shape, not as advisory commentary. The full execution path is the composition of this skill's digraph with any overlay-supplied fragments at their named positions.
+
 ```dot
 digraph plan_review {
     "Start" [shape=doublecircle];
