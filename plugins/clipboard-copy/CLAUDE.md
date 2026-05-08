@@ -88,6 +88,38 @@ Sources `lib/common.sh`, calls `parse_hook_input`, then runs a series of grep -E
 3. The loop reads JSON-RPC requests one per line on stdin and writes responses on stdout. The server log goes to `mcp-server-clipboard/server.log` (gitignored — log file rather than committed state).
 4. `tools/call clipboard_copy` → `tool_clipboard_copy` → `_clipboard_send_stdin <backend>` → backend utility or OSC 52 escape to `/dev/tty`.
 
+## Testing
+
+BATS tests live in `plugin-tests/clipboard-copy/`:
+
+```bash
+# Setup (first time only)
+./.github/scripts/setup-bats.sh
+
+# Run all clipboard-copy tests
+.bats/bats-core/bin/bats plugin-tests/clipboard-copy/*.bats
+
+# Filter by tag
+.bats/bats-core/bin/bats --filter-tags hook        plugin-tests/clipboard-copy/*.bats
+.bats/bats-core/bin/bats --filter-tags detect      plugin-tests/clipboard-copy/*.bats
+.bats/bats-core/bin/bats --filter-tags tool        plugin-tests/clipboard-copy/*.bats
+.bats/bats-core/bin/bats --filter-tags block       plugin-tests/clipboard-copy/*.bats
+.bats/bats-core/bin/bats --filter-tags allow       plugin-tests/clipboard-copy/*.bats
+.bats/bats-core/bin/bats --filter-tags validate    plugin-tests/clipboard-copy/*.bats
+```
+
+Files:
+
+- `check_clipboard.bats` — block/allow matrix for the PreToolUse hook (pbcopy/wl-copy/clip/clip.exe/xclip/xsel × direct/piped/chained, plus paste-mode and false-positive guards).
+- `detect_backend.bats` — `_clipboard_detect_backend` cascade across OS × installed-utility × WAYLAND_DISPLAY/DISPLAY combinations.
+- `tool_clipboard_copy_file.bats` — every path-validation branch (missing/empty/relative/nonexistent/directory/unreadable) plus byte-exact dispatcher capture for the success path. Smoke-checks `tool_clipboard_copy` text validation too.
+
+### Mocking
+
+`plugin-tests/clipboard-copy/test_helper/backend_setup.bash` provides `backend_set os=... pbcopy=1 xclip=0 ...` for PATH-based mocking. It restricts PATH to the mock dir alone (so `command -v pbcopy` is deterministic on macOS where the real binary lives in `/usr/bin`) and captures absolute paths to `cat`/`chmod`/`rm`/`uname` for its own use. Call `backend_setup_init` in `setup()` and `backend_setup_cleanup` in `teardown()`.
+
+The `tool_clipboard_copy_file.bats` suite stubs `_clipboard_send_stdin` to capture bytes to a tempfile rather than touching the real clipboard, so the success path is verified without depending on any platform utility being installed.
+
 ## Manual Smoke Test
 
 The MCP server is just a stdio process — drive it with hand-crafted JSON-RPC:
