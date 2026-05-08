@@ -84,6 +84,11 @@
       "name": "reviewing-plans-with-opus-enforcer",
       "source": "./plugins/reviewing-plans-with-opus-enforcer",
       "category": "guardrails"
+    },
+    {
+      "name": "clipboard-copy",
+      "source": "./plugins/clipboard-copy",
+      "category": "productivity"
     }
   ]
 }

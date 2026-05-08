@@ -1,0 +1,13 @@
+{
+  "protocolVersion": "2024-11-05",
+  "serverInfo": {
+    "name": "clipboard-copy",
+    "version": "1.0.0"
+  },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
+  "instructions": "Cross-platform clipboard MCP server. Provides two tools: clipboard_copy (writes text to the clipboard) and clipboard_copy_file (writes the contents of a file at an absolute path to the clipboard — useful when content has already been written to a temp file). The backend is auto-detected per OS and environment: pbcopy on macOS; wl-copy on Linux Wayland; xclip or xsel on Linux X11; clip.exe on WSL; clip on Cygwin/MSYS. When no native clipboard utility is reachable, falls back to an OSC 52 terminal escape sequence written to /dev/tty, which works over SSH and in many modern terminals (tmux, kitty, iTerm2, Windows Terminal, Alacritty)."
+}

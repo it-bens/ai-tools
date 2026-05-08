@@ -1,0 +1,32 @@
+{
+  "tools": [
+    {
+      "name": "clipboard_copy",
+      "description": "Copy text to the system clipboard.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["text"],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The text to write to the clipboard. Sent verbatim — no trailing newline is appended."
+          }
+        }
+      }
+    },
+    {
+      "name": "clipboard_copy_file",
+      "description": "Copy the contents of a file to the system clipboard. Use this when the content is already on disk (e.g. a temp file you just wrote) instead of inlining it as text.",
+      "inputSchema": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Absolute filesystem path to the file whose contents should be copied. Must start with '/'."
+          }
+        }
+      }
+    }
+  ]
+}
