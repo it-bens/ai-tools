@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0] - 2026-05-10
+
+### Added
+
+- **SessionStart hook** (`hooks/scripts/session-start.sh`) — injects clipboard-copy MCP tool directives into the conversation context at session start so the model prefers `clipboard_copy` / `clipboard_copy_file` from the first turn, instead of relying solely on the reactive `PreToolUse` block message. The directive is held in `hooks/prompts/mcp-tool-directives.md` and emitted via the standard `hookSpecificOutput.additionalContext` channel. Pattern adapted from the gh-tooling plugin.
+- **BATS coverage** for the SessionStart hook (`plugin-tests/clipboard-copy/session_start.bats`) — asserts JSON shape (`hookEventName`, non-empty `additionalContext`), directive content (ALWAYS/NEVER framing, both tool names, every blocked Bash command, paste-mode escape hatch), and the silent-success no-op when the prompt template is absent.
+
 ## [1.0.0] - 2026-05-08
 
 Initial release.

@@ -19,8 +19,11 @@ plugins/clipboard-copy/
 │   └── lib/
 │       └── clipboard.sh             # Backend detection + tool implementations
 └── hooks/
-    ├── hooks.json                   # PreToolUse(Bash) registration
+    ├── hooks.json                   # SessionStart + PreToolUse(Bash) registration
+    ├── prompts/
+    │   └── mcp-tool-directives.md   # Static directive injected at SessionStart
     └── scripts/
+        ├── session-start.sh         # Emits the directive as additionalContext
         ├── check-clipboard.sh       # Pattern-matches and blocks native writes
         └── lib/
             └── common.sh            # parse_hook_input + block_clipboard helpers
@@ -55,6 +58,11 @@ Reads `.path` from the JSON args. Validates that the path is non-empty, absolute
 #### `run_mcp_server` (in `shared/mcpserver_core.sh`)
 JSON-RPC 2.0 stdio loop. Dispatches `initialize`, `tools/list`, `tools/call`, `notifications/initialized`, and `ping`. Tool calls invoke `tool_<name>` functions; missing functions return JSON-RPC error -32601.
 
+### SessionStart hook (`hooks/`)
+
+#### `session-start.sh` (entry point)
+Drains stdin, locates `hooks/prompts/mcp-tool-directives.md` relative to its own path, JSON-encodes it via `jq -Rs '.'`, and emits a `hookSpecificOutput.additionalContext` object on stdout so Claude Code splices the directive into the conversation context at session start. Exits 0 silently if the prompt file is missing or `jq` is unavailable — the SessionStart channel is optional and must never block the session. The directive itself (`hooks/prompts/mcp-tool-directives.md`) is static: clipboard-copy has no per-project config, so the gh-tooling template-assembly machinery (write/label sections, opt-out flag) was dropped in this adaptation.
+
 ### PreToolUse hook (`hooks/`)
 
 #### `parse_hook_input()` (in `scripts/lib/common.sh`)
@@ -76,6 +84,8 @@ Sources `lib/common.sh`, calls `parse_hook_input`, then runs a series of grep -E
 | Add a new MCP tool | Add `tool_<name>` to `lib/clipboard.sh` and a schema entry to `mcp-server-clipboard/tools.json` |
 | Update tool descriptions / schemas | `mcp-server-clipboard/tools.json` |
 | Update server-level `instructions` text | `mcp-server-clipboard/config.json` |
+| Adjust the SessionStart directive text | `hooks/prompts/mcp-tool-directives.md` |
+| Change how the SessionStart directive is assembled or emitted | `hooks/scripts/session-start.sh` |
 | Adjust which Bash patterns get blocked | `hooks/scripts/check-clipboard.sh` |
 | Adjust the block message | `hooks/scripts/lib/common.sh` — `block_clipboard` |
 | Adjust the hook timeout | `hooks/hooks.json` |
@@ -100,12 +110,13 @@ BATS tests live in `plugin-tests/clipboard-copy/`:
 .bats/bats-core/bin/bats plugin-tests/clipboard-copy/*.bats
 
 # Filter by tag
-.bats/bats-core/bin/bats --filter-tags hook        plugin-tests/clipboard-copy/*.bats
-.bats/bats-core/bin/bats --filter-tags detect      plugin-tests/clipboard-copy/*.bats
-.bats/bats-core/bin/bats --filter-tags tool        plugin-tests/clipboard-copy/*.bats
-.bats/bats-core/bin/bats --filter-tags block       plugin-tests/clipboard-copy/*.bats
-.bats/bats-core/bin/bats --filter-tags allow       plugin-tests/clipboard-copy/*.bats
-.bats/bats-core/bin/bats --filter-tags validate    plugin-tests/clipboard-copy/*.bats
+.bats/bats-core/bin/bats --filter-tags hook          plugin-tests/clipboard-copy/*.bats
+.bats/bats-core/bin/bats --filter-tags detect        plugin-tests/clipboard-copy/*.bats
+.bats/bats-core/bin/bats --filter-tags tool          plugin-tests/clipboard-copy/*.bats
+.bats/bats-core/bin/bats --filter-tags block         plugin-tests/clipboard-copy/*.bats
+.bats/bats-core/bin/bats --filter-tags allow         plugin-tests/clipboard-copy/*.bats
+.bats/bats-core/bin/bats --filter-tags validate      plugin-tests/clipboard-copy/*.bats
+.bats/bats-core/bin/bats --filter-tags session-start plugin-tests/clipboard-copy/*.bats
 ```
 
 Files:
@@ -113,6 +124,7 @@ Files:
 - `check_clipboard.bats` — block/allow matrix for the PreToolUse hook (pbcopy/wl-copy/clip/clip.exe/xclip/xsel × direct/piped/chained, plus paste-mode and false-positive guards).
 - `detect_backend.bats` — `_clipboard_detect_backend` cascade across OS × installed-utility × WAYLAND_DISPLAY/DISPLAY combinations.
 - `tool_clipboard_copy_file.bats` — every path-validation branch (missing/empty/relative/nonexistent/directory/unreadable) plus byte-exact dispatcher capture for the success path. Smoke-checks `tool_clipboard_copy` text validation too.
+- `session_start.bats` — JSON shape (`hookEventName`, non-empty `additionalContext`), directive content (ALWAYS/NEVER framing, both tool names, every blocked Bash command, paste-mode escape hatch), plus the silent-success path when the prompt template is absent. Pattern adapted from `plugin-tests/gh-tooling/session_start.bats` in the shopware ai-coding-tools repo.
 
 ### Mocking
 

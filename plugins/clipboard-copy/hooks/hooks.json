@@ -1,6 +1,17 @@
 {
-  "description": "PreToolUse hook to block native clipboard-write Bash commands and route them to the clipboard-copy MCP tools.",
+  "description": "SessionStart hook to inject clipboard-copy MCP tool directives, and a PreToolUse hook to block native clipboard-write Bash commands and route them to the clipboard-copy MCP tools.",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",

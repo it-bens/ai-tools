@@ -1,7 +1,7 @@
 {
   "name": "clipboard-copy",
-  "version": "1.0.0",
-  "description": "Bash-based MCP server providing cross-platform clipboard tools — clipboard_copy for inline text and clipboard_copy_file for the contents of a file at an absolute path. Auto-detects the right backend per environment (pbcopy on macOS, wl-copy/xclip/xsel on Linux, clip.exe on WSL, clip on Cygwin/MSYS) and falls back to OSC 52 escape sequences when no native utility is available. A PreToolUse hook blocks native clipboard-write commands in Bash and routes them to the MCP tools.",
+  "version": "1.1.0",
+  "description": "Bash-based MCP server providing cross-platform clipboard tools — clipboard_copy for inline text and clipboard_copy_file for the contents of a file at an absolute path. Auto-detects the right backend per environment (pbcopy on macOS, wl-copy/xclip/xsel on Linux, clip.exe on WSL, clip on Cygwin/MSYS) and falls back to OSC 52 escape sequences when no native utility is available. A SessionStart hook primes Claude with the MCP tool directives, and a PreToolUse hook blocks native clipboard-write commands in Bash and routes them to the MCP tools.",
   "author": {
     "name": "Martin Bens",
     "email": "martin.bens@it-bens.de"

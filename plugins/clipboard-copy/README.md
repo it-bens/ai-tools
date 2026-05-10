@@ -47,6 +47,12 @@ The server picks the first available backend in this order, scoped to the OS:
 | Cygwin / MinGW / MSYS (Windows) | `clip` → `osc52`                                                          |
 | Other                           | `osc52`                                                                   |
 
+## SessionStart Hook
+
+A `SessionStart` hook injects a short directive into the conversation context at the start of every session, naming `clipboard_copy` / `clipboard_copy_file` as the right way to write to the clipboard and listing the Bash commands that are blocked. This complements the reactive `PreToolUse` block message below: the model sees the directive *before* it ever reaches for `pbcopy`, instead of only being corrected after the fact.
+
+The directive text lives in `hooks/prompts/mcp-tool-directives.md`. The hook script (`hooks/scripts/session-start.sh`) emits it via `hookSpecificOutput.additionalContext`.
+
 ## Bash Enforcement Hook
 
 A `PreToolUse` hook on the `Bash` tool blocks native clipboard-write commands and routes them to the MCP tools, mirroring the gh-tooling approach. Blocked invocations exit with code 2 and a hint pointing to `clipboard_copy` / `clipboard_copy_file`.
@@ -109,8 +115,11 @@ plugins/clipboard-copy/
 ├── shared/
 │   └── mcpserver_core.sh           # JSON-RPC 2.0 stdio handler
 ├── hooks/
-│   ├── hooks.json                  # PreToolUse(Bash) registration
+│   ├── hooks.json                  # SessionStart + PreToolUse(Bash) registration
+│   ├── prompts/
+│   │   └── mcp-tool-directives.md  # Static template injected at SessionStart
 │   └── scripts/
+│       ├── session-start.sh        # Emits the directive as additionalContext
 │       ├── check-clipboard.sh      # Pattern-matches and blocks native writes
 │       └── lib/
 │           └── common.sh           # parse_hook_input + block_clipboard
