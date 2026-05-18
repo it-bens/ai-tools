@@ -32,6 +32,22 @@ The skill is extendable in two complementary ways:
 
 Both shapes are additive. The skill works without any extension; defaults produce a sane Conventional Commits message.
 
+## Authoring Overlays
+
+Overlay files are injected verbatim into agent context. Nothing in the file is read by a human at runtime. Write only matchable content — `## Pre-Step-N` / `## Post-Step-N` sections and named-value assignments. Do not add a file title, a "this overlay extends X" preamble, or any orientation prose; unmatched lines consume agent attention without behavioral effect.
+
+Minimal correct overlay:
+
+````markdown
+## Named-value assignments
+
+- `footer.template` = `""` (suppresses the co-authoring footer line)
+
+## Pre-Step-10
+
+When the commit type is not `test` or `docs`, do not mention test or documentation changes in the subject or body.
+````
+
 ## Recognized Named Values
 
 | Name                           | Default                                                  | Effect                                                                                                                                     |
