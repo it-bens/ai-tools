@@ -22,6 +22,8 @@
 
 # Claude Code local settings
 .claude/
+!.claude/settings.json
+!.claude/hook-contexts/
 
 # Logs
 *.log
