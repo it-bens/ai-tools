@@ -1,0 +1,11 @@
+{
+  "name": "commit-message-writer",
+  "version": "1.0.0",
+  "description": "Commit-message-writing skill for Conventional Commits. Mode detection (staged, squash, rewrite), a deterministic gather-script-driven workflow, anti-slop ruleset, and validation mode. Extendable at every step via Pre-Step-N / Post-Step-N positions and via recognized named configuration values.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["commit-messages", "conventional-commits", "git", "extendable", "skill"]
+}

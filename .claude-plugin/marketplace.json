@@ -89,6 +89,11 @@
       "name": "clipboard-copy",
       "source": "./plugins/clipboard-copy",
       "category": "productivity"
+    },
+    {
+      "name": "commit-message-writer",
+      "source": "./plugins/commit-message-writer",
+      "category": "development"
     }
   ]
 }
