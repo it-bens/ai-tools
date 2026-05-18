@@ -94,6 +94,11 @@
       "name": "commit-message-writer",
       "source": "./plugins/commit-message-writer",
       "category": "development"
+    },
+    {
+      "name": "commit-message-writer-extension-setup",
+      "source": "./plugins/commit-message-writer-extension-setup",
+      "category": "development"
     }
   ]
 }

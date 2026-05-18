@@ -1,0 +1,11 @@
+{
+  "name": "commit-message-writer-extension-setup",
+  "version": "1.0.0",
+  "description": "One-time setup skill that provisions the hook plumbing and overlay content file needed to extend the commit-message-writer plugin's writing-commit-messages skill. Long plugin and skill names are intentional to prevent accidental invocation.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["commit-messages", "setup", "hooks", "extension", "skill"]
+}
