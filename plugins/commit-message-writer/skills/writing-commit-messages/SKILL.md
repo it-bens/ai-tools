@@ -64,7 +64,13 @@ Detection of "validate", "check", "verify", or "is this commit message correct" 
 
 ### Step 2: Gather diff material
 
-Run the gather script: `scripts/gather.sh <range>`.
+Run the gather script:
+
+```
+bash .claude/skills/commit-message-generating/scripts/gather.sh <range>
+```
+
+The script writes all git output to a single file in `/tmp` and prints a table of contents on stdout.
 
 The range depends on mode:
 
