@@ -21,7 +21,7 @@ input=$(cat)
     IFS= read -r offset
     IFS= read -r limit
     IFS= read -r start_line
-    IFS= read -r total_lines
+    IFS= read -r num_lines
 } < <(printf '%s' "$input" | jq -r '
     (.session_id // ""),
     (.agent_id // "main"),
@@ -31,10 +31,10 @@ input=$(cat)
     (.tool_input.offset // ""),
     (.tool_input.limit // ""),
     (.tool_response.file.startLine // ""),
-    (.tool_response.file.totalLines // "")
+    (.tool_response.file.numLines // "")
 ')
 
-if [[ -z "$session_id" || -z "$file_path" || -z "$start_line" || -z "$total_lines" ]]; then
+if [[ -z "$session_id" || -z "$file_path" || -z "$start_line" || -z "$num_lines" ]]; then
     exit 0
 fi
 
@@ -44,9 +44,11 @@ tracker_file=$(tracker_path "$CLAUDE_PLUGIN_DATA" "$session_id" "$agent_id")
 tracker=$(load_tracker "$tracker_file")
 
 # Compute new range (match pre-read.sh: both offset AND limit required for bounded range)
+# Range end is derived from numLines (lines actually returned), not totalLines
+# (the file's full line count), so a partial read records only the span it read.
 if [[ -n "$offset" && -n "$limit" ]]; then
     new_start="$start_line"
-    new_end=$(( start_line + total_lines - 1 ))
+    new_end=$(( start_line + num_lines - 1 ))
 else
     new_start=1
     new_end="null"

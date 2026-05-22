@@ -131,16 +131,18 @@ run_pre_read() {
 }
 
 # Run post-read.sh
-# Args: $1 = session_id, $2 = file_path, $3 = startLine, $4 = totalLines,
-#        $5 = offset (optional), $6 = limit (optional), $7 = agent_id (optional)
+# Args: $1 = session_id, $2 = file_path, $3 = startLine, $4 = numLines,
+#        $5 = totalLines (optional, default = numLines),
+#        $6 = offset (optional), $7 = limit (optional), $8 = agent_id (optional)
 run_post_read() {
     local session_id="$1"
     local file_path="$2"
     local start_line="$3"
-    local total_lines="$4"
-    local offset="${5:-}"
-    local limit="${6:-}"
-    local agent_id="${7:-}"
+    local num_lines="$4"
+    local total_lines="${5:-$num_lines}"
+    local offset="${6:-}"
+    local limit="${7:-}"
+    local agent_id="${8:-}"
 
     local stdin
     stdin=$(_base_stdin "$session_id" "$agent_id")
@@ -158,8 +160,9 @@ run_post_read() {
     tool_response=$(jq -n -c \
         --arg fp "$file_path" \
         --argjson sl "$start_line" \
+        --argjson nl "$num_lines" \
         --argjson tl "$total_lines" \
-        '{file: {filePath: $fp, startLine: $sl, totalLines: $tl}}')
+        '{file: {filePath: $fp, startLine: $sl, numLines: $nl, totalLines: $tl}}')
 
     stdin=$(echo "$stdin" | jq -c \
         --argjson ti "$tool_input" \

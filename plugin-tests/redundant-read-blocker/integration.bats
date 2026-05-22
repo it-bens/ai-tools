@@ -15,7 +15,7 @@ load 'test_helper/common_setup'
     append_assistant_message 10000 0 0 100
 
     # 1. Record a read
-    run_post_read "sess-1" "$test_file" 1 50 0 50
+    run_post_read "sess-1" "$test_file" 1 50 200 1 50
     assert_success
 
     # 2. Re-read should be blocked
@@ -80,6 +80,23 @@ load 'test_helper/common_setup'
 }
 
 # bats test_tags=lifecycle
+@test "partial top read does not block a later deeper read of the same file" {
+    local test_file="${TEST_TEMP_DIR}/two-pass.txt"
+    printf 'line\n%.0s' {1..97} > "$test_file"
+
+    append_assistant_message 10000 0 0 100
+
+    # Pass 1: read the top (lines 1-37) of a 97-line file
+    run_post_read "sess-1" "$test_file" 1 37 97 1 37
+    assert_success
+
+    # Pass 2: read the rest (lines 39-97) — must be ALLOWED, the top read
+    # only covered 1-37
+    run_pre_read "sess-1" "$test_file" 39 59
+    assert_success
+}
+
+# bats test_tags=lifecycle
 @test "agent isolation: main blocked, subagent can still read" {
     local test_file="${TEST_TEMP_DIR}/agent-iso.txt"
     echo "content" > "$test_file"
@@ -87,7 +104,7 @@ load 'test_helper/common_setup'
     append_assistant_message 10000 0 0 100
 
     # 1. Main agent records a read
-    run_post_read "sess-1" "$test_file" 1 50 0 50
+    run_post_read "sess-1" "$test_file" 1 50 200 1 50
     assert_success
 
     # 2. Main agent re-read is blocked

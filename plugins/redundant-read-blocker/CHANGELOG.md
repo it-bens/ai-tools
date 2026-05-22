@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.1] - 2026-05-23
+
+### Fixed
+
+- `post-read.sh` recorded the read range end from `tool_response.file.totalLines` (the file's full line count) instead of `numLines` (the lines actually returned). A bounded read of the top of a larger file (e.g. lines 1-37 of a 97-line file) was recorded as covering the whole file, so any later read of a deeper section was wrongly blocked on first attempt. The end is now derived from `numLines`.
+
 ## [1.2.0] - 2026-04-09
 
 ### Added
