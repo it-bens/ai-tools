@@ -1,5 +1,6 @@
 ---
 name: writing-commit-messages
+version: 1.0.2
 description: Use when the user asks to generate, write, draft, or validate a commit message, squash commit, or merge commit message. Detects mode (staged, squash, rewrite) from arguments and message context. Do NOT activate during implementation work; only when the user is ready to capture a finished change or validate an existing one.
 ---
 
@@ -52,7 +53,7 @@ digraph writing_commit_messages {
 
 ### Step 1: Detect mode
 
-The skill picks one mode in this order. No slash commands.
+The skill picks one mode in this order. The argument is authoritative: select mode directly from it; never re-interpret it against conversation context (e.g., do not fall back to staged mode because uncommitted changes exist). No slash commands.
 
 1. Argument is a full or short SHA → **rewrite** mode (range = `<sha>^..<sha>`).
 2. Argument is a range expression (`<a>..<b>` or `<a>...<b>`) → **squash** mode (range as-is).
@@ -67,7 +68,7 @@ Detection of "validate", "check", "verify", or "is this commit message correct" 
 Run the gather script:
 
 ```
-bash .claude/skills/commit-message-generating/scripts/gather.sh <range>
+bash scripts/gather.sh <range>
 ```
 
 The script writes all git output to a single file in `/tmp` and prints a table of contents on stdout.

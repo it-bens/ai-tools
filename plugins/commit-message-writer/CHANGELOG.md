@@ -1,6 +1,12 @@
 # Changelog
 
-## [1.1.0] - 2026-05-22
+## [1.0.2] - 2026-05-22
+
+### Fixed
+- Step 2 now invokes `gather.sh` via the skill-relative path `scripts/gather.sh`. The previous path (`.claude/skills/commit-message-generating/scripts/gather.sh`) pointed at a non-existent location, causing sessions to abandon the gather workflow and orient with raw git commands instead.
+- Step 1 mode detection now states that the argument is authoritative and must not be re-interpreted against conversation context, preventing the skill from falling back to staged mode when uncommitted changes are present alongside a SHA or range argument.
+
+## [1.0.1] - 2026-05-22
 
 ### Fixed
 - `gather.sh` now handles a rewrite-mode range against a root (parentless) commit. The script detects `<sha>^..<sha>` where `<sha>^` does not resolve and substitutes git's empty-tree object for the diff side and `-1 <sha>` for the log side, so `git diff` and `git log` both succeed on a repository's initial commit.
