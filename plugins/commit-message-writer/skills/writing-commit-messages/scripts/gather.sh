@@ -8,14 +8,30 @@ set -euo pipefail
 
 RANGE="${1-}"
 RANGE_ARGS=()
+LOG_RANGE_ARGS=()
 if [[ -n "$RANGE" ]]; then
     RANGE_ARGS+=("$RANGE")
+    LOG_RANGE_ARGS+=("$RANGE")
 fi
 
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 if [[ -z "$REPO_ROOT" ]]; then
     echo "gather.sh: not inside a git repository" >&2
     exit 2
+fi
+
+# Rewrite-mode range "<sha>^..<sha>" targeting a root commit: <sha>^ does not
+# resolve. Diff against git's empty-tree object; restrict the log to <sha>.
+if [[ -n "$RANGE" && "$RANGE" =~ ^([^.]+)\^\.\.([^.]+)$ ]]; then
+    LEFT_REF="${BASH_REMATCH[1]}"
+    RIGHT_REF="${BASH_REMATCH[2]}"
+    if [[ "$LEFT_REF" == "$RIGHT_REF" ]] \
+        && ! git -C "$REPO_ROOT" rev-parse --verify "${LEFT_REF}^" >/dev/null 2>&1; then
+        EMPTY_TREE='4b825dc642cb6eb9a060e54bf8d69288fbee4904'
+        RANGE="${EMPTY_TREE}..${RIGHT_REF}"
+        RANGE_ARGS=("$RANGE")
+        LOG_RANGE_ARGS=("-1" "$RIGHT_REF")
+    fi
 fi
 
 set +e
@@ -53,7 +69,7 @@ git -C "$REPO_ROOT" --no-pager diff ${RANGE_ARGS[@]+"${RANGE_ARGS[@]}"} --no-col
 add_marker numstat
 git -C "$REPO_ROOT" --no-pager diff ${RANGE_ARGS[@]+"${RANGE_ARGS[@]}"} --no-color --find-renames --numstat >>"$TMPFILE" || true
 
-LOG_OUTPUT="$(git -C "$REPO_ROOT" --no-pager log ${RANGE_ARGS[@]+"${RANGE_ARGS[@]}"} --no-color --format='%H%n%s%n%b%n---' 2>/dev/null || true)"
+LOG_OUTPUT="$(git -C "$REPO_ROOT" --no-pager log ${LOG_RANGE_ARGS[@]+"${LOG_RANGE_ARGS[@]}"} --no-color --format='%H%n%s%n%b%n---' 2>/dev/null || true)"
 if [[ -n "$LOG_OUTPUT" ]]; then
     add_marker log
     printf '%s\n' "$LOG_OUTPUT" >>"$TMPFILE"

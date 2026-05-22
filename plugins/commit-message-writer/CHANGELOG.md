@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0] - 2026-05-22
+
+### Fixed
+- `gather.sh` now handles a rewrite-mode range against a root (parentless) commit. The script detects `<sha>^..<sha>` where `<sha>^` does not resolve and substitutes git's empty-tree object for the diff side and `-1 <sha>` for the log side, so `git diff` and `git log` both succeed on a repository's initial commit.
+
+### Added
+- BATS regression test for the root-commit case in `plugin-tests/commit-message-writer/gather.bats`.
+
 ## [1.0.0] - 2026-05-18
 
 ### Added

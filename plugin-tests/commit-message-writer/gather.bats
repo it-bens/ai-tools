@@ -73,6 +73,30 @@ teardown() {
     [[ "$output" == *"SECTION log"* ]]
 }
 
+@test "gather.sh: handles a rewrite-mode range against a root commit" {
+    local repo
+    repo="$(mktemp -d)"
+    git -C "$repo" init -q
+    git -C "$repo" config user.email "test@example.com"
+    git -C "$repo" config user.name "Test"
+    cd "$repo"
+    echo "hello" > a.txt
+    git add a.txt
+    git commit -q -m "root content"
+    ROOT_SHA="$(git rev-parse HEAD)"
+
+    run "$GATHER_SH" "${ROOT_SHA}^..${ROOT_SHA}"
+    local rc="$status"
+    local out="$output"
+
+    rm -rf "$repo"
+
+    [ "$rc" -eq 0 ]
+    [[ "$out" == *"TMPFILE=/tmp/commit-msg."* ]]
+    [[ "$out" == *"DIFF_FILE a.txt"* ]]
+    [[ "$out" == *"SECTION log"* ]]
+}
+
 # Regression guard: tmpfile prefix must stay commit-msg.XXXXXX. A prior port
 # from cc-port used cc-port-commit.XXXXXX; this test prevents accidental
 # revert when the script is re-touched.
