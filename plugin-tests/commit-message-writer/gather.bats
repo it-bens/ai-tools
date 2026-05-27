@@ -97,6 +97,20 @@ teardown() {
     [[ "$out" == *"SECTION log"* ]]
 }
 
+# Regression guard: a rewrite range "<sha>^..<sha>" whose <sha> does not resolve
+# in this repo (e.g. invoked from the wrong working directory) must not be
+# mistaken for a root commit and silently diffed against the empty-tree object.
+@test "gather.sh: rejects a rewrite range whose commit does not resolve in this repo" {
+    cd "$TEST_REPO"
+    local missing="deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+
+    run "$GATHER_SH" "${missing}^..${missing}"
+
+    [ "$status" -eq 2 ]
+    [[ "$output" == *"invalid git range"* ]]
+    [[ "$output" != *"4b825dc6"* ]]
+}
+
 # Regression guard: tmpfile prefix must stay commit-msg.XXXXXX. A prior port
 # from cc-port used cc-port-commit.XXXXXX; this test prevents accidental
 # revert when the script is re-touched.

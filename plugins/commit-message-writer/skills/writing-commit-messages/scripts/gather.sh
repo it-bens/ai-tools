@@ -20,12 +20,16 @@ if [[ -z "$REPO_ROOT" ]]; then
     exit 2
 fi
 
-# Rewrite-mode range "<sha>^..<sha>" targeting a root commit: <sha>^ does not
-# resolve. Diff against git's empty-tree object; restrict the log to <sha>.
+# Rewrite range "<sha>^..<sha>" on a root commit: <sha> resolves but its parent
+# does not. Diff against git's empty-tree object and log just <sha>. Require
+# <sha> itself to resolve so an unknown ref (e.g. wrong working directory or
+# repository) falls through to the normal "invalid range" path instead of being
+# mistaken for a root commit.
 if [[ -n "$RANGE" && "$RANGE" =~ ^([^.]+)\^\.\.([^.]+)$ ]]; then
     LEFT_REF="${BASH_REMATCH[1]}"
     RIGHT_REF="${BASH_REMATCH[2]}"
     if [[ "$LEFT_REF" == "$RIGHT_REF" ]] \
+        && git -C "$REPO_ROOT" rev-parse --verify "${RIGHT_REF}^{commit}" >/dev/null 2>&1 \
         && ! git -C "$REPO_ROOT" rev-parse --verify "${LEFT_REF}^" >/dev/null 2>&1; then
         EMPTY_TREE='4b825dc642cb6eb9a060e54bf8d69288fbee4904'
         RANGE="${EMPTY_TREE}..${RIGHT_REF}"

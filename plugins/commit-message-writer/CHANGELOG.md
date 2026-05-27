@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.3] - 2026-05-28
+
+### Fixed
+- Step 2 now directs running `gather.sh` by its absolute path while keeping the working directory inside the repository being summarized. The script detects its target repository from the current working directory, so the previous relative-path invocation led sessions to `cd` into the skill's own directory (a different repository when the skill is plugin-installed), targeting the wrong repository.
+- `gather.sh` root-commit detection now requires `<sha>` itself to resolve before treating `<sha>^..<sha>` as a root commit. An unknown ref (e.g. invoked against the wrong repository) previously matched the same "parent does not resolve" test, was rewritten to git's empty-tree object, and surfaced a misleading `invalid git range: 4b825dc6...` error. It now falls through to report `invalid git range: <sha>^..<sha>`, naming the actual input.
+- Step 2 exit-code `2` handling now names both causes (invalid range, not inside a git repository) and directs reporting the script's stderr message verbatim.
+
+### Added
+- BATS regression test for a rewrite range whose commit does not resolve in the current repository.
+
 ## [1.0.2] - 2026-05-22
 
 ### Fixed

@@ -1,6 +1,6 @@
 ---
 name: writing-commit-messages
-version: 1.0.2
+version: 1.0.3
 description: Use when the user asks to generate, write, draft, or validate a commit message, squash commit, or merge commit message. Detects mode (staged, squash, rewrite) from arguments and message context. Do NOT activate during implementation work; only when the user is ready to capture a finished change or validate an existing one.
 ---
 
@@ -65,10 +65,10 @@ Detection of "validate", "check", "verify", or "is this commit message correct" 
 
 ### Step 2: Gather diff material
 
-Run the gather script:
+Run the gather script by its **absolute path** (`<skill-dir>/scripts/gather.sh`), and keep the working directory **inside the repository whose changes you are summarizing**. Do not `cd` into the skill's own directory: the script detects its target repository from the current working directory, so running it from anywhere else targets the wrong repository.
 
 ```
-bash scripts/gather.sh <range>
+bash <skill-dir>/scripts/gather.sh <range>
 ```
 
 The script writes all git output to a single file in `/tmp` and prints a table of contents on stdout.
@@ -87,7 +87,7 @@ Exit-code handling:
 
 - `0`: success, proceed.
 - `1`: no changes. For staged mode, retry with empty range. For squash mode, report "branch has no commits ahead of base" and stop. For rewrite mode, report "hash resolves to no changes" and stop.
-- `2`: invalid range. Report stderr message to the user and stop.
+- `2`: invalid range, or not inside a git repository. Report the script's stderr message verbatim to the user and stop.
 
 ### Step 3: Orient
 
