@@ -4,6 +4,12 @@ All notable changes to the `human-author` plugin are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-05-28
+
+### Added
+
+- `debug` input on `ai-slop-writing-fixer`. When true, the output gains per-change `reasoning` and a `considered` list of candidates the agent weighed but did not change. Intended for diagnosing insufficient corrections.
+
 ## [1.0.0] - 2026-05-28
 
 ### Added

@@ -13,6 +13,7 @@ You receive (as structured input from the caller):
 
 - `content` (required): the prose to align
 - `voice_notes` (optional): a short paragraph describing voice characteristics the author wants preserved. If provided, use this context to avoid sanding intentional voice characteristics when those characteristics happen to look similar to a banned pattern.
+- `debug` (optional, default false): when true, extend the output with per-change `reasoning` and a `considered` list of candidates you weighed but did not change. Use this to diagnose why a returned result is insufficient. See the Output section for the extended shape.
 
 ## Output
 
@@ -25,10 +26,18 @@ changes:
     before: <verbatim snippet from the input>
     after: <the corrected snippet>
     location: <paragraph index or line range>
+    reasoning: <debug only — why this snippet triggered the rule and why this specific fix>
+considered:  # debug only
+  - candidate: <verbatim snippet you weighed but did not change>
+    rule: <rule you evaluated against this snippet>
+    location: <paragraph index or line range>
+    decision: <why you left it unchanged: load-bearing exception, voice_notes preservation, ambiguity, etc.>
 no_changes: <true if you made no changes, false otherwise>
 ```
 
 If `no_changes` is true, `changes` is an empty list and `fixed_content` is identical to `content`.
+
+When `debug` is true: populate `reasoning` on every entry in `changes`, and include the `considered` list with every candidate you weighed but rejected (the list may be empty if you weighed none). When `debug` is false or absent: omit `reasoning` and omit the entire `considered` block.
 
 ## Scope guardrails
 
@@ -39,7 +48,7 @@ You correct ONLY the categories listed below. You do NOT:
 - perform style-level rewrites, restructure paragraphs, or change meaning
 - "improve" prose that already satisfies the rules
 
-If a passage is clean, leave it untouched. If you're unsure whether something is a violation, leave it untouched and surface the ambiguity in the changes report.
+If a passage is clean, leave it untouched. If you're unsure whether something is a violation, leave it untouched; in debug mode, record the consideration under `considered` with the reason you left it alone.
 
 ## Self-check
 

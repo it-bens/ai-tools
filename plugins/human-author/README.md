@@ -20,6 +20,7 @@ A subagent that receives prose and returns the prose with anti-slop rule violati
 
 - `content` (required): the prose to align.
 - `voice_notes` (optional): characteristics to preserve so intentional voice doesn't get sanded into something that merely satisfies the rules.
+- `debug` (optional, default false): when true, the output includes per-change `reasoning` and a `considered` list of candidates the agent weighed but did not change. Use to diagnose insufficient corrections.
 
 **Output shape:**
 
@@ -30,8 +31,16 @@ changes:
     before: <verbatim snippet from the input>
     after: <the corrected snippet>
     location: <paragraph index or line range>
+    reasoning: <debug only — why this snippet triggered the rule and why this fix>
+considered:  # debug only
+  - candidate: <snippet weighed but unchanged>
+    rule: <rule considered>
+    location: <paragraph index or line range>
+    decision: <why left unchanged>
 no_changes: <true if no changes were made>
 ```
+
+In normal mode (`debug` false or absent), `reasoning` and the `considered` block are omitted.
 
 **What it corrects:**
 
