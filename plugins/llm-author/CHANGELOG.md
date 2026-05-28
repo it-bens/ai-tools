@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.1.0] - 2026-05-28
+
+Added Writing Subagent Descriptions skill for authoring the `description` field on Claude Code agent definitions. A single `[invocation-style]` argument (`broad` | `narrow` | `specialist`) controls trigger phrasing and routing breadth. The skill treats descriptions as LLM-routing artifacts, not human prose: no anti-slop validation runs, and router-recognized tokens such as `PROACTIVELY` and `MUST BE USED` are explicitly preserved.
+
+### Added
+
+- `skills/writing-subagent-descriptions/SKILL.md` — digraph workflow, broad / narrow / specialist drafting templates, router-vs-expert separation audit that preserves routing-critical tokens
+
 ## [3.0.0] - 2026-04-14
 
 Renamed plugin from `prompt-engineering` to `llm-author`. The previous name collided with the inner `prompt-engineering` skill during invocation — phrases like "use the prompt-engineering plugin" frequently routed to the wrong skill. The new name reflects the plugin's actual scope: authoring LLM-targeted content (prompts, skills, agents, rules files) rather than prompt engineering alone. Skill names are unchanged.

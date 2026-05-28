@@ -42,6 +42,21 @@ This plugin bundles the craft of authoring LLM-targeted content: designing high-
 - Enforce the canonical family pattern (CRITICAL → Decision Test → body → Red Flags)
 - Report honest token-reduction trajectory without manufacturing cuts
 
+### Writing Subagent Descriptions
+
+**Triggers:** "write a subagent description", "draft a description for this agent", "improve this agent's description", edits to the `description` field on a file under `.claude/agents/`, `~/.claude/agents/`, or a plugin's `agents/` directory
+
+**Argument:** `<invocation-style>` — `broad` | `narrow` | `specialist`
+
+**Capabilities:**
+- Locate the target agent's identity, capability, and system-prompt body from conversation context or the working tree
+- Draft a `description` field matched to the chosen invocation style:
+  - `broad` — proactive auto-delegation with a wide routing net (`Proactively …`)
+  - `narrow` — auto-fires when conditions match, with enumerated negative space (`MUST BE USED when … Do NOT use for …`)
+  - `specialist` — capability and tight scope only, no auto-trigger phrases; `@-mention` invocation
+- Audit drafts for router-vs-expert separation (no behavioural instructions, no workflow steps, no output-contract leaks) while preserving routing-critical tokens such as `PROACTIVELY` and `MUST BE USED`
+- Treat descriptions as LLM-routing artifacts, never as human prose — human-targeted prose validators (anti-slop) are explicitly not applied
+
 ## Usage
 
 Once installed, simply ask Claude Code for help with prompts:
@@ -58,6 +73,9 @@ Once installed, simply ask Claude Code for help with prompts:
 "Adapt this prompt for Gemini"
 "Create a Gemini 3 prompt for [task]"
 "Create a Gemini deep research prompt for [topic]"
+"Write a broad description for this agent"
+"Draft a narrow subagent description"
+"Improve the description on .claude/agents/code-reviewer.md"
 ```
 
 ## Claude Web Project
@@ -99,6 +117,8 @@ llm-author/
 │   │   ├── SKILL.md             # Rule-file writing and optimization skill
 │   │   ├── assets/templates/    # Canonical rules-file skeleton
 │   │   └── references/          # On-demand depth for optimization passes
+│   ├── writing-subagent-descriptions/
+│   │   └── SKILL.md             # Subagent description writing skill
 │   └── prompt-engineering/
 │       ├── SKILL.md             # Main skill definition
 │       ├── references/          # Skill-specific references
