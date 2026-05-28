@@ -179,10 +179,12 @@ Bad (bold-as-title in a numbered list):
 1. **Threshold and override.** "5-10" needs a defensible default.
 2. **Summary line wording.** Avoid leaking reviewer voice into raw output.
 
-Better (lead with the substance, drop the bold title):
+Better (drop the bold; keep a short topic phrase as a scannable handle):
 
-1. The "5-10" threshold needs a defensible default, probably a constant. A `--max-locations` flag would let reviewers see the full list without switching to JSON.
-2. Summary lines like `+ 73 more locations` work, but they should not leak reviewer-to-developer voice into raw tool output.
+1. Threshold and override. "5-10" needs a defensible default, probably a constant. A `--max-locations` flag would let reviewers see the full list without switching to JSON.
+2. Summary line wording. Lines like `+ 73 more locations` work, but they should not leak reviewer-to-developer voice into raw tool output.
+
+The bold span is what triggers the rule. The topic phrase as plain text is fine and often useful as a scannable handle. Do not fold the topic into the sentence body when the input was structured as an enumeration — that destroys navigation. Only switch to flowing prose when the items are not a genuine enumeration to begin with.
 
 ### Tone
 

@@ -4,6 +4,12 @@ All notable changes to the `human-author` plugin are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2026-05-28
+
+### Changed
+
+- Refined the `Better` example for the bold-as-title rule in `ai-slop-writing-fixer`. The previous version folded the topic phrase into the sentence body (`The "5-10" threshold needs...`), which trained the agent to destroy the navigation handle when the input was structured as an enumeration. The new version keeps the topic phrase as plain leading text (`Threshold and override. "5-10" needs...`) and adds a follow-up clause clarifying that the bold span is the trigger, not the topic phrase itself.
+
 ## [1.1.1] - 2026-05-28
 
 ### Changed
