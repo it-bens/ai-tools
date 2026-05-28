@@ -35,7 +35,7 @@ Checks run in validation mode (Step V). Each rule has a category (Format Complia
 | Body does not restate the diff (heuristic: no file-name listing pattern, no implementation-walkthrough phrasing) | WARN |
 | Body contains motivation indicators ("because", "caused", "previously", "root cause", or before/after framing) | WARN if absent |
 | No em dashes (`—`) anywhere | FAIL if found (literal character check) |
-| No banned vocabulary from `writing-rules-anti-ai-slop.md` | WARN, one entry per match |
+| No banned vocabulary from the `human-author:ai-slop-writing-fixer` agent's vocabulary list | WARN, one entry per match |
 
 ## Report Format
 
