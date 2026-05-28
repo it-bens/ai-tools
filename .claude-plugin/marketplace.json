@@ -16,6 +16,11 @@
       "category": "productivity"
     },
     {
+      "name": "human-author",
+      "source": "./plugins/human-author",
+      "category": "productivity"
+    },
+    {
       "name": "python-plan-optimizer",
       "source": "./plugins/python-plan-optimizer",
       "category": "development"

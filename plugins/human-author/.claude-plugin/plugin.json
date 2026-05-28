@@ -1,0 +1,13 @@
+{
+  "name": "human-author",
+  "version": "1.0.0",
+  "description": "Author content that reads like a human wrote it. Currently ships the ai-slop-writing-fixer subagent: receives prose, returns the prose with anti-slop violations corrected plus a structured change report.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["anti-slop", "ai-slop", "writing", "prose", "editing", "human-voice", "llm-detection"],
+  "homepage": "https://github.com/it-bens/ai-tools/tree/main/plugins/human-author",
+  "repository": "https://github.com/it-bens/ai-tools"
+}
