@@ -169,10 +169,20 @@ Better: "The dispatch sites had `Context` in scope but didn't pass it to the eve
 
 ### Formatting Discipline
 
-- Bold-keyword-colon lists (`**Reliability:** The system...`) are not a substitute for prose. When content flows as argument, write paragraphs.
+- Bold-as-title list items (`**Reliability:** The system...`, `**Reliability.** The system...`, `**Reliability** acts as...`) are not a substitute for prose. When content flows as argument, write paragraphs. Applies to bulleted and numbered lists alike; the punctuation after the bold span (colon, period, dash, none) does not matter, and a colon inside the bold span (`**Scope: per-panel only.**`) does not exempt the item.
 - Do not bold every other sentence. Bold only key behavioral changes, sparingly.
 - Use lists when content is a genuine enumeration (parallel items the reader will scan, not a prose flow forced into bullets). Numbered lists only when items have a real sequence. Use bullets otherwise.
 - Match the formatting density of existing content in the target context.
+
+Bad (bold-as-title in a numbered list):
+
+1. **Threshold and override.** "5-10" needs a defensible default.
+2. **Summary line wording.** Avoid leaking reviewer voice into raw output.
+
+Better (lead with the substance, drop the bold title):
+
+1. The "5-10" threshold needs a defensible default, probably a constant. A `--max-locations` flag would let reviewers see the full list without switching to JSON.
+2. Summary lines like `+ 73 more locations` work, but they should not leak reviewer-to-developer voice into raw tool output.
 
 ### Tone
 
