@@ -1,6 +1,6 @@
 ---
 name: writing-commit-messages
-version: 1.0.3
+version: 1.1.0
 description: Use when the user asks to generate, write, draft, or validate a commit message, squash commit, or merge commit message. Detects mode (staged, squash, rewrite) from arguments and message context. Do NOT activate during implementation work; only when the user is ready to capture a finished change or validate an existing one.
 ---
 
@@ -179,13 +179,8 @@ Confidence handling:
 
 ### Step 11: Anti-slop validation
 
-Re-read `references/writing-rules-anti-ai-slop.md`, then check the draft message literally (not from memory):
-
 1. Check each body paragraph for hard-wrapping. Join multi-line paragraphs into a single continuous line. The 72-char limit applies only to the subject.
-2. Search subject and body for em dash (`—`) and en dash (`–`) characters. Remove every instance. This is a literal character search, not a mental scan.
-3. Re-read each word against the banned vocabulary list. Replace matches with the plain alternative or delete.
-4. Check for banned sentence patterns, colon overuse, hedging filler.
-5. If violations are found, rewrite the affected text and re-check the rewritten text.
+2. Dispatch the `human-author:ai-slop-writing-fixer` subagent via the Agent tool. Pass the full message text (subject and body, including any breaking-change footer but excluding the `Co-Authored-By` and other generated footer lines from Step 12) as `content`. Use the returned `fixed_content` as the message text for Step 12. If the agent's `changes` list is non-empty, the violations are already corrected; do not re-apply them.
 
 ### Step 12: Present message with footer
 

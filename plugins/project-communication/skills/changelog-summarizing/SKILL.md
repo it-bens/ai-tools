@@ -1,7 +1,7 @@
 ---
 name: changelog-summarizing
 description: Write a summary post about repository changes since a given date for Discord and Slack. Analyzes commits on main, groups by conventional-commit scope, and produces separate platform-formatted posts.
-allowed-tools: Bash, Read, Grep, AskUserQuestion
+allowed-tools: Bash, Read, Grep, AskUserQuestion, Agent
 ---
 
 # Changelog Summary Post
@@ -81,14 +81,7 @@ For each scope group, write a short contextual paragraph. Follow these rules:
 
 ## Phase 6: Anti-Slop Validation
 
-Read references/writing-rules-anti-ai-slop.md and apply every rule to the draft post. Specifically:
-
-1. Search the entire draft for em dash (—) and en dash (–) characters. Remove every instance.
-2. Check every word against the banned vocabulary list. Replace with the plain alternative or delete.
-3. Check for banned sentence patterns, colon/semicolon overuse, hedging filler.
-4. Verify sentence rhythm varies (mix short and long sentences, no metronomic 15-20 word uniformity).
-5. Check for concreteness: no "improved X" when you can name the specific class, config key, or behavior.
-6. If any violations found, rewrite the affected text and re-check.
+Dispatch the `human-author:ai-slop-writing-fixer` subagent via the Agent tool. Pass the synthesized prose from Phase 5 as `content`. The agent applies em-dash, banned-vocabulary, sentence-pattern, rhythm, and concreteness corrections, then returns the fixed prose plus a structured change report. Use the returned `fixed_content` as input to Phase 7. If the `changes` list is non-empty, the violations are already corrected; do not re-apply them.
 
 ## Phase 7: Format Output
 

@@ -1,6 +1,8 @@
 # Commit Message Writer
 
-Commit-message-writing skill for Conventional Commits. Mode detection (staged / squash / rewrite), a deterministic gather-script-driven workflow, an anti-slop ruleset, and validation mode.
+Commit-message-writing skill for Conventional Commits. Mode detection (staged / squash / rewrite), a deterministic gather-script-driven workflow, anti-slop validation via the `human-author:ai-slop-writing-fixer` subagent, and validation mode.
+
+The `human-author` plugin is declared as a dependency and auto-installs alongside this one.
 
 ## Quick Start
 

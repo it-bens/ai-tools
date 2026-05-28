@@ -1,7 +1,7 @@
 {
   "name": "project-communication",
-  "version": "1.0.0",
-  "description": "Turn repository activity into platform-formatted posts. Currently ships the changelog-summarizing skill: walks committed history on main, groups commits by conventional-commit scope, synthesizes each group into a contextual paragraph, and applies anti-AI-slop validation before formatting Discord and Slack outputs.",
+  "version": "1.1.0",
+  "description": "Turn repository activity into platform-formatted posts. Currently ships the changelog-summarizing skill: walks committed history on main, groups commits by conventional-commit scope, synthesizes each group into a contextual paragraph, and dispatches the human-author:ai-slop-writing-fixer subagent before formatting Discord and Slack outputs.",
   "author": {
     "name": "Martin Bens",
     "email": "martin.bens@it-bens.de"
@@ -9,5 +9,6 @@
   "license": "MIT",
   "keywords": ["changelog", "summary", "discord", "slack", "git", "conventional-commits", "communication"],
   "homepage": "https://github.com/it-bens/ai-tools/tree/main/plugins/project-communication",
-  "repository": "https://github.com/it-bens/ai-tools"
+  "repository": "https://github.com/it-bens/ai-tools",
+  "dependencies": ["human-author"]
 }

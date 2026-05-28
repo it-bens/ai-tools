@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.0] - 2026-05-28
+
+### Changed
+- Step 11 now dispatches the `human-author:ai-slop-writing-fixer` subagent via the Agent tool instead of re-reading an inline anti-slop reference. The agent applies the corrections and returns the fixed message text. This shifts anti-slop maintenance to the `human-author` plugin and picks up its broader ruleset (pre-empted concession, hedge openers, balanced hedging, parallelism in compound predicates, label-not-explanation, plus the existing em-dash ban, banned vocabulary, sentence patterns, rhythm, and concreteness rules).
+
+### Added
+- `dependencies` entry on `human-author` in `.claude-plugin/plugin.json`. Installing this plugin now auto-installs `human-author`.
+
+### Removed
+- `skills/writing-commit-messages/references/writing-rules-anti-ai-slop.md`. The ruleset lives in the `human-author:ai-slop-writing-fixer` agent.
+
 ## [1.0.3] - 2026-05-28
 
 ### Fixed
