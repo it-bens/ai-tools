@@ -4,6 +4,12 @@ All notable changes to the `human-author` plugin are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2026-05-28
+
+### Changed
+
+- Tightened the bold-as-title rule in `ai-slop-writing-fixer` after a regression where the agent stopped stripping the bold markers entirely. Two root causes: (1) Bad and Better had different content (Bad short, Better expanded), making the required fix-shape ambiguous; (2) the clarifying paragraph emphasized preservation ("topic phrase is fine", "do not fold") over the imperative action. The rule now opens with "are slop. Strip the bold markers around the topic phrase", and Bad/Better differ by exactly four asterisks per item with identical content otherwise.
+
 ## [1.1.2] - 2026-05-28
 
 ### Changed

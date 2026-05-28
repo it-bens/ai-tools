@@ -169,7 +169,7 @@ Better: "The dispatch sites had `Context` in scope but didn't pass it to the eve
 
 ### Formatting Discipline
 
-- Bold-as-title list items (`**Reliability:** The system...`, `**Reliability.** The system...`, `**Reliability** acts as...`) are not a substitute for prose. When content flows as argument, write paragraphs. Applies to bulleted and numbered lists alike; the punctuation after the bold span (colon, period, dash, none) does not matter, and a colon inside the bold span (`**Scope: per-panel only.**`) does not exempt the item.
+- Bold-as-title list items (`**Reliability:** The system...`, `**Reliability.** The system...`, `**Reliability** acts as...`) are slop. Strip the bold markers around the topic phrase. Keep the topic phrase, the punctuation, and the list structure. Applies to bulleted and numbered lists alike. The punctuation after the bold span (colon, period, dash, none) does not matter, and a colon inside the bold span (`**Scope: per-panel only.**`) does not exempt the item. Switch to flowing prose only when the items were not a genuine enumeration to begin with, i.e. prose forced into bullets.
 - Do not bold every other sentence. Bold only key behavioral changes, sparingly.
 - Use lists when content is a genuine enumeration (parallel items the reader will scan, not a prose flow forced into bullets). Numbered lists only when items have a real sequence. Use bullets otherwise.
 - Match the formatting density of existing content in the target context.
@@ -179,12 +179,12 @@ Bad (bold-as-title in a numbered list):
 1. **Threshold and override.** "5-10" needs a defensible default.
 2. **Summary line wording.** Avoid leaking reviewer voice into raw output.
 
-Better (drop the bold; keep a short topic phrase as a scannable handle):
+Better (only the bold markers are removed; everything else stays):
 
-1. Threshold and override. "5-10" needs a defensible default, probably a constant. A `--max-locations` flag would let reviewers see the full list without switching to JSON.
-2. Summary line wording. Lines like `+ 73 more locations` work, but they should not leak reviewer-to-developer voice into raw tool output.
+1. Threshold and override. "5-10" needs a defensible default.
+2. Summary line wording. Avoid leaking reviewer voice into raw output.
 
-The bold span is what triggers the rule. The topic phrase as plain text is fine and often useful as a scannable handle. Do not fold the topic into the sentence body when the input was structured as an enumeration — that destroys navigation. Only switch to flowing prose when the items are not a genuine enumeration to begin with.
+The diff between Bad and Better is exactly four asterisks per item. Do not delete the topic phrase, fold it into the sentence body, expand the content, restructure the list, or change punctuation. Only the bold markup goes.
 
 ### Tone
 
