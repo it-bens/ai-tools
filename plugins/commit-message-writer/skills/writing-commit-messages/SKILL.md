@@ -1,7 +1,9 @@
 ---
 name: writing-commit-messages
-version: 1.1.0
+version: 1.2.0
 description: Use when the user asks to generate, write, draft, or validate a commit message, squash commit, or merge commit message. Detects mode (staged, squash, rewrite) from arguments and message context. Do NOT activate during implementation work; only when the user is ready to capture a finished change or validate an existing one.
+model: sonnet
+effort: high
 ---
 
 # Writing Commit Messages

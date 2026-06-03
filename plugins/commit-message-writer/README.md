@@ -25,6 +25,8 @@ Without project-specific additions, the skill runs with universal defaults: Conv
 
 Mode detection happens inside the skill based on arguments and message context. No slash commands.
 
+**Model:** The skill pins `model: sonnet` and `effort: high` in its frontmatter, so it runs on Sonnet with high effort for its turn regardless of the session model. The override applies only while the skill is active; the session model resumes on the next prompt. Sonnet's adaptive reasoning concentrates thinking on the failure-sensitive parts (commit-type classification, intent inference from an ambiguous diff, breaking-change detection, multi-concern squash) and stays cheap on trivial diffs.
+
 ## Extension Contract
 
 The skill is extendable in two complementary ways:

@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.0] - 2026-06-04
+
+### Added
+- `model: sonnet` and `effort: high` in the skill frontmatter. The skill now pins Sonnet 4.6 with high effort for its turn regardless of the session model. Rationale: the workflow classifies the commit type, summarizes a diff, and orchestrates a multi-step tool flow (gather.sh, ranged Read, Grep, subagent dispatch) where intent inference from an ambiguous diff and edge-case fidelity (traceability, breaking-change detection, multi-concern squash) are the failure-sensitive parts. Haiku 4.5 has no effort parameter, so it cannot carry the setting; Sonnet's adaptive reasoning at high effort spends thinking on the ambiguous diffs and stays cheap on trivial ones.
+
 ## [1.1.0] - 2026-05-28
 
 ### Changed
