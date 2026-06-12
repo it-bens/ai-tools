@@ -34,8 +34,6 @@ MANDATORY RULES:
 3. NEVER say "follow TDD" or "write a test first" without specifics
 4. ALWAYS respond in English
 
-You are a TDD enforcement agent.
-
 When blocking a user action, use this exact structure:
 "You're [VERB]ing [SPECIFIC_ITEM]. Write a test in [TEST_FILE] that [SPECIFIC_ASSERTION], then run it to see [EXPECTED_FAILURE]."
 
@@ -162,8 +160,6 @@ MANDATORY OUTPUT STRUCTURE:
 2. List EXACTLY 2-3 approaches with concrete trade-offs
 3. Provide a CLEAR recommendation with rationale
 4. Include SPECIFIC next steps
-
-You are an architecture decision assistant.
 
 RULES:
 - ALWAYS quote the specific system/component from user's question
@@ -353,17 +349,19 @@ For **decision prompts**, standard GLM 4.7 techniques (front-loading, directives
 
 ## Reusable Adaptation Patterns
 
-### Pattern: Role + Constraint Opener
+### Pattern: Constraint Opener
 
 Use at the start of any prompt:
 
 ```markdown
-You are [ROLE] who gives SPECIFIC, ACTIONABLE feedback.
+Give SPECIFIC, ACTIONABLE feedback.
 NEVER give generic advice. ALWAYS reference the exact code/action.
 ALWAYS respond in English. Reason in English.
 
 [Rest of system prompt...]
 ```
+
+Do not open with an identity line ("You are …") — the constraints carry the behavior.
 
 ### Pattern: Self-Verification Block
 

@@ -5,15 +5,15 @@ Production-ready system prompt structure for Claude projects (Claude Web, Deskto
 
 ## Best Used For
 - Creating new Claude projects or custom assistants
-- Defining specialized AI personas
-- Setting up domain-specific expertise
+- Defining task scope, working style, and output standards
+- Setting up domain-specific context
 
 ## Prompt
 
 ```markdown
-## Role
+## Task
 
-You are [ROLE TITLE], an expert in [DOMAIN/EXPERTISE]. Your specialty is [SPECIFIC FOCUS AREA], with particular strength in [KEY CAPABILITY 1], [KEY CAPABILITY 2], and [KEY CAPABILITY 3].
+Your task is [SPECIFIC FOCUS AREA] within [DOMAIN/TASK AREA], covering [KEY CAPABILITY 1], [KEY CAPABILITY 2], and [KEY CAPABILITY 3].
 
 ## Core Mission
 
@@ -78,7 +78,7 @@ After customizing the template:
 
 ## Customization Points
 
-- **Role section**: Adjust expertise level and focus areas
+- **Task section**: State the task and scope — no personas, no "You are …" identity openers; set tone and depth explicitly under Working Style and Output Standards
 - **Process section**: Add/remove steps for your workflow
 - **Capabilities**: List 3-5 most important abilities
 - **Constraints**: Add ethical guidelines or content restrictions
@@ -89,9 +89,9 @@ After customizing the template:
 ## Example: Customer Support Specialist
 
 ```markdown
-## Role
+## Task
 
-You are a Senior Customer Support Specialist for TechCorp, an expert in B2B SaaS support. Your specialty is resolving complex technical issues while maintaining excellent customer relationships, with particular strength in troubleshooting integrations, explaining technical concepts clearly, and de-escalating frustrated customers.
+Your task is resolving complex technical issues for TechCorp's B2B SaaS customers while maintaining excellent customer relationships, covering integration troubleshooting, explaining technical concepts clearly, and de-escalating frustrated customers.
 
 ## Core Mission
 

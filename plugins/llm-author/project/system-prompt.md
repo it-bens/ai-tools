@@ -13,7 +13,7 @@ These files contain everything you need: the 3-phase workflow, prompting techniq
 
 ---
 
-You are an expert prompt engineer specializing in Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3. Your mission is to transform user requirements into high-performing, production-ready prompts.
+Transform user requirements into high-performing, production-ready prompts for Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3.
 
 **For every prompt request, follow the workflow in SKILL.md:**
 

@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.2.0] - 2026-06-12
+
+Banned persona/role prompting and "You are …" identity openers in the prompt-engineering skill. Zheng et al. 2024 (arXiv:2311.10054) showed personas in system prompts do not improve factual correctness (162 personas, 4 model families, 2,410 factual questions; per-question effects unpredictable); identity openers restate the task without adding constraints. The skill now teaches explicit task and output requirements instead, actively removes personas and identity openers when optimizing existing prompts, and keeps a single exception: character roleplay, where the persona is the requested output. Citations stay out of skill content; provenance lives in this changelog and `docs/`. This deliberately diverges from Anthropic's legacy role-prompting guidance.
+
+### Changed
+
+- `skills/prompt-engineering/SKILL.md` — "Role Prompting" essential technique replaced by "Roles (Do Not Use)"; fixed broken deep-dive anchor (`#5-give-claude-a-role` → `#5-system-prompts-and-role-prompting`)
+- `skills/prompt-engineering/SKILL.md` — optimization now actively removes personas and identity openers from existing prompts and LLM-targeted content: Phase 2 optimization step converts what they implied (tone/depth/audience) into explicit requirements, the LLM-targeted-content preservation principle excludes them from "substantive content", and the quality checklist gates delivery on their absence (character roleplay excepted)
+- `references/techniques-detailed.md` §5 — removed "Enhanced accuracy" claims, role-specificity ladder, and the General Counsel example; replaced with a do-not-use directive, persona-vs-explicit-requirements example, domain-performance alternatives, and the character-roleplay exception
+- `references/techniques-detailed.md` — technique-selection table routes "Domain expertise" to context/domain material/grounding instead of role prompting
+- `examples/system-prompt-template.md` — Role section replaced by a Task section (no identity opener); customer-support example updated accordingly
+- `references/glm-47-guide.md` / `examples/glm-47-adaptation.md` — "Role + Constraint Opener" reduced to "Constraint Opener"; identity openers stripped from all adapted example prompts (before-examples keep them as input being corrected)
+- `examples/gemini-3-adaptation.md` / `references/gemini-3-guide.md` — identity openers stripped from adapted example prompts and the system-instruction API example
+- `references/claude-4-guide.md` — safety template opens with directives instead of "You are a helpful, harmless, and honest AI assistant"
+- `project/system-prompt.md` — Claude Web project prompt opens with the task statement instead of "You are an expert prompt engineer …"
+- `docs/system-prompts.md` — editorial note marking the source doc's accuracy claims as superseded, to prevent regression in future skill updates
+
 ## [3.1.0] - 2026-05-28
 
 Added Writing Subagent Descriptions skill for authoring the `description` field on Claude Code agent definitions. A single `[invocation-style]` argument (`broad` | `narrow` | `specialist`) controls trigger phrasing and routing breadth. The skill treats descriptions as LLM-routing artifacts, not human prose: no anti-slop validation runs, and router-recognized tokens such as `PROACTIVELY` and `MUST BE USED` are explicitly preserved.

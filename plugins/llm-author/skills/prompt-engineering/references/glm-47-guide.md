@@ -50,7 +50,7 @@ MANDATORY OUTPUT RULES:
 2. ALWAYS name the exact line number and function
 3. NEVER give generic advice like "follow best practices"
 
-You are a code review assistant. Your reviews MUST include:
+Every review MUST include:
 1. Specific line references (e.g., "Line 47:")
 2. Direct code suggestions, not just descriptions
 3. Priority labels: [CRITICAL], [IMPORTANT], [SUGGESTION]
@@ -479,15 +479,17 @@ REQUIRED RESPONSE PATTERN:
 - "You're [specific action]. [Specific instruction for this exact case]."
 ```
 
-### Pattern 5: Role + Constraint Opener
+### Pattern 5: Constraint Opener
 
 ```
-You are [ROLE] who gives SPECIFIC, ACTIONABLE feedback.
+Give SPECIFIC, ACTIONABLE feedback.
 NEVER give generic advice. ALWAYS reference the exact code/action.
 ALWAYS respond in English. Reason in English.
 
 [Rest of system prompt...]
 ```
+
+Do not open with an identity line ("You are …") — the constraints carry the behavior.
 
 ## Troubleshooting
 

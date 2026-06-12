@@ -296,7 +296,7 @@ response = model.generate_content(
 ```python
 model = genai.GenerativeModel(
     "gemini-2.0-flash",
-    system_instruction="You are a code review assistant. Provide specific, actionable feedback."
+    system_instruction="Review the user's code. Provide specific, actionable feedback."
 )
 
 response = model.generate_content(user_prompt)

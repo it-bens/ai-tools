@@ -233,50 +233,45 @@ Provide findings in <analysis> tags.
 
 ## 5. System Prompts and Role Prompting
 
-The system parameter sets Claude's role and dramatically improves domain-specific performance.
+The system parameter defines the task, constraints, and output requirements. Do not use it for personas: they do not improve factual correctness, their per-question effects are unpredictable, and the style they imply is better stated as explicit requirements the model cannot misread.
 
-### Role Prompting Benefits
-- **Enhanced accuracy**: Better performance on domain-specific tasks
-- **Tailored tone**: Communication style matches expertise
-- **Improved focus**: Claude stays within task requirements
+### Use Explicit Requirements Instead of a Persona
 
-### Effective Role Definition
-
-**Basic:**
-```
-You are a data scientist at a Fortune 500 company.
-```
-
-**Enhanced:**
-```
-You are a senior data scientist specializing in customer behavior analysis
-at a Fortune 500 retail company. You have 15 years of experience with
-predictive modeling and are presenting findings to the executive team.
-```
-
-### Example: Legal Analysis
-
-**Without role:**
-```
-Analyze this software licensing agreement for potential risks.
-Focus on indemnification, liability, and IP ownership.
-```
-Result: Surface-level summary that may miss critical issues.
-
-**With role:**
+**Persona-implied (don't):**
 ```
 System: You are the General Counsel of a Fortune 500 tech company.
 
+User: Analyze this software licensing agreement for potential risks.
+```
+The persona adds no accuracy. The tone, depth, and audience it *implies* are left for the model to guess.
+
+**Explicit (do):**
+```
+System: Analyze contracts for legal risk. Your reader is an executive
+deciding whether to sign.
+
 User: We're considering this software licensing agreement for our core
 data infrastructure. Analyze it for potential risks, focusing on
-indemnification, liability, and IP ownership. Give your professional opinion.
-```
-Result: Deep analysis identifying critical issues with specific recommendations.
+indemnification, liability, and IP ownership.
 
-### Role Specificity
-More specific roles yield better results:
-- "data scientist" < "data scientist specializing in customer insights"
-- "lawyer" < "General Counsel of a Fortune 500 tech company"
+Requirements:
+- For each risk: cite the clause, explain the exposure, recommend a change
+- Order risks by severity
+- Use precise legal terminology; no hedging summaries
+- End with a sign / negotiate / reject recommendation
+```
+Everything the General Counsel persona was supposed to evoke — depth, audience, professional register, a concrete opinion — is stated directly.
+
+### What Improves Domain Performance Instead
+
+- **Task context**: what the output is for, who reads it, what happens next
+- **Domain material**: reference documents, definitions, and data in the prompt (see [Long Context Tips](#8-long-context-tips))
+- **Output requirements**: format, depth, terminology, length, structure
+- **Grounding and verification**: quote-first analysis, source citation (see [Reduce Hallucinations](#9-reduce-hallucinations))
+
+### The Only Exception: Character Roleplay
+
+A persona that *is* the requested output (fiction, simulation, practice conversations) stays — it is the deliverable, not a prompting technique. Identity openers like "You are a TDD enforcement agent" are not an exception: they restate the task without adding a constraint. Delete them and state the task directly.
 
 ## 6. Prefilling (API Only)
 
@@ -406,7 +401,7 @@ If you find conflicting information, note the discrepancy.
 |-----------|-------------------|
 | Format-specific output | Examples, XML tags, Prefilling |
 | Complex reasoning | Chain of thought, XML structure |
-| Domain expertise | Role prompting, Context |
+| Domain expertise | Context, Domain material, Grounding |
 | Multi-step workflows | Prompt chaining |
 | Long documents | XML tags, Retrieval strategy |
 | Consistency | Examples, Prefilling |

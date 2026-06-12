@@ -229,7 +229,7 @@ Help me research the current state of WebAssembly adoption and create a summary 
 ### Gemini 3 Adapted Prompt
 
 ```markdown
-You are a research assistant with access to:
+You have access to:
 - web_search: Search for current information
 - read_file: Read local documentation
 - write_file: Save findings

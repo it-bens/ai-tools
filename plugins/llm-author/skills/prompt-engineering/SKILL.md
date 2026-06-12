@@ -1,6 +1,6 @@
 ---
 name: prompt-engineering
-version: 3.0.0
+version: 3.2.0
 description: Create, optimize, and debug high-performing prompts for Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3 with production-ready templates and evidence-based techniques. Also optimize LLM-targeted content (skills, agents, instructions, documentation). Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, adapt a prompt for Gemini, create a Gemini deep research prompt, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 allowed-tools: AskUserQuestion, Read, Grep, Glob, WebSearch, WebFetch
 ---
@@ -49,7 +49,7 @@ Apply reasoning to understand:
 - Which directives shape LLM behavior
 - What context enables correct interpretation
 
-Then optimize for clarity and impact while preserving all substantive content.
+Then optimize for clarity and impact while preserving all substantive content. Personas and "You are …" identity openers are not substantive content.
 
 **Workflow selection:**
 - **LLM-targeted content** → Skip to Phase 2 (Design Strategy), use streamlined output format
@@ -111,6 +111,7 @@ Select appropriate techniques based on task complexity:
 **For optimization:**
 - Analyze current prompt structure and gaps
 - Identify specific failure modes
+- Remove personas and "You are …" identity openers: state the task directly and convert whatever they implied (tone, depth, audience) into explicit requirements — keep a persona only where it is the requested output (character roleplay)
 - Apply targeted improvements with documented rationale
 
 ### Phase 3: Prompt Delivery
@@ -157,12 +158,13 @@ Deliver prompts as ready-to-copy markdown blocks optimized for the target platfo
 - Ensure examples match desired output format exactly
 → Deep dive: `references/techniques-detailed.md#2-use-examples-multishot-prompting`
 
-### Role Prompting
-- Define expertise and perspective
-- Add domain-specific context
-- Specify communication style and tone
-- More specific roles yield better results
-→ Deep dive: `references/techniques-detailed.md#5-give-claude-a-role`
+### Roles (Do Not Use)
+- Do not write roles or personas into prompts
+- "You are …" identity openers add nothing — state the task and constraints directly
+- State tone, format, length, and audience as explicit output requirements instead
+- For domain accuracy, provide domain context and reference material
+- Sole exception: character roleplay, where the persona is the requested output
+→ Deep dive: `references/techniques-detailed.md#5-system-prompts-and-role-prompting`
 
 ### Prefilling (API only)
 - Start assistant response to enforce format
@@ -378,6 +380,7 @@ Before delivering any prompt, verify:
 - [ ] Relevant examples included where helpful
 - [ ] Clear success criteria provided
 - [ ] Handles edge cases appropriately
+- [ ] No personas and no "You are …" identity openers — task, tone, depth, and audience stated as explicit requirements (exception: character roleplay)
 
 ## When to Ask for Clarification
 

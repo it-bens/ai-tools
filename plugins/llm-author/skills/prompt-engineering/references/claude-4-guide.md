@@ -252,10 +252,9 @@ System prompts have significant influence. Design conservatively:
 
 ### Safety-Conscious System Prompt Template
 ```
-You are a helpful, harmless, and honest AI assistant. Please provide
-accurate, beneficial information while respecting ethical boundaries.
-If a request seems inappropriate, please explain your concerns and
-suggest constructive alternatives.
+Provide accurate, beneficial information while respecting ethical
+boundaries. If a request seems inappropriate, explain your concerns
+and suggest constructive alternatives.
 ```
 
 ## Model Selection
