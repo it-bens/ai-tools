@@ -47,7 +47,7 @@ Two entries are required in the settings target.
 ```json
 {
   "type": "command",
-  "command": "jq --rawfile ctx .claude/hook-contexts/writing-commit-messages.md 'if .tool_input.skill == \"commit-message-writer:writing-commit-messages\" then {hookSpecificOutput: {hookEventName: \"PostToolUse\", additionalContext: $ctx}} else empty end'"
+  "command": "jq --rawfile ctx \"$CLAUDE_PROJECT_DIR/.claude/hook-contexts/writing-commit-messages.md\" 'if .tool_input.skill == \"commit-message-writer:writing-commit-messages\" then {hookSpecificOutput: {hookEventName: \"PostToolUse\", additionalContext: $ctx}} else empty end'"
 }
 ```
 
@@ -56,7 +56,7 @@ Two entries are required in the settings target.
 ```json
 {
   "type": "command",
-  "command": "jq --rawfile ctx .claude/hook-contexts/writing-commit-messages.md 'if (.prompt // \"\" | startswith(\"/commit-message-writer:writing-commit-messages\")) then {hookSpecificOutput: {hookEventName: \"UserPromptSubmit\", additionalContext: $ctx}} else empty end'"
+  "command": "jq --rawfile ctx \"$CLAUDE_PROJECT_DIR/.claude/hook-contexts/writing-commit-messages.md\" 'if (.prompt // \"\" | startswith(\"/commit-message-writer:writing-commit-messages\")) then {hookSpecificOutput: {hookEventName: \"UserPromptSubmit\", additionalContext: $ctx}} else empty end'"
 }
 ```
 
