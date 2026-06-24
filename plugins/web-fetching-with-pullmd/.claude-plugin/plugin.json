@@ -1,0 +1,9 @@
+{
+  "name": "web-fetching-with-pullmd",
+  "version": "1.0.0",
+  "description": "Fetch web pages, documents (PDF/Office/EPUB), and YouTube transcripts as clean Markdown via PullMD. A PreToolUse hook redirects WebFetch of normal pages to the PullMD MCP tool; the instance is set in a user- or project-level pullmd.json (project overrides user).",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  }
+}

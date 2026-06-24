@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/it-bens/ai-tools/plugins/web-fetching-with-pullmd/pullmd.schema.json",
+  "title": "web-fetching-with-pullmd plugin configuration",
+  "description": "Configures the PullMD instance and the WebFetch redirect hook. Place at ~/.claude/pullmd.json (user level) and/or <project>/.claude/pullmd.json (project level). Project values override user values per key.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "instance": {
+      "type": "string",
+      "format": "uri",
+      "description": "Base URL of the PullMD service, e.g. https://pullmd.example.com (no trailing slash). When absent at every level, the WebFetch hook is a no-op.",
+      "examples": ["https://pullmd.example.com"]
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Master switch for the WebFetch redirect hook. Set false to disable redirection without removing the config."
+    },
+    "mcp_tool": {
+      "type": "string",
+      "default": "mcp__pullmd__read_url",
+      "description": "Name of the PullMD MCP tool to recommend in the deny message. Override if your MCP server is registered under a different name (e.g. mcp__plugin_<plugin>_<server>__read_url)."
+    },
+    "escape_after": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2,
+      "description": "Allow the Nth WebFetch attempt of the same URL through. With the default 2, the first attempt is blocked and a retry is allowed — the escape hatch for JSON APIs or URLs PullMD cannot handle."
+    },
+    "allow_hosts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Extra hosts always allowed through WebFetch (in addition to the configured instance host and GitHub). Matches the exact host or any subdomain of it.",
+      "examples": [["status.example.com", "api.internal"]]
+    },
+    "debug": {
+      "type": "boolean",
+      "default": false,
+      "description": "Log allow/deny decisions to stderr with a [pullmd] prefix."
+    }
+  }
+}
