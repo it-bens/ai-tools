@@ -102,15 +102,9 @@ remaining=$(( PULLMD_ESCAPE_AFTER - count ))
 debug_log "DENY ${url} — redirect to ${PULLMD_MCP_TOOL} (attempt ${count}/${PULLMD_ESCAPE_AFTER})"
 
 {
-    printf '🤖 PullMD: read this URL as clean Markdown via %s, not WebFetch.\n' "$PULLMD_MCP_TOOL"
-    printf '\n'
+    printf '🤖 PullMD: read this URL via %s, not WebFetch.\n' "$PULLMD_MCP_TOOL"
     printf 'URL: %s\n' "$url"
     printf '\n'
-    printf '%s returns structured Markdown — it handles JS-heavy pages, PDFs, Office\n' "$PULLMD_MCP_TOOL"
-    printf 'docs, YouTube, and Reddit, and is far cleaner than WebFetch raw HTML.\n'
-    printf 'Configured PullMD instance: %s\n' "$PULLMD_INSTANCE"
-    printf '\n'
-    printf 'Escape hatch: if %s cannot handle this URL (e.g. a JSON API, or PullMD\n' "$PULLMD_MCP_TOOL"
-    printf 'failed), retry the same WebFetch — it is allowed once attempts reach %s (%s to go).\n' "$PULLMD_ESCAPE_AFTER" "$remaining"
+    printf 'If %s cannot handle it (e.g. a JSON API, or it failed), retry this WebFetch — allowed once attempts reach %s (%s to go).\n' "$PULLMD_MCP_TOOL" "$PULLMD_ESCAPE_AFTER" "$remaining"
 } >&2
 exit 2
