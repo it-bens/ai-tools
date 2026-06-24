@@ -1,0 +1,11 @@
+{
+  "name": "code-comment-writer",
+  "version": "2.0.0",
+  "description": "Code-comment-writing skill that improves comments toward 'why not what'. Removes redundant comments, improves vague ones, condenses verbose ones, preserves valuable ones, and flags inconsistencies across files, directories, or git changes. Deterministic scope resolution via scope.sh, an uncertainty pass that flags risky edits for verification, a read-only mode, and extension at every step via Pre-Step-N / Post-Step-N positions and recognized named configuration values.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["code-comments", "documentation", "code-quality", "review", "extendable", "skill"]
+}

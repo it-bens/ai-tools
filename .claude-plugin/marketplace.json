@@ -99,6 +99,16 @@
       "name": "commit-message-writer-extension-setup",
       "source": "./plugins/commit-message-writer-extension-setup",
       "category": "development"
+    },
+    {
+      "name": "code-comment-writer",
+      "source": "./plugins/code-comment-writer",
+      "category": "development"
+    },
+    {
+      "name": "code-comment-writer-extension-setup",
+      "source": "./plugins/code-comment-writer-extension-setup",
+      "category": "development"
     }
   ]
 }

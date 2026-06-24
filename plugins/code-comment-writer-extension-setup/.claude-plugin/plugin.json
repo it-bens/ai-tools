@@ -1,0 +1,11 @@
+{
+  "name": "code-comment-writer-extension-setup",
+  "version": "1.0.0",
+  "description": "One-time setup skill that provisions the hook plumbing and overlay content file needed to extend the code-comment-writer plugin's writing-code-comments skill. Long plugin and skill names are intentional to prevent accidental invocation.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["code-comments", "setup", "hooks", "extension", "skill"]
+}
