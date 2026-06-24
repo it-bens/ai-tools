@@ -4,7 +4,10 @@
 # and configured allow_hosts. A per-URL escape hatch lets a repeated attempt
 # through after `escape_after` tries (for JSON APIs or when PullMD can't help).
 #
-# No-op when no PullMD instance is configured (user or project pullmd.json).
+# No-op when disabled (enabled: false). Fails hard — blocks the WebFetch — when
+# enabled but no PullMD instance is configured anywhere (user or project
+# pullmd.json). The hook only runs when the plugin was deliberately activated,
+# so a missing instance is a setup error, not a reason to fall through.
 #
 # Exit codes:
 #   0 - Allow the WebFetch
@@ -33,10 +36,30 @@ fi
 
 load_config "${CLAUDE_PROJECT_DIR:-$cwd}"
 
-# Disabled, or no instance configured anywhere → do nothing.
-if [[ "$PULLMD_ENABLED" != "true" || -z "$PULLMD_INSTANCE" ]]; then
-    debug_log "ALLOW ${url} — hook inactive (enabled=${PULLMD_ENABLED}, instance='${PULLMD_INSTANCE}')"
+# Explicit opt-out: master switch off → do nothing.
+if [[ "$PULLMD_ENABLED" != "true" ]]; then
+    debug_log "ALLOW ${url} — disabled (enabled=${PULLMD_ENABLED})"
     exit 0
+fi
+
+# Enabled but no instance configured anywhere → fail hard. The hook only runs
+# when the plugin was deliberately activated, so a missing instance is a setup
+# error, not a reason to silently fall back to WebFetch.
+if [[ -z "$PULLMD_INSTANCE" ]]; then
+    debug_log "DENY ${url} — no PullMD instance configured"
+    {
+        printf '🤖 PullMD: this plugin is active but no PullMD instance is configured.\n'
+        printf '\n'
+        printf 'Set "instance" in a pullmd.json — user level (~/.claude/pullmd.json) or\n'
+        printf 'project level (<project>/.claude/pullmd.json or <project>/pullmd.json):\n'
+        printf '\n'
+        printf '    { "instance": "https://pullmd.example.com" }\n'
+        printf '\n'
+        printf 'Then register the PullMD MCP server so its read_url tool is available\n'
+        printf '(see the plugin README, MCP Server Setup). To opt out instead, set\n'
+        printf '"enabled": false in pullmd.json.\n'
+    } >&2
+    exit 2
 fi
 
 host=$(extract_host "$url")

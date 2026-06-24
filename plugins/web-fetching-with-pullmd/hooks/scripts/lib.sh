@@ -7,7 +7,8 @@
 #   lowercase  — script-local and function-local variables
 
 # --- Config defaults ---
-# instance has NO default: when unset everywhere, the WebFetch hook is a no-op.
+# instance has NO default: when unset everywhere (and enabled), the WebFetch
+# hook fails hard and blocks the WebFetch.
 PULLMD_DEFAULTS='{"enabled":true,"mcp_tool":"mcp__pullmd__read_url","escape_after":2,"allow_hosts":[],"debug":false}'
 
 # Hosts always allowed through WebFetch (never redirected to PullMD).

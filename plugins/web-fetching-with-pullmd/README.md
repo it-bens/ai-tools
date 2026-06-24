@@ -76,16 +76,14 @@ A user-level config typically sets the instance once. A project can then overrid
 { "escape_after": 3, "allow_hosts": ["status.example.com"] }
 ```
 
-| Field          | Type    | Default                 | Description                                                                                                  |
-|----------------|---------|-------------------------|--------------------------------------------------------------------------------------------------------------|
-| `instance`     | string  | —                       | Base URL of your PullMD service. When unset at every level, the hook is a no-op and WebFetch passes through. |
-| `enabled`      | boolean | `true`                  | Master switch for the redirect hook.                                                                         |
-| `mcp_tool`     | string  | `mcp__pullmd__read_url` | MCP tool name recommended in the deny message. Override to match your server's tool name.                    |
-| `escape_after` | integer | `2`                     | Allow the Nth WebFetch attempt of the same URL through. Default `2`: first attempt blocked, retry allowed.   |
-| `allow_hosts`  | array   | `[]`                    | Extra hosts always allowed through WebFetch. Matches the exact host or any subdomain.                        |
-| `debug`        | boolean | `false`                 | Log allow/deny decisions to stderr with a `[pullmd]` prefix.                                                 |
-
-The config schema is at [`pullmd.schema.json`](./pullmd.schema.json).
+| Field          | Type    | Default                 | Description                                                                                                                                                                       |
+|----------------|---------|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `instance`     | string  | —                       | Base URL of your PullMD service. When unset at every level while the plugin is enabled, the hook fails hard and blocks WebFetch until you configure it (or set `enabled: false`). |
+| `enabled`      | boolean | `true`                  | Master switch for the redirect hook.                                                                                                                                              |
+| `mcp_tool`     | string  | `mcp__pullmd__read_url` | MCP tool name recommended in the deny message. Override to match your server's tool name.                                                                                         |
+| `escape_after` | integer | `2`                     | Allow the Nth WebFetch attempt of the same URL through. Default `2`: first attempt blocked, retry allowed.                                                                        |
+| `allow_hosts`  | array   | `[]`                    | Extra hosts always allowed through WebFetch. Matches the exact host or any subdomain.                                                                                             |
+| `debug`        | boolean | `false`                 | Log allow/deny decisions to stderr with a `[pullmd]` prefix.                                                                                                                      |
 
 ## WebFetch Hook
 
@@ -93,7 +91,8 @@ A `PreToolUse` hook on the `WebFetch` tool decides, for every call:
 
 | Target                                          | Action                                                         |
 |-------------------------------------------------|----------------------------------------------------------------|
-| No instance configured, or `enabled: false`     | Allow (no-op)                                                  |
+| `enabled: false`                                | Allow (no-op — explicit opt-out)                               |
+| Enabled but no instance configured              | Block and tell the user to configure `pullmd.json`             |
 | The configured instance host                    | Allow (share links and direct PullMD pages)                    |
 | `github.com` family, or a host in `allow_hosts` | Allow (PullMD is the wrong tool for these)                     |
 | Anything else                                   | Deny and tell Claude to use the PullMD MCP tool                |
@@ -114,7 +113,6 @@ plugins/web-fetching-with-pullmd/
 ├── README.md
 ├── CHANGELOG.md
 ├── CLAUDE.md
-├── pullmd.schema.json              # Config schema (pullmd.json)
 ├── .claude-plugin/
 │   └── plugin.json                 # Plugin manifest
 ├── hooks/

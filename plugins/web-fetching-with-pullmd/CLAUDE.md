@@ -7,7 +7,6 @@ plugins/web-fetching-with-pullmd/
 ├── README.md
 ├── CHANGELOG.md
 ├── CLAUDE.md
-├── pullmd.schema.json              # Config schema for pullmd.json
 ├── .claude-plugin/
 │   └── plugin.json                 # Plugin manifest
 ├── hooks/
@@ -37,7 +36,7 @@ Sourced by both hook scripts; sets the `PULLMD_*` globals and provides the share
 
 ### `hooks/scripts/pre-webfetch.sh`
 
-`PreToolUse` on `WebFetch`. Allows and exits 0 when disabled, no instance is configured, the target host is the instance host, or `host_allowed` passes. Otherwise increments the per-URL attempt count: once it reaches `PULLMD_ESCAPE_AFTER` it allows (escape hatch), else it writes the count and exits 2 with a message naming `PULLMD_MCP_TOOL`. Fails open (exit 0) when `CLAUDE_PLUGIN_DATA` is unset, so the escape hatch can never deadlock.
+`PreToolUse` on `WebFetch`. Allows and exits 0 when disabled (`enabled: false`), the target host is the instance host, or `host_allowed` passes. Fails hard (exit 2) when enabled but no instance is configured anywhere, telling the user to set `instance` in `pullmd.json`. Otherwise increments the per-URL attempt count: once it reaches `PULLMD_ESCAPE_AFTER` it allows (escape hatch), else it writes the count and exits 2 with a message naming `PULLMD_MCP_TOOL`. Fails open (exit 0) when `CLAUDE_PLUGIN_DATA` is unset, so the escape hatch can never deadlock.
 
 ### `hooks/scripts/session-start.sh`
 
@@ -48,7 +47,6 @@ Sourced by both hook scripts; sets the `PULLMD_*` globals and provides the share
 | Task                                           | File                                                            |
 |------------------------------------------------|-----------------------------------------------------------------|
 | Change config fields, defaults, or merge order | `hooks/scripts/lib.sh` — `load_config`                          |
-| Change the config schema                       | `pullmd.schema.json`                                            |
 | Change which hosts bypass the redirect         | `hooks/scripts/lib.sh` — `PULLMD_BUILTIN_ALLOW`, `host_allowed` |
 | Change the allow/deny decision or escape hatch | `hooks/scripts/pre-webfetch.sh`                                 |
 | Change the deny message wording                | `hooks/scripts/pre-webfetch.sh`                                 |
@@ -61,8 +59,8 @@ Sourced by both hook scripts; sets the `PULLMD_*` globals and provides the share
 
 1. **The skill treats PullMD as a black box.** `SKILL.md` documents the `read_url` tool's parameters and when to reach for it — never PullMD's internal extraction mechanics.
 2. **The skill never names the hook.** Redirection, the escape hatch, and `pullmd.json` are hook/config concerns. The skill runs a pre-flight (is the `read_url` tool available?), prefers it, and falls back to WebFetch — it never mentions the redirect.
-3. **No hardcoded instance.** The instance lives in `pullmd.json`. With no instance configured the hook is a no-op — keep it that way so the plugin ships unscoped to any one server.
-4. **Hook scripts fail open.** A blocking decision must never be reachable without a working escape hatch; when state cannot be tracked, allow.
+3. **No hardcoded instance.** The instance lives in `pullmd.json`, so the plugin ships unscoped to any one server. When enabled but no instance is configured anywhere, the WebFetch hook fails hard (exit 2) — the hook only runs once the plugin is deliberately activated, so a missing instance is a setup error, not a silent fall-through. The only no-op is `enabled: false` (an explicit opt-out).
+4. **Escape-hatch tracking fails open.** The per-URL *redirect* block must never be reachable without a working escape hatch; when escape-hatch state cannot be tracked (`CLAUDE_PLUGIN_DATA` unset), allow. This is distinct from the deliberate fail-hard on a missing instance (rule 3), which has no escape hatch — the fix there is to configure the instance or set `enabled: false`.
 5. **Refer to tools descriptively in the skill.** Use "the `read_url` tool of the PullMD MCP server", never the wire name `mcp__pullmd__read_url` — the server may be registered under another name. A concrete tool name belongs only in the hook, which reads it from `mcp_tool`.
 
 ## Testing
@@ -86,7 +84,7 @@ BATS tests live in `plugin-tests/web-fetching-with-pullmd/`:
 Files:
 
 - `lib.bats` — `extract_host`, `host_allowed`, `load_config` (defaults, user/project sources, per-key precedence, invalid-JSON fallback, `escape_after` coercion), `mcp_server_from_tool` (server-name derivation), and `mcp_server_configured` (user/local/project-scope detection, absent/missing/invalid-JSON cases).
-- `pre_webfetch.bats` — the allow/deny matrix (no-op, instance host, GitHub, `allow_hosts`, normal pages), the escape hatch, and the deny message.
+- `pre_webfetch.bats` — the allow/deny matrix (the no-instance fail-hard, the `enabled: false` no-op, instance host, GitHub, `allow_hosts`, normal pages), the escape hatch, and the deny messages.
 - `session_start.bats` — state wipe on startup/compact, session isolation, the no-state path, and the registration nudge (startup-only, silent when registered/disabled/no-instance, custom `mcp_tool` server name).
 
 The helper (`test_helper/common_setup.bash`) isolates `HOME`, `CLAUDE_PROJECT_DIR`, and `CLAUDE_PLUGIN_DATA` per test so the developer's real `~/.claude/pullmd.json` never leaks into a run.

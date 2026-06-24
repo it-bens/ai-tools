@@ -6,18 +6,37 @@ load 'test_helper/common_setup'
 CONFIGURED='{"instance":"https://pullmd.example.com"}'
 
 # =============================================================================
-# NO-OP — hook inactive
+# FAIL HARD — enabled but no instance configured
+# =============================================================================
+
+# bats test_tags=deny,noinstance
+@test "blocks any WebFetch when no instance is configured" {
+    run_pre_webfetch "s1" "https://news.example.org/article"
+    assert_failure 2
+}
+
+# bats test_tags=deny,noinstance,message
+@test "no-instance fail-hard message points the user at pullmd.json" {
+    run_pre_webfetch "s1" "https://news.example.org/article"
+    assert_failure 2
+    assert_output --partial "no PullMD instance is configured"
+    assert_output --partial "pullmd.json"
+}
+
+# =============================================================================
+# NO-OP — explicit opt-out
 # =============================================================================
 
 # bats test_tags=allow,noop
-@test "allows any WebFetch when no instance is configured" {
+@test "allows WebFetch when enabled is false" {
+    write_project_config '{"instance":"https://pullmd.example.com","enabled":false}'
     run_pre_webfetch "s1" "https://news.example.org/article"
     assert_success
 }
 
 # bats test_tags=allow,noop
-@test "allows WebFetch when enabled is false" {
-    write_project_config '{"instance":"https://pullmd.example.com","enabled":false}'
+@test "allows WebFetch when enabled is false even with no instance" {
+    write_project_config '{"enabled":false}'
     run_pre_webfetch "s1" "https://news.example.org/article"
     assert_success
 }

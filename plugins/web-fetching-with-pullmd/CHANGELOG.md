@@ -4,6 +4,16 @@ All notable changes to the `web-fetching-with-pullmd` plugin are documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-24
+
+### Changed
+
+- The `PreToolUse` WebFetch hook now fails hard (blocks the WebFetch, exit 2) when the plugin is enabled but no PullMD instance is configured at any level, instead of silently passing the WebFetch through. The hook only runs once the plugin is deliberately activated, so a missing instance is a setup error — the deny message tells the user to set `instance` in `pullmd.json` and register the MCP server. `enabled: false` remains an explicit no-op opt-out. The registration check stays in the non-blocking `SessionStart` nudge: it is best-effort (registration only, and can miss a server registered under another name), so gating a blocking hook on it could break a working setup.
+
+### Removed
+
+- `pullmd.schema.json`. Nothing consumed it at runtime — `load_config` parses `pullmd.json` directly with its own defaults and coercion, and editor validation via the schema was opt-in and never wired up. The configuration table in the plugin README is now the single source of truth for the `pullmd.json` fields.
+
 ## [1.0.0] - 2026-06-24
 
 Initial release of `web-fetching-with-pullmd`, an independent plugin that fetches web content through a PullMD instance via its MCP tool. The skill was adapted from PullMD's own bundled Claude Code skill (PullMD by Aeterna Labs, licensed AGPL-3.0).
