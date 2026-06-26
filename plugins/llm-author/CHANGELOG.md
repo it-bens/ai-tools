@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.3.0] - 2026-06-26
+
+Added two skills that author session-to-session prompts, derived from recurring request patterns in the shopware/shopware sessions: `writing-handoff-prompts` (forward — package a unit of work for a fresh, zero-context session) and `writing-session-feedback` (backward — a calibration note to the upstream session that defined the work, so it can confirm correctness and sharpen future specs/reviews). Both stay abstract over the kind of work and deduce branch, commit/verification policy, scope, and recipient from context. They are `model: sonnet` and `user-invocable: false` (invoked only on an explicit user request, never proactively), craft their output via the nested `llm-author:prompt-engineering` skill, and ask whether to save it to a file or copy it to the clipboard. The section templates and gates were sharpened against external research on session handoffs — see `RESEARCH.md` for the distilled findings and design rationale.
+
+### Added
+
+- `skills/writing-handoff-prompts/SKILL.md` — contextual-requirements deduction table, a handoff section template (mission, first action, required reading, settled-vs-open, trust-the-code, scope, escalation boundary, evidence-based done), zero-context-completeness and concrete-real-values gates, and an ask-then-deliver step, pinned by a decision digraph
+- `skills/writing-session-feedback/SKILL.md` — recipient/anchor deduction table, a feedback section template (verdict, divergences-with-reasons, under-specified, judgment calls with confidence tags, before/after verification), a self-evaluation-leniency counter, and an ask-then-deliver step, with a matching digraph
+
 ## [3.2.0] - 2026-06-12
 
 Banned persona/role prompting and "You are …" identity openers in the prompt-engineering skill. Zheng et al. 2024 (arXiv:2311.10054) showed personas in system prompts do not improve factual correctness (162 personas, 4 model families, 2,410 factual questions; per-question effects unpredictable); identity openers restate the task without adding constraints. The skill now teaches explicit task and output requirements instead, actively removes personas and identity openers when optimizing existing prompts, and keeps a single exception: character roleplay, where the persona is the requested output. Citations stay out of skill content; provenance lives in this changelog and `docs/`. This deliberately diverges from Anthropic's legacy role-prompting guidance.

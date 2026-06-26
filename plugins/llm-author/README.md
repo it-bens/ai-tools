@@ -4,7 +4,7 @@ Author LLM-targeted content — prompts, skills, agents, and rules files — for
 
 ## Overview
 
-This plugin bundles the craft of authoring LLM-targeted content: designing high-performing prompts for Claude 4, GLM 4.7 (Z.ai), and Gemini 3; editing skills and agents without bloat; and writing auto-loaded Claude Code rules files. It transforms requirements into production-ready artifacts through evidence-based techniques and systematic optimization. Also adapts existing Claude prompts for GLM 4.7 or Gemini 3 when requested, and supports specialized Gemini Deep Research prompts for autonomous multi-source research.
+This plugin bundles the craft of authoring LLM-targeted content: designing high-performing prompts for Claude 4, GLM 4.7 (Z.ai), and Gemini 3; editing skills and agents without bloat; writing auto-loaded Claude Code rules files; and packaging session-to-session prompts (handoffs forward to a fresh session, feedback backward to the session that defined the work). It transforms requirements into production-ready artifacts through evidence-based techniques and systematic optimization. Also adapts existing Claude prompts for GLM 4.7 or Gemini 3 when requested, and supports specialized Gemini Deep Research prompts for autonomous multi-source research.
 
 ## Skills
 
@@ -56,6 +56,31 @@ This plugin bundles the craft of authoring LLM-targeted content: designing high-
   - `specialist` — capability and tight scope only, no auto-trigger phrases; `@-mention` invocation
 - Audit drafts for router-vs-expert separation (no behavioural instructions, no workflow steps, no output-contract leaks) while preserving routing-critical tokens such as `PROACTIVELY` and `MUST BE USED`
 - Treat descriptions as LLM-routing artifacts, never as human prose — human-targeted prose validators (anti-slop) are explicitly not applied
+
+### Writing Handoff Prompts
+
+**Invocation:** Invoked by Claude only when the user explicitly asks to write a handoff prompt for a fresh / new / separate session — never proactively. Hidden from the `/` menu (`user-invocable: false`), so it is not a typed slash command.
+
+**Model:** `sonnet`. **Tools** (`allowed-tools`): `Skill(llm-author:prompt-engineering)` to craft the prompt, `AskUserQuestion` to offer delivery, and `Write` to save to a file. It gathers no new context — it works from what the session already holds.
+
+**What it does:**
+- Deduces the contextual requirements from context rather than hardcoding them: the kind of work (implement a spec, apply review/report fixes, turn review findings into a change proposal, continue an analysis, hand off the next phase), the branch, the commit and verification policy, and the in/out scope
+- Crafts a self-contained handoff prompt with the `llm-author:prompt-engineering` skill (nested), so every needed fact is stated inline or reachable by an explicit file reference
+- Includes (research-informed) a one-line mission, an explicit first action, a "settled vs. open" list, a "trust the code, not this prompt" directive, an escalation / stop-and-ask boundary, and evidence-based done criteria
+- Uses only values that are concrete (no placeholders) and real (not invented) — for anything unknown, it writes how the receiver obtains the value
+- Presents the prompt, then asks whether to save it to a file or copy it to the clipboard (no default)
+
+### Writing Session Feedback
+
+**Invocation:** Invoked by Claude only when the user explicitly asks to write feedback / a report / a note for another session — never proactively. Hidden from the `/` menu.
+
+**Model:** `sonnet`. **Tools** (`allowed-tools`): `Skill(llm-author:prompt-engineering)` to craft the note, `AskUserQuestion` to offer delivery, and `Write` to save to a file. It gathers no new context.
+
+**What it does:**
+- Crafts a calibration note addressed to the upstream session (spec author, reviewer, or planner) with the `llm-author:prompt-engineering` skill (nested), anchored to the concrete change (branch, commit(s), verification state)
+- Leads with a one-line verdict, then divergences from the upstream's framing and why, where reading the code changed the reasoning, and what was under-specified — a calibration, not a status summary
+- Counters self-evaluation leniency (research-informed): a session over-praises its own work, so it defaults to scrutiny, tags each item with confidence/uncertainty, and shows before/after verification deltas
+- Presents the note, then asks whether to save it to a file or copy it to the clipboard (no default)
 
 ## Usage
 
@@ -109,6 +134,7 @@ These source materials are preserved for reference and can be used to update or 
 llm-author/
 ├── .claude-plugin/
 │   └── plugin.json              # Plugin manifest
+├── RESEARCH.md                  # Research + design knowledge behind the handoff & feedback skills
 ├── docs/                        # Source documentation (15 files)
 ├── skills/
 │   ├── content-editing/
@@ -119,6 +145,10 @@ llm-author/
 │   │   └── references/          # On-demand depth for optimization passes
 │   ├── writing-subagent-descriptions/
 │   │   └── SKILL.md             # Subagent description writing skill
+│   ├── writing-handoff-prompts/
+│   │   └── SKILL.md             # Handoff-prompt writing skill (model-invocable)
+│   ├── writing-session-feedback/
+│   │   └── SKILL.md             # Session-feedback writing skill (model-invocable)
 │   └── prompt-engineering/
 │       ├── SKILL.md             # Main skill definition
 │       ├── references/          # Skill-specific references

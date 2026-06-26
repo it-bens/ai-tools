@@ -7,6 +7,7 @@
 | When you need to... | Consult |
 |---------------------|---------|
 | Understand plugin purpose and usage | `README.md` |
+| Understand the research and design knowledge behind the handoff & feedback skills | `RESEARCH.md` |
 | Modify skill behavior or triggers | `skills/prompt-engineering/SKILL.md` |
 | Modify content editing behavior | `skills/content-editing/SKILL.md` |
 | Modify rule-file writing behavior or triggers | `skills/rule-file-writing/SKILL.md` |
@@ -14,6 +15,8 @@
 | Update Pass 2 techniques or three-angle pattern | `skills/rule-file-writing/references/techniques.md`, `skills/rule-file-writing/references/three-angle-pattern.md` |
 | Update the rules-file skeleton template | `skills/rule-file-writing/assets/templates/rules-file-skeleton.md` |
 | Modify subagent description writing behavior, triggers, or invocation-style templates | `skills/writing-subagent-descriptions/SKILL.md` |
+| Modify handoff-prompt writing behavior or triggers | `skills/writing-handoff-prompts/SKILL.md` |
+| Modify session-feedback writing behavior or triggers | `skills/writing-session-feedback/SKILL.md` |
 | Update core techniques or patterns | `skills/prompt-engineering/references/` |
 | Update output format templates | `skills/prompt-engineering/references/output-formats.md` |
 | Update GLM 4.7 adaptation guide | `skills/prompt-engineering/references/glm-47-guide.md` |
