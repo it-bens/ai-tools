@@ -25,16 +25,15 @@ block_clipboard() {
     local hint="$2"
 
     {
-        echo "🤖 Down, model! Use the ${tool} MCP tool instead!"
+        echo "Use the ${tool} MCP tool instead."
         echo ""
         echo "Bad command detected: ${COMMAND}"
         echo ""
-        echo "You were trained better than this! ${hint}"
+        echo "${hint}"
         echo ""
-        echo "Good models use the clipboard-copy MCP tool because it:"
-        echo "  🔧 Auto-detects the right backend per OS (pbcopy / wl-copy / xclip / xsel / clip.exe / clip)"
-        echo "  🔧 Falls back to OSC 52 over SSH and in headless environments"
-        echo "  🔧 Earns you treats (user approval)"
+        echo "The clipboard-copy MCP tool:"
+        echo "  - Auto-detects the right backend per OS (pbcopy / wl-copy / xclip / xsel / clip.exe / clip)"
+        echo "  - Falls back to OSC 52 over SSH and in headless environments"
     } >&2
     exit 2
 }

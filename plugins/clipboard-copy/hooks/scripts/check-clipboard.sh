@@ -1,6 +1,5 @@
 #!/bin/bash
-# Claude Code Hook: clipboard-copy MCP enforcer
-# ==============================================
+# Clipboard-copy MCP enforcer.
 # Blocks native clipboard-write Bash commands in favor of the
 # clipboard_copy / clipboard_copy_file MCP tools.
 #
@@ -10,7 +9,7 @@
 #
 # Exit codes:
 #   0 - command allowed
-#   2 - command blocked (message shown to Claude)
+#   2 - command blocked with a message shown to the agent
 
 set -euo pipefail
 

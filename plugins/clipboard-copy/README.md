@@ -2,7 +2,11 @@
 
 A bash-based MCP server that provides cross-platform clipboard tools: `clipboard_copy` (inline text) and `clipboard_copy_file` (contents of a file at an absolute path). Auto-detects the right backend (pbcopy / wl-copy / xclip / xsel / clip.exe / clip) and falls back to OSC 52 escape sequences when no native utility is available — so it still works over SSH and in headless environments.
 
+The plugin is intentionally compatible with both Claude Code and Codex. Claude Code uses `.claude-plugin/plugin.json` plus `.mcp.json`; Codex uses `.codex-plugin/plugin.json` and the repo marketplace at `.agents/plugins/marketplace.json`. The MCP server, hook scripts, and directive prompt are shared.
+
 ## Quick Start
+
+### Claude Code
 
 ```bash
 /plugin install clipboard-copy@itb-ai-tools
@@ -13,6 +17,20 @@ Restart Claude Code so the MCP server is registered. Then ask Claude to copy som
 > Copy the latest changelog entry to my clipboard.
 
 Claude will call `clipboard_copy` with the text; the server picks the backend appropriate for your machine.
+
+### Codex
+
+From a clone of this repository, add the repo marketplace once:
+
+```bash
+codex plugin marketplace add <repo-root>
+```
+
+Then install `clipboard-copy` from Codex's plugin browser, restart Codex, and ask Codex to copy something:
+
+> Copy the latest changelog entry to my clipboard.
+
+Codex exposes the same MCP tools. In the tested local install, they appear under the `mcp__clipboard_copy` namespace as `clipboard_copy` and `clipboard_copy_file`.
 
 ## Tools
 
@@ -52,6 +70,8 @@ The server picks the first available backend in this order, scoped to the OS:
 A `SessionStart` hook injects a short directive into the conversation context at the start of every session, naming `clipboard_copy` / `clipboard_copy_file` as the right way to write to the clipboard and listing the Bash commands that are blocked. This complements the reactive `PreToolUse` block message below: the model sees the directive *before* it ever reaches for `pbcopy`, instead of only being corrected after the fact.
 
 The directive text lives in `hooks/prompts/mcp-tool-directives.md`. The hook script (`hooks/scripts/session-start.sh`) emits it via `hookSpecificOutput.additionalContext`.
+
+The hook registration is shared between Claude Code and Codex. It resolves the plugin root from `CODEX_PLUGIN_ROOT`, then `CLAUDE_PLUGIN_ROOT`, then local fallback paths so the same `hooks/hooks.json` works in both runtimes and during repo-local tests.
 
 ## Bash Enforcement Hook
 
@@ -108,9 +128,13 @@ If your terminal does not honor OSC 52 the copy will silently no-op as far as th
 
 ```
 plugins/clipboard-copy/
+├── AGENTS.md                      # Shared development guidance for Codex and Claude Code
+├── CLAUDE.md                      # Claude Code wrapper: @AGENTS.md
 ├── .claude-plugin/
-│   └── plugin.json
-├── .mcp.json
+│   └── plugin.json                 # Claude Code plugin manifest
+├── .codex-plugin/
+│   └── plugin.json                 # Codex plugin manifest
+├── .mcp.json                       # Claude Code MCP registration
 ├── README.md
 ├── shared/
 │   └── mcpserver_core.sh           # JSON-RPC 2.0 stdio handler
@@ -130,6 +154,8 @@ plugins/clipboard-copy/
     └── lib/
         └── clipboard.sh             # Backend detection + tool implementations
 ```
+
+Codex marketplace metadata lives outside the plugin directory at `.agents/plugins/marketplace.json`, with `source.path` pointing back to `./plugins/clipboard-copy`.
 
 ## License
 
