@@ -1,0 +1,13 @@
+{
+  "protocolVersion": "2024-11-05",
+  "serverInfo": {
+    "name": "file-read",
+    "version": "0.1.0"
+  },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
+  "instructions": "Portable MCP server that provides read_file for local text files. The tool accepts file_path plus optional offset, limit, max_bytes, and cwd arguments, then returns line-numbered text. It rejects likely binary files, strips a UTF-8 BOM, normalizes CRLF endings to LF, and truncates returned content at the configured byte/token caps."
+}
