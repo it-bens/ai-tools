@@ -42,6 +42,8 @@ The repository marketplace exposes `file-read` to Codex through `.codex-plugin/p
 
 Other MCP clients can launch `mcp-server-read/server.sh` as a stdio server. The server requires Bash and resolves its support files relative to its own location.
 
+When installed as a plugin in a host that supports hooks, the `SessionStart` hook injects guidance to use `read_file` instead of shell commands that print file contents. The hook does not block Bash commands; enforcement can be supplied separately by a guardrail plugin.
+
 ## Design Notes
 
 - `file_path`, `offset`, and `limit` follow the familiar range-reader argument shape used by coding-agent file tools.
@@ -51,6 +53,7 @@ Other MCP clients can launch `mcp-server-read/server.sh` as a stdio server. The 
 - Returned content is capped by `max_bytes`, `FILE_READ_MAX_BYTES`, and `FILE_READ_MAX_OUTPUT_TOKENS`.
 - `CODEX_READ_MAX_BYTES` and `CODEX_READ_MAX_OUTPUT_TOKENS` remain compatibility aliases.
 - The plugin stays separate from guardrail plugins such as `redundant-read-blocker` and `native-tools-enforcer`.
+- The hook prompt and MCP server share the same `read_file` argument contract.
 
 ## Requirements
 
@@ -63,4 +66,4 @@ Other MCP clients can launch `mcp-server-read/server.sh` as a stdio server. The 
 
 ## Version
 
-Current version: `0.1.0`
+Current version: `0.2.0`

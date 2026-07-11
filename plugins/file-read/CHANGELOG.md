@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.0] - 2026-07-12
+
+### Added
+
+- Session-start hook that directs compatible agent hosts to use `read_file` for local text reads.
+
 ## [0.1.0] - 2026-07-09
 
 ### Added

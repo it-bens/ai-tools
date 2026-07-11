@@ -1,0 +1,16 @@
+{
+  "description": "SessionStart hook to inject file-read MCP tool directives.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'root=\"${CODEX_PLUGIN_ROOT:-}\"; if [ -z \"${root}\" ] && [ -x ./hooks/scripts/session-start.sh ]; then root=.; fi; if [ -z \"${root}\" ] && [ -x ./plugins/file-read/hooks/scripts/session-start.sh ]; then root=./plugins/file-read; fi; if [ -n \"${root}\" ]; then exec bash \"${root}/hooks/scripts/session-start.sh\"; fi; exit 0'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

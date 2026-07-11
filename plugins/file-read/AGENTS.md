@@ -9,12 +9,17 @@ This is a portable MCP plugin. Keep the core server and tool contract independen
 - Preserve relative path support through the optional `cwd` argument and the MCP server working-directory fallback.
 - Keep output line-numbered so responses are easy to cite and guardrail hooks can reason about returned ranges.
 - Preserve text-reader safeguards: reject likely binary files, strip a UTF-8 BOM, normalize CRLF to LF, and cap returned content through byte and token limits.
+- Keep the `SessionStart` directive host-neutral apart from the MCP tool name. File-reading command enforcement belongs in a separate guardrail plugin.
 
 ## Layout
 
 ```text
 file-read/
 |-- .codex-plugin/plugin.json
+|-- hooks/
+|   |-- hooks.json
+|   |-- prompts/mcp-tool-directives.md
+|   `-- scripts/session-start.sh
 |-- mcp-server-read/
 |   |-- config.json
 |   |-- tools.json

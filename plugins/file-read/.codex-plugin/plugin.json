@@ -1,6 +1,6 @@
 {
   "name": "file-read",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Portable MCP read_file tool for reading local text files with offset and limit arguments.",
   "author": {
     "name": "Martin Bens",
