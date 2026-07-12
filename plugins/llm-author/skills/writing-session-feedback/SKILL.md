@@ -1,6 +1,6 @@
 ---
 name: writing-session-feedback
-version: 1.0.0
+version: 3.4.0
 description: Use when the user explicitly asks to write feedback, a report, or a note for another session — typically the upstream session that defined the work this session just executed (it wrote the spec, performed the review, or made the plan), so that session can confirm the work was done correctly and calibrate its future specs and reviews. Invoke only on such an explicit request, never proactively. Produces a calibration note addressed to that session, anchored to the concrete change (branch, commit(s), verification state), then offers to save it to a file or copy it to the clipboard.
 model: sonnet
 user-invocable: false
@@ -21,7 +21,7 @@ digraph feedback {
   cal      [shape=diamond, label="Does each item teach the recipient\nsomething — and did I scrutinize my own\nwork as hard as I confirmed it?"];
   val      [shape=diamond, label="Does every claim carry real evidence\nfrom this session, with a confidence signal?"];
   fix      [shape=box, label="Send it back through prompt-engineering\nwith the item recast or the evidence supplied"];
-  ask      [shape=box, label="Ask the user (AskUserQuestion):\nsave to a file or copy to the clipboard?"];
+  ask      [shape=box, label="Ask the user:\nsave to a file or copy to the clipboard?"];
   deliver  [shape=box, label="Write the file or copy to the clipboard\nper the answer"];
   done     [shape=doublecircle, label="Done"];
 
@@ -74,4 +74,4 @@ Take every commit hash, file path, symbol name, and test count from this session
 
 ## Ask how to deliver, then deliver
 
-Present the finished note in your reply. Then use `AskUserQuestion` to ask whether to save it to a file or copy it to the clipboard — choose neither by default. Save the note to a file with `Write`, or copy it to the clipboard, according to the answer.
+Present the finished note in your reply. Then ask whether to save it to a file or copy it to the clipboard — choose neither by default. Deliver it according to the answer.

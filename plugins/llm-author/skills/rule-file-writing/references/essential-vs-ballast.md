@@ -4,7 +4,7 @@ Loaded before Pass 1 of the rules-file optimization loop. The unit of analysis i
 
 ## The Per-Paragraph Decision Test
 
-> **"Does this change a token-level decision Claude will make at generation time, or does it justify the rule to a human reader?"**
+> **"Does this change a token-level decision the assistant will make at generation time, or does it justify the rule to a human reader?"**
 
 - Behavior-changing → **keep**.
 - Justification → **cut**.
@@ -17,8 +17,8 @@ Loaded before Pass 1 of the rules-file optimization loop. The unit of analysis i
 | **Decision Tests / pre-action gates** | Single-question gates that fire before a triggering action. Highest-leverage lever in a rules file. |
 | **WRONG/CORRECT code pairs** | Highest-fidelity directive: exact pattern to avoid, exact replacement. |
 | **Operational tables** (input → response, classification, routing) | Compress many directives into one scannable block. |
-| **Red Flags table** | Intercepts rationalizations at the moment they appear in Claude's reasoning. |
-| **WHY clauses inline** (one short clause per rule) | Lets Claude generalize the rule to edge cases instead of following it mechanically. |
+| **Red Flags table** | Intercepts rationalizations at the moment they appear in the assistant's reasoning. |
+| **WHY clauses inline** (one short clause per rule) | Lets the assistant generalize the rule to edge cases instead of following it mechanically. |
 | **Allowed exceptions / escape hatches** (narrow and gated) | Without explicit gates, an absolute rule gets ignored at the first plausible exception. |
 | **Subagent delegation directives** (verbatim text) | Some rules must propagate to spawned agents that won't see the parent file. The verbatim block is the only place that text lives. |
 

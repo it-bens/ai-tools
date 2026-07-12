@@ -14,7 +14,7 @@ A rule lands harder when it appears in three forms:
 
 Each form is recalled via a different cognitive trigger:
 
-| Angle | Recalled when Claude is... |
+| Angle | Recalled when the assistant is... |
 |---|---|
 | **Declarative** | thinking about the rule space |
 | **Syntactic** | writing the specific token |
@@ -32,7 +32,7 @@ Apply the full three-angle treatment to rules where **bypass is a known failure 
 
 ## When One Angle Is Enough
 
-Rules with **no plausible rationalization** need only one or two angles. If the wrong path returns an error on its own (e.g. a host that returns 403 for automated fetches), Claude cannot rationalize the wrong token — the environment enforces the rule. One declarative rule plus a decision gate and a small table is sufficient:
+Rules with **no plausible rationalization** need only one or two angles. If the wrong path returns an error on its own (e.g. a host that returns 403 for automated fetches), the assistant cannot rationalize the wrong token — the environment enforces the rule. One declarative rule plus a decision gate and a small table is sufficient:
 
 ```markdown
 # NPM Registry Access

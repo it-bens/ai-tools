@@ -1,6 +1,6 @@
 ---
 name: writing-handoff-prompts
-version: 1.0.0
+version: 3.4.0
 description: Use when the user explicitly asks to write a handoff prompt for a fresh, new, separate, or other session — for example to start a spec's implementation, apply review or report fixes, turn review findings into a change proposal, or continue work — in a session that will have none of this session's context. Invoke only on such an explicit request, never proactively. Produces a self-contained handoff prompt (every needed fact stated inline or reachable by an explicit file reference; the work type, branch, commit and verification policy, and scope deduced from context), then offers to save it to a file or copy it to the clipboard.
 model: sonnet
 user-invocable: false
@@ -19,7 +19,7 @@ digraph handoff {
   ctx      [shape=diamond, label="Does it stand alone for a zero-context\nreader — every fact inline or in a named file?"];
   val      [shape=diamond, label="Is every hash, path, name, and count\nconcrete and taken from this session?"];
   fix      [shape=box, label="Send it back through prompt-engineering\nwith the gap named"];
-  ask      [shape=box, label="Ask the user (AskUserQuestion):\nsave to a file or copy to the clipboard?"];
+  ask      [shape=box, label="Ask the user:\nsave to a file or copy to the clipboard?"];
   deliver  [shape=box, label="Write the file or copy to the clipboard\nper the answer"];
   done     [shape=doublecircle, label="Done"];
 
@@ -80,4 +80,4 @@ Take every commit hash, file path, class or symbol name, line number, and test c
 
 ## Ask how to deliver, then deliver
 
-Present the finished prompt in your reply. Then use `AskUserQuestion` to ask whether to save it to a file or copy it to the clipboard — choose neither by default. Save the prompt to a file with `Write`, or copy it to the clipboard, according to the answer.
+Present the finished prompt in your reply. Then ask whether to save it to a file or copy it to the clipboard — choose neither by default. Deliver it according to the answer.
