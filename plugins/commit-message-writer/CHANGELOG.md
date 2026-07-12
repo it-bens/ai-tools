@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [1.3.0] - 2026-07-13
+
 ### Added
 
 - Codex plugin metadata and repository marketplace registration.
