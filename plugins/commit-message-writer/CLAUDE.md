@@ -4,6 +4,7 @@
 
 ```
 plugins/commit-message-writer/
+├── .codex-plugin/plugin.json
 ├── .claude-plugin/plugin.json
 ├── CHANGELOG.md
 ├── CLAUDE.md
@@ -22,7 +23,7 @@ plugins/commit-message-writer/
 This plugin provides:
 - **Skill** (`skills/writing-commit-messages/`): the workflow for generating and validating Conventional Commits with a generic `Pre-Step-N` / `Post-Step-N` extension contract and a small catalog of named configuration values.
 
-**No commands, agents, hooks, or MCP servers.** Skill-only plugin.
+**No commands, agents, hooks, or MCP servers.** Skill-only plugin. The Codex version of its required subagent is installed separately from `codex-subagents/`.
 
 ## Key Navigation Points
 

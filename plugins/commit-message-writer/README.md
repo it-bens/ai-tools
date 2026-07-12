@@ -2,13 +2,15 @@
 
 Commit-message-writing skill for Conventional Commits. Mode detection (staged / squash / rewrite), a deterministic gather-script-driven workflow, anti-slop validation via the `human-author:ai-slop-writing-fixer` subagent, and validation mode.
 
-The `human-author` plugin is declared as a dependency and auto-installs alongside this one.
+Claude Code installs the `human-author` plugin dependency automatically. Codex users must manually install the matching `human-author:ai-slop-writing-fixer` custom agent before using this skill.
 
 ## Quick Start
 
 ```bash
 /plugin install commit-message-writer@itb-ai-tools
 ```
+
+For Codex, install the required custom agent first, then install `commit-message-writer` from the Codex marketplace.
 
 Without project-specific additions, the skill runs with universal defaults: Conventional Commits format, scope inferred from changed-file directories, kebab-case scope naming, 72-character subject cap, and a `Co-Authored-By: Claude {model}` footer.
 

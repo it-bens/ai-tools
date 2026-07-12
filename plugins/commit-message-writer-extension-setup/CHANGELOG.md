@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0] - 2026-07-12
+
+### Added
+- Codex plugin metadata and project-local Codex hook setup using `.codex/hooks.json`.
+
+### Changed
+- The setup workflow now chooses Claude Code or Codex overlay paths and delivery hooks while preserving the same extension contract.
+
 ## [1.0.1] - 2026-06-24
 
 ### Fixed

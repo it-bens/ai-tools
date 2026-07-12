@@ -5,7 +5,7 @@ description: Use when the user explicitly asks to set up, install, configure, wi
 
 # Setting Up the commit-message-writer Extension
 
-Create the canonical extension setup for `commit-message-writer:writing-commit-messages` in the current project: an overlay content file at `.claude/hook-contexts/writing-commit-messages.md` and the two hook entries that deliver it.
+Create the canonical extension setup for `commit-message-writer:writing-commit-messages` in the current project. Preserve the same overlay format across hosts and use the active host's project hook configuration to deliver it.
 
 ## Workflow
 
@@ -13,9 +13,15 @@ Create the canonical extension setup for `commit-message-writer:writing-commit-m
 
 Confirm the current working directory is the project root that should receive the extension. If unclear, ask the user before doing anything else.
 
+Identify the active host. Use the Claude Code path when running in Claude Code and the Codex path when running in Codex. If the host cannot be determined, ask the user.
+
 ### Step 2: Choose the settings target
 
-The settings target is the file that will hold the hook entries. Default: `.claude/settings.json`.
+The settings target is the file that will hold the hook entries.
+
+For Codex, use `.codex/hooks.json`. If it does not exist, create it from `{}`.
+
+For Claude Code, default to `.claude/settings.json`:
 
 - If only `.claude/settings.json` exists, use it.
 - If only `.claude/settings.local.json` exists, use it.
@@ -29,7 +35,7 @@ The overlay extends `commit-message-writer:writing-commit-messages` through exac
 1. **Named-value assignments** — overrides for the configuration names documented in the parent plugin's README under "Recognized Named Values". Each name has a default and a documented effect.
 2. **Workflow position extensions** — `## Pre-Step-N` or `## Post-Step-N` sections of imperative instructions, where `N` is one of the step numbers or labels in the parent skill's SKILL.md.
 
-When the user invokes this skill without naming specific options, locate the parent plugin's files (Claude Code installs plugins under a discoverable path; if you cannot find them, ask the user). Read the README's Recognized Named Values table and the SKILL.md's step list, present both to the user, and ask which named values to assign and which workflow positions to extend.
+When the user invokes this skill without naming specific options, locate the installed parent plugin's files through the active host. If you cannot find them, ask the user. Read the README's Recognized Named Values table and the SKILL.md's step list, present both to the user, and ask which named values to assign and which workflow positions to extend.
 
 When the user describes intent in free form, translate it to the supported mechanisms before writing — the parent skill matches the formal options more precisely than equivalent free text:
 
@@ -40,7 +46,7 @@ If a request cannot be mapped to either mechanism, surface that to the user and 
 
 ### Step 4: Define the hook entries
 
-Two entries are required in the settings target.
+Claude Code requires two entries in the settings target.
 
 `PostToolUse` matcher entry (matcher value: the exact string `Skill`):
 
@@ -62,19 +68,30 @@ Two entries are required in the settings target.
 
 The two `command` strings above are the authoritative form. Treat them as opaque — do not reformat, line-wrap, or reorder keys.
 
+Codex requires one `SessionStart` matcher entry with matcher `"startup|resume|clear|compact"` and this command hook:
+
+```json
+{
+  "type": "command",
+  "command": "bash -lc 'input=$(cat); cwd=$(jq -r \".cwd\" <<<\"$input\"); jq -n --rawfile ctx \"$cwd/.codex/hook-contexts/writing-commit-messages.md\" '\"'\"'{hookSpecificOutput: {hookEventName: \"SessionStart\", additionalContext: $ctx}}'\"'\"''"
+}
+```
+
+Treat this command string as opaque. It reads Codex's hook input to resolve the project directory and emits the overlay as `SessionStart` additional context.
+
 ### Step 5: Confirm the plan
 
 Present the user with:
 
 - Settings target file.
 - Overlay content to be written.
-- The two hook entries that will be merged.
+- The host-specific hook entries that will be merged.
 
 Wait for explicit approval before any write. The user may reject or amend the plan; loop back to Step 3 if content changes.
 
 ### Step 6: Write the overlay content file
 
-Write `.claude/hook-contexts/writing-commit-messages.md` using this template, omitting any section with no entries:
+Write the overlay to `.claude/hook-contexts/writing-commit-messages.md` for Claude Code or `.codex/hook-contexts/writing-commit-messages.md` for Codex. Use this template, omitting any section with no entries:
 
 ````
 ## Named-value assignments
@@ -92,24 +109,28 @@ Write `.claude/hook-contexts/writing-commit-messages.md` using this template, om
 
 One bullet per assigned name under the single `## Named-value assignments` heading. One section per workflow position extension, ordered by step number. The body of each `Pre-Step-N` / `Post-Step-N` section is the imperative instruction text confirmed in Step 5.
 
-Create the `.claude/hook-contexts/` directory if it does not exist.
+Create the selected host's `hook-contexts` directory if it does not exist.
 
 Verify after writing: every section in the file is one of the three template sections above and appears in the order shown.
 
 ### Step 7: Merge hook entries
 
-Read the settings target (parse as JSON; if absent, start from `{}`). Ensure:
+Read the settings target (parse as JSON; if absent, start from `{}`).
+
+For Claude Code, ensure:
 
 - `.hooks.PostToolUse` is an array. Find an element whose `matcher` is `"Skill"`. If none, append a new element `{ "matcher": "Skill", "hooks": [] }`. Append the Step 4 PostToolUse entry to that element's `hooks` array *only if* no existing entry in that array has the same `command` string.
 - `.hooks.UserPromptSubmit` is an array. Find an element whose `matcher` is `""`. If none, append a new element `{ "matcher": "", "hooks": [] }`. Append the Step 4 UserPromptSubmit entry to that element's `hooks` array *only if* no existing entry has the same `command` string.
 
 Do not modify any unrelated key, matcher, or hook entry. Write the result atomically (temp file in the same directory, then rename).
 
+For Codex, ensure `.hooks.SessionStart` is an array. Find an element whose `matcher` is `"startup|resume|clear|compact"`; if none exists, append `{ "matcher": "startup|resume|clear|compact", "hooks": [] }`. Append the Step 4 Codex command hook only when no existing hook has the same `command` string. Preserve unrelated keys and hooks, and write atomically.
+
 ### Step 8: Verify and report
 
 Confirm in this order:
 
-1. `.claude/hook-contexts/writing-commit-messages.md` exists and matches the Step 6 template.
-2. The settings target is valid JSON and contains the two Step 4 entries.
+1. The selected host's overlay file exists and matches the Step 6 template.
+2. The settings target is valid JSON and contains the host-specific Step 4 entries.
 
-Report to the user: settings target chosen, files written, and the next user-facing step (invoke `commit-message-writer:writing-commit-messages` to confirm the overlay reaches it).
+Report the settings target and files written. For Claude Code, invoke `commit-message-writer:writing-commit-messages` to confirm delivery. For Codex, review and trust the new hook, then start a new session and invoke the writing skill to confirm delivery.

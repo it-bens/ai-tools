@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Codex plugin metadata and repository marketplace registration.
+- Manual Codex custom-agent package for the existing `human-author:ai-slop-writing-fixer` prerequisite.
+
 ## [1.2.0] - 2026-06-04
 
 ### Added
