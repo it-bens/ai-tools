@@ -1,6 +1,14 @@
 # Changelog
 
-## Unreleased
+## [1.4.0] - 2026-07-13
+
+### Added
+
+- Constrained `cleanup.sh` helper and BATS coverage for deleting only owned regular `/tmp/commit-msg.*` files.
+
+### Changed
+
+- Step 14 now invokes the cleanup helper instead of exposing `rm -f` as the top-level Codex command.
 
 ## [1.3.0] - 2026-07-13
 

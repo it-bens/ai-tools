@@ -1,6 +1,6 @@
 {
   "name": "commit-message-writer",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Commit-message-writing skill for Conventional Commits. Mode detection (staged, squash, rewrite), a deterministic gather-script-driven workflow, anti-slop validation via the human-author:ai-slop-writing-fixer subagent, and validation mode. Extendable at every step via Pre-Step-N / Post-Step-N positions and via recognized named configuration values.",
   "author": {
     "name": "Martin Bens",

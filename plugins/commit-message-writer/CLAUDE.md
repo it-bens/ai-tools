@@ -12,7 +12,9 @@ plugins/commit-message-writer/
 └── skills/
     └── writing-commit-messages/
         ├── SKILL.md
-        ├── scripts/gather.sh
+        ├── scripts/
+        │   ├── cleanup.sh
+        │   └── gather.sh
         └── references/
             ├── type-detection.md
             └── validation-rules.md
@@ -33,12 +35,12 @@ This plugin provides:
 | Modify the universal type-detection decision tree | `skills/writing-commit-messages/references/type-detection.md` | Priority-ordered type rules, breaking-change detection |
 | Modify the anti-slop ruleset | The `human-author:ai-slop-writing-fixer` agent | Em-dash ban, banned vocabulary, sentence patterns. Step 11 dispatches this agent via the Agent tool. |
 | Modify validation-mode checks | `skills/writing-commit-messages/references/validation-rules.md` | Format / consistency / body-quality categories |
-| Modify diff-gather script | `skills/writing-commit-messages/scripts/gather.sh` | TOC sections, exit codes, tmpfile prefix |
+| Modify diff-gather or cleanup scripts | `skills/writing-commit-messages/scripts/` | TOC sections, exit codes, tmpfile creation and constrained deletion |
 
 ## Testing
 
-BATS tests for `gather.sh` live in `plugin-tests/commit-message-writer/`. Run with:
+BATS tests for the scripts live in `plugin-tests/commit-message-writer/`. Run with:
 
 ```bash
-.bats/bats-core/bin/bats plugin-tests/commit-message-writer/gather.bats
+.bats/bats-core/bin/bats plugin-tests/commit-message-writer/gather.bats plugin-tests/commit-message-writer/cleanup.bats
 ```

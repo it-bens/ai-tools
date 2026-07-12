@@ -15,4 +15,8 @@ cleanup_test_repo() {
     rm -f /tmp/commit-msg.* 2>/dev/null || true
 }
 
+# These paths are consumed by the BATS files that load this helper.
+# shellcheck disable=SC2034
 GATHER_SH="${BATS_TEST_DIRNAME}/../../plugins/commit-message-writer/skills/writing-commit-messages/scripts/gather.sh"
+# shellcheck disable=SC2034
+CLEANUP_SH="${BATS_TEST_DIRNAME}/../../plugins/commit-message-writer/skills/writing-commit-messages/scripts/cleanup.sh"
