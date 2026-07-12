@@ -1,0 +1,1 @@
+When web content is needed, prefer the `read_url` tool of the PullMD MCP server for ordinary pages, Reddit threads, documents, and YouTube transcripts. Use the host's native web research for GitHub URLs and JSON API endpoints. If `read_url` is unavailable or fails, fall back to native web research for content it can handle and report any remaining gap.

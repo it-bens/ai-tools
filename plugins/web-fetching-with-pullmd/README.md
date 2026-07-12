@@ -1,33 +1,46 @@
 # Web Fetching with PullMD
 
-Fetch web pages, documents (PDF/Office/EPUB), and YouTube transcripts as clean, structured Markdown through a PullMD instance instead of raw WebFetch HTML. The plugin ships a skill that explains when and how to call the PullMD MCP tool, plus a `PreToolUse` hook that redirects `WebFetch` of normal pages to that tool. Which PullMD instance to use is set in a `pullmd.json` config file — the plugin is not hardcoded to any one server.
+Fetch web pages, documents (PDF/Office/EPUB), Reddit threads, and YouTube transcripts as clean, structured Markdown through a PullMD instance. The shared skill supports Claude Code and Codex. Claude Code additionally gets an enforced `WebFetch` redirect; Codex gets a `SessionStart` directive that prefers PullMD over native web research because Codex hooks cannot intercept that built-in tool.
 
-## Quick Start
+## Installation
+
+### Claude Code
 
 ```bash
 /plugin install web-fetching-with-pullmd@itb-ai-tools
 ```
 
-Create a user-level config pointing at your instance:
+Create the redirect-hook configuration, register the MCP server, and restart Claude Code:
 
 ```bash
 # ~/.claude/pullmd.json
 { "instance": "https://pullmd.example.com" }
-```
 
-Register the PullMD MCP server in Claude Code so its `read_url` tool is available (auth details under [MCP Server Setup](#mcp-server-setup)), then restart Claude Code:
-
-```bash
 claude mcp add --transport http pullmd https://pullmd.example.com/mcp --scope user
 ```
 
-From then on, when Claude reaches for `WebFetch` on a normal page the hook redirects it to the PullMD MCP tool, which returns cleaner Markdown than raw HTML.
+### Codex
+
+From a clone of this repository, add the repository marketplace once:
+
+```bash
+codex plugin marketplace add <repo-root>
+```
+
+Install `web-fetching-with-pullmd` from the Codex plugin browser, then register the PullMD MCP server:
+
+```bash
+codex mcp add pullmd --url https://pullmd.example.com/mcp
+codex mcp login pullmd
+```
+
+Review and trust the plugin hooks (`/hooks` in the Codex CLI), then start a new session. Codex does not require `pullmd.json`; its MCP registration already stores the instance URL.
 
 ## MCP Server Setup
 
-The plugin reads web content through a PullMD instance's MCP `read_url` tool. It does **not** bundle or register that server — set it up once in Claude Code.
+The plugin reads web content through a PullMD instance's MCP `read_url` tool. It does **not** bundle or register that server because the endpoint and authentication are user-specific.
 
-### 1. Register the server
+### Claude Code
 
 ```bash
 claude mcp add --transport http pullmd https://pullmd.example.com/mcp --scope user
@@ -37,29 +50,40 @@ claude mcp add --transport http pullmd https://pullmd.example.com/mcp --scope us
 
 The server **name** must match the server segment of `mcp_tool` — the default `mcp__pullmd__read_url` implies a server named `pullmd`. Register it under a different name and you must set `mcp_tool` in `pullmd.json` to match.
 
-### 2. Authenticate
+For OAuth, run `/mcp` after registration. Claude Code opens the login flow and manages the resulting token. For a bearer token, generate an API key on the PullMD instance and pass it as a registration header:
 
-A PullMD instance with `PULLMD_AUTH_MODE` set to anything other than `disabled` requires authentication on `/mcp`. Claude Code supports two paths:
+```bash
+claude mcp add --transport http pullmd https://pullmd.example.com/mcp --scope user \
+  --header "Authorization: Bearer pmd_..."
+```
 
-- **OAuth** — after adding the server, run `/mcp` in Claude Code. It detects that the server needs authentication and opens a browser for the login and consent flow; the token is then stored and refreshed automatically (in the OS keychain on macOS). Run `/mcp` again to clear authentication.
-- **Bearer token** — generate an API key on your instance (`https://pullmd.example.com/settings`) and pass it as a header when registering:
+Run `/mcp` to verify that `pullmd` is connected and exposes `read_url`, `get_share`, and `list_recent`.
 
-  ```bash
-  claude mcp add --transport http pullmd https://pullmd.example.com/mcp --scope user \
-    --header "Authorization: Bearer pmd_..."
-  ```
+### Codex
 
-### 3. Verify
+Register a streamable HTTP server and authenticate with OAuth:
 
-Run `/mcp` — `pullmd` should be connected and expose `read_url` (alongside `get_share` and `list_recent`). With that in place and `instance` set in your `pullmd.json`, the redirect hook and the tool line up.
+```bash
+codex mcp add pullmd --url https://pullmd.example.com/mcp
+codex mcp login pullmd
+```
+
+For bearer-token authentication, provide the name of an environment variable that Codex can read:
+
+```bash
+codex mcp add pullmd --url https://pullmd.example.com/mcp \
+  --bearer-token-env-var PULLMD_TOKEN
+```
+
+Run `codex mcp list` to verify registration, then start a new session so the MCP tools and plugin skill are available.
 
 ### Server-side setup
 
 Running and configuring the PullMD instance itself — Docker deployment, the `PULLMD_AUTH_MODE` modes, and enabling OAuth (`OAUTH_JWT_SECRET`, `PUBLIC_URL`) — depends on your server. See the PullMD project for the authoritative guide: **<https://github.com/AeternaLabsHQ/pullmd>** (its *Authentication* and *AI-agent integration* sections).
 
-## Configuration
+## Claude Code Hook Configuration
 
-The plugin reads `pullmd.json` from two levels and merges them per key, with the project level overriding the user level:
+The Claude Code `WebFetch` redirect reads `pullmd.json` from two levels and merges them per key, with the project level overriding the user level:
 
 | Level   | Path                                                          |
 |---------|---------------------------------------------------------------|
@@ -79,13 +103,15 @@ A user-level config typically sets the instance once. A project can then overrid
 | Field          | Type    | Default                 | Description                                                                                                                                                                       |
 |----------------|---------|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `instance`     | string  | —                       | Base URL of your PullMD service. When unset at every level while the plugin is enabled, the hook fails hard and blocks WebFetch until you configure it (or set `enabled: false`). |
-| `enabled`      | boolean | `true`                  | Master switch for the redirect hook.                                                                                                                                              |
+| `enabled`      | boolean | `true`                  | Master switch for the Claude Code redirect hook.                                                                                                                                  |
 | `mcp_tool`     | string  | `mcp__pullmd__read_url` | MCP tool name recommended in the deny message. Override to match your server's tool name.                                                                                         |
 | `escape_after` | integer | `2`                     | Allow the Nth WebFetch attempt of the same URL through. Default `2`: first attempt blocked, retry allowed.                                                                        |
 | `allow_hosts`  | array   | `[]`                    | Extra hosts always allowed through WebFetch. Matches the exact host or any subdomain.                                                                                             |
 | `debug`        | boolean | `false`                 | Log allow/deny decisions to stderr with a `[pullmd]` prefix.                                                                                                                      |
 
-## WebFetch Hook
+## Host Behavior
+
+### Claude Code WebFetch Hook
 
 A `PreToolUse` hook on the `WebFetch` tool decides, for every call:
 
@@ -95,16 +121,23 @@ A `PreToolUse` hook on the `WebFetch` tool decides, for every call:
 | Enabled but no instance configured              | Block and tell the user to configure `pullmd.json`             |
 | The configured instance host                    | Allow (share links and direct PullMD pages)                    |
 | `github.com` family, or a host in `allow_hosts` | Allow (PullMD is the wrong tool for these)                     |
-| Anything else                                   | Deny and tell Claude to use the PullMD MCP tool                |
+| Anything else                                   | Deny and tell Claude Code to use the PullMD MCP tool           |
 
 ### Escape hatch
 
 PullMD cannot handle every URL — JSON APIs, or the rare site it fails on. The hook counts attempts per URL within a session. Once attempts reach `escape_after` (default `2`), the same WebFetch is allowed through, so a retry always works. Counters reset on session start and compaction. The pattern mirrors the [`redundant-read-blocker`](../redundant-read-blocker/) plugin.
 
+### Codex Native Web Research
+
+Codex loads the shared skill and receives a concise `SessionStart` directive to prefer PullMD for ordinary pages, documents, Reddit threads, and YouTube transcripts. This is model guidance, not enforcement: Codex `PreToolUse` hooks cannot currently intercept its built-in web research tool. GitHub URLs and JSON APIs stay on Codex's native web tooling, and failed PullMD calls can fall back there when the format is supported.
+
+Codex requires users to review and trust the plugin hooks. Changed hook definitions are skipped until trusted again.
+
 ## Requirements
 
 - `jq`
-- A PullMD MCP server exposing a `read_url` tool, registered in Claude Code (see [MCP Server Setup](#mcp-server-setup))
+- Bash
+- A PullMD MCP server exposing a `read_url` tool, registered in the active host (see [MCP Server Setup](#mcp-server-setup))
 
 ## Layout
 
@@ -112,15 +145,20 @@ PullMD cannot handle every URL — JSON APIs, or the rare site it fails on. The 
 plugins/web-fetching-with-pullmd/
 ├── README.md
 ├── CHANGELOG.md
-├── CLAUDE.md
+├── AGENTS.md
+├── CLAUDE.md                      # Loads AGENTS.md for Claude Code
 ├── .claude-plugin/
-│   └── plugin.json                 # Plugin manifest
+│   └── plugin.json                 # Claude Code manifest
+├── .codex-plugin/
+│   └── plugin.json                 # Codex manifest
 ├── hooks/
 │   ├── hooks.json                  # SessionStart + PreToolUse(WebFetch) registration
+│   ├── prompts/
+│   │   └── mcp-tool-directives.md  # Codex native-web routing guidance
 │   └── scripts/
 │       ├── lib.sh                  # Config merge, host parsing, escape-hatch state I/O
 │       ├── pre-webfetch.sh         # Allow/deny decision + redirect message
-│       └── session-start.sh        # Wipes escape-hatch counters; nudges on missing MCP registration
+│       └── session-start.sh        # Resets state, injects guidance, checks MCP registration
 └── skills/
     └── fetching-web-with-pullmd/
         └── SKILL.md                # When and how to use the PullMD MCP tool

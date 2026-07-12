@@ -1,7 +1,7 @@
 ---
 name: fetching-web-with-pullmd
-version: 1.1.0
-description: "This skill should be used when the user asks to 'read this page', 'what does this URL say', 'fetch this article', 'summarize this PDF', or 'get the transcript of this video', or when web content is needed as context for another task. Fetches web pages, Reddit threads, PDF/Word/PowerPoint/Excel/EPUB documents, and YouTube videos as clean Markdown via PullMD. Also a fallback when WebFetch returns poor or noisy results. Do NOT use for GitHub URLs (use gh) or JSON API endpoints."
+version: 1.2.0
+description: "This skill should be used when the user asks to 'read this page', 'what does this URL say', 'fetch this article', 'summarize this PDF', or 'get the transcript of this video', or when web content is needed as context for another task. Fetches web pages, Reddit threads, PDF/Word/PowerPoint/Excel/EPUB documents, and YouTube videos as clean Markdown via PullMD. Also a fallback when the host's native web research returns poor or noisy results. Do NOT use for GitHub URLs (use gh) or JSON API endpoints."
 ---
 
 # Fetching Web Content with PullMD
@@ -22,7 +22,7 @@ digraph pullmd {
     "Call read_url" [shape=box];
     "Got clean Markdown?" [shape=diamond];
     "Use the Markdown" [shape=doublecircle];
-    "Fall back to WebFetch" [shape=box];
+    "Fall back to native web research" [shape=box];
 
     "Need to read a URL?" -> "GitHub URL?";
     "GitHub URL?" -> "Use gh CLI" [label="yes"];
@@ -31,16 +31,21 @@ digraph pullmd {
     "JSON API?" -> "read_url tool available?" [label="no"];
     "read_url tool available?" -> "Call read_url" [label="yes"];
     "read_url tool available?" -> "Tell user to set up the PullMD MCP server" [label="no"];
-    "Tell user to set up the PullMD MCP server" -> "Fall back to WebFetch";
+    "Tell user to set up the PullMD MCP server" -> "Fall back to native web research";
     "Call read_url" -> "Got clean Markdown?";
     "Got clean Markdown?" -> "Use the Markdown" [label="yes"];
-    "Got clean Markdown?" -> "Fall back to WebFetch" [label="no / failed"];
+    "Got clean Markdown?" -> "Fall back to native web research" [label="no / failed"];
 }
 ```
 
 ## Pre-flight
 
-Before relying on PullMD, confirm the `read_url` tool of the PullMD MCP server is in your available tools. If it is not, the server is not registered or authenticated in this session — tell the user to register it (`claude mcp add --transport http <name> <instance>/mcp`) and, if the instance requires auth, authenticate via `/mcp`. Until then, fall back to WebFetch for web pages; documents and YouTube have no WebFetch equivalent, so report the gap instead.
+Before relying on PullMD, confirm the `read_url` tool of the PullMD MCP server is in your available tools. If it is not, the server is not registered or authenticated in this session. Tell the user how to register it for the active host:
+
+- Claude Code: `claude mcp add --transport http <name> <instance>/mcp`, then `/mcp` for authentication.
+- Codex: `codex mcp add <name> --url <instance>/mcp`, then `codex mcp login <name>` for OAuth authentication.
+
+Until then, fall back to the host's native web research for content it can handle and report any remaining gap.
 
 ## Parameters
 
@@ -74,4 +79,4 @@ read_url(url="https://example.com/status", nocache=true)                    # fr
 - `frontmatter=true` adds a metadata block (title, source, extraction quality, and — for Reddit/media/YouTube — author, date, duration, token usage).
 - For a JS-heavy page that came back thin, set `extractor="playwright"` to force a full render.
 - `list_recent` lists recently fetched URLs (and their share ids); `get_share` re-fetches a prior result by its 8-hex share id. Both are tools of the PullMD MCP server.
-- If `read_url` returns poor output or fails, fall back to WebFetch for web pages — documents and YouTube have no WebFetch equivalent, so report the failure instead.
+- If `read_url` returns poor output or fails, fall back to the host's native web research for content it can handle and report any remaining gap.
