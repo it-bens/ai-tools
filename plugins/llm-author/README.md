@@ -140,7 +140,6 @@ llm-author/
 │   └── plugin.json              # Claude Code plugin manifest
 ├── .codex-plugin/
 │   └── plugin.json              # Codex plugin manifest
-├── RESEARCH.md                  # Research + design knowledge behind the handoff & feedback skills
 ├── docs/                        # Source documentation (15 files)
 ├── skills/
 │   ├── content-editing/

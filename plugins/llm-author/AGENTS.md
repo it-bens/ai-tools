@@ -20,7 +20,6 @@ This plugin must remain compatible with Claude Code and Codex.
 | Update Claude Code plugin metadata | `.claude-plugin/plugin.json` |
 | Update Codex plugin metadata | `.codex-plugin/plugin.json` |
 | Update Codex marketplace registration | `.agents/plugins/marketplace.json` at the repository root |
-| Understand the research and design knowledge behind the handoff & feedback skills | `RESEARCH.md` |
 | Modify skill behavior or triggers | `skills/prompt-engineering/SKILL.md` |
 | Modify content editing behavior | `skills/content-editing/SKILL.md` |
 | Modify rule-file writing behavior or triggers | `skills/rule-file-writing/SKILL.md` |
