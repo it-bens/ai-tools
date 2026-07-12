@@ -30,7 +30,7 @@ The `commit-message-writer` plugin documents the *content shape* of an overlay (
 | Task | Primary File | Key Concepts |
 |------|--------------|--------------|
 | Modify the setup workflow | `skills/setting-up-commit-message-writer-extension/SKILL.md` | Settings target choice, overlay content rules, idempotent settings merge |
-| Modify canonical paths | `skills/setting-up-commit-message-writer-extension/SKILL.md` | `.claude/hook-contexts/`, `.codex/hook-contexts/`, hook command templates |
+| Modify canonical paths | `skills/setting-up-commit-message-writer-extension/SKILL.md` | `.claude/hook-contexts/`, root `AGENTS.override.md`, Claude hook templates |
 
 ## Testing
 

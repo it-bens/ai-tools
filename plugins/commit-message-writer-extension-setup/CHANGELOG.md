@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.1.1] - 2026-07-12
+
+### Fixed
+- Codex setup now uses a committed root `AGENTS.override.md` that conditionally references the shared `.claude/hook-contexts/writing-commit-messages.md` overlay. This avoids relying on project hook environment variables or relative working directories when Codex operates from a project subdirectory.
+
 ## [1.1.0] - 2026-07-12
 
 ### Added

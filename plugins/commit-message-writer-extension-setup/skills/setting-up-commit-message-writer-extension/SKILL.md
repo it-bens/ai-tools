@@ -5,7 +5,7 @@ description: Use when the user explicitly asks to set up, install, configure, wi
 
 # Setting Up the commit-message-writer Extension
 
-Create the canonical extension setup for `commit-message-writer:writing-commit-messages` in the current project. Preserve the same overlay format across hosts and use the active host's project hook configuration to deliver it.
+Create the canonical extension setup for `commit-message-writer:writing-commit-messages` in the current project. Both hosts share `.claude/hook-contexts/writing-commit-messages.md`; Claude Code delivers it through hooks, while Codex discovers it through a committed root `AGENTS.override.md`.
 
 ## Workflow
 
@@ -15,11 +15,9 @@ Confirm the current working directory is the project root that should receive th
 
 Identify the active host. Use the Claude Code path when running in Claude Code and the Codex path when running in Codex. If the host cannot be determined, ask the user.
 
-### Step 2: Choose the settings target
+### Step 2: Choose the delivery target
 
-The settings target is the file that will hold the hook entries.
-
-For Codex, use `.codex/hooks.json`. If it does not exist, create it from `{}`.
+For Codex, use `AGENTS.override.md` in the project root. This file must be committed with the project so Codex can discover the extension from the project root and its subdirectories.
 
 For Claude Code, default to `.claude/settings.json`:
 
@@ -44,7 +42,7 @@ When the user describes intent in free form, translate it to the supported mecha
 
 If a request cannot be mapped to either mechanism, surface that to the user and ask whether to drop or rephrase it. Do not write content that lies outside the two mechanisms.
 
-### Step 4: Define the hook entries
+### Step 4: Define the delivery entries
 
 Claude Code requires two entries in the settings target.
 
@@ -66,32 +64,33 @@ Claude Code requires two entries in the settings target.
 }
 ```
 
-The two `command` strings above are the authoritative form. Treat them as opaque — do not reformat, line-wrap, or reorder keys.
+The two `command` strings above are the authoritative Claude Code form. Treat them as opaque — do not reformat, line-wrap, or reorder keys.
 
-Codex requires one `SessionStart` matcher entry with matcher `"startup|resume|clear|compact"` and this command hook:
+For Codex, add this section to the root `AGENTS.override.md`:
 
-```json
-{
-  "type": "command",
-  "command": "bash -lc 'input=$(cat); cwd=$(jq -r \".cwd\" <<<\"$input\"); jq -n --rawfile ctx \"$cwd/.codex/hook-contexts/writing-commit-messages.md\" '\"'\"'{hookSpecificOutput: {hookEventName: \"SessionStart\", additionalContext: $ctx}}'\"'\"''"
-}
+```markdown
+## Commit Message Writer Extension
+
+Whenever the `commit-message-writer:writing-commit-messages` skill is used, apply the project-specific instructions in:
+
+@.claude/hook-contexts/writing-commit-messages.md
 ```
 
-Treat this command string as opaque. It reads Codex's hook input to resolve the project directory and emits the overlay as `SessionStart` additional context.
+If a root `AGENTS.md` exists, `AGENTS.override.md` takes precedence over it. Ensure the override also contains `@AGENTS.md` before the extension section so the project's normal guidance remains active.
 
 ### Step 5: Confirm the plan
 
 Present the user with:
 
-- Settings target file.
+- Delivery target file.
 - Overlay content to be written.
-- The host-specific hook entries that will be merged.
+- The host-specific delivery entries that will be merged.
 
 Wait for explicit approval before any write. The user may reject or amend the plan; loop back to Step 3 if content changes.
 
 ### Step 6: Write the overlay content file
 
-Write the overlay to `.claude/hook-contexts/writing-commit-messages.md` for Claude Code or `.codex/hook-contexts/writing-commit-messages.md` for Codex. Use this template, omitting any section with no entries:
+Write the overlay to `.claude/hook-contexts/writing-commit-messages.md` for both hosts. Use this template, omitting any section with no entries:
 
 ````
 ## Named-value assignments
@@ -109,28 +108,29 @@ Write the overlay to `.claude/hook-contexts/writing-commit-messages.md` for Clau
 
 One bullet per assigned name under the single `## Named-value assignments` heading. One section per workflow position extension, ordered by step number. The body of each `Pre-Step-N` / `Post-Step-N` section is the imperative instruction text confirmed in Step 5.
 
-Create the selected host's `hook-contexts` directory if it does not exist.
+Create `.claude/hook-contexts/` if it does not exist.
 
 Verify after writing: every section in the file is one of the three template sections above and appears in the order shown.
 
-### Step 7: Merge hook entries
+### Step 7: Merge the delivery entries
 
-Read the settings target (parse as JSON; if absent, start from `{}`).
-
-For Claude Code, ensure:
+For Claude Code, read the settings target (parse as JSON; if absent, start from `{}`). Ensure:
 
 - `.hooks.PostToolUse` is an array. Find an element whose `matcher` is `"Skill"`. If none, append a new element `{ "matcher": "Skill", "hooks": [] }`. Append the Step 4 PostToolUse entry to that element's `hooks` array *only if* no existing entry in that array has the same `command` string.
 - `.hooks.UserPromptSubmit` is an array. Find an element whose `matcher` is `""`. If none, append a new element `{ "matcher": "", "hooks": [] }`. Append the Step 4 UserPromptSubmit entry to that element's `hooks` array *only if* no existing entry has the same `command` string.
 
 Do not modify any unrelated key, matcher, or hook entry. Write the result atomically (temp file in the same directory, then rename).
 
-For Codex, ensure `.hooks.SessionStart` is an array. Find an element whose `matcher` is `"startup|resume|clear|compact"`; if none exists, append `{ "matcher": "startup|resume|clear|compact", "hooks": [] }`. Append the Step 4 Codex command hook only when no existing hook has the same `command` string. Preserve unrelated keys and hooks, and write atomically.
+For Codex, read the root `AGENTS.override.md`; if absent, start with an empty file. Preserve all unrelated content. If root `AGENTS.md` exists, ensure `@AGENTS.md` appears once before the extension section. Add the Step 4 extension section only when it is absent; if the heading already exists, update that section to the canonical form without duplicating it.
+
+Ensure `AGENTS.override.md` and `.claude/hook-contexts/writing-commit-messages.md` are not ignored by version control. They are project configuration and must be committed. Do not create a commit without the user's explicit approval, but report untracked or uncommitted state as incomplete setup.
 
 ### Step 8: Verify and report
 
 Confirm in this order:
 
-1. The selected host's overlay file exists and matches the Step 6 template.
-2. The settings target is valid JSON and contains the host-specific Step 4 entries.
+1. `.claude/hook-contexts/writing-commit-messages.md` exists and matches the Step 6 template.
+2. Claude Code: the settings target is valid JSON and contains both Step 4 hooks.
+3. Codex: root `AGENTS.override.md` contains the canonical extension section, retains root `AGENTS.md` through `@AGENTS.md` when applicable, and both project files are tracked and committed.
 
-Report the settings target and files written. For Claude Code, invoke `commit-message-writer:writing-commit-messages` to confirm delivery. For Codex, review and trust the new hook, then start a new session and invoke the writing skill to confirm delivery.
+Report the delivery target and files written. For Claude Code, invoke `commit-message-writer:writing-commit-messages` to confirm delivery. For Codex, start a new session from the project root or a subdirectory and invoke the writing skill to confirm the override is active.
