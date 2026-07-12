@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0] - 2026-07-09
+
+### Added
+
+- Codex plugin metadata (`.codex-plugin/plugin.json`) and repo marketplace metadata (`.agents/plugins/marketplace.json`) while keeping the existing Claude Code manifest and `.mcp.json` path.
+- Shared `AGENTS.md` development guidance with `CLAUDE.md` reduced to an `@AGENTS.md` compatibility wrapper.
+
+### Changed
+
+- Hook launcher commands now resolve either Codex or Claude Code plugin-root environments before falling back to repo-local paths.
+- Block-message wording is host-neutral so the shared hook prompt works in both Claude Code and Codex.
+- Plugin and MCP server metadata now report version `1.2.0`.
+
 ## [1.1.0] - 2026-05-10
 
 ### Added

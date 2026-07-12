@@ -1,0 +1,25 @@
+{
+  "name": "commit-message-writer",
+  "version": "1.2.0",
+  "description": "Generate and validate Conventional Commit messages from staged changes, branches, or individual commits.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["commit-messages", "conventional-commits", "git", "skill"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Commit Message Writer",
+    "shortDescription": "Write Conventional Commit messages from Git changes.",
+    "longDescription": "Adds a mode-aware skill for drafting and validating Conventional Commit messages from staged changes, branch ranges, or individual commits.",
+    "developerName": "Martin Bens",
+    "category": "Development",
+    "capabilities": ["Skill", "Git", "Commit Messages"],
+    "defaultPrompt": [
+      "Write a commit message for my staged changes.",
+      "Summarize this branch as a squash commit.",
+      "Validate the latest commit message."
+    ]
+  }
+}

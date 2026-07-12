@@ -217,3 +217,32 @@ source "${SCRIPTS_DIR}/lib.sh"
     run mcp_server_configured "" "$TEST_PROJECT_DIR"
     assert_failure
 }
+
+# bats test_tags=mcp-config,codex
+@test "mcp_server_configured finds an enabled Codex server" {
+    install_fake_codex
+    export PLUGIN_ROOT="${REPO_ROOT}/plugins/web-fetching-with-pullmd"
+    export FAKE_CODEX_MCP_LIST='[{"name":"pullmd","enabled":true}]'
+
+    mcp_server_configured "pullmd" "$TEST_PROJECT_DIR"
+}
+
+# bats test_tags=mcp-config,codex
+@test "mcp_server_configured rejects a disabled Codex server" {
+    install_fake_codex
+    export PLUGIN_ROOT="${REPO_ROOT}/plugins/web-fetching-with-pullmd"
+    export FAKE_CODEX_MCP_LIST='[{"name":"pullmd","enabled":false}]'
+
+    run mcp_server_configured "pullmd" "$TEST_PROJECT_DIR"
+    assert_failure
+}
+
+# bats test_tags=mcp-config,codex
+@test "mcp_server_configured rejects an absent Codex server" {
+    install_fake_codex
+    export PLUGIN_ROOT="${REPO_ROOT}/plugins/web-fetching-with-pullmd"
+    export FAKE_CODEX_MCP_LIST='[{"name":"other","enabled":true}]'
+
+    run mcp_server_configured "pullmd" "$TEST_PROJECT_DIR"
+    assert_failure
+}

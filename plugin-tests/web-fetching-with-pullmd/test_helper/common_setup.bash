@@ -22,6 +22,8 @@ SCRIPTS_DIR="${REPO_ROOT}/plugins/web-fetching-with-pullmd/hooks/scripts"
 setup() {
     TEST_TEMP_DIR="$(mktemp -d)"
 
+    unset PLUGIN_ROOT CODEX_PLUGIN_ROOT PLUGIN_DATA CODEX_PLUGIN_DATA
+
     # Isolate HOME so the developer's real ~/.claude/pullmd.json never leaks in.
     export HOME="${TEST_TEMP_DIR}/home"
     mkdir -p "${HOME}/.claude"
@@ -65,6 +67,28 @@ write_project_mcp_json() {
     printf '%s' "$1" > "${TEST_PROJECT_DIR}/.mcp.json"
 }
 
+# Install a fake Codex CLI that serves FAKE_CODEX_MCP_LIST for
+# `codex mcp list --json`.
+install_fake_codex() {
+    local bin_dir script
+    bin_dir="${TEST_TEMP_DIR}/bin"
+    script="${bin_dir}/codex"
+    mkdir -p "$bin_dir"
+    cat > "$script" <<'EOF'
+#!/bin/bash
+set -euo pipefail
+
+if [[ "${1:-}" == "mcp" && "${2:-}" == "list" && "${3:-}" == "--json" ]]; then
+    printf '%s\n' "${FAKE_CODEX_MCP_LIST:-[]}"
+    exit 0
+fi
+
+exit 1
+EOF
+    chmod +x "$script"
+    export PATH="${bin_dir}:${PATH}"
+}
+
 # --- Hook runners ---
 
 # Run pre-webfetch.sh. Args: $1 = session_id, $2 = url
@@ -88,8 +112,11 @@ run_session_start() {
     local source="$2"
 
     local stdin
-    stdin=$(jq -n -c --arg sid "$session_id" --arg src "$source" \
-        '{session_id: $sid, source: $src}')
+    stdin=$(jq -n -c \
+        --arg sid "$session_id" \
+        --arg cwd "$TEST_PROJECT_DIR" \
+        --arg src "$source" \
+        '{session_id: $sid, cwd: $cwd, source: $src}')
 
     run bash -c 'printf "%s" "$1" | bash "$2"' _ "$stdin" "${SCRIPTS_DIR}/session-start.sh"
 }

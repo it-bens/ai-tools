@@ -1,5 +1,5 @@
 {
-  "description": "Redirect WebFetch of normal pages to the PullMD MCP tool for clean Markdown; allow the configured instance host, GitHub, and configured hosts, with a per-URL escape hatch",
+  "description": "Inject PullMD routing guidance for Codex and redirect Claude Code WebFetch calls to PullMD, with configured host exceptions and a per-URL escape hatch",
   "hooks": {
     "SessionStart": [
       {
@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start.sh",
+            "command": "bash -lc 'root=\"${PLUGIN_ROOT:-${CODEX_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}}\"; if [[ -z \"$root\" && -x ./hooks/scripts/session-start.sh ]]; then root=.; fi; if [[ -z \"$root\" && -x ./plugins/web-fetching-with-pullmd/hooks/scripts/session-start.sh ]]; then root=./plugins/web-fetching-with-pullmd; fi; if [[ -n \"$root\" ]]; then exec bash \"$root/hooks/scripts/session-start.sh\"; fi; cat >/dev/null; exit 0'",
             "timeout": 5
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start.sh",
+            "command": "bash -lc 'root=\"${PLUGIN_ROOT:-${CODEX_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}}\"; if [[ -z \"$root\" && -x ./hooks/scripts/session-start.sh ]]; then root=.; fi; if [[ -z \"$root\" && -x ./plugins/web-fetching-with-pullmd/hooks/scripts/session-start.sh ]]; then root=./plugins/web-fetching-with-pullmd; fi; if [[ -n \"$root\" ]]; then exec bash \"$root/hooks/scripts/session-start.sh\"; fi; cat >/dev/null; exit 0'",
             "timeout": 5
           }
         ]
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/pre-webfetch.sh",
+            "command": "bash -lc 'root=\"${PLUGIN_ROOT:-${CODEX_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}}\"; if [[ -z \"$root\" && -x ./hooks/scripts/pre-webfetch.sh ]]; then root=.; fi; if [[ -z \"$root\" && -x ./plugins/web-fetching-with-pullmd/hooks/scripts/pre-webfetch.sh ]]; then root=./plugins/web-fetching-with-pullmd; fi; if [[ -n \"$root\" ]]; then exec bash \"$root/hooks/scripts/pre-webfetch.sh\"; fi; cat >/dev/null; exit 0'",
             "timeout": 10
           }
         ]

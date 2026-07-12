@@ -1,0 +1,21 @@
+{
+  "name": "commit-message-writer-extension-setup",
+  "version": "1.1.1",
+  "description": "Set up project-specific overlays for the commit-message-writer skill.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["commit-messages", "setup", "hooks", "extension", "skill"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Commit Message Writer Extension Setup",
+    "shortDescription": "Configure project-specific commit message rules.",
+    "longDescription": "Adds a setup skill that provisions project-specific named values and workflow-position instructions for commit-message-writer.",
+    "developerName": "Martin Bens",
+    "category": "Development",
+    "capabilities": ["Skill", "Hooks", "Project Setup"],
+    "defaultPrompt": ["Set up the commit-message-writer extension for this project."]
+  }
+}

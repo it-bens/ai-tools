@@ -4,6 +4,19 @@ All notable changes to the `web-fetching-with-pullmd` plugin are documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-07-12
+
+### Added
+
+- Codex plugin manifest and repository marketplace registration
+- Codex `SessionStart` guidance that prefers PullMD over native web research
+
+### Changed
+
+- Generalized the skill's setup and fallback instructions for Claude Code and Codex
+- Made MCP registration diagnostics use the active host's registry
+- Moved shared development guidance to `AGENTS.md`, with `CLAUDE.md` loading it through `@AGENTS.md`
+
 ## [1.1.0] - 2026-06-24
 
 ### Changed

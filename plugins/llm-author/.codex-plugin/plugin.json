@@ -1,0 +1,25 @@
+{
+  "name": "llm-author",
+  "version": "3.4.0",
+  "description": "Author and refine LLM-targeted prompts, skills, rule files, session handoffs, and session feedback.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["llm-author", "prompt-engineering", "content-editing", "rule-file-writing", "handoff-prompts", "session-feedback", "prompting", "templates", "claude-4", "glm-4.7", "z-ai", "gemini-3", "deep-research"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "LLM Author",
+    "shortDescription": "Author and refine content written for LLMs.",
+    "longDescription": "Adds skills for prompt engineering, concise content editing, rule-file authoring, session handoffs, and session feedback across AI coding assistants.",
+    "developerName": "Martin Bens",
+    "category": "Productivity",
+    "capabilities": ["Skill", "Prompt Engineering", "Rule Files"],
+    "defaultPrompt": [
+      "Create a production-ready prompt for this task.",
+      "Optimize this LLM-targeted content without adding bloat.",
+      "Write a rule file for this behavior."
+    ]
+  }
+}

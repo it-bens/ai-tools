@@ -78,8 +78,8 @@ if host_allowed "$host"; then
 fi
 
 # Cannot track the escape hatch without a data dir → fail open (never deadlock).
-if [[ -z "${CLAUDE_PLUGIN_DATA:-}" ]]; then
-    debug_log "ALLOW ${url} — CLAUDE_PLUGIN_DATA unset (cannot track escape hatch)"
+if [[ -z "$PULLMD_PLUGIN_DATA" ]]; then
+    debug_log "ALLOW ${url} — plugin data directory unset (cannot track escape hatch)"
     exit 0
 fi
 

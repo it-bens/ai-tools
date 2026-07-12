@@ -4,9 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.4.0] - 2026-07-12
+
+Generalized the plugin's runtime instructions for use by multiple AI coding assistants while preserving Claude-specific frontmatter and Claude Web assets.
+
+### Added
+
+- Codex plugin manifest and repository marketplace registration
+
+### Changed
+
+- Generalized rule-file authoring around the shared rule-file concept and the active assistant's discovery conventions
+- Replaced named tool calls in skill bodies with host-neutral actions while retaining the helpful Claude Code frontmatter
+- Synchronized every included skill to plugin version `3.4.0`
+- Moved shared development guidance to `AGENTS.md`, with `CLAUDE.md` loading it through `@AGENTS.md`
+
+### Removed
+
+- `writing-subagent-descriptions`, which will be superseded by a tool-neutral description-writing skill
+
 ## [3.3.0] - 2026-06-26
 
-Added two skills that author session-to-session prompts, derived from recurring request patterns in the shopware/shopware sessions: `writing-handoff-prompts` (forward — package a unit of work for a fresh, zero-context session) and `writing-session-feedback` (backward — a calibration note to the upstream session that defined the work, so it can confirm correctness and sharpen future specs/reviews). Both stay abstract over the kind of work and deduce branch, commit/verification policy, scope, and recipient from context. They are `model: sonnet` and `user-invocable: false` (invoked only on an explicit user request, never proactively), craft their output via the nested `llm-author:prompt-engineering` skill, and ask whether to save it to a file or copy it to the clipboard. The section templates and gates were sharpened against external research on session handoffs — see `RESEARCH.md` for the distilled findings and design rationale.
+Added two skills that author session-to-session prompts, derived from recurring request patterns in the shopware/shopware sessions: `writing-handoff-prompts` (forward — package a unit of work for a fresh, zero-context session) and `writing-session-feedback` (backward — a calibration note to the upstream session that defined the work, so it can confirm correctness and sharpen future specs/reviews). Both stay abstract over the kind of work and deduce branch, commit/verification policy, scope, and recipient from context. They are `model: sonnet` and `user-invocable: false` (invoked only on an explicit user request, never proactively), craft their output via the nested `llm-author:prompt-engineering` skill, and ask whether to save it to a file or copy it to the clipboard. The section templates and gates were sharpened against external research on session handoffs.
 
 ### Added
 

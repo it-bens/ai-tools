@@ -6,7 +6,7 @@ Loaded before Pass 2 of the optimization loop. Each technique is a short named b
 
 The Decision Test almost always belongs immediately after the CRITICAL opener, before the body of rules. Most unoptimized rules files bury it at the bottom as a closing self-check. Move it up.
 
-**Why:** Claude reads top-to-bottom. A gate at the bottom fires after all the rules have loaded; a gate at the top primes the check before the rules need to apply.
+**Why:** The assistant reads top-to-bottom. A gate at the bottom fires after all the rules have loaded; a gate at the top primes the check before the rules need to apply.
 
 ## 2. WRONG/CORRECT Code Blocks for Syntactic Patterns
 
@@ -17,7 +17,7 @@ CORRECT: $requiredId ?? throw new InvalidArgumentException(...)
 
 Code blocks beat prose because:
 - Visual contrast makes them scannable.
-- Exact tokens are present, so Claude can pattern-match against its own next-token decisions.
+- Exact tokens are present, so the assistant can pattern-match against its own next-token decisions.
 - WRONG/CORRECT framing is unambiguous about which is the rule.
 
 ## 3. Tables for Classification
@@ -42,7 +42,7 @@ Embed the WHY as a short clause on the rule itself rather than in a separate par
 
 > "Empty collection / null / zero returns on error paths are BANNED: they look like valid empty results."
 
-The `: they look like valid empty results` clause is the WHY. Costs ~6 tokens, lets Claude judge edge cases.
+The `: they look like valid empty results` clause is the WHY. Costs ~6 tokens, lets the assistant judge edge cases.
 
 ## 6. Narrow Escape Hatches with Explicit Gates
 
@@ -62,7 +62,7 @@ Without explicit gates, an absolute rule will be ignored at the first plausible 
 
 ## 7. Cross-File Structural Alignment
 
-When multiple rules files share a domain, use the same structural shape across all of them. A consistent `CRITICAL → Decision Test → rules → Red Flags` layout reinforces pattern-matching: when Claude reads one rules file, the others become easier to parse and apply.
+When multiple rules files share a domain, use the same structural shape across all of them. A consistent `CRITICAL → Decision Test → rules → Red Flags` layout reinforces pattern-matching: when the assistant reads one rule file, the others become easier to parse and apply.
 
 ## Pass 2 Scan Checklist
 

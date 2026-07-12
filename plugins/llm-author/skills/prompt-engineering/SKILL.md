@@ -1,6 +1,6 @@
 ---
 name: prompt-engineering
-version: 3.2.0
+version: 3.4.0
 description: Create, optimize, and debug high-performing prompts for Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3 with production-ready templates and evidence-based techniques. Also optimize LLM-targeted content (skills, agents, instructions, documentation). Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, adapt a prompt for Gemini, create a Gemini deep research prompt, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 allowed-tools: AskUserQuestion, Read, Grep, Glob, WebSearch, WebFetch
 ---
@@ -384,7 +384,7 @@ Before delivering any prompt, verify:
 
 ## When to Ask for Clarification
 
-For **traditional prompts**, use the AskUserQuestion tool when:
+For **traditional prompts**, ask the user for clarification when:
 - Use case is ambiguous or too broad
 - Multiple valid approaches exist
 - Output format preferences are unclear

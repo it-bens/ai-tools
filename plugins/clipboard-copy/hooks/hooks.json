@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start.sh",
+            "command": "bash -lc 'root=\"${CODEX_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; if [ -z \"$root\" ] && [ -x ./hooks/scripts/session-start.sh ]; then root=.; fi; if [ -z \"$root\" ] && [ -x ./plugins/clipboard-copy/hooks/scripts/session-start.sh ]; then root=./plugins/clipboard-copy; fi; if [ -n \"$root\" ]; then exec \"$root/hooks/scripts/session-start.sh\"; fi; exit 0'",
             "timeout": 5
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/check-clipboard.sh",
+            "command": "bash -lc 'root=\"${CODEX_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; if [ -z \"$root\" ] && [ -x ./hooks/scripts/check-clipboard.sh ]; then root=.; fi; if [ -z \"$root\" ] && [ -x ./plugins/clipboard-copy/hooks/scripts/check-clipboard.sh ]; then root=./plugins/clipboard-copy; fi; if [ -n \"$root\" ]; then exec bash \"$root/hooks/scripts/check-clipboard.sh\"; fi; cat >/dev/null; exit 0'",
             "timeout": 5
           }
         ]

@@ -1,0 +1,46 @@
+{
+  "name": "clipboard-copy",
+  "version": "1.2.0",
+  "description": "Cross-platform clipboard MCP tools for copying inline text or file contents to the system clipboard from Codex.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "clipboard",
+    "bash",
+    "cross-platform",
+    "pbcopy",
+    "xclip",
+    "wl-copy",
+    "osc52"
+  ],
+  "mcpServers": {
+    "clipboard-copy": {
+      "command": "bash",
+      "args": [
+        "-lc",
+        "root=\"${CODEX_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; if [ -z \"$root\" ] && [ -x ./mcp-server-clipboard/server.sh ]; then root=.; fi; if [ -z \"$root\" ] && [ -x ./plugins/clipboard-copy/mcp-server-clipboard/server.sh ]; then root=./plugins/clipboard-copy; fi; if [ -z \"$root\" ]; then echo 'clipboard-copy: unable to locate plugin root' >&2; exit 1; fi; exec \"$root/mcp-server-clipboard/server.sh\""
+      ],
+      "env": {}
+    }
+  },
+  "interface": {
+    "displayName": "Clipboard Copy",
+    "shortDescription": "Copy text or file contents to the system clipboard.",
+    "longDescription": "Adds clipboard_copy and clipboard_copy_file MCP tools. The server auto-detects macOS, Linux, WSL, Cygwin/MSYS, and OSC 52 clipboard backends.",
+    "developerName": "Martin Bens",
+    "category": "Productivity",
+    "capabilities": [
+      "MCP",
+      "Local Tool",
+      "Clipboard"
+    ],
+    "defaultPrompt": [
+      "Copy the latest response to my clipboard.",
+      "Copy this file to my clipboard."
+    ]
+  }
+}

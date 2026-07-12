@@ -1,6 +1,6 @@
 # Commit Message Writer Extension Setup
 
-One-time setup skill that wires up a project to extend the `commit-message-writer:writing-commit-messages` skill. Provisions the overlay content file and the hook entries that deliver it to the agent the moment the skill runs.
+One-time setup skill that wires up a project to extend the `commit-message-writer:writing-commit-messages` skill in Claude Code or Codex. It provisions a shared overlay content file and the host-specific project configuration that exposes it to the agent.
 
 The plugin name and the skill name are intentionally long so neither activates by accident; invoke the skill explicitly when you want to set the extension up in a project.
 
@@ -16,7 +16,7 @@ Then invoke the skill from the project root:
 /commit-message-writer-extension-setup:setting-up-commit-message-writer-extension
 ```
 
-The skill walks the project state, asks what to put in the overlay (or imports content from a legacy location), writes `.claude/hook-contexts/writing-commit-messages.md`, and merges the required hook entries into `.claude/settings.json` (or `.claude/settings.local.json` when preferred).
+The skill detects the active host and gathers the overlay content in `.claude/hook-contexts/writing-commit-messages.md`. Claude Code delivers it through project hooks. Codex uses a committed root `AGENTS.override.md` that conditionally references the same file whenever the writing skill is used.
 
 ## Skills
 
@@ -29,6 +29,7 @@ The skill walks the project state, asks what to put in the overlay (or imports c
 - `.claude/settings.json` (or `.claude/settings.local.json`) entries:
   - `PostToolUse` with matcher `Skill`, gated on `tool_input.skill == "commit-message-writer:writing-commit-messages"`.
   - `UserPromptSubmit`, gated on a prompt that begins with `/commit-message-writer:writing-commit-messages`.
+- For Codex, a committed root `AGENTS.override.md` section that references `.claude/hook-contexts/writing-commit-messages.md` whenever the writing skill is used. Existing root `AGENTS.md` guidance is retained through `@AGENTS.md`.
 
 ## License
 

@@ -3,13 +3,17 @@
 # Sourced by pre-webfetch.sh and session-start.sh — not executed directly.
 #
 # Naming convention:
-#   UPPERCASE  — env vars (CLAUDE_PLUGIN_DATA), config globals (PULLMD_*), SCRIPT_DIR
+#   UPPERCASE  — env vars, config globals (PULLMD_*), SCRIPT_DIR
 #   lowercase  — script-local and function-local variables
 
 # --- Config defaults ---
 # instance has NO default: when unset everywhere (and enabled), the WebFetch
 # hook fails hard and blocks the WebFetch.
 PULLMD_DEFAULTS='{"enabled":true,"mcp_tool":"mcp__pullmd__read_url","escape_after":2,"allow_hosts":[],"debug":false}'
+
+# Writable plugin data directory. Codex provides PLUGIN_DATA and compatibility
+# aliases; Claude Code provides CLAUDE_PLUGIN_DATA.
+PULLMD_PLUGIN_DATA="${PLUGIN_DATA:-${CODEX_PLUGIN_DATA:-${CLAUDE_PLUGIN_DATA:-}}}"
 
 # Hosts always allowed through WebFetch (never redirected to PullMD).
 # PullMD is the wrong tool for GitHub — these stay on WebFetch / gh.
@@ -95,6 +99,12 @@ debug_log() {
 
 # --- MCP server registration check ---
 
+# Returns 0 when running as a Codex plugin hook. Codex provides PLUGIN_ROOT;
+# CODEX_PLUGIN_ROOT remains supported for compatibility with older builds.
+is_codex_host() {
+    [[ -n "${PLUGIN_ROOT:-}" || -n "${CODEX_PLUGIN_ROOT:-}" ]]
+}
+
 # Derive the MCP server name from a tool name of the form mcp__<server>__<tool>.
 # Prints the server name, or empty when the tool name is not in that form.
 # Args: $1 = tool name
@@ -111,15 +121,28 @@ mcp_server_from_tool() {
     esac
 }
 
-# Best-effort check: is an MCP server named $1 registered in the standard
-# Claude Code config locations? Checks ~/.claude.json (top-level mcpServers and
-# every projects[].mcpServers) and <project_dir>/.mcp.json. Returns 0 if found,
-# 1 otherwise. Detects configured-ness only — NOT whether the server is
-# connected or authenticated (an OAuth server can be registered yet unauthed).
+# Best-effort check: is an MCP server named $1 registered in the active host?
+# Codex is queried through `codex mcp list --json`; Claude Code checks
+# ~/.claude.json and <project_dir>/.mcp.json. Returns 0 if found, 1 otherwise.
+# Detects configured-ness only, not whether the server is connected or
+# authenticated.
 # Args: $1 = server name, $2 = project directory (may be empty)
 mcp_server_configured() {
-    local server="$1" project_dir="$2" user_cfg project_mcp
+    local server project_dir user_cfg project_mcp output
+    server="$1"
+    project_dir="$2"
     if [[ -z "$server" ]]; then
+        return 1
+    fi
+
+    if is_codex_host; then
+        command -v codex >/dev/null 2>&1 || return 1
+        output=$(codex mcp list --json 2>/dev/null || true)
+        if [[ -n "$output" ]] && printf '%s' "$output" | jq -e --arg n "$server" '
+            any(.[]?; .name == $n and .enabled != false)
+        ' >/dev/null 2>&1; then
+            return 0
+        fi
         return 1
     fi
 
@@ -172,17 +195,17 @@ host_allowed() {
 }
 
 # --- Escape-hatch state I/O ---
-# State lives at ${CLAUDE_PLUGIN_DATA}/<session_id>/webfetch-attempts.json
+# State lives at ${PULLMD_PLUGIN_DATA}/<session_id>/webfetch-attempts.json
 # shape: {"urls": {"<url>": <attempt-count>}}
 
 # Args: $1 = session_id
 state_path() {
-    printf '%s' "${CLAUDE_PLUGIN_DATA}/${1}/webfetch-attempts.json"
+    printf '%s' "${PULLMD_PLUGIN_DATA}/${1}/webfetch-attempts.json"
 }
 
 # Args: $1 = session_id
 session_dir() {
-    printf '%s' "${CLAUDE_PLUGIN_DATA}/${1}"
+    printf '%s' "${PULLMD_PLUGIN_DATA}/${1}"
 }
 
 # Load state JSON, or an empty tracker if missing/corrupt.
