@@ -1,3 +1,5 @@
+@AGENTS.md
+
 # Commit Message Writer Extension
 
 Whenever the `commit-message-writer:writing-commit-messages` skill is used, apply the project-specific instructions in:
