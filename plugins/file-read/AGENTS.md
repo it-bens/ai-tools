@@ -36,6 +36,5 @@ Run these checks after edits:
 
 ```bash
 jq empty plugins/file-read/.codex-plugin/plugin.json plugins/file-read/mcp-server-read/config.json plugins/file-read/mcp-server-read/tools.json
-python3 /Users/martinbens/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/file-read
 .bats/bats-core/bin/bats plugin-tests/file-read/*.bats
 ```
