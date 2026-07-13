@@ -7,7 +7,7 @@ This plugin must remain dual-compatible with Claude Code and Codex.
 - Claude Code uses `.claude-plugin/plugin.json` and `.mcp.json`.
 - Codex uses `.codex-plugin/plugin.json` and the repo marketplace at `.agents/plugins/marketplace.json`.
 - The MCP server implementation, hook scripts, and `hooks/prompts/mcp-tool-directives.md` are shared.
-- Keep `hooks/hooks.json` compatible with both runtimes. Its commands intentionally resolve the plugin root through `CODEX_PLUGIN_ROOT`, `CLAUDE_PLUGIN_ROOT`, plugin-root cwd, and repo-root fallback paths.
+- Keep `hooks/hooks.json` compatible with both runtimes. Resolve the plugin root from Codex's `PLUGIN_ROOT` or Claude Code's `CLAUDE_PLUGIN_ROOT`, and fail when neither is available; do not probe cwd-relative fallback paths.
 - Do not replace Claude-specific files while adding Codex support. Codex files are additive.
 
 ## Directory & File Structure

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.1] - 2026-07-13
+
+### Fixed
+
+- Codex now launches the MCP server from the plugin root, and the SessionStart hook fails when the host does not provide a plugin root instead of silently probing local paths.
+
 ## [0.2.0] - 2026-07-12
 
 ### Added

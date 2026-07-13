@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.1] - 2026-07-13
+
+### Fixed
+
+- Codex now launches the MCP server from the plugin root, and shared hook launchers require host-provided plugin-root variables instead of probing repo-local paths.
+
 ## [1.2.0] - 2026-07-09
 
 ### Added

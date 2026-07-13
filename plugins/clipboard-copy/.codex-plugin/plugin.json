@@ -1,6 +1,6 @@
 {
   "name": "clipboard-copy",
-  "version": "1.2.0",
+  "version": "1.2.1+codex.20260713054742",
   "description": "Cross-platform clipboard MCP tools for copying inline text or file contents to the system clipboard from Codex.",
   "author": {
     "name": "Martin Bens",
@@ -21,9 +21,9 @@
     "clipboard-copy": {
       "command": "bash",
       "args": [
-        "-lc",
-        "root=\"${CODEX_PLUGIN_ROOT:-${CLAUDE_PLUGIN_ROOT:-}}\"; if [ -z \"$root\" ] && [ -x ./mcp-server-clipboard/server.sh ]; then root=.; fi; if [ -z \"$root\" ] && [ -x ./plugins/clipboard-copy/mcp-server-clipboard/server.sh ]; then root=./plugins/clipboard-copy; fi; if [ -z \"$root\" ]; then echo 'clipboard-copy: unable to locate plugin root' >&2; exit 1; fi; exec \"$root/mcp-server-clipboard/server.sh\""
+        "./mcp-server-clipboard/server.sh"
       ],
+      "cwd": ".",
       "env": {}
     }
   },

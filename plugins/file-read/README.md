@@ -64,6 +64,6 @@ When installed as a plugin in a host that supports hooks, the `SessionStart` hoo
 - `grep`
 - `head` or `dd`
 
-## Version
+## Release
 
-Current version: `0.2.0`
+Current release: `0.2.1`

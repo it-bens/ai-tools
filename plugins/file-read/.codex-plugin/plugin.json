@@ -1,6 +1,6 @@
 {
   "name": "file-read",
-  "version": "0.2.0",
+  "version": "0.2.1+codex.20260713054742",
   "description": "Portable MCP read_file tool for reading local text files with offset and limit arguments.",
   "author": {
     "name": "Martin Bens",
@@ -17,9 +17,9 @@
     "file-read": {
       "command": "bash",
       "args": [
-        "-lc",
-        "root=\"${CODEX_PLUGIN_ROOT:-}\"; if [ -z \"${root}\" ] && [ -f ./mcp-server-read/server.sh ]; then root=.; fi; if [ -z \"${root}\" ] && [ -f ./plugins/file-read/mcp-server-read/server.sh ]; then root=./plugins/file-read; fi; if [ -z \"${root}\" ]; then printf '%s\\n' 'file-read: unable to locate plugin root' >&2; exit 1; fi; exec bash \"${root}/mcp-server-read/server.sh\""
+        "./mcp-server-read/server.sh"
       ],
+      "cwd": ".",
       "env": {}
     }
   },

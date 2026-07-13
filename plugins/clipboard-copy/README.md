@@ -71,7 +71,7 @@ A `SessionStart` hook injects a short directive into the conversation context at
 
 The directive text lives in `hooks/prompts/mcp-tool-directives.md`. The hook script (`hooks/scripts/session-start.sh`) emits it via `hookSpecificOutput.additionalContext`.
 
-The hook registration is shared between Claude Code and Codex. It resolves the plugin root from `CODEX_PLUGIN_ROOT`, then `CLAUDE_PLUGIN_ROOT`, then local fallback paths so the same `hooks/hooks.json` works in both runtimes and during repo-local tests.
+The hook registration is shared between Claude Code and Codex. It resolves the plugin root from Codex's `PLUGIN_ROOT` or Claude Code's `CLAUDE_PLUGIN_ROOT` and fails explicitly when neither host-provided variable is available.
 
 ## Bash Enforcement Hook
 
