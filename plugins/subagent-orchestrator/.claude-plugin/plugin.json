@@ -1,0 +1,11 @@
+{
+  "name": "subagent-orchestrator",
+  "version": "1.0.0",
+  "description": "Orchestrate implementation and review work through dispatched workers — Codex CLI (GPT-5.6) and Claude subagents — with a task-strategy workflow, model routing, fenced write scopes, and independent two-worker verification",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["orchestration", "subagents", "codex", "codex-exec", "gpt-5.6", "model-routing", "verification", "code-review", "dispatch", "skills"]
+}

@@ -114,6 +114,11 @@
       "name": "web-fetching-with-pullmd",
       "source": "./plugins/web-fetching-with-pullmd",
       "category": "productivity"
+    },
+    {
+      "name": "subagent-orchestrator",
+      "source": "./plugins/subagent-orchestrator",
+      "category": "development"
     }
   ]
 }
