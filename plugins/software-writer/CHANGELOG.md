@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.0.0] - 2026-07-20
+
+### Added
+
+- Shipped Claude Code delivery: `hooks/hooks.json` (`PostToolUse` on the Skill tool, `UserPromptSubmit` for slash invocations) and the self-gating `hooks/scripts/inject-extension.sh`. The script stays silent unless one of the three skills is invoked and the project has a matching extension file, so extension-file existence is the per-project opt-in. Projects no longer carry any delivery configuration.
+- Structural envelope around delivered extension content: a `<project_extension>` block with `skill` and `position` attributes and `<handling_instructions>` stating identity, inertness, and whether the skill body is loaded yet. The envelope restates no mechanism semantics; the skill bodies own those.
+- Reference-like extensions documented in `EXTENSION.md`: an extension file may cite project documentation surfaces, read on demand at the step that cites them. Cited files must be docs surfaces registered in `docs.surfaces` — no agent-only reference trees under `.claude/`. All three skill bodies gained the read-on-demand sentence.
+- BATS suite `plugin-tests/software-writer/` covering the inject script's gating, delivery envelope, and loud-failure paths.
+
+### Changed
+
+- Canonical extension file path is now `.claude/extensions/software-writer/<skill>.md` (was `.claude/hook-contexts/<skill>.md`). The new path doubles as the v1/v2 discriminator: the shipped script reads only the new path, so unmigrated v1 projects keep their old project-provisioned delivery without double injection.
+- Vocabulary unified on "extension content" / "extension file"; "overlay" removed from `EXTENSION.md` and from the one stray use in the `writing-docs` skill body.
+- `EXTENSION.md` gained a Delivery section (shipped hooks, envelope shape, envelope-wrapped Codex `AGENTS.override.md` discovery) and a Reference-Like Extensions section.
+
+### Migration from 1.x
+
+Run the `software-writer-extension-setup` skill (2.x) in each provisioned project: it rewrites the extension files at the new path, deletes the legacy `.claude/hook-contexts/writing-*.md` files, and removes the six v1 hook entries from the project settings. Until then, v1 projects keep working on their old delivery, without the envelope. Restart Claude Code after updating the plugin so the shipped hooks load.
+
 ## [1.0.0] - 2026-07-20
 
 ### Added

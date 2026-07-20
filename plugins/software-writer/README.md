@@ -12,6 +12,8 @@ The `writing-docs` anti-slop step dispatches the `human-author:ai-slop-writing-f
 /plugin install software-writer@itb-ai-tools
 ```
 
+**Restart Claude Code** after installing or updating so the extension-delivery hooks load.
+
 Without project-specific additions, the skills run on universal defaults: stack detection from file extensions and project signals, the universal test-data source list, the built-in documentation-surface taxonomy, and a `CLAUDE.md` pointer-file convention.
 
 ## Skills
@@ -38,11 +40,11 @@ Without project-specific additions, the skills run on universal defaults: stack 
 
 ## Extension Contract
 
-Projects register their own conventions through two additive shapes: `Pre-Step-N` / `Post-Step-N` workflow positions, and named configuration values that override the defaults documented inline in each skill body. Every skill works without any extension.
+Projects register their own conventions through two additive shapes: `Pre-Step-N` / `Post-Step-N` workflow positions, and named configuration values that override the defaults documented inline in each skill body. Extension files live at `.claude/extensions/software-writer/<skill>.md`; on Claude Code the plugin's own hooks deliver them wrapped in a structural envelope whenever the matching skill runs, so projects carry no delivery configuration. An extension may also cite project documentation surfaces that are read on demand. Every skill works without any extension.
 
-`EXTENSION.md` owns the contract: overlay file layout, both mechanisms in detail, the recognized named values per skill, and worked examples for registering a code framework and extending the documentation surface map.
+`EXTENSION.md` owns the contract: extension file layout, delivery, both mechanisms in detail, reference-like extensions, the recognized named values per skill, and worked examples for registering a code framework and extending the documentation surface map.
 
-The companion plugin `software-writer-extension-setup` provisions overlays for you. Its `setting-up-software-writer-extension` skill explores the codebase, drafts per-skill overlay content conversationally, writes the overlay files, and merges the matching delivery configuration. It also re-syncs existing overlays against a changed codebase.
+The companion plugin `software-writer-extension-setup` writes extension files for you. Its `setting-up-software-writer-extension` skill explores the codebase, drafts per-skill extension content conversationally, writes the files plus the Codex `AGENTS.override.md` delivery, re-syncs existing extension files against a changed codebase, and migrates v1 (`.claude/hook-contexts/`) setups.
 
 ## House Style
 

@@ -11,6 +11,10 @@ plugins/software-writer/
 ├── CLAUDE.md
 ├── EXTENSION.md
 ├── README.md
+├── hooks/
+│   ├── hooks.json                     # PostToolUse (Skill) + UserPromptSubmit delivery hooks
+│   └── scripts/
+│       └── inject-extension.sh        # self-gating extension delivery with structural envelope
 └── skills/
     ├── writing-code/
     │   ├── SKILL.md
@@ -46,7 +50,9 @@ This plugin provides:
 - **Skill** (`skills/writing-tests/`): the test-authoring workflow — single behavior, seam decision, arrange-data sourcing, body shape, independence, redundancy and guard-clause gate.
 - **Skill** (`skills/writing-docs/`): the documentation workflow — surface confirmation, fixed surface shapes, style-while-writing, anti-slop subagent dispatch, cross-surface quality gate.
 
-**No commands, agents, hooks, or MCP servers.** Skill-only plugin. The `writing-docs` anti-slop step dispatches the `human-author:ai-slop-writing-fixer` subagent, which requires the `human-author` plugin on Claude Code and the matching custom agent from `codex-subagents/` on Codex. The companion `software-writer-extension-setup` plugin provisions project overlays.
+- **Hooks** (`hooks/`): Claude Code extension delivery — a `PostToolUse` hook (matcher `Skill`) and a `UserPromptSubmit` hook run `inject-extension.sh`, which delivers a project's `.claude/extensions/software-writer/<skill>.md` wrapped in the `<project_extension>` envelope and stays silent for every other skill, prompt, or project.
+
+**No commands, agents, or MCP servers.** The `writing-docs` anti-slop step dispatches the `human-author:ai-slop-writing-fixer` subagent, which requires the `human-author` plugin on Claude Code and the matching custom agent from `codex-subagents/` on Codex. The companion `software-writer-extension-setup` plugin writes project extension files.
 
 ## Key Navigation Points
 
@@ -63,8 +69,20 @@ This plugin provides:
 | Modify pointer-file rules | `skills/writing-docs/references/pointer-file.md` | Existence gate, bullet discipline, per-bullet decision test |
 | Modify writing-style targets | `skills/writing-docs/references/writing-style.md` | Sentence constraints, jargon, numbers, diagrams |
 | Add, rename, or retire a named value | `skills/<skill>/SKILL.md` + `EXTENSION.md` | The recognized-values tables must match the names and inline defaults cited in the skill bodies |
-| Document how projects extend the skills | `EXTENSION.md` | Overlay file layout, both extension mechanisms, named-value tables, worked examples |
+| Document how projects extend the skills | `EXTENSION.md` | Extension file layout, delivery, both mechanisms, reference-like extensions, named-value tables, worked examples |
+| Change the delivery envelope, gating, or failure behavior | `hooks/scripts/inject-extension.sh` | `<project_extension>` envelope, position variants, silent gates vs loud failures |
+| Change delivery events or timeout | `hooks/hooks.json` | `PostToolUse` matcher `Skill`, `UserPromptSubmit` |
 
 ## Testing
 
-No scripts, so no automated tests. Validate changes by invoking each skill in a scratch project without an overlay (universal defaults) and in a project with a provisioned overlay (extension contract).
+BATS tests for the delivery script in `plugin-tests/software-writer/`:
+
+```bash
+# Setup (first time only)
+./.github/scripts/setup-bats.sh
+
+# Run
+.bats/bats-core/bin/bats plugin-tests/software-writer/*.bats
+```
+
+Skill-body changes have no automated tests. Validate them by invoking each skill in a scratch project without an extension file (universal defaults) and in a project with one (extension contract, envelope delivery).

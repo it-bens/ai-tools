@@ -1,6 +1,6 @@
 ---
 name: writing-docs
-version: 1.0.0
+version: 2.0.0
 description: Use when writing or editing a repository documentation surface — a README, an architecture document, a CLAUDE.md or AGENTS.md pointer file, or a surface the project has registered. Do NOT activate for code comments, commit messages, or PR descriptions.
 ---
 
@@ -17,7 +17,7 @@ The workflow below can be extended by content earlier in context. Two shapes are
 1. **Pre-Step / Post-Step instructions.** Before executing Step N, check whether earlier context contains a section headed `## Pre-Step-N`. If it does, execute its content as additional instructions, then continue with Step N. After Step N, do the same check for `## Post-Step-N`.
 2. **Named-value assignments.** The skill body cites certain configuration values by backticked name alongside an inline default (for example `` `docs.pointer_file` ``). When such a name appears, check whether earlier context assigns a value to it. If yes, use the assigned value; otherwise use the inline default.
 
-Both checks default to no-op. When earlier context contains no matching section or assignment, the skill runs entirely on the defaults documented inline.
+Both checks default to no-op. When earlier context contains no matching section or assignment, the skill runs entirely on the defaults documented inline. Extension content may cite project files by path; read a cited file when the step that cites it runs, not before.
 
 ```dot
 digraph writing_docs {
@@ -69,7 +69,7 @@ Code comments, commit messages, PR descriptions, and procedural plans or specs a
 
 **Prose branch.** Load `references/surface-shapes.md` for the fixed shape of the target surface: the README shapes, the Handled / Refused / Not covered contracts skeleton, the §Limitations anti-pattern, the architecture-document layout, and the changelog discipline. The shape is not yours to refine mid-edit.
 
-**Pointer branch.** The existence gate comes first: the module must own at least one hard cross-cutting constraint an editor must know before changing code. A ceremonial pointer file is noise that erodes trust in every pointer file — a module without such a constraint gets no pointer file (STOP). Load `references/pointer-file.md` for the skeleton, the bullet discipline, the per-bullet decision test, and the worked pairs. When the project maintains both the `CLAUDE.md` and `AGENTS.md` conventions, apply the companion-file rule (one file owns the content, the other is a one-line include; the reference carries it); the project's overlay names which file owns the content.
+**Pointer branch.** The existence gate comes first: the module must own at least one hard cross-cutting constraint an editor must know before changing code. A ceremonial pointer file is noise that erodes trust in every pointer file — a module without such a constraint gets no pointer file (STOP). Load `references/pointer-file.md` for the skeleton, the bullet discipline, the per-bullet decision test, and the worked pairs. When the project maintains both the `CLAUDE.md` and `AGENTS.md` conventions, apply the companion-file rule (one file owns the content, the other is a one-line include; the reference carries it); the project's extension content names which file owns the content.
 
 ### Step 3: Write the content
 

@@ -1,7 +1,7 @@
 {
   "name": "software-writer-extension-setup",
-  "version": "1.0.0",
-  "description": "Set up project-specific overlays for the software-writer skills.",
+  "version": "2.0.0",
+  "description": "Set up project-specific extension files for the software-writer skills.",
   "author": {
     "name": "Martin Bens",
     "email": "martin.bens@it-bens.de"
@@ -11,8 +11,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Software Writer Extension Setup",
-    "shortDescription": "Configure project-specific software-writer overlays.",
-    "longDescription": "Adds a setup skill that explores the project, drafts named-value and workflow-position overlays for the software-writer skills, and provisions the delivery configuration for Claude Code or Codex, with a re-sync mode for drift audits.",
+    "shortDescription": "Configure project-specific software-writer extension files.",
+    "longDescription": "Adds a setup skill that explores the project, drafts named-value and workflow-position extension content for the software-writer skills, and writes the shared extension files (plus the Codex AGENTS.override.md delivery), with a re-sync mode for drift audits and v1 migration.",
     "developerName": "Martin Bens",
     "category": "Development",
     "capabilities": ["Skill", "Hooks", "Project Setup"],

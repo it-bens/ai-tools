@@ -1,6 +1,6 @@
 ---
 name: writing-tests
-version: 1.0.0
+version: 2.0.0
 description: Use when authoring, editing, or reviewing an automated test — any change to a test file or its fixtures.
 ---
 
@@ -15,7 +15,7 @@ The workflow below can be extended by content earlier in context. Two shapes are
 1. **Pre-Step / Post-Step instructions.** Before executing Step N, check whether earlier context contains a section headed `## Pre-Step-N`. If it does, execute its content as additional instructions, then continue with Step N. After Step N, do the same check for `## Post-Step-N`.
 2. **Named-value assignments.** The skill body cites certain configuration values by backticked name alongside an inline default (for example `` `tests.parallelism` ``). When such a name appears, check whether earlier context assigns a value to it. If yes, use the assigned value; otherwise use the inline default.
 
-Both checks default to no-op. When earlier context contains no matching section or assignment, the skill runs entirely on the defaults documented inline.
+Both checks default to no-op. When earlier context contains no matching section or assignment, the skill runs entirely on the defaults documented inline. Extension content may cite project files by path; read a cited file when the step that cites it runs, not before.
 
 ```dot
 digraph writing_tests {

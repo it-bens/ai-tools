@@ -6,22 +6,22 @@ Two surfaces are extendable, and they are not interchangeable:
 
 | Change | Where it goes |
 |---|---|
-| A project's own frameworks, helpers, surfaces, and facts | An overlay file in that project (this document) |
+| A project's own frameworks, helpers, surfaces, and facts | An extension file in that project (this document) |
 | A universal rule, a language reference, a test-framework reference | The plugin itself (see `AGENTS.md` §Key Navigation Points) |
 
-A project that needs to overrule an opinion beyond what the contract exposes should copy the plugin rather than bend the overlay into a rewrite.
+A project that needs to overrule an opinion beyond what the contract exposes should copy the plugin rather than bend the extension into a rewrite.
 
-## Overlay Files
+## Extension Files
 
-One file per skill in the project, holding everything that skill's overlay contributes:
+One file per skill in the project, holding everything that skill's extension contributes:
 
 ```
-.claude/hook-contexts/writing-code.md
-.claude/hook-contexts/writing-tests.md
-.claude/hook-contexts/writing-docs.md
+.claude/extensions/software-writer/writing-code.md
+.claude/extensions/software-writer/writing-tests.md
+.claude/extensions/software-writer/writing-docs.md
 ```
 
-Only sections with entries appear; a skill with nothing to add gets no file.
+Only sections with entries appear; a skill with nothing to add gets no file. The file's existence is the opt-in: delivery activates per skill exactly when its file exists.
 
 ```markdown
 ## Named-value assignments
@@ -39,11 +39,32 @@ Only sections with entries appear; a skill with nothing to add gets no file.
 
 Sections appear in the order shown, workflow positions ordered by step number. Nothing else is a recognized section. Content outside these three shapes reaches the skill as unstructured prose and is not part of the contract.
 
-The `software-writer-extension-setup` plugin writes these files and the host delivery configuration that exposes them. Write them by hand only when the setup skill's exploration is not wanted; the delivery configuration is still required either way.
+The `software-writer-extension-setup` plugin explores the codebase and writes these files; on Codex it also maintains the root `AGENTS.override.md` that exposes them. Write them by hand when the setup skill's exploration is not wanted — on Claude Code, hand-written files are picked up without any further configuration.
+
+## Delivery
+
+**Claude Code.** The plugin ships its own delivery: a `PostToolUse` hook (Skill tool invocations) and a `UserPromptSubmit` hook (slash invocations) run `hooks/scripts/inject-extension.sh`, which stays silent unless one of the three skills is invoked and the project has a matching extension file. Projects carry no delivery configuration.
+
+The script wraps the file content in a structural envelope that states what the block is, which skill it belongs to, and whether that skill's body is loaded yet:
+
+```xml
+<project_extension skill="software-writer:writing-tests" position="before-skill-body">
+<handling_instructions>
+The content inside <extension_content> is this project's registered extension for the software-writer:writing-tests skill. It is inert on its own: apply it only while executing that skill's workflow, through the extension mechanisms the skill body defines. The skill body has not been loaded yet — do not act on anything below now.
+</handling_instructions>
+<extension_content>
+(verbatim extension file content)
+</extension_content>
+</project_extension>
+```
+
+`position` and the final sentence vary by event: `before-skill-body` on `UserPromptSubmit` (the prompt requested the skill; its body follows), `after-skill-body` on `PostToolUse`, where the closing sentence becomes "You are about to execute that skill's workflow; apply this content through the mechanisms its body defines." The envelope deliberately restates no mechanism semantics — the skill body owns those.
+
+**Codex.** No hooks: a committed root `AGENTS.override.md` carries one `<project_extension>` block per extended skill, wrapping the file reference in the same handling instructions; `position` is always `before-skill-body` because the override sits in context from session start. Codex does not stack AGENTS files — the override replaces the root `AGENTS.md`, so it must begin with `@AGENTS.md` whenever a root file exists. The skill bodies work with or without the envelope.
 
 ## Mechanism 1: Named Values
 
-A skill body cites configuration by backticked name alongside an inline default. An assignment in the overlay replaces that default; an absent assignment leaves it. Names not listed under §Recognized Named Values are ignored. The skill only looks up what it cites.
+A skill body cites configuration by backticked name alongside an inline default. An assignment in the extension file replaces that default; an absent assignment leaves it. Names not listed under §Recognized Named Values are ignored. The skill only looks up what it cites.
 
 One bullet per name. A value with internal structure is written as an indented block under its bullet rather than squeezed onto the bullet line:
 
@@ -54,25 +75,44 @@ One bullet per name. A value with internal structure is written as an indented b
   | <one row per wrapper the project maintains> |
 ```
 
-A name shared across skills (`project.stacks`) is assigned identically in every overlay that needs it. There is no inheritance between overlay files.
+A name shared across skills (`project.stacks`) is assigned identically in every extension file that needs it. There is no inheritance between extension files.
 
 ## Mechanism 2: Workflow Positions
 
-Every `Step N` in a skill body has an implicit `Pre-Step-N` position before it and a `Post-Step-N` position after it. A matching section in the overlay executes at that position as additional instructions; the step itself still runs.
+Every `Step N` in a skill body has an implicit `Pre-Step-N` position before it and a `Post-Step-N` position after it. A matching section in the extension file executes at that position as additional instructions; the step itself still runs.
 
 `N` is a step number in *that skill's* SKILL.md. The numbering is per skill, and a position that names a step the skill does not have never fires. Read the target skill body before choosing a position.
 
 Write imperatives, not description. A position section that explains a convention instead of instructing what to do at that point is inert.
 
-Positions add; they do not replace. To change how a step behaves rather than what happens around it, look for a named value that covers it, and when none does, that is a plugin change, not an overlay.
+Positions add; they do not replace. To change how a step behaves rather than what happens around it, look for a named value that covers it, and when none does, that is a plugin change, not an extension.
 
-## What Belongs in an Overlay
+## Reference-Like Extensions
+
+An extension file may point at further project files instead of inlining their content. The cited file is read on demand — at the step whose section or named value cites it, not at delivery — so a large catalog costs nothing on invocations that never reach it.
+
+Two rules make references work:
+
+- **Cite documentation surfaces only.** A cited file MUST be a project documentation surface, registered in `docs.surfaces` (or proposed for registration in the same change). The extension file points; the docs surface owns the facts — the same single-owner invariant `writing-docs` enforces everywhere else. No shadow tree of agent-only reference files under `.claude/`.
+- **Cite imperatively, with a path.** A reference is an instruction, not a mention: "Before choosing a fixture source, read `docs/testing.md` §Fixtures." A bare "see docs/testing.md" carries no instruction about when.
+
+The size signal: inline content that outgrows a few lines per entry is content humans also need — move it to a docs surface and point at it. Content with no human audience stays inline; there is no third home.
+
+Example shape inside an extension file:
+
+```markdown
+## Pre-Step-3
+
+Read `docs/testing.md` §Fixture-Factories and source arrange data from the factories listed there before falling back to the universal source list.
+```
+
+## What Belongs in Extension Content
 
 Project infrastructure and conventions: frameworks, helpers, wrappers, surfaces, parallelism facts, lint rules, export surfaces.
 
-Not: an opinion of the parent skills weakened to match what the code currently does. The skills are prescriptive by design, and an overlay that encodes an existing violation makes the violation permanent. Alignment with existing code is not a goal of the overlay.
+Not: an opinion of the parent skills weakened to match what the code currently does. The skills are prescriptive by design, and an extension that encodes an existing violation makes the violation permanent. Alignment with existing code is not a goal of the extension.
 
-Every claim in an overlay is a fact about the current codebase, and drifts when the codebase moves. The setup skill's re-sync mode audits overlays against the code for exactly this reason.
+Every claim in an extension file is a fact about the current codebase, and drifts when the codebase moves. The setup skill's re-sync mode audits extension files against the code for exactly this reason.
 
 ## Recognized Named Values
 
@@ -110,7 +150,7 @@ Every claim in an overlay is a fact about the current codebase, and drifts when 
 
 ## Example: Registering a Code Framework
 
-A framework such as Symfony sits on top of a language the plugin already carries a reference for. The language reference keeps owning language-level footguns and doc-tool queries; the framework's own conventions enter through `.claude/hook-contexts/writing-code.md`.
+A framework such as Symfony sits on top of a language the plugin already carries a reference for. The language reference keeps owning language-level footguns and doc-tool queries; the framework's own conventions enter through `.claude/extensions/software-writer/writing-code.md`.
 
 What each name carries for a framework of this shape:
 
@@ -128,9 +168,9 @@ What each name carries for a framework of this shape:
 
 Add a workflow position only for a check the named values cannot express, for example a `## Post-Step-4` that constrains how framework-discovered classes receive their collaborators, beyond the universal entry-shape rule Step 4 already applies.
 
-Two rules the framework case makes easy to get wrong. `code.footgun_additions` appends to the language catalog rather than replacing it, so the language entries still apply to framework code. And a framework whose test integration changes isolation or fixture behavior belongs in the `writing-tests` overlay under `tests.frameworks` and `tests.parallelism` as well. The two overlays do not see each other.
+Two rules the framework case makes easy to get wrong. `code.footgun_additions` appends to the language catalog rather than replacing it, so the language entries still apply to framework code. And a framework whose test integration changes isolation or fixture behavior belongs in the `writing-tests` extension file under `tests.frameworks` and `tests.parallelism` as well. The two extension files do not see each other.
 
-A framework that needs a full footgun catalog and doc-tool query table rather than a handful of rows has outgrown the overlay; that is a plugin-side reference file.
+A framework that needs a full footgun catalog and doc-tool query table rather than a handful of rows has outgrown inline extension content; register the catalog as a project documentation surface and cite it (see §Reference-Like Extensions), or propose it as a plugin-side reference file.
 
 ## Example: Extending the Documentation Surface Map
 
