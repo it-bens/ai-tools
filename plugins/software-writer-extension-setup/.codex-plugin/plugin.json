@@ -1,0 +1,21 @@
+{
+  "name": "software-writer-extension-setup",
+  "version": "1.0.0",
+  "description": "Set up project-specific overlays for the software-writer skills.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["code-quality", "setup", "hooks", "extension", "skill"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Software Writer Extension Setup",
+    "shortDescription": "Configure project-specific software-writer overlays.",
+    "longDescription": "Adds a setup skill that explores the project, drafts named-value and workflow-position overlays for the software-writer skills, and provisions the delivery configuration for Claude Code or Codex, with a re-sync mode for drift audits.",
+    "developerName": "Martin Bens",
+    "category": "Development",
+    "capabilities": ["Skill", "Hooks", "Project Setup"],
+    "defaultPrompt": ["Set up the software-writer extension for this project."]
+  }
+}

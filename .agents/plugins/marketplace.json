@@ -75,6 +75,30 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Productivity"
+    },
+    {
+      "name": "software-writer",
+      "source": {
+        "source": "local",
+        "path": "./plugins/software-writer"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
+    },
+    {
+      "name": "software-writer-extension-setup",
+      "source": {
+        "source": "local",
+        "path": "./plugins/software-writer-extension-setup"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
     }
   ]
 }

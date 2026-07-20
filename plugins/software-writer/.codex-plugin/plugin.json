@@ -1,0 +1,25 @@
+{
+  "name": "software-writer",
+  "version": "1.0.0",
+  "description": "Universal, opinionated skills for writing implementation code, automated tests, and repository documentation.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["code-quality", "testing", "documentation", "skill"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Software Writer",
+    "shortDescription": "Write code, tests, and docs with opinionated universal workflows.",
+    "longDescription": "Adds three skills that guide implementation code (API consultation, dependency shape, footgun checks, comment policy), automated tests (classicist behavior-first workflow), and repository documentation (single-owner surfaces, pointer-file discipline) with per-stack references for Go, Python, TypeScript, and PHP.",
+    "developerName": "Martin Bens",
+    "category": "Development",
+    "capabilities": ["Skill", "Code Quality", "Testing", "Documentation"],
+    "defaultPrompt": [
+      "Write a test for this behavior.",
+      "Implement this feature following the writing-code skill.",
+      "Update the module README for this change."
+    ]
+  }
+}

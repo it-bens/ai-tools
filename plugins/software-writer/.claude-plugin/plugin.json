@@ -1,0 +1,12 @@
+{
+  "name": "software-writer",
+  "version": "1.0.0",
+  "description": "Three universal, opinionated skills for writing software: writing-code (API-consultation gate, dependency shape, stack footgun check, two-tier comment policy), writing-tests (classicist behavior-first workflow with stack-specific idioms), and writing-docs (single-owner surfaces, pointer-file discipline, anti-slop validation via the human-author:ai-slop-writing-fixer subagent). Each skill is extendable at every step via Pre-Step-N / Post-Step-N positions and via recognized named configuration values.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["code-quality", "testing", "documentation", "extendable", "skill"],
+  "dependencies": ["human-author"]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "software-writer-extension-setup",
+  "version": "1.0.0",
+  "description": "One-time setup skill that explores a project's codebase, drafts project-specific overlay content conversationally, and provisions the delivery plumbing needed to extend the software-writer plugin's writing-code, writing-tests, and writing-docs skills. Includes a re-sync mode that audits existing overlays for drift. Long plugin and skill names are intentional to prevent accidental invocation.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["code-quality", "setup", "hooks", "extension", "skill"]
+}
