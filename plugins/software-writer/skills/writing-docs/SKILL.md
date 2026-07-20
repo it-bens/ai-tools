@@ -1,6 +1,6 @@
 ---
 name: writing-docs
-version: 2.0.0
+version: 2.0.1
 description: Use when writing or editing a repository documentation surface — a README, an architecture document, a CLAUDE.md or AGENTS.md pointer file, or a surface the project has registered. Do NOT activate for code comments, commit messages, or PR descriptions.
 ---
 

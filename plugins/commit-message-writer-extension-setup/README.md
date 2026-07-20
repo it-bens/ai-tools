@@ -16,7 +16,7 @@ Then invoke the skill from the project root:
 /commit-message-writer-extension-setup:setting-up-commit-message-writer-extension
 ```
 
-The skill detects the active host and gathers the overlay content in `.claude/hook-contexts/writing-commit-messages.md`. Claude Code delivers it through project hooks. Codex uses a committed root `AGENTS.override.md` that conditionally references the same file whenever the writing skill is used.
+The skill detects the active host and gathers the overlay content in `.claude/hook-contexts/writing-commit-messages.md`. Claude Code delivers it through project hooks. Codex uses a committed root `AGENTS.override.md` that instructs the agent to read the same file whenever the writing skill is used.
 
 ## Skills
 
@@ -29,7 +29,7 @@ The skill detects the active host and gathers the overlay content in `.claude/ho
 - `.claude/settings.json` (or `.claude/settings.local.json`) entries:
   - `PostToolUse` with matcher `Skill`, gated on `tool_input.skill == "commit-message-writer:writing-commit-messages"`.
   - `UserPromptSubmit`, gated on a prompt that begins with `/commit-message-writer:writing-commit-messages`.
-- For Codex, a committed root `AGENTS.override.md` section that references `.claude/hook-contexts/writing-commit-messages.md` whenever the writing skill is used. Existing root `AGENTS.md` guidance is retained through `@AGENTS.md`.
+- For Codex, a committed root `AGENTS.override.md` section that instructs the agent to read `.claude/hook-contexts/writing-commit-messages.md` whenever the writing skill is used. Existing root `AGENTS.md` guidance is retained through an explicit read instruction — Codex replaces, not stacks, AGENTS files and resolves no `@path` references inside them.
 
 ## License
 

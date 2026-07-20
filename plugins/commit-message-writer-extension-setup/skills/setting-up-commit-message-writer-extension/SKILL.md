@@ -71,12 +71,10 @@ For Codex, add this section to the root `AGENTS.override.md`:
 ```markdown
 ## Commit Message Writer Extension
 
-Whenever the `commit-message-writer:writing-commit-messages` skill is used, apply the project-specific instructions in:
-
-@.claude/hook-contexts/writing-commit-messages.md
+Whenever the `commit-message-writer:writing-commit-messages` skill is used, first read `.claude/hook-contexts/writing-commit-messages.md` and apply its project-specific instructions.
 ```
 
-If a root `AGENTS.md` exists, `AGENTS.override.md` takes precedence over it. Ensure the override also contains `@AGENTS.md` before the extension section so the project's normal guidance remains active.
+If a root `AGENTS.md` exists, `AGENTS.override.md` replaces it — Codex does not stack AGENTS files and resolves no `@path` references inside them. Ensure the override begins with an explicit instruction to read `AGENTS.md` (canonical line: "Read AGENTS.md before acting on anything else in this file. This override replaces it; all of its guidance still applies.") so the project's normal guidance remains active.
 
 ### Step 5: Confirm the plan
 
@@ -121,7 +119,7 @@ For Claude Code, read the settings target (parse as JSON; if absent, start from 
 
 Do not modify any unrelated key, matcher, or hook entry. Write the result atomically (temp file in the same directory, then rename).
 
-For Codex, read the root `AGENTS.override.md`; if absent, start with an empty file. Preserve all unrelated content. If root `AGENTS.md` exists, ensure `@AGENTS.md` appears once before the extension section. Add the Step 4 extension section only when it is absent; if the heading already exists, update that section to the canonical form without duplicating it.
+For Codex, read the root `AGENTS.override.md`; if absent, start with an empty file. Preserve all unrelated content. If root `AGENTS.md` exists, ensure the Step 4 read-`AGENTS.md` instruction appears once before the extension section. Add the Step 4 extension section only when it is absent; if the heading already exists, update that section to the canonical form without duplicating it (including any earlier form that used `@path` references — Codex reads those as literal strings).
 
 Ensure `AGENTS.override.md` and `.claude/hook-contexts/writing-commit-messages.md` are not ignored by version control. They are project configuration and must be committed. Do not create a commit without the user's explicit approval, but report untracked or uncommitted state as incomplete setup.
 
@@ -131,6 +129,6 @@ Confirm in this order:
 
 1. `.claude/hook-contexts/writing-commit-messages.md` exists and matches the Step 6 template.
 2. Claude Code: the settings target is valid JSON and contains both Step 4 hooks.
-3. Codex: root `AGENTS.override.md` contains the canonical extension section, retains root `AGENTS.md` through `@AGENTS.md` when applicable, and both project files are tracked and committed.
+3. Codex: root `AGENTS.override.md` contains the canonical extension section, retains root `AGENTS.md` through the explicit read instruction when applicable, contains no `@path` references (Codex reads them as literal strings), and both project files are tracked and committed.
 
 Report the delivery target and files written. For Claude Code, invoke `commit-message-writer:writing-commit-messages` to confirm delivery. For Codex, start a new session from the project root or a subdirectory and invoke the writing skill to confirm the override is active.

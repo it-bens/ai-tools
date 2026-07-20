@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.1] - 2026-07-20
+
+### Fixed
+
+- Codex delivery: the documented `AGENTS.override.md` envelope used `@path` references, but Codex resolves no includes inside AGENTS files and reads them as literal strings, so neither the extension files nor a root `AGENTS.md` were ever loaded. The envelope now carries the bare file path in `<extension_path>` plus handling instructions that say when to read the file (before executing the skill's workflow, or when a step first cites a named value or workflow position it defines), and root `AGENTS.md` guidance is retained through an explicit read instruction.
+
 ## [2.0.0] - 2026-07-20
 
 ### Added

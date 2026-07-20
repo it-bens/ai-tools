@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.2] - 2026-07-20
+
+### Fixed
+
+- Codex delivery: the canonical `AGENTS.override.md` section referenced the overlay file and the root `AGENTS.md` via `@path` references, but Codex resolves no includes inside AGENTS files and reads them as literal strings, so neither file was ever loaded. The section and the `AGENTS.md` retention line are now explicit read instructions, and setup rewrites earlier `@path`-form sections.
+
 ## [1.1.1] - 2026-07-12
 
 ### Fixed

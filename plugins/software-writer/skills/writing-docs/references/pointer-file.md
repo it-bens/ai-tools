@@ -70,7 +70,7 @@ Line numbers shift on any reformat; heading names survive until a rename — whi
 
 ## Companion-file rule
 
-When the project maintains both pointer-file conventions, one file owns the content and the other is a one-line include of it (a `CLAUDE.md` containing only `@AGENTS.md`, or the reverse). Create and delete the pair together; never author content in both.
+When the project maintains both pointer-file conventions, `AGENTS.md` owns the content and `CLAUDE.md` is a one-line include of it (`@AGENTS.md`). Never the reverse: only Claude Code resolves `@path` includes — Codex reads them as literal strings, so an `AGENTS.md` that is only an include delivers nothing there. Create and delete the pair together; never author content in both.
 
 ## Common rationalizations to refuse
 

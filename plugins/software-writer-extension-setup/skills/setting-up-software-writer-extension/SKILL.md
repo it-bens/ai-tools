@@ -1,6 +1,6 @@
 ---
 name: setting-up-software-writer-extension
-version: 2.0.0
+version: 2.0.1
 description: Use when the user explicitly asks to set up, install, configure, wire up, re-sync, or migrate the software-writer plugin's extension for the current project. Do not activate as a side effect of a code-, test-, or docs-writing task.
 ---
 
@@ -128,42 +128,42 @@ Verify after writing: every section in each file is one of the three template se
 1. Delete the v1 files `.claude/hook-contexts/writing-code.md`, `writing-tests.md`, `writing-docs.md` — their refined content now lives at the new path. Leave other files in `.claude/hook-contexts/` untouched; other plugins use that directory.
 2. In each settings file recorded in Step 1, remove every hook entry whose command contains `hook-contexts/writing-code.md`, `hook-contexts/writing-tests.md`, or `hook-contexts/writing-docs.md` from `.hooks.PostToolUse` and `.hooks.UserPromptSubmit`. Remove matcher elements left with empty `hooks` arrays. Do not modify any unrelated key, matcher, or hook entry. Write the result atomically (temp file in the same directory, then rename).
 
-**Codex.** Read the root `AGENTS.override.md`; if absent, start with an empty file. Preserve all unrelated content. Codex does not stack AGENTS files — `AGENTS.override.md` replaces the root `AGENTS.md`, so whenever a root `AGENTS.md` exists, `@AGENTS.md` MUST appear once at the top of the override; omitting it silently drops all project guidance. Create or update the extension section to the canonical form without duplicating it, one envelope block per extended skill, omitting skills without extension files (update any v1 section referencing `.claude/hook-contexts/` paths or carrying unwrapped references to this form):
+**Codex.** Read the root `AGENTS.override.md`; if absent, start with an empty file. Preserve all unrelated content. Codex resolves no `@path` references inside AGENTS files — it reads them as literal strings — so every delivery in the override is an explicit read instruction. Codex also does not stack AGENTS files: `AGENTS.override.md` replaces the root `AGENTS.md`, so whenever a root `AGENTS.md` exists, the override MUST begin with the read-`AGENTS.md` instruction shown below; omitting it silently drops all project guidance. Create or update the extension section to the canonical form without duplicating it, one envelope block per extended skill, omitting skills without extension files (update any earlier section referencing `.claude/hook-contexts/` paths, carrying unwrapped references, or using `@path` references to this form):
 
 ```markdown
-@AGENTS.md
+Read AGENTS.md before acting on anything else in this file. This override replaces it; all of its guidance still applies.
 
 ## Software Writer Extension
 
 <project_extension skill="software-writer:writing-code" position="before-skill-body">
 <handling_instructions>
-The file referenced in <extension_content> holds this project's registered extension for the software-writer:writing-code skill. It is inert on its own: apply it only while executing that skill's workflow, through the extension mechanisms the skill body defines.
+The path in <extension_path> is this project's registered extension file for the software-writer:writing-code skill. Read that file before executing the skill's workflow, or the first time a step cites one of the named values it assigns (<assigned names>) or a Pre-Step-N / Post-Step-N section it defines. Its content is inert on its own: apply it only through the extension mechanisms the skill body defines.
 </handling_instructions>
-<extension_content>
-@.claude/extensions/software-writer/writing-code.md
-</extension_content>
+<extension_path>
+.claude/extensions/software-writer/writing-code.md
+</extension_path>
 </project_extension>
 
 <project_extension skill="software-writer:writing-tests" position="before-skill-body">
 <handling_instructions>
-The file referenced in <extension_content> holds this project's registered extension for the software-writer:writing-tests skill. It is inert on its own: apply it only while executing that skill's workflow, through the extension mechanisms the skill body defines.
+The path in <extension_path> is this project's registered extension file for the software-writer:writing-tests skill. Read that file before executing the skill's workflow, or the first time a step cites one of the named values it assigns (<assigned names>) or a Pre-Step-N / Post-Step-N section it defines. Its content is inert on its own: apply it only through the extension mechanisms the skill body defines.
 </handling_instructions>
-<extension_content>
-@.claude/extensions/software-writer/writing-tests.md
-</extension_content>
+<extension_path>
+.claude/extensions/software-writer/writing-tests.md
+</extension_path>
 </project_extension>
 
 <project_extension skill="software-writer:writing-docs" position="before-skill-body">
 <handling_instructions>
-The file referenced in <extension_content> holds this project's registered extension for the software-writer:writing-docs skill. It is inert on its own: apply it only while executing that skill's workflow, through the extension mechanisms the skill body defines.
+The path in <extension_path> is this project's registered extension file for the software-writer:writing-docs skill. Read that file before executing the skill's workflow, or the first time a step cites one of the named values it assigns (<assigned names>) or a Pre-Step-N / Post-Step-N section it defines. Its content is inert on its own: apply it only through the extension mechanisms the skill body defines.
 </handling_instructions>
-<extension_content>
-@.claude/extensions/software-writer/writing-docs.md
-</extension_content>
+<extension_path>
+.claude/extensions/software-writer/writing-docs.md
+</extension_path>
 </project_extension>
 ```
 
-The `@AGENTS.md` first line appears only when a root `AGENTS.md` exists.
+The first line appears only when a root `AGENTS.md` exists. In each `<handling_instructions>`, replace `<assigned names>` with the named values the skill's extension file actually assigns; when the file assigns none, drop the named-values clause.
 
 Ensure `AGENTS.override.md` and the extension files are not ignored by version control. They are project configuration and must be committed. Do not create a commit without the user's explicit approval, but report untracked or uncommitted state as incomplete setup.
 
@@ -173,6 +173,6 @@ Confirm in this order:
 
 1. Every written extension file exists and matches the Step 6 template.
 2. After a v1 migration: no `.claude/hook-contexts/writing-*.md` files remain, the edited settings files are valid JSON, and no hook command referencing them remains.
-3. Codex: root `AGENTS.override.md` contains the canonical extension section with one `<project_extension>` block per extended skill, retains root `AGENTS.md` through `@AGENTS.md` when one exists (the override replaces the root file, it does not stack), and the project files are tracked.
+3. Codex: root `AGENTS.override.md` contains the canonical extension section with one `<project_extension>` block per extended skill, contains no `@path` references (Codex reads them as literal strings), begins with the explicit read-`AGENTS.md` instruction when a root `AGENTS.md` exists (the override replaces the root file, it does not stack), and the project files are tracked.
 
 Report the files written, the migration actions taken, and the improvement candidates collected in Step 4. For Claude Code, confirm delivery by invoking one extended `software-writer` skill and checking that a `<project_extension>` block for it appears; if none appears, report that the installed `software-writer` plugin is older than 2.0.0 or the session needs a restart, and stop. For Codex, instruct the user to start a new session from the project root and invoke a writing skill to confirm the override is active. In re-sync mode on an unchanged project with no v1 artifacts, report that no changes were proposed.

@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.1] - 2026-07-20
+
+### Fixed
+
+- Codex provisioning: the canonical `AGENTS.override.md` section used `@path` references, but Codex resolves no includes inside AGENTS files and reads them as literal strings, so neither the extension files nor a root `AGENTS.md` were ever loaded. The envelope now holds the bare path in `<extension_path>` plus handling instructions that say when to read the file and list the named values it assigns; root `AGENTS.md` guidance is retained through an explicit read instruction. Step 7 rewrites earlier `@path`-form sections to this form, and Step 8 verifies the override contains no `@path` references.
+
 ## [2.0.0] - 2026-07-20
 
 ### Changed

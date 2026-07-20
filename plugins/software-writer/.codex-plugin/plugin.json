@@ -1,6 +1,6 @@
 {
   "name": "software-writer",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Universal, opinionated skills for writing implementation code, automated tests, and repository documentation.",
   "author": {
     "name": "Martin Bens",

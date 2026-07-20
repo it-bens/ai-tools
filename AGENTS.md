@@ -66,7 +66,7 @@ To create Claude Web-compatible ZIPs that strip `allowed-tools`:
 | Path | Purpose |
 |---|---|
 | `AGENTS.md` | Shared project guidance for Codex and Claude Code |
-| `AGENTS.override.md` | Codex project override that inlines `AGENTS.md` before project-specific additions |
+| `AGENTS.override.md` | Codex project override that instructs reading `AGENTS.md` before project-specific additions |
 | `CLAUDE.md` | Claude Code wrapper that inlines `AGENTS.md` |
 | `plugins/` | Plugin implementations (skills, agents, commands, hooks, and MCP servers) |
 | `plugin-tests/` | BATS tests for hook scripts |
