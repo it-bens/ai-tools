@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.2] - 2026-07-23
+
+### Fixed
+
+- Codex reported `UserPromptSubmit hook (failed)` on every submitted prompt. Codex discovers and runs the shipped `PostToolUse` / `UserPromptSubmit` hooks but does not set `CLAUDE_PROJECT_DIR`, and `inject-extension.sh` treated the missing variable as a hard failure (exit 1) before reading stdin or self-gating. The variable is the Claude Code delivery-path signal, so the script now self-gates silently (exit 0) when it is absent: on Codex the hook does nothing and delivery flows entirely through the committed `AGENTS.override.md`. Claude Code behavior, which always sets the variable, is unchanged.
+
 ## [2.0.1] - 2026-07-20
 
 ### Fixed

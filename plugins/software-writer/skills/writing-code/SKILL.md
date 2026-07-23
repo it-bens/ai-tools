@@ -1,6 +1,6 @@
 ---
 name: writing-code
-version: 2.0.1
+version: 2.0.2
 description: Use when writing or editing implementation code — any change that adds, modifies, or removes logic, signatures, or comments on the lines being written. Do NOT activate for retrospective cleanup or audits of existing comments (the code-comment-writer plugin owns those) or for test files and their fixtures (the writing-tests skill owns those).
 ---
 

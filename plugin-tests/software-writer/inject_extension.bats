@@ -139,6 +139,38 @@ Consult the DI container docs."
 }
 
 # =============================================================================
+# CODEX HOST TESTS - no CLAUDE_PROJECT_DIR: self-gate silently
+# =============================================================================
+# Codex runs the same plugin hooks but never sets CLAUDE_PROJECT_DIR; it
+# delivers extensions through a committed AGENTS.override.md, not this hook.
+# The hook must produce nothing (exit 0, no output) on that host, for every
+# mode and prompt — including a matching software-writer invocation.
+
+# bats test_tags=codex
+@test "user-prompt: self-gates silently when CLAUDE_PROJECT_DIR is unset (Codex)" {
+    run bash -c 'unset CLAUDE_PROJECT_DIR; printf "%s" "{\"prompt\": \"please fix the tests\", \"cwd\": \"/tmp/project\"}" | bash "$1" user-prompt' _ "$SCRIPT"
+    assert_success
+    assert_output ""
+}
+
+# bats test_tags=codex
+@test "user-prompt: ignores cwd extension file on Codex (no CLAUDE_PROJECT_DIR)" {
+    make_extension "writing-code" "## Pre-Step-4"
+    local json
+    json=$(jq -n --arg cwd "$CLAUDE_PROJECT_DIR" '{prompt: "/software-writer:writing-code add the parser", cwd: $cwd}')
+    run bash -c 'unset CLAUDE_PROJECT_DIR; printf "%s" "$1" | bash "$2" user-prompt' _ "$json" "$SCRIPT"
+    assert_success
+    assert_output ""
+}
+
+# bats test_tags=codex
+@test "post-tool-use: self-gates silently when CLAUDE_PROJECT_DIR is unset (Codex)" {
+    run bash -c 'unset CLAUDE_PROJECT_DIR; printf "%s" "{\"tool_input\": {\"skill\": \"software-writer:writing-code\"}, \"cwd\": \"/tmp/project\"}" | bash "$1" post-tool-use' _ "$SCRIPT"
+    assert_success
+    assert_output ""
+}
+
+# =============================================================================
 # FAILURE TESTS - loud failures (non-zero exit, stderr message)
 # =============================================================================
 
@@ -154,13 +186,6 @@ Consult the DI container docs."
     run bash -c 'printf "%s" "{}" | bash "$1" 2>&1' _ "$SCRIPT"
     assert_failure
     assert_output --partial "mode"
-}
-
-# bats test_tags=failure
-@test "fails when CLAUDE_PROJECT_DIR is unset" {
-    run bash -c 'unset CLAUDE_PROJECT_DIR; printf "%s" "{\"tool_input\": {\"skill\": \"software-writer:writing-tests\"}}" | bash "$1" post-tool-use 2>&1' _ "$SCRIPT"
-    assert_failure
-    assert_output --partial "CLAUDE_PROJECT_DIR"
 }
 
 # bats test_tags=failure

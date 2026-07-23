@@ -12,7 +12,10 @@ case "$MODE" in
     *) fail "unknown or missing mode argument: '${MODE}' (expected post-tool-use or user-prompt)" ;;
 esac
 
-[[ -n "${CLAUDE_PROJECT_DIR:-}" ]] || fail "CLAUDE_PROJECT_DIR is not set"
+# CLAUDE_PROJECT_DIR marks the Claude Code delivery path. Absent means another
+# host (e.g. Codex, which delivers extensions via a committed AGENTS.override.md)
+# is running this hook; self-gate silently rather than failing the turn.
+[[ -n "${CLAUDE_PROJECT_DIR:-}" ]] || exit 0
 
 INPUT=$(cat)
 
