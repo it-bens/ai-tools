@@ -36,7 +36,7 @@ Routing rules:
 
 Codex-less substitutions (apply only after the consent gate):
 
-- Review checkpoints → sonnet subagents running the identical prompt-block protocol, one per scope; merge outputs in the session.
+- Review checkpoints → sonnet subagents running the identical prompt-block protocol from `worker-prompts.md`, one per scope; merge outputs in the session.
 - Fix batches → sonnet subagents per non-overlapping file group, or the session itself. A subagent fix batch carries the full implementer prompt-block protocol, fence and gates included; the blocks do not lapse because the actor changed.
 - Verification, sweeps, and deep reads are unchanged — they never depended on codex.
 - Cross-family review coverage is lost in this mode; state that in the strategy message and in the final report.

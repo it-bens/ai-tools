@@ -36,7 +36,8 @@ Without a project extension, the skill runs on universal defaults: gates enumera
 **References** (loaded on demand):
 
 - `references/model-routing.md` — the checkpoint-to-actor routing table, verification shape, effort ladder, severity-label calibration, and codex-less substitutions
-- `references/codex-dispatch.md` — codex invocation hygiene, review and implementer prompt-block protocols, the `codex exec resume` re-validation loop, and trust boundaries
+- `references/worker-prompts.md` — the review and implementer prompt-block protocols every worker receives, how extension content reaches a worker, and the trust boundaries on worker output
+- `references/codex-dispatch.md` — codex invocation hygiene and the `codex exec resume` re-validation loop
 
 ## Extension Contract
 
@@ -80,8 +81,9 @@ subagent-orchestrator/
     └── orchestrating-subagent-work/
         ├── SKILL.md                     # Orchestration workflow with digraph
         └── references/
-            ├── codex-dispatch.md        # Codex invocation, prompt blocks, re-validation
-            └── model-routing.md         # Checkpoint-to-actor routing table
+            ├── codex-dispatch.md        # Codex invocation and re-validation loop
+            ├── model-routing.md         # Checkpoint-to-actor routing table
+            └── worker-prompts.md        # Prompt blocks every worker receives
 ```
 
 ## License

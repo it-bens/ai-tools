@@ -16,7 +16,8 @@ This plugin provides:
 | Modify the workflow shape (nodes, gates, terminal states) | `skills/orchestrating-subagent-work/SKILL.md` | Pre-flight, consent gate, strategy message, deviation loop, dual-confirmation closure |
 | Modify the extension mechanisms or the position table | `skills/orchestrating-subagent-work/SKILL.md` §Workflow | Node-keyed positions, named-value lookup, append-only rule |
 | Modify checkpoint-to-actor routing or effort defaults | `skills/orchestrating-subagent-work/references/model-routing.md` | Routing table, verification shape, severity-label calibration, codex-less substitutions |
-| Modify codex invocation flags, prompt blocks, or the re-validation loop | `skills/orchestrating-subagent-work/references/codex-dispatch.md` | Invocation hygiene, review/implementer blocks, `exec resume`, trust boundaries, extension propagation into worker prompts |
+| Modify what any worker receives in its prompt | `skills/orchestrating-subagent-work/references/worker-prompts.md` | Review/implementer blocks, trust boundaries, extension propagation into worker prompts |
+| Modify codex invocation flags or the re-validation loop | `skills/orchestrating-subagent-work/references/codex-dispatch.md` | Invocation hygiene, `exec resume`, codex-less re-validation |
 | Add, rename, or retire a named value or position | `EXTENSION.md` + the file that cites it | The recognized-values table and position table must match the names and inline defaults cited in `SKILL.md` and both references |
 | Document how projects extend the skill | `EXTENSION.md` | File layout, delivery, both mechanisms, the non-extendable surface, reference-like extensions, worked examples |
 | Change the delivery envelope, gating, or failure behavior | `hooks/scripts/inject-extension.sh` | `<project_extension>` envelope, position variants, silent gates vs loud failures |

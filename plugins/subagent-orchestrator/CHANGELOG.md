@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] - 2026-07-26
+
+The prompt-block protocols were reachable only through a file named for codex, so the branch that dispatches a subagent never opened them. 2.0.0 fixed the pointer; this release fixes the placement.
+
+### Added
+
+- `skills/orchestrating-subagent-work/references/worker-prompts.md` — the review and implementer prompt-block protocols, extension-content propagation into worker prompts, and the trust boundaries on worker output, all moved here from `codex-dispatch.md` and stated worker-generally
+
+### Changed
+
+- `skills/orchestrating-subagent-work/SKILL.md` — the dispatch node reads `references/worker-prompts.md` before the first dispatch of any checkpoint, ahead of the actor-specific bullets, so the blocks no longer hang off the codex branch
+- `skills/orchestrating-subagent-work/references/codex-dispatch.md` — reduced to codex mechanics (invocation hygiene, the `exec resume` loop) and gains the codex-less re-validation rule the resume loop previously left implicit
+- Trust boundaries and the GATES row are stated per worker rather than per codex run: a gate claim is non-final whatever produced it, the sandbox is named as the codex case rather than the rule, and diff review covers every worker-written change
+
+No named value, position, or extension-file format changed. Projects with an extension file need no action.
+
 ## [2.0.0] - 2026-07-26
 
 Adds the project extension surface, modeled on the one `software-writer` 2.x ships. The mechanisms are the same — workflow positions plus named configuration values, delivered by plugin-owned hooks — with two adaptations the orchestration workflow forces: positions are keyed by node name rather than step number, because the workflow is cyclic and a linear step number would misdescribe it; and named values that feed worker prompts are inlined verbatim at dispatch, because workers are stateless and inherit nothing from the session.

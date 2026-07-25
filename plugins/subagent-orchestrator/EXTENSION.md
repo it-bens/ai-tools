@@ -106,7 +106,7 @@ That guarantee is narrower than "the contract exposes no place to write it", and
 An extension file may point at further project files instead of inlining their content. Two rules make references work here, and the second differs from how a session-only skill would treat them:
 
 - **Cite imperatively, with a path.** A reference is an instruction, not a mention: "Pass `docs/security-review.md` as required reading for any review scope touching authentication." A bare "see docs/security-review.md" carries no instruction about when.
-- **A cited path travels to the worker, not into the session.** Workers are stateless and inherit nothing. A cited path passes in the SKILLS block of the worker's prompt, where codex reads it on disk under `-C <repo root>` and a subagent is told to read it. The session reads a cited file only when a node it executes itself needs the content.
+- **A cited path travels to the worker, not into the session.** Workers are stateless and inherit nothing. A cited path passes in the SKILLS block of the worker's prompt (see `skills/orchestrating-subagent-work/references/worker-prompts.md`), where codex reads it on disk under `-C <repo root>` and a subagent is told to read it. The session reads a cited file only when a node it executes itself needs the content.
 
 The size signal: inline content that outgrows a few lines per entry is content humans also need — move it to a project documentation surface and point at it. A gate table stays inline; a full security-review checklist becomes a cited file.
 

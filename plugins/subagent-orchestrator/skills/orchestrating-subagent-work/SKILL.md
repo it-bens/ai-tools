@@ -1,6 +1,6 @@
 ---
 name: orchestrating-subagent-work
-version: 2.0.0
+version: 2.1.0
 description: Use when a task will be executed or reviewed through dispatched workers — before the first codex dispatch, subagent spawn, or workflow run of any implementation or review task.
 ---
 
@@ -101,8 +101,10 @@ Dispatch immediately after stating the strategy; do not wait for approval or ack
 
 Dispatch the current checkpoint's worker per the strategy.
 
-- Codex dispatches: read `references/codex-dispatch.md` and follow it for invocation hygiene, prompt blocks, and the re-validation loop. Codex runs through the CLI only (`codex exec`); never through an MCP transport.
-- Subagent spawns: every prompt is self-contained — include the routing, honesty, and fail-hard directives the worker must follow; workers inherit nothing from the session. Spawn with an explicit model; the orchestrator stays the sole file writer unless a checkpoint explicitly fences a worker's write scope. A subagent carrying a review scope or a fenced write scope gets the same prompt blocks a codex worker would: read `references/codex-dispatch.md` for those blocks and for how extension content reaches a worker. The blocks are worker-shaped, not codex-shaped — a codex-less run that skips them dispatches implementers with no fence and no gates.
+Read `references/worker-prompts.md` before the first dispatch of any checkpoint and build the prompt from it. It governs every worker — codex and subagent alike — and a codex-less run keeps every block; skipping it dispatches implementers with no fence and no gates.
+
+- Codex dispatches: additionally read `references/codex-dispatch.md` for invocation hygiene and the re-validation loop. Codex runs through the CLI only (`codex exec`); never through an MCP transport.
+- Subagent spawns: include the routing, honesty, and fail-hard directives the worker must follow; workers inherit nothing from the session. Spawn with an explicit model; the orchestrator stays the sole file writer unless a checkpoint explicitly fences a worker's write scope.
 - Any result handed to the user mid-task carries an explicit per-item confirmation status (dual-confirmed / single-source / unverified); single-source and unverified items are labeled as such and never presented as final.
 
 ### Deviation or unforeseen problem?
