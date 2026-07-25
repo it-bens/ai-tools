@@ -1,7 +1,7 @@
 ---
 name: fetching-web-with-pullmd
-version: 1.2.0
-description: "This skill should be used when the user asks to 'read this page', 'what does this URL say', 'fetch this article', 'summarize this PDF', or 'get the transcript of this video', or when web content is needed as context for another task. Fetches web pages, Reddit threads, PDF/Word/PowerPoint/Excel/EPUB documents, and YouTube videos as clean Markdown via PullMD. Also a fallback when the host's native web research returns poor or noisy results. Do NOT use for GitHub URLs (use gh) or JSON API endpoints."
+version: 1.3.0
+description: "This skill should be used when the user asks to 'read this page', 'what does this URL say', 'fetch this article', 'summarize this PDF', or 'get the transcript of this video', or when web content is needed as context for another task. Fetches web pages, PDF/Word/PowerPoint/Excel/EPUB documents, and YouTube videos as clean Markdown via PullMD. Also a fallback when the host's native web research returns poor or noisy results. Do NOT use for GitHub URLs (use gh), Reddit URLs, or JSON API endpoints."
 ---
 
 # Fetching Web Content with PullMD
@@ -15,6 +15,8 @@ digraph pullmd {
     "Need to read a URL?" [shape=doublecircle];
     "GitHub URL?" [shape=diamond];
     "Use gh CLI" [shape=box];
+    "Reddit URL?" [shape=diamond];
+    "Use a Reddit research MCP, else ask the user" [shape=box];
     "JSON API?" [shape=diamond];
     "Fetch JSON directly" [shape=box];
     "read_url tool available?" [shape=diamond];
@@ -26,7 +28,9 @@ digraph pullmd {
 
     "Need to read a URL?" -> "GitHub URL?";
     "GitHub URL?" -> "Use gh CLI" [label="yes"];
-    "GitHub URL?" -> "JSON API?" [label="no"];
+    "GitHub URL?" -> "Reddit URL?" [label="no"];
+    "Reddit URL?" -> "Use a Reddit research MCP, else ask the user" [label="yes"];
+    "Reddit URL?" -> "JSON API?" [label="no"];
     "JSON API?" -> "Fetch JSON directly" [label="yes"];
     "JSON API?" -> "read_url tool available?" [label="no"];
     "read_url tool available?" -> "Call read_url" [label="yes"];
@@ -51,24 +55,22 @@ Until then, fall back to the host's native web research for content it can handl
 
 `read_url` takes `url` (required) plus these optional parameters:
 
-| Param           | Default  | Notes                                                                          |
-| --------------- | -------- | ------------------------------------------------------------------------------ |
-| `comments`      | `true`   | Include Reddit comments. Ignored for non-Reddit URLs.                          |
-| `comment_depth` | `3`      | Reddit comment nesting depth (1–10).                                           |
-| `comment_limit` | none     | Cap on top-level Reddit comments (1–500). Reddit returns ~200 without a cap.   |
-| `frontmatter`   | `false`  | Prepend a YAML metadata block (title, source, quality, …).                     |
-| `nocache`       | `false`  | Bypass the cache and re-fetch from source.                                     |
-| `extractor`     | auto     | Force `readability` / `trafilatura` / `playwright` instead of the auto choice. |
-| `pdf_ocr`       | `false`  | High-quality OCR for PDFs (table-grade output; needs a server-side OCR key).   |
-| `yt_timecodes`  | `links`  | YouTube transcripts: `links` (clickable), `plain` (`[MM:SS]`), `none`.         |
-| `yt_chunk`      | —        | YouTube transcript block size in seconds; `0` = per original snippet.          |
-| `lang`          | `de`     | Language for the comments-section header (`de` or `en`).                       |
+| Param          | Default | Notes                                                                                                    |
+| -------------- | ------- | -------------------------------------------------------------------------------------------------------- |
+| `query`        | none    | Return only the sections relevant to this query (BM25 over the converted Markdown). Omit for the full page. |
+| `max_tokens`   | `600`   | Token budget for `query` extraction (64–20000). Without `query`, irrelevant.                              |
+| `frontmatter`  | `false` | Prepend a YAML metadata block (title, source, quality, …).                                                |
+| `nocache`      | `false` | Bypass the cache and re-fetch from source.                                                                |
+| `extractor`    | auto    | Force `readability` / `trafilatura` / `playwright` instead of the auto choice.                            |
+| `pdf_ocr`      | `false` | High-quality OCR for PDFs (table-grade output; needs a server-side OCR key).                              |
+| `yt_timecodes` | `links` | YouTube transcripts: `links` (clickable), `plain` (`[MM:SS]`), `none`.                                    |
+| `yt_chunk`     | —       | YouTube transcript block size in seconds; `0` = per original snippet.                                     |
 
 ### Examples
 
 ```
 read_url(url="https://example.com/blog/why-we-migrated")
-read_url(url="https://www.reddit.com/r/homelab/comments/1ab2c3d/topic/", comment_depth=5)
+read_url(url="https://example.com/docs/api", query="rate limiting")          # only the relevant sections
 read_url(url="https://example.org/research/whitepaper.pdf", pdf_ocr=true)
 read_url(url="https://example.com/app/dashboard", extractor="playwright")   # force full render of a JS-heavy page
 read_url(url="https://example.com/status", nocache=true)                    # fresh, uncached
@@ -76,7 +78,7 @@ read_url(url="https://example.com/status", nocache=true)                    # fr
 
 ## Tips
 
-- `frontmatter=true` adds a metadata block (title, source, extraction quality, and — for Reddit/media/YouTube — author, date, duration, token usage).
+- `frontmatter=true` adds a metadata block (title, source, extraction quality, and — for media/YouTube — author, date, duration, token usage).
 - For a JS-heavy page that came back thin, set `extractor="playwright"` to force a full render.
 - `list_recent` lists recently fetched URLs (and their share ids); `get_share` re-fetches a prior result by its 8-hex share id. Both are tools of the PullMD MCP server.
 - If `read_url` returns poor output or fails, fall back to the host's native web research for content it can handle and report any remaining gap.

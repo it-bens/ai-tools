@@ -8,7 +8,12 @@
 # Matcher: startup, compact
 #
 # Exit codes:
-#   0 - Always (SessionStart hooks must not block)
+#   0 - Normal operation. SessionStart hooks must not block the session, so no
+#       configuration state, missing file, or absent MCP registration fails it.
+#   non-zero - A file the script is packaged with is unusable (prompt file
+#       unreadable, hardcoded host-rule table malformed), or an unexpected
+#       runtime error trips errexit. Surfacing a packaging bug beats injecting
+#       guidance that silently omits the block rules.
 
 set -euo pipefail
 
@@ -51,9 +56,18 @@ append_context() {
     context+="$addition"
 }
 
-if is_codex_host && [[ -f "$PROMPT_FILE" ]]; then
-    prompt=$(cat -- "$PROMPT_FILE")
-    append_context "$prompt"
+if is_codex_host; then
+    if [[ -f "$PROMPT_FILE" ]]; then
+        prompt=$(cat -- "$PROMPT_FILE")
+        append_context "$prompt"
+    fi
+    # Hosts the WebFetch hook denies outright cannot be intercepted here, so
+    # the same rule table is rendered into the directive instead. Assigned to a
+    # variable first: passing the substitution as a bare argument would discard
+    # its exit status, so a malformed PULLMD_HOST_RULES would silently yield an
+    # empty directive instead of failing the way host_block_rule does.
+    block_directive=$(render_block_directive)
+    append_context "$block_directive"
 fi
 
 # 3. Registration nudge — startup only, so it does not re-fire on compaction.

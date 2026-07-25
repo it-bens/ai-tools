@@ -1,6 +1,6 @@
 {
   "name": "web-fetching-with-pullmd",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Fetch web pages, documents, and YouTube transcripts as clean Markdown through a separately registered PullMD MCP server.",
   "author": {
     "name": "Martin Bens",
@@ -19,7 +19,7 @@
   "interface": {
     "displayName": "Web Fetching with PullMD",
     "shortDescription": "Fetch web content as clean Markdown through PullMD.",
-    "longDescription": "Adds a skill and lifecycle guidance for reading web pages, documents, Reddit threads, and YouTube transcripts through a separately registered PullMD MCP server.",
+    "longDescription": "Adds a skill and lifecycle guidance for reading web pages, documents, and YouTube transcripts through a separately registered PullMD MCP server.",
     "developerName": "Martin Bens",
     "category": "Productivity",
     "capabilities": [

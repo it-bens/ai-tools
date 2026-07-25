@@ -1,6 +1,6 @@
 # Web Fetching with PullMD
 
-Fetch web pages, documents (PDF/Office/EPUB), Reddit threads, and YouTube transcripts as clean, structured Markdown through a PullMD instance. The shared skill supports Claude Code and Codex. Claude Code additionally gets an enforced `WebFetch` redirect; Codex gets a `SessionStart` directive that prefers PullMD over native web research because Codex hooks cannot intercept that built-in tool.
+Fetch web pages, documents (PDF/Office/EPUB), and YouTube transcripts as clean, structured Markdown through a PullMD instance. The shared skill supports Claude Code and Codex. Claude Code additionally gets an enforced `WebFetch` redirect; Codex gets a `SessionStart` directive that prefers PullMD over native web research because Codex hooks cannot intercept that built-in tool.
 
 ## Installation
 
@@ -120,16 +120,41 @@ A `PreToolUse` hook on the `WebFetch` tool decides, for every call:
 | `enabled: false`                                | Allow (no-op — explicit opt-out)                               |
 | Enabled but no instance configured              | Block and tell the user to configure `pullmd.json`             |
 | The configured instance host                    | Allow (share links and direct PullMD pages)                    |
-| `github.com` family, or a host in `allow_hosts` | Allow (PullMD is the wrong tool for these)                     |
+| Built-in allow list, or a host in `allow_hosts` | Allow (PullMD is the wrong tool for these)                     |
+| Built-in block list                             | Deny with a host-specific message and no escape hatch          |
 | Anything else                                   | Deny and tell Claude Code to use the PullMD MCP tool           |
+
+### Built-in host rules
+
+Two hardcoded lists ship with the plugin. They are opinionated on purpose and need no configuration.
+
+**Always allowed** — PullMD is the wrong tool, so these stay on WebFetch:
+
+| Host | Why |
+|---|---|
+| `github.com`, `www.github.com`, `raw.githubusercontent.com`, `gist.github.com` | Belongs on `gh` / WebFetch |
+| `registry.npmjs.org` | Serves JSON, not a page |
+| `localhost`, `127.0.0.1` | A remote PullMD instance has no route to the caller's loopback |
+
+**Denied by default** — PullMD cannot serve them and WebFetch cannot reach them either, so the deny carries a host-specific message and the escape hatch does not apply:
+
+| Host | Why |
+|---|---|
+| `reddit.com`, `redd.it` | PullMD returns no comment tree, and Reddit answers direct fetches with 403 |
+
+Both lists match the exact host or any subdomain, so `reddit.com` also covers `www.`, `old.`, and `np.reddit.com`. An `allow_hosts` entry is checked first and therefore overrides a built-in block, which keeps the opinionated defaults from becoming a trap.
+
+Under Codex, where a `PreToolUse` hook cannot intercept the native web tool, the block list is rendered into the `SessionStart` directive from the same table.
 
 ### Escape hatch
 
 PullMD cannot handle every URL — JSON APIs, or the rare site it fails on. The hook counts attempts per URL within a session. Once attempts reach `escape_after` (default `2`), the same WebFetch is allowed through, so a retry always works. Counters reset on session start and compaction. The pattern mirrors the [`redundant-read-blocker`](../redundant-read-blocker/) plugin.
 
+Hosts on the built-in block list are exempt: they are denied before the counter is touched, because letting the retry through would only hit the upstream block.
+
 ### Codex Native Web Research
 
-Codex loads the shared skill and receives a concise `SessionStart` directive to prefer PullMD for ordinary pages, documents, Reddit threads, and YouTube transcripts. This is model guidance, not enforcement: Codex `PreToolUse` hooks cannot currently intercept its built-in web research tool. GitHub URLs and JSON APIs stay on Codex's native web tooling, and failed PullMD calls can fall back there when the format is supported.
+Codex loads the shared skill and receives a concise `SessionStart` directive to prefer PullMD for ordinary pages, documents, and YouTube transcripts, followed by the built-in block list rendered from the same table the Claude Code hook reads. This is model guidance, not enforcement: Codex `PreToolUse` hooks cannot currently intercept its built-in web research tool. GitHub URLs and JSON APIs stay on Codex's native web tooling, and failed PullMD calls can fall back there when the format is supported.
 
 Codex requires users to review and trust the plugin hooks. Changed hook definitions are skipped until trusted again.
 
@@ -156,7 +181,7 @@ plugins/web-fetching-with-pullmd/
 │   ├── prompts/
 │   │   └── mcp-tool-directives.md  # Codex native-web routing guidance
 │   └── scripts/
-│       ├── lib.sh                  # Config merge, host parsing, escape-hatch state I/O
+│       ├── lib.sh                  # Config merge, host parsing, built-in host rules, escape-hatch state I/O
 │       ├── pre-webfetch.sh         # Allow/deny decision + redirect message
 │       └── session-start.sh        # Resets state, injects guidance, checks MCP registration
 └── skills/
@@ -166,7 +191,7 @@ plugins/web-fetching-with-pullmd/
 
 ## Credits
 
-PullMD is a self-hosted web-to-Markdown service by **Aeterna Labs** (<https://github.com/AeternaLabsHQ/pullmd>), licensed AGPL-3.0. All the heavy lifting — Reddit comment trees, headless-Chromium rendering, document and YouTube extraction — happens in PullMD itself; full credit for that work goes to its authors.
+PullMD is a self-hosted web-to-Markdown service by **Aeterna Labs** (<https://github.com/AeternaLabsHQ/pullmd>), licensed AGPL-3.0. All the heavy lifting — headless-Chromium rendering, document and YouTube extraction — happens in PullMD itself; full credit for that work goes to its authors.
 
 This plugin is an independent, third-party piece of work, not affiliated with Aeterna Labs. Its skill was adapted from PullMD's own bundled Claude Code skill; the redirect hook is an independent reimplementation. The plugin talks to a PullMD instance through its MCP tool and bundles none of PullMD's code.
 

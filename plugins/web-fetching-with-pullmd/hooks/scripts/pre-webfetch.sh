@@ -71,10 +71,27 @@ if [[ -n "$instance_host" && "$host" == "$instance_host" ]]; then
     exit 0
 fi
 
-# Allow GitHub and any configured allow_hosts.
+# Allow GitHub and any configured allow_hosts. Checked before the block rules
+# below, so an explicit allow_hosts entry overrides a hardcoded block.
 if host_allowed "$host"; then
     debug_log "ALLOW ${url} — allowed host (${host})"
     exit 0
+fi
+
+# Hardcoded block: PullMD cannot serve this host and WebFetch cannot reach it
+# either. Denied before the escape-hatch bookkeeping, so no attempt is recorded
+# and no retry is ever let through.
+block_rule=$(host_block_rule "$host")
+if [[ -n "$block_rule" ]]; then
+    IFS=$'\t' read -r block_reason block_guidance <<< "$block_rule"
+    debug_log "DENY ${url} — hardcoded block (${host})"
+    {
+        printf '🤖 PullMD: %s\n' "$block_reason"
+        printf 'URL: %s\n' "$url"
+        printf '\n'
+        printf '%s\n' "$block_guidance"
+    } >&2
+    exit 2
 fi
 
 # Cannot track the escape hatch without a data dir → fail open (never deadlock).

@@ -44,7 +44,7 @@ plugins/web-fetching-with-pullmd/
 | Change skill triggers or PullMD usage | `skills/fetching-web-with-pullmd/SKILL.md` |
 | Change Codex routing guidance | `hooks/prompts/mcp-tool-directives.md` |
 | Change hook registration or launch paths | `hooks/hooks.json` |
-| Change config, host detection, or state helpers | `hooks/scripts/lib.sh` |
+| Change config, host detection, built-in allow/block rules, or state helpers | `hooks/scripts/lib.sh` |
 | Change Claude Code WebFetch routing | `hooks/scripts/pre-webfetch.sh` |
 | Change state reset or MCP setup diagnostics | `hooks/scripts/session-start.sh` |
 
@@ -53,9 +53,10 @@ plugins/web-fetching-with-pullmd/
 1. Treat PullMD as a black box. Document the MCP tool contract, not PullMD's extraction internals.
 2. Refer to the `read_url` tool descriptively in skill and prompt content. The MCP server may be registered under a different name.
 3. Keep `pullmd.json` focused on the Claude Code redirect and shared setup diagnostics. Do not require duplicate Codex configuration for an endpoint already stored in Codex's MCP registry.
-4. Preserve the Claude Code escape hatch. If plugin state cannot be written, the `WebFetch` hook must fail open.
+4. Preserve the Claude Code escape hatch. If plugin state cannot be written, the `WebFetch` hook must fail open. Built-in block rules are the one exception: they deny before the counter is touched, because the hosts they cover are unreachable through `WebFetch` too.
 5. Keep MCP registration checks best-effort. Claude Code checks its JSON registries; Codex checks `codex mcp list --json`. Neither check proves connection or authentication.
 6. Keep the Codex directive concise. It compensates for a missing hook interception point and must not duplicate the full skill.
+7. Keep the built-in block rules and the Codex directive rendered from one table in `lib.sh`. Codex has no interception point, so a second hand-written copy would drift.
 
 ## Validation
 

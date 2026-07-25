@@ -78,6 +78,48 @@ load 'test_helper/common_setup'
     assert_output --partial 'prefer the `read_url` tool'
 }
 
+# bats test_tags=codex,directive,block
+@test "Codex startup injects the hardcoded block directive naming Reddit" {
+    export PLUGIN_ROOT="${REPO_ROOT}/plugins/web-fetching-with-pullmd"
+
+    run_session_start "sess-c5" "startup"
+    assert_success
+    assert_output --partial "Do not use the PullMD read_url tool for these hosts"
+    assert_output --partial "reddit.com"
+}
+
+# bats test_tags=codex,directive,block
+@test "a malformed host-rule table fails the hook instead of injecting an empty directive" {
+    local fake_scripts
+    fake_scripts="${TEST_TEMP_DIR}/hooks/scripts"
+    mkdir -p "$fake_scripts"
+    cp "${SCRIPTS_DIR}/session-start.sh" "${SCRIPTS_DIR}/lib.sh" "$fake_scripts/"
+    # Appended after lib.sh's own definition: the file is sourced whole before
+    # any function runs, so the last assignment wins. This fails only if the
+    # rendering failure propagates — reverting to a status-discarding
+    # invocation makes the hook exit 0 and this test fail.
+    printf "\nPULLMD_HOST_RULES='not valid json'\n" >> "${fake_scripts}/lib.sh"
+
+    export PLUGIN_ROOT="${TEST_TEMP_DIR}/hooks"
+
+    local stdin
+    stdin=$(jq -n -c --arg cwd "$TEST_PROJECT_DIR" \
+        '{session_id: "sess-bad", cwd: $cwd, source: "startup"}')
+
+    run bash -c 'printf "%s" "$1" | bash "$2"' _ "$stdin" "${fake_scripts}/session-start.sh"
+    assert_failure
+}
+
+# bats test_tags=directive,block
+@test "Claude Code startup does not inject the hardcoded block directive" {
+    write_user_config '{"instance":"https://pullmd.example.com"}'
+    write_user_claude_json '{"mcpServers":{}}'
+
+    run_session_start "sess-n7" "startup"
+    assert_success
+    refute_output --partial "Do not use the PullMD read_url tool for these hosts"
+}
+
 # bats test_tags=codex,nudge
 @test "Codex startup uses Codex setup commands when the server is absent" {
     install_fake_codex

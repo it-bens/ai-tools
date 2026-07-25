@@ -68,6 +68,22 @@ CONFIGURED='{"instance":"https://pullmd.example.com"}'
     assert_success
 }
 
+# bats test_tags=allow
+@test "allows WebFetch of the npm registry" {
+    write_project_config "$CONFIGURED"
+    run_pre_webfetch "s1" "https://registry.npmjs.org/some-pkg/latest"
+    assert_success
+}
+
+# bats test_tags=allow
+@test "allows WebFetch of localhost and 127.0.0.1" {
+    write_project_config "$CONFIGURED"
+    run_pre_webfetch "s1" "http://localhost:3000/api"
+    assert_success
+    run_pre_webfetch "s1" "http://127.0.0.1:8080/x"
+    assert_success
+}
+
 # =============================================================================
 # DENY — normal pages redirected to the MCP tool
 # =============================================================================
@@ -94,6 +110,74 @@ CONFIGURED='{"instance":"https://pullmd.example.com"}'
     run_pre_webfetch "s1" "https://news.example.org/article"
     assert_failure 2
     assert_output --partial "mcp__plugin_x_pullmd__read_url"
+}
+
+# =============================================================================
+# BLOCKED HOSTS — hardcoded, no escape hatch
+# =============================================================================
+
+# bats test_tags=deny,block
+@test "blocks WebFetch of a Reddit thread" {
+    write_project_config "$CONFIGURED"
+    run_pre_webfetch "s1" "https://www.reddit.com/r/x/comments/abc/y/"
+    assert_failure 2
+}
+
+# bats test_tags=deny,block,message
+@test "block deny message names the reason and URL, not the generic redirect" {
+    write_project_config "$CONFIGURED"
+    run_pre_webfetch "s1" "https://www.reddit.com/r/x/comments/abc/y/"
+    assert_failure 2
+    assert_output --partial "Reddit is not readable here."
+    assert_output --partial "https://www.reddit.com/r/x/comments/abc/y/"
+    refute_output --partial "mcp__pullmd__read_url"
+    refute_output --partial "attempts reach"
+}
+
+# bats test_tags=deny,block
+@test "blocks Reddit across its listed hosts and subdomains" {
+    write_project_config "$CONFIGURED"
+    run_pre_webfetch "s1" "https://reddit.com/r/x"
+    assert_failure 2
+    run_pre_webfetch "s1" "https://www.reddit.com/r/x"
+    assert_failure 2
+    run_pre_webfetch "s1" "https://old.reddit.com/r/x"
+    assert_failure 2
+    run_pre_webfetch "s1" "https://redd.it/abc123"
+    assert_failure 2
+}
+
+# bats test_tags=deny,block,escape
+@test "blocked host has no escape hatch: the same URL is still denied on a second attempt" {
+    write_project_config "$CONFIGURED"
+    run_pre_webfetch "s1" "https://www.reddit.com/r/x/comments/abc/y/"
+    assert_failure 2
+    run_pre_webfetch "s1" "https://www.reddit.com/r/x/comments/abc/y/"
+    assert_failure 2
+}
+
+# bats test_tags=deny,block,escape
+@test "blocked host attempt records no escape-hatch state" {
+    write_project_config "$CONFIGURED"
+    run_pre_webfetch "s1" "https://www.reddit.com/r/x/comments/abc/y/"
+    assert_failure 2
+
+    local state
+    state=$(read_attempts "s1")
+    if [[ -z "$state" ]]; then
+        # No state file was ever written for this session — trivially no entry.
+        return 0
+    fi
+    local has_entry
+    has_entry=$(printf '%s' "$state" | jq -r --arg u "https://www.reddit.com/r/x/comments/abc/y/" 'has("urls") and (.urls | has($u))')
+    [[ "$has_entry" == "false" ]]
+}
+
+# bats test_tags=allow,block-override
+@test "a configured allow_hosts entry overrides the hardcoded Reddit block" {
+    write_project_config '{"instance":"https://pullmd.example.com","allow_hosts":["reddit.com"]}'
+    run_pre_webfetch "s1" "https://www.reddit.com/r/x/comments/abc/y/"
+    assert_success
 }
 
 # =============================================================================

@@ -4,6 +4,23 @@ All notable changes to the `web-fetching-with-pullmd` plugin are documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-07-25
+
+### Added
+
+- Built-in host rules (`PULLMD_HOST_RULES` in `lib.sh`). Hosts that PullMD cannot serve and that WebFetch cannot reach either are denied with a host-specific message instead of the generic PullMD redirect, and are exempt from the escape hatch — letting the retry through would only hit the upstream block. Ships opinionated and unconfigurable, with one rule covering `reddit.com` and `redd.it`. A user `allow_hosts` entry is checked first and therefore overrides a built-in block, so the defaults can never trap a user.
+- `registry.npmjs.org`, `localhost`, and `127.0.0.1` on the built-in allow list. The npm registry serves JSON rather than a page, and a remote PullMD instance has no route to the caller's loopback; both were previously redirected to PullMD and had to burn the escape hatch to get through.
+- Codex `SessionStart` guidance now renders the block list from the same table the Claude Code hook reads, so the enforced rules and the injected directive cannot drift apart.
+- `query` and `max_tokens` in the skill's parameter table. The `read_url` tool has always accepted them; they return only the sections relevant to a query, which the skill never surfaced.
+
+### Changed
+
+- Under Codex, a missing `mcp-tool-directives.md` no longer suppresses the whole `SessionStart` injection. The static prompt file and the rendered block list are now independent, so the block rules are delivered even when the prompt file is absent.
+
+### Removed
+
+- The skill's `comments`, `comment_depth`, `comment_limit`, and `lang` parameters, the Reddit `read_url` example, and every claim of Reddit support across the skill, both manifests, the Codex directive, and the READMEs. Testing against a live instance showed thread fetches return title and metadata but an empty comment tree at depths 3 and 5, with and without a comment cap and with the cache bypassed, while subreddit listings answer 403 on both `www.` and `old.reddit.com`. `lang` only ever set the comments-section header, so it went with them.
+
 ## [1.2.0] - 2026-07-12
 
 ### Added

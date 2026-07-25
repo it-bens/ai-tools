@@ -58,6 +58,72 @@ source "${SCRIPTS_DIR}/lib.sh"
 }
 
 # =============================================================================
+# PULLMD_HOST_RULES / host_block_rule / render_block_directive
+# =============================================================================
+
+# bats test_tags=block-rules
+@test "PULLMD_HOST_RULES parses as valid JSON" {
+    printf '%s' "$PULLMD_HOST_RULES" | jq empty
+}
+
+# bats test_tags=block-rules
+@test "host_block_rule prints nothing for an unmatched host" {
+    # Assigned before asserting: a substitution inside [[ ]] would swallow a
+    # lookup failure, so a broken function emitting nothing would still pass.
+    local result
+    result=$(host_block_rule "news.example.org")
+    [[ -z "$result" ]]
+}
+
+# bats test_tags=block-rules
+@test "host_block_rule returns tab-separated reason and guidance for an exact match and a subdomain match" {
+    local host result reason guidance
+    for host in "reddit.com" "www.reddit.com"; do
+        result=$(host_block_rule "$host")
+        IFS=$'\t' read -r reason guidance <<< "$result"
+        [[ "$reason" == "Reddit is not readable here." ]]
+        # Asserted non-empty: a trailing-wildcard match alone would also accept
+        # a rule that emitted no guidance at all.
+        [[ -n "$guidance" ]]
+    done
+}
+
+# bats test_tags=block-rules
+@test "host_block_rule requires a dot boundary and does not match a bare suffix" {
+    local host result
+    for host in "notreddit.com" "myredd.it" "xreddit.com" "reddit.com.evil.example"; do
+        result=$(host_block_rule "$host")
+        [[ -z "$result" ]]
+    done
+}
+
+# bats test_tags=block-rules
+@test "every host rule's reason and guidance are single-line" {
+    run jq -e 'all(.[]; ((.reason | test("[\t\n]") | not) and (.guidance | test("[\t\n]") | not)))' <<< "$PULLMD_HOST_RULES"
+    assert_success
+}
+
+# bats test_tags=block-rules
+@test "render_block_directive prints nothing when the rules table is empty" {
+    PULLMD_HOST_RULES='[]'
+    local output
+    output=$(render_block_directive)
+    [[ -z "$output" ]]
+}
+
+# bats test_tags=block-rules
+@test "render_block_directive names every host in the table" {
+    local output
+    output=$(render_block_directive)
+    local hosts
+    hosts=$(printf '%s' "$PULLMD_HOST_RULES" | jq -r '.[].hosts[]')
+    while IFS= read -r host; do
+        [[ -z "$host" ]] && continue
+        [[ "$output" == *"$host"* ]]
+    done <<< "$hosts"
+}
+
+# =============================================================================
 # load_config — defaults
 # =============================================================================
 

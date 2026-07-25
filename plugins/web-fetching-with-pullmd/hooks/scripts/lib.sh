@@ -15,9 +15,24 @@ PULLMD_DEFAULTS='{"enabled":true,"mcp_tool":"mcp__pullmd__read_url","escape_afte
 # aliases; Claude Code provides CLAUDE_PLUGIN_DATA.
 PULLMD_PLUGIN_DATA="${PLUGIN_DATA:-${CODEX_PLUGIN_DATA:-${CLAUDE_PLUGIN_DATA:-}}}"
 
-# Hosts always allowed through WebFetch (never redirected to PullMD).
-# PullMD is the wrong tool for GitHub — these stay on WebFetch / gh.
-PULLMD_BUILTIN_ALLOW=$'github.com\nwww.github.com\nraw.githubusercontent.com\ngist.github.com'
+# Hosts always allowed through WebFetch (never redirected to PullMD), because
+# PullMD is the wrong tool for them: GitHub belongs on WebFetch / gh, the npm
+# registry serves JSON rather than a page, and a remote PullMD instance has no
+# route to the caller's loopback.
+PULLMD_BUILTIN_ALLOW=$'github.com\nwww.github.com\nraw.githubusercontent.com\ngist.github.com\nregistry.npmjs.org\nlocalhost\n127.0.0.1'
+
+# Hosts PullMD cannot serve and WebFetch cannot reach either. These are denied
+# outright — no escape hatch, because letting the retry through would only hit
+# the upstream block. Each rule supplies the reason and guidance shown in place
+# of the generic PullMD redirect. Keep `reason` and `guidance` single-line: they
+# cross the lookup boundary as TSV.
+PULLMD_HOST_RULES='[
+  {
+    "hosts": ["reddit.com", "redd.it"],
+    "reason": "Reddit is not readable here.",
+    "guidance": "PullMD returns no comment tree for Reddit threads, and Reddit blocks direct fetches (403). Use a Reddit-specific research MCP if one is registered; otherwise ask the user to paste the content."
+  }
+]'
 
 # Globals set by load_config:
 #   PULLMD_INSTANCE       base URL of the PullMD service ("" = unconfigured)
@@ -192,6 +207,34 @@ host_allowed() {
         fi
     done < <(printf '%s\n%s\n' "$PULLMD_BUILTIN_ALLOW" "${PULLMD_ALLOW_HOSTS:-}")
     return 1
+}
+
+# Look up the hardcoded block rule for a host. Prints "<reason>\t<guidance>"
+# when one matches and nothing otherwise. Matching mirrors host_allowed: exact
+# host or any subdomain of a listed entry, so one `reddit.com` entry covers
+# www./old./np.reddit.com. A jq failure here means PULLMD_HOST_RULES is
+# malformed — a bug the bats suite guards, and one that must surface loudly
+# rather than silently degrade into "no rule matched".
+# Args: $1 = host (lowercased)
+host_block_rule() {
+    local host="$1"
+    printf '%s' "$PULLMD_HOST_RULES" | jq -r --arg h "$host" '
+        map(select(.hosts | any(. as $e | $h == $e or ($h | endswith("." + $e)))))
+        | first
+        | if . then [.reason, .guidance] | @tsv else empty end
+    '
+}
+
+# Render the hardcoded block rules as routing guidance for hosts that cannot be
+# intercepted by a PreToolUse hook. Prints nothing when no rules are defined.
+render_block_directive() {
+    printf '%s' "$PULLMD_HOST_RULES" | jq -r '
+        if length == 0 then empty else
+          "Do not use the PullMD read_url tool for these hosts:\n" +
+          (map("- " + (.hosts | join(", ")) + " — " + .reason + " " + .guidance)
+           | join("\n"))
+        end
+    '
 }
 
 # --- Escape-hatch state I/O ---
