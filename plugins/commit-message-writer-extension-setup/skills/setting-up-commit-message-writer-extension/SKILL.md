@@ -1,5 +1,6 @@
 ---
 name: setting-up-commit-message-writer-extension
+version: 1.1.2
 description: Use when the user explicitly asks to set up, install, configure, wire up, or create the commit-message-writer plugin's extension for the current project. Do not activate as a side effect of a commit-message-writing task.
 ---
 

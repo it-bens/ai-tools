@@ -2,6 +2,8 @@
 
 Assign every checkpoint an actor from this table. When a task type is absent, route by the closest profile: open-ended judgment → gpt-5.6-sol; specified everyday work → gpt-5.6-terra or sonnet; enumerated repeatable work → gpt-5.6-luna or haiku. When a model tier is updated, re-validate this table before relying on it.
 
+`routing.additions` appends checkpoint-type rows for project checkpoint types this table has no profile for; default if not otherwise stated: none. Additions append only — a row here never rewrites one below, because the rows below carry the plugin's evidence base rather than a preference.
+
 | Checkpoint type | Actor | Effort |
 |---|---|---|
 | Per-bundle focused review (commit-sized change) | codex `gpt-5.6-terra` | high |
@@ -30,11 +32,11 @@ Routing rules:
 - Haiku output never flows into a decision unverified: pair every haiku fan-out with a sonnet verification stage or a deterministic check (the gate re-run's exit-code acceptance is such a check). Give haiku decision-free instructions and a structured output schema; it does not recover from its own wrong guesses.
 - Ignore severity labels from `gpt-5.6-sol` and re-rank its findings; `gpt-5.6-luna` severity labels are trustworthy; `gpt-5.6-terra` labels are usable.
 - Finding-verdict vocabulary: confirmed / mechanism confirmed / adjudicated (real behavior, documented accepted decision — name where) / not verified / disputed (name which part fails).
-- Effort ladder when the table gives none: low for mechanical work, medium for specified implementation, high for focused review, xhigh for broad review gates. Start low and escalate on weak results; a resumed codex session keeps its context across escalation. Table efforts are defaults: escalating is always allowed; downgrading a table effort is an adaptation that must be announced like a scope change, and verification requirements never scale down with effort.
+- Effort ladder when the table gives none: low for mechanical work, medium for specified implementation, high for focused review, xhigh for broad review gates. Start low and escalate on weak results; a resumed codex session keeps its context across escalation. Table efforts are defaults: escalating is always allowed; downgrading a table effort is an adaptation that must be announced like a scope change, and verification requirements never scale down with effort. `routing.effort_defaults` overrides the effort for named checkpoint types; default if not otherwise stated: the table's efforts, then the ladder above. An assigned effort replaces the default for that checkpoint type only — going below it at dispatch time is still an announced adaptation.
 
 Codex-less substitutions (apply only after the consent gate):
 
 - Review checkpoints → sonnet subagents running the identical prompt-block protocol, one per scope; merge outputs in the session.
-- Fix batches → sonnet subagents per non-overlapping file group, or the session itself.
+- Fix batches → sonnet subagents per non-overlapping file group, or the session itself. A subagent fix batch carries the full implementer prompt-block protocol, fence and gates included; the blocks do not lapse because the actor changed.
 - Verification, sweeps, and deep reads are unchanged — they never depended on codex.
 - Cross-family review coverage is lost in this mode; state that in the strategy message and in the final report.

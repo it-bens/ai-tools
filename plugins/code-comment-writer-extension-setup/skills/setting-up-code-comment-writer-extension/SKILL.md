@@ -1,5 +1,6 @@
 ---
 name: setting-up-code-comment-writer-extension
+version: 1.0.1
 description: Use when the user explicitly asks to set up, install, configure, wire up, or create the code-comment-writer plugin's extension for the current project. Do not activate as a side effect of a code-comment-writing task.
 ---
 

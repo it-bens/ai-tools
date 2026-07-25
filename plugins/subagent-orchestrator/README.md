@@ -21,7 +21,11 @@ The skill is host-specific to Claude Code (it orchestrates Claude subagent spawn
 /plugin install subagent-orchestrator@itb-ai-tools
 ```
 
+**Restart Claude Code** after installing or updating so the extension-delivery hooks load.
+
 Codex CLI worker dispatch additionally requires an installed, authenticated `codex` binary. The skill detects its absence and asks for consent before running codex-less.
+
+Without a project extension, the skill runs on universal defaults: gates enumerated from the build configuration at dispatch time, the universal banned-command and conduct-rule lists, and the routing table as shipped.
 
 ## Skill
 
@@ -33,6 +37,18 @@ Codex CLI worker dispatch additionally requires an installed, authenticated `cod
 
 - `references/model-routing.md` — the checkpoint-to-actor routing table, verification shape, effort ladder, severity-label calibration, and codex-less substitutions
 - `references/codex-dispatch.md` — codex invocation hygiene, review and implementer prompt-block protocols, the `codex exec resume` re-validation loop, and trust boundaries
+
+## Extension Contract
+
+Projects register their own gates, fences, conduct rules, and checkpoint types through two additive shapes: `Pre-<position>` / `Post-<position>` workflow positions on five named nodes, and named configuration values that override the defaults documented inline in the skill body and its references. The extension file lives at `.claude/extensions/subagent-orchestrator/orchestrating-subagent-work.md`; the plugin's own hooks deliver it wrapped in a structural envelope whenever the skill runs, so projects carry no delivery configuration. The skill works without any extension.
+
+Positions are keyed by node name rather than step number because the workflow is a loop — `Dispatch` and `Adapt` fire on every pass, so content written there must be safe to repeat. Named values that feed worker prompts are inlined verbatim at dispatch, since workers are stateless and inherit nothing from the session; a value that cites a project file by path travels to the worker as required reading rather than being read into the session.
+
+Four nodes are fenced — the consent check, the consent question, the halt state, and the deviation check. None takes a position, and the only named value reaching any of them is `deviation.additional_triggers`, which appends triggers and cannot remove one. There is no named value at all for the verification shape or dual-confirmation closure. A position section is free-form prose and cannot be prevented from arguing against a fenced node, but the node still runs after it, positions add rather than replace, and the setup skill refuses to author such content.
+
+`EXTENSION.md` owns the contract: file layout, delivery, both mechanisms, the non-extendable surface, reference-like extensions, the ten recognized named values, and worked examples for registering a project's gates and adding a checkpoint type.
+
+The companion plugin `subagent-orchestrator-extension-setup` writes the extension file for you. Its `setting-up-subagent-orchestrator-extension` skill explores the project's gates, protected paths, conduct rules, and CI configuration, drafts the content conversationally, and re-syncs an existing file against a changed project.
 
 ## Documentation Sources
 
@@ -51,10 +67,15 @@ subagent-orchestrator/
 │   └── plugin.json                      # Claude Code plugin manifest
 ├── CHANGELOG.md
 ├── CLAUDE.md                            # Development guidance
+├── EXTENSION.md                         # Project extension contract
 ├── README.md
 ├── docs/                                # Distilled research findings (not loaded at runtime)
 │   ├── codex-dispatch-experiments.md
 │   └── gpt-5-6-model-family.md
+├── hooks/
+│   ├── hooks.json                       # PostToolUse (Skill) + UserPromptSubmit delivery hooks
+│   └── scripts/
+│       └── inject-extension.sh          # self-gating extension delivery with structural envelope
 └── skills/
     └── orchestrating-subagent-work/
         ├── SKILL.md                     # Orchestration workflow with digraph
