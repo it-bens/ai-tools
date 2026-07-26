@@ -21,6 +21,20 @@ PULLMD_PLUGIN_DATA="${PLUGIN_DATA:-${CODEX_PLUGIN_DATA:-${CLAUDE_PLUGIN_DATA:-}}
 # route to the caller's loopback.
 PULLMD_BUILTIN_ALLOW=$'github.com\nwww.github.com\nraw.githubusercontent.com\ngist.github.com\nregistry.npmjs.org\nlocalhost\n127.0.0.1'
 
+# JSON APIs served from hosts that also serve real pages. PullMD cannot turn the
+# JSON into meaningful Markdown, but the host still has pages worth routing
+# through PullMD, so a whole-host entry in PULLMD_BUILTIN_ALLOW would over-reach.
+# Each rule pairs a host (exact or subdomain, matched like PULLMD_BUILTIN_ALLOW)
+# with a single-line Oniguruma path regex; a URL matching both is allowed
+# through WebFetch. PyPI's package JSON API lives at /pypi/<pkg>/json and
+# /pypi/<pkg>/<version>/json.
+PULLMD_BUILTIN_ALLOW_PATHS='[
+  {
+    "hosts": ["pypi.org"],
+    "path_pattern": "^/pypi/[^/]+/(json|[^/]+/json)/?$"
+  }
+]'
+
 # Hosts PullMD cannot serve and WebFetch cannot reach either. These are denied
 # outright — no escape hatch, because letting the retry through would only hit
 # the upstream block. Each rule supplies the reason and guidance shown in place
@@ -194,6 +208,22 @@ extract_host() {
     printf '%s' "$host" | tr '[:upper:]' '[:lower:]'
 }
 
+# Extract the path from a URL (leading "/", no query or fragment). Tolerates a
+# missing scheme and a host-only URL, which yields "/". Not lowercased: paths
+# are case-sensitive.
+# Args: $1 = url
+extract_path() {
+    local url="$1" rest path
+    rest="${url#*://}"           # strip scheme; unchanged when there is none
+    rest="${rest%%\#*}"          # strip fragment before locating the path — a
+    rest="${rest%%\?*}"          # slash inside a query/fragment is not the path
+    case "$rest" in
+        */*) path="/${rest#*/}" ;;   # everything from the first slash onward
+        *)   path="/" ;;             # host only, no path
+    esac
+    printf '%s' "$path"
+}
+
 # Test whether a host is allowed through WebFetch (builtin allow + configured
 # allow_hosts). Matches exact host or any subdomain of an allowed host.
 # Args: $1 = host (lowercased)
@@ -207,6 +237,22 @@ host_allowed() {
         fi
     done < <(printf '%s\n%s\n' "$PULLMD_BUILTIN_ALLOW" "${PULLMD_ALLOW_HOSTS:-}")
     return 1
+}
+
+# Test whether a URL matches a built-in allow-path rule: its host matches (exact
+# or subdomain, like host_allowed) and its path matches the rule's regex. For
+# JSON APIs on hosts that also serve pages PullMD should still handle. A jq
+# failure means PULLMD_BUILTIN_ALLOW_PATHS is malformed — a bug the bats suite
+# guards — so it surfaces as a non-match rather than a silent allow.
+# Args: $1 = host (lowercased), $2 = path
+# Returns 0 if allowed, 1 otherwise.
+url_allowed() {
+    local host="$1" path="$2"
+    printf '%s' "$PULLMD_BUILTIN_ALLOW_PATHS" | jq -e --arg h "$host" --arg p "$path" '
+        any(.[]; . as $rule
+            | ($rule.hosts | any(. as $e | $h == $e or ($h | endswith("." + $e))))
+              and ($p | test($rule.path_pattern)))
+    ' >/dev/null 2>&1
 }
 
 # Look up the hardcoded block rule for a host. Prints "<reason>\t<guidance>"

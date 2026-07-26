@@ -1,8 +1,10 @@
 #!/bin/bash
 # PreToolUse WebFetch hook: redirect WebFetch of normal pages to the PullMD MCP
-# tool for clean Markdown. Allows the configured PullMD instance host, GitHub,
-# and configured allow_hosts. A per-URL escape hatch lets a repeated attempt
-# through after `escape_after` tries (for JSON APIs or when PullMD can't help).
+# tool for clean Markdown. Allows the configured PullMD instance host and the
+# built-in and configured allow rules (allow hosts and JSON-API URL patterns in
+# lib.sh); built-in block-list hosts are denied outright. A per-URL escape hatch
+# lets a repeated attempt through after `escape_after` tries (for JSON APIs or
+# when PullMD can't help).
 #
 # No-op when disabled (enabled: false). Fails hard — blocks the WebFetch — when
 # enabled but no PullMD instance is configured anywhere (user or project
@@ -75,6 +77,15 @@ fi
 # below, so an explicit allow_hosts entry overrides a hardcoded block.
 if host_allowed "$host"; then
     debug_log "ALLOW ${url} — allowed host (${host})"
+    exit 0
+fi
+
+# Allow specific JSON-API URL patterns on hosts that also serve real pages
+# (e.g. PyPI's /pypi/<pkg>/json). A whole-host allow would route the host's
+# pages away from PullMD too, so match the path as well.
+path=$(extract_path "$url")
+if url_allowed "$host" "$path"; then
+    debug_log "ALLOW ${url} — allowed URL pattern (${host}${path})"
     exit 0
 fi
 

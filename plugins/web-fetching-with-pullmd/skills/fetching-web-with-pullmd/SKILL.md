@@ -1,6 +1,6 @@
 ---
 name: fetching-web-with-pullmd
-version: 1.3.0
+version: 1.4.0
 description: "This skill should be used when the user asks to 'read this page', 'what does this URL say', 'fetch this article', 'summarize this PDF', or 'get the transcript of this video', or when web content is needed as context for another task. Fetches web pages, PDF/Word/PowerPoint/Excel/EPUB documents, and YouTube videos as clean Markdown via PullMD. Also a fallback when the host's native web research returns poor or noisy results. Do NOT use for GitHub URLs (use gh), Reddit URLs, or JSON API endpoints."
 ---
 

@@ -31,6 +31,44 @@ source "${SCRIPTS_DIR}/lib.sh"
 }
 
 # =============================================================================
+# extract_path
+# =============================================================================
+
+# bats test_tags=path
+@test "extract_path pulls the path from a full URL" {
+    [[ "$(extract_path "https://pypi.org/pypi/fb-idb/json")" == "/pypi/fb-idb/json" ]]
+}
+
+# bats test_tags=path
+@test "extract_path strips query and fragment" {
+    [[ "$(extract_path "https://example.com/a/b?x=1#frag")" == "/a/b" ]]
+}
+
+# bats test_tags=path
+@test "extract_path yields / for a host-only URL" {
+    [[ "$(extract_path "https://example.com")" == "/" ]]
+    [[ "$(extract_path "https://example.com/")" == "/" ]]
+}
+
+# bats test_tags=path
+@test "extract_path tolerates a missing scheme" {
+    [[ "$(extract_path "pypi.org/pypi/fb-idb/json")" == "/pypi/fb-idb/json" ]]
+}
+
+# bats test_tags=path
+@test "extract_path is unaffected by userinfo and port" {
+    [[ "$(extract_path "https://user@example.com:8443/pypi/fb-idb/json")" == "/pypi/fb-idb/json" ]]
+}
+
+# bats test_tags=path
+@test "extract_path yields / when a slash lives only in the query or fragment" {
+    # A path-less URL whose query or fragment happens to contain a slash must not
+    # have that slash mistaken for the path (else a homepage would false-allow).
+    [[ "$(extract_path "https://pypi.org?next=/pypi/foo/json")" == "/" ]]
+    [[ "$(extract_path "https://pypi.org#/pypi/foo/json")" == "/" ]]
+}
+
+# =============================================================================
 # host_allowed
 # =============================================================================
 
@@ -54,6 +92,60 @@ source "${SCRIPTS_DIR}/lib.sh"
     host_allowed "internal.test"
     host_allowed "api.internal.test"
     run host_allowed "notinternal.test"
+    assert_failure
+}
+
+# =============================================================================
+# PULLMD_BUILTIN_ALLOW_PATHS / url_allowed
+# =============================================================================
+
+# bats test_tags=allow-path
+@test "PULLMD_BUILTIN_ALLOW_PATHS parses as valid JSON" {
+    printf '%s' "$PULLMD_BUILTIN_ALLOW_PATHS" | jq empty
+}
+
+# bats test_tags=allow-path
+@test "every allow-path rule has a single-line path_pattern and at least one host" {
+    run jq -e 'all(.[]; (.path_pattern | test("[\t\n]") | not) and (.hosts | length > 0))' <<< "$PULLMD_BUILTIN_ALLOW_PATHS"
+    assert_success
+}
+
+# bats test_tags=allow-path
+@test "url_allowed accepts the PyPI package JSON API" {
+    url_allowed "pypi.org" "/pypi/fb-idb/json"
+}
+
+# bats test_tags=allow-path
+@test "url_allowed accepts the PyPI per-version JSON API" {
+    url_allowed "pypi.org" "/pypi/fb-idb/1.2.3/json"
+}
+
+# bats test_tags=allow-path
+@test "url_allowed accepts a PyPI subdomain (TestPyPI)" {
+    url_allowed "test.pypi.org" "/pypi/fb-idb/json"
+}
+
+# bats test_tags=allow-path
+@test "url_allowed rejects a PyPI project page" {
+    run url_allowed "pypi.org" "/project/fb-idb/"
+    assert_failure
+}
+
+# bats test_tags=allow-path
+@test "url_allowed rejects a non-JSON PyPI path" {
+    run url_allowed "pypi.org" "/pypi/fb-idb/"
+    assert_failure
+}
+
+# bats test_tags=allow-path
+@test "url_allowed rejects the JSON-API path on an unlisted host" {
+    run url_allowed "example.org" "/pypi/fb-idb/json"
+    assert_failure
+}
+
+# bats test_tags=allow-path
+@test "url_allowed requires a dot boundary and does not match a bare suffix" {
+    run url_allowed "notpypi.org" "/pypi/fb-idb/json"
     assert_failure
 }
 

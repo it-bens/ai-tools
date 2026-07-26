@@ -85,6 +85,38 @@ CONFIGURED='{"instance":"https://pullmd.example.com"}'
 }
 
 # =============================================================================
+# ALLOW — JSON-API URL patterns
+# =============================================================================
+
+# bats test_tags=allow,allow-path
+@test "allows WebFetch of the PyPI package JSON API" {
+    write_project_config "$CONFIGURED"
+    run_pre_webfetch "s1" "https://pypi.org/pypi/fb-idb/json"
+    assert_success
+}
+
+# bats test_tags=allow,allow-path
+@test "allows WebFetch of the PyPI per-version JSON API" {
+    write_project_config "$CONFIGURED"
+    run_pre_webfetch "s1" "https://pypi.org/pypi/fb-idb/1.2.3/json"
+    assert_success
+}
+
+# bats test_tags=deny,allow-path
+@test "still redirects a PyPI project page to PullMD" {
+    write_project_config "$CONFIGURED"
+    run_pre_webfetch "s1" "https://pypi.org/project/fb-idb/"
+    assert_failure 2
+}
+
+# bats test_tags=deny,allow-path
+@test "does not allow a path-less PyPI URL whose query only looks like a JSON path" {
+    write_project_config "$CONFIGURED"
+    run_pre_webfetch "s1" "https://pypi.org?next=/pypi/fb-idb/json"
+    assert_failure 2
+}
+
+# =============================================================================
 # DENY — normal pages redirected to the MCP tool
 # =============================================================================
 

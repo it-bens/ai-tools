@@ -1,6 +1,6 @@
 {
   "name": "web-fetching-with-pullmd",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Fetch web pages, documents, and YouTube transcripts as clean Markdown through a separately registered PullMD MCP server.",
   "author": {
     "name": "Martin Bens",

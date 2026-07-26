@@ -121,12 +121,13 @@ A `PreToolUse` hook on the `WebFetch` tool decides, for every call:
 | Enabled but no instance configured              | Block and tell the user to configure `pullmd.json`             |
 | The configured instance host                    | Allow (share links and direct PullMD pages)                    |
 | Built-in allow list, or a host in `allow_hosts` | Allow (PullMD is the wrong tool for these)                     |
+| Built-in JSON-API URL pattern (e.g. PyPI `/pypi/*/json`) | Allow (JSON, not a page — PullMD is the wrong tool)    |
 | Built-in block list                             | Deny with a host-specific message and no escape hatch          |
 | Anything else                                   | Deny and tell Claude Code to use the PullMD MCP tool           |
 
 ### Built-in host rules
 
-Two hardcoded lists ship with the plugin. They are opinionated on purpose and need no configuration.
+Three hardcoded lists ship with the plugin. They are opinionated on purpose and need no configuration.
 
 **Always allowed** — PullMD is the wrong tool, so these stay on WebFetch:
 
@@ -136,13 +137,19 @@ Two hardcoded lists ship with the plugin. They are opinionated on purpose and ne
 | `registry.npmjs.org` | Serves JSON, not a page |
 | `localhost`, `127.0.0.1` | A remote PullMD instance has no route to the caller's loopback |
 
+**Always allowed (specific URL patterns)** — the host also serves real pages worth routing through PullMD, so only its JSON-API paths skip it:
+
+| URL pattern | Why |
+|---|---|
+| `pypi.org/pypi/<pkg>/json`, `pypi.org/pypi/<pkg>/<version>/json` | PyPI's package JSON API — JSON, not a page. `pypi.org` project and search pages still go through PullMD. |
+
 **Denied by default** — PullMD cannot serve them and WebFetch cannot reach them either, so the deny carries a host-specific message and the escape hatch does not apply:
 
 | Host | Why |
 |---|---|
 | `reddit.com`, `redd.it` | PullMD returns no comment tree, and Reddit answers direct fetches with 403 |
 
-Both lists match the exact host or any subdomain, so `reddit.com` also covers `www.`, `old.`, and `np.reddit.com`. An `allow_hosts` entry is checked first and therefore overrides a built-in block, which keeps the opinionated defaults from becoming a trap.
+All three lists match the exact host or any subdomain, so `reddit.com` also covers `www.`, `old.`, and `np.reddit.com`, and the PyPI rule covers `test.pypi.org`. The URL-pattern list additionally requires the path to match, so a PyPI project page still routes through PullMD. An `allow_hosts` entry is checked first and therefore overrides a built-in block, which keeps the opinionated defaults from becoming a trap.
 
 Under Codex, where a `PreToolUse` hook cannot intercept the native web tool, the block list is rendered into the `SessionStart` directive from the same table.
 
