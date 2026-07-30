@@ -1,0 +1,25 @@
+{
+  "name": "dependency-update-triage",
+  "version": "1.0.0",
+  "description": "Assess a single dependency update before adopting it, across three prongs: required code changes, enabled improvements, and latent-bug reach from an upstream fix.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["dependency-updates", "assessment", "triage", "renovate", "dependabot", "skill"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Dependency Update Triage",
+    "shortDescription": "Assess a dependency update before adopting it.",
+    "longDescription": "Adds a read-only skill that assesses one dependency update: whether it requires code changes, what improvements (including testability) it enables, and whether a bug it fixes may still affect the application. Ecosystem and release-notes location are detected from the host project at runtime.",
+    "developerName": "Martin Bens",
+    "category": "Development",
+    "capabilities": ["Skill", "Dependencies", "Assessment"],
+    "defaultPrompt": [
+      "Should we upgrade this package to the new version?",
+      "Assess this dependency update PR before I merge it.",
+      "What does this dependency bump change for us?"
+    ]
+  }
+}

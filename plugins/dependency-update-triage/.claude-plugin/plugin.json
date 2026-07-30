@@ -1,0 +1,11 @@
+{
+  "name": "dependency-update-triage",
+  "version": "1.0.0",
+  "description": "Assess a single dependency update before adopting it. Detects the update and its release notes at runtime, then reports across three prongs: whether it requires code changes, what improvements (including testability) it enables, and whether a bug it fixes may still affect the application. Read-only end to end. Delivers the assessment to the clipboard. Ecosystem, forge, and updater bot are detected from the host project, never assumed.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["dependency-updates", "assessment", "triage", "renovate", "dependabot", "skill"]
+}

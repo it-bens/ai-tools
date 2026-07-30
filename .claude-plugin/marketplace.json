@@ -134,6 +134,11 @@
       "name": "subagent-orchestrator-extension-setup",
       "source": "./plugins/subagent-orchestrator-extension-setup",
       "category": "development"
+    },
+    {
+      "name": "dependency-update-triage",
+      "source": "./plugins/dependency-update-triage",
+      "category": "development"
     }
   ]
 }

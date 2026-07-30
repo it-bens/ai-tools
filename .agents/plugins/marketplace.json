@@ -99,6 +99,18 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Development"
+    },
+    {
+      "name": "dependency-update-triage",
+      "source": {
+        "source": "local",
+        "path": "./plugins/dependency-update-triage"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development"
     }
   ]
 }
