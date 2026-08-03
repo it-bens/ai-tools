@@ -73,7 +73,7 @@ One bullet per name. A value with internal structure is written as an indented b
   | <one row per gate the project runs> |
 ```
 
-**Every list-shaped value appends.** `project.protected_paths`, `project.banned_commands`, `project.conduct_rules`, `project.review_lenses`, `deviation.additional_triggers`, `routing.additions`, and `codex.extra_config` add to their lists and never shorten them. This is what keeps the contract from being used to strip a fence rather than tighten it. Three names are not list-shaped: `project.gates` and `project.skill_files` supply content the universal body has none of, and `routing.effort_defaults` replaces per-checkpoint efforts.
+**Every list-shaped value appends.** `project.protected_paths`, `project.banned_commands`, `project.conduct_rules`, `project.review_lenses`, `deviation.additional_triggers`, `routing.additions`, and `codex.extra_config` add to their lists and never shorten them. This is what keeps the contract from being used to strip a fence rather than tighten it. Four names are not list-shaped: `project.gates` and `project.skill_files` supply content the universal body has none of, `routing.effort_defaults` replaces per-checkpoint efforts, and `routing.codex_bias` sets a single bias value rather than appending to a list.
 
 `codex.extra_config` additionally rejects any assignment that would set `approval_policy`, `sandbox_mode`, `model_reasoning_effort`, the model, or `--disable memories` — those flags carry the dispatch's safety and routing contract, not a project preference.
 
@@ -131,7 +131,10 @@ Every claim in an extension file is a fact about the current codebase — a gate
 | `codex.extra_config` | (the pinned flags only) | Additional `-c key=value` flags appended to every codex invocation. Appends; rejects the contract-carrying flags named above. |
 | `routing.additions` | (none) | Checkpoint-type rows appended to the routing table. Appends; never rewrites an existing row. |
 | `routing.effort_defaults` | (the table's efforts, then the effort ladder) | Per-checkpoint-type effort overrides. Going below an assigned effort at dispatch time is still an announced adaptation. |
+| `routing.codex_bias` | (unset — session decides per the routing table) | Biases the discretionary codex/claude split at the strategy node across `codex-heavy` / `claude-lean` / `codex-less`; `codex-less` routes through the existing consent path; bounded by cross-family independence. |
 | `deviation.additional_triggers` | (the listed triggers only) | Project deviation triggers appended to the trigger list. Appends. |
+
+Set `routing.codex_bias` in the extension file for a persistent per-project default or directly in conversation for a per-task assignment; a direct conversational assignment overrides an extension-file assignment.
 
 ## Example: Registering a Project's Gates and Fence
 

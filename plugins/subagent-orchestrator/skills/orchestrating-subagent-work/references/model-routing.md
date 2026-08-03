@@ -34,6 +34,17 @@ Routing rules:
 - Finding-verdict vocabulary: confirmed / mechanism confirmed / adjudicated (real behavior, documented accepted decision — name where) / not verified / disputed (name which part fails).
 - Effort ladder when the table gives none: low for mechanical work, medium for specified implementation, high for focused review, xhigh for broad review gates. Start low and escalate on weak results; a resumed codex session keeps its context across escalation. Table efforts are defaults: escalating is always allowed; downgrading a table effort is an adaptation that must be announced like a scope change, and verification requirements never scale down with effort. `routing.effort_defaults` overrides the effort for named checkpoint types; default if not otherwise stated: the table's efforts, then the ladder above. An assigned effort replaces the default for that checkpoint type only — going below it at dispatch time is still an announced adaptation.
 
+`routing.codex_bias` is an override-shaped (non-list-shaped) named value with a single enum value; default if not otherwise stated: unset. It biases discretionary codex/claude assignments at the strategy node:
+
+| Value | Semantics |
+|---|---|
+| *(unset)* | Default. The strategy node assigns actors per the table and its own judgment. No behavior change. |
+| `codex-heavy` | Spend codex freely: run the optional third broad pass, run codex at the table's high efforts, and prefer codex as the implementer for discretionary batches. The pre-flight still gates codex availability. |
+| `claude-lean` | Spend codex minimally: omit optional codex passes, run codex at table-minimum efforts, and prefer session/claude as the implementer for discretionary work. Codex stays on the load-bearing cross-family reviews. |
+| `codex-less` | The claude-heavy terminus. Request a run without codex through the existing codex-less consent path; do not treat it as a new mode or bypass. |
+
+Cross-family independence bounds this dial on both ends and is never overridden: a codex-implemented artifact's diff-review stays claude, and a claude/session-implemented artifact's review stays codex. Every implemented artifact costs exactly one codex touch, as implementer or reviewer, so swapping a batch's implementer family relocates codex between implementation and review rather than removing it. `claude-lean` reduces codex spend only by omitting optional passes and lowering effort; full codex elimination is available only at `codex-less`, so do not expect a linear codex saving from `claude-lean`. Where `routing.effort_defaults` pins an effort, that explicit override wins over the effort implied by this bias.
+
 Codex-less substitutions (apply only after the consent gate):
 
 - Review checkpoints → sonnet subagents running the identical prompt-block protocol from `worker-prompts.md`, one per scope; merge outputs in the session.

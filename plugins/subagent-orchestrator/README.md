@@ -47,7 +47,7 @@ Positions are keyed by node name rather than step number because the workflow is
 
 Four nodes are fenced — the consent check, the consent question, the halt state, and the deviation check. None takes a position, and the only named value reaching any of them is `deviation.additional_triggers`, which appends triggers and cannot remove one. There is no named value at all for the verification shape or dual-confirmation closure. A position section is free-form prose and cannot be prevented from arguing against a fenced node, but the node still runs after it, positions add rather than replace, and the setup skill refuses to author such content.
 
-`EXTENSION.md` owns the contract: file layout, delivery, both mechanisms, the non-extendable surface, reference-like extensions, the ten recognized named values, and worked examples for registering a project's gates and adding a checkpoint type.
+`EXTENSION.md` owns the contract: file layout, delivery, both mechanisms, the non-extendable surface, reference-like extensions, the eleven recognized named values, and worked examples for registering a project's gates and adding a checkpoint type.
 
 The companion plugin `subagent-orchestrator-extension-setup` writes the extension file for you. Its `setting-up-subagent-orchestrator-extension` skill explores the project's gates, protected paths, conduct rules, and CI configuration, drafts the content conversationally, and re-syncs an existing file against a changed project.
 

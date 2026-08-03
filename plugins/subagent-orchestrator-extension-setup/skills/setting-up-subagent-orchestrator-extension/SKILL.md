@@ -1,6 +1,6 @@
 ---
 name: setting-up-subagent-orchestrator-extension
-version: 1.0.0
+version: 1.1.0
 description: Use when the user explicitly asks to set up, install, configure, wire up, or re-sync the subagent-orchestrator plugin's extension for the current project. Do not activate as a side effect of an orchestration task.
 ---
 
@@ -79,6 +79,8 @@ If a finding cannot be mapped to either mechanism, surface it to the user and as
 
 **Fence guard.** The consent gate, the deviation check, the halt state, the verification shape, and dual-confirmation closure are outside the contract. A finding that would soften any of them — a project that "always runs codex-less", a checkpoint that "does not need a second confirmer", a fast path that skips the outside-sandbox gate re-run — is refused, not encoded. Collect these with the improvement candidates below.
 
+Do not author `routing.codex_bias = codex-less`. Treat a persistent from-file value as the refused "always runs codex-less" shape and as unable to serve as consent. Explain that codex-less is a per-session consent decision that the user must state directly, and record it among the surfaced decisions rather than in the file.
+
 **Loop-node guard.** `Dispatch` and `Adapt` fire on every pass. Content proposed for either must be safe to repeat; a proposal that assumes it runs once per task belongs at `Strategy` or `Report`.
 
 **Prescriptive guard.** Extension content is project *infrastructure and conventions*: gates, fences, rules, lenses, checkpoint types. Never weaken an orchestration discipline of the parent skill to match how the project currently dispatches work. Collect observed shortcuts into an "improvement candidates" report for the user instead of encoding them.
@@ -92,7 +94,7 @@ Work one family at a time, in the order gates → fence → rules and lenses →
 - Confirm each gate's exact command, and whether it runs inside a `workspace-write` sandbox. For a gate that does not, get its one permitted fallback and whether an independent worker re-runs it outside.
 - Accept or reject each protected path and each banned command class, with evidence.
 - Confirm which conduct rules and project skill files a worker must receive, and the scope condition for each.
-- Accept or reject each proposed routing addition and effort override — an effort override needs the project's own evidence, not a preference.
+- Accept or reject each proposed routing addition and effort override — an effort override needs the project's own evidence, not a preference. Ask whether the project wants a persistent codex/claude bias; offer `codex-heavy`, `claude-lean`, or none, and record `routing.codex_bias` when selected. Treat this bias as a preference, not a Step 2 probe target, and exempt it from the effort-override evidence requirement.
 - Confirm each proposed deviation trigger.
 
 Translate free-form intent into named values or positions before writing. Loop until the user approves each family; on rejection, amend or drop and re-present.

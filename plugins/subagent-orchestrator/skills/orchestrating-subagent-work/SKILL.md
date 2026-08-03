@@ -1,6 +1,6 @@
 ---
 name: orchestrating-subagent-work
-version: 2.1.0
+version: 2.2.0
 description: Use when a task will be executed or reviewed through dispatched workers — before the first codex dispatch, subagent spawn, or workflow run of any implementation or review task.
 ---
 
@@ -32,6 +32,7 @@ digraph orchestrating_subagent_work {
     "Task needs dispatched workers" [shape=doublecircle];
     "Run codex pre-flight" [shape=box];
     "codex available?" [shape=diamond];
+    "codex_bias = codex-less requested?" [shape=diamond];
     "Codex-less consent on record in this conversation?" [shape=diamond];
     "Ask user: proceed without codex, or halt?" [shape=box];
     "User consents to codex-less run?" [shape=diamond];
@@ -48,7 +49,9 @@ digraph orchestrating_subagent_work {
 
     "Task needs dispatched workers" -> "Run codex pre-flight";
     "Run codex pre-flight" -> "codex available?";
-    "codex available?" -> "Build task strategy in conversation" [label="yes"];
+    "codex available?" -> "codex_bias = codex-less requested?" [label="yes"];
+    "codex_bias = codex-less requested?" -> "Codex-less consent on record in this conversation?" [label="yes"];
+    "codex_bias = codex-less requested?" -> "Build task strategy in conversation" [label="no"];
     "codex available?" -> "Codex-less consent on record in this conversation?" [label="no"];
     "Codex-less consent on record in this conversation?" -> "Build task strategy in conversation" [label="yes"];
     "Codex-less consent on record in this conversation?" -> "Ask user: proceed without codex, or halt?" [label="no"];
@@ -78,9 +81,13 @@ Run this node at task entry before any planning or dispatch, and again whenever 
 
 Search the current conversation for an explicit user statement authorizing work without codex. It counts only when it names this task or is an unqualified general authorization; when it is unclear whether an earlier, narrower statement covers the current task, the answer is no. Only statements in this conversation count — memory files, prior sessions, and inferred preferences never do.
 
+### codex_bias = codex-less requested?
+
+If `routing.codex_bias` is `codex-less`, route to the codex-less consent check even when codex is available. Otherwise continue to strategy.
+
 ### Ask user: proceed without codex, or halt?
 
-Use AskUserQuestion. Present exactly two options: proceed without codex (name the substitutions from the routing table that will apply), or halt so the user can restore codex (`codex login`, quota reset). Dispatch nothing — including claude-only workers for "independent" parts of the task — while this question is open. Partial dispatch before consent is a violation.
+Use AskUserQuestion. Present exactly two options: proceed without codex (name the substitutions from the routing table that will apply), or halt (restore codex, or drop the codex-less bias). Dispatch nothing — including claude-only workers for "independent" parts of the task — while this question is open. Partial dispatch before consent is a violation.
 
 ### HALT: blocked on codex
 
@@ -94,6 +101,8 @@ Read `references/model-routing.md` and apply it. State the strategy as a compact
 2. Per checkpoint: actor (codex model / sonnet / haiku / session), effort, and dispatch order (codex dispatches sequential; read-only subagent fan-outs may run parallel to a background codex run) — plus any routing-table optional pass being omitted.
 3. Verification: which independent worker confirms which output. Default shape: every load-bearing result reaches two-worker confirmation — producer plus an independent confirmer. A result is load-bearing when it feeds a write to the tree, a reported conclusion, or a checkpoint closure; when unsure, it is load-bearing. Sandbox gate claims are re-run outside the sandbox by a worker, not the orchestrator.
 4. Named assumptions whose breach triggers adaptation — always including any stated deadline or token/quota budget.
+
+Consult `routing.codex_bias` (unset = session decides per the table) when assigning actors, and declare the active bias among the named assumptions.
 
 Dispatch immediately after stating the strategy; do not wait for approval or acknowledgement. The first arrival at this node always produces the full strategy message — including when it was reached through the consent gate. Only on re-entry after a mid-task adaptation does the announced delta serve as the strategy amendment; update the affected checkpoints and do not restate the rest.
 
