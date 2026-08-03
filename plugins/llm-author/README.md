@@ -30,7 +30,7 @@ Then install `llm-author` from the Codex plugin browser and start a new session.
 
 ### Prompt Engineering
 
-**Triggers:** "create a prompt", "write a prompt", "optimize a prompt", "debug a prompt", "improve my prompt", "help with prompting", "build a prompt chain", "make a system prompt", "design a prompt", "optimize this skill", "improve this agent", "adapt prompt for GLM", "convert to GLM 4.7", "adapt prompt for Gemini", "convert to Gemini", "deep research prompt", "Gemini deep research"
+**Triggers:** "create a prompt", "write a prompt", "optimize a prompt", "debug a prompt", "improve my prompt", "help with prompting", "build a prompt chain", "make a system prompt", "design a prompt", "optimize this skill", "improve this agent", "adapt prompt for GLM", "convert to GLM 4.7", "adapt prompt for Gemini", "convert to Gemini", "deep research prompt", "Gemini deep research", "migrate prompt to Claude 5", "re-tune this skill for Claude 5"
 
 **Capabilities:**
 - Create new prompts from scratch for specific use cases
@@ -42,6 +42,7 @@ Then install `llm-author` from the Codex plugin browser and start a new session.
 - Adapt Claude prompts for GLM 4.7 (Z.ai) with reasoning parity
 - Adapt Claude prompts for Gemini 3 (Flash/Pro) with quality parity
 - Create Gemini Deep Research prompts with scope, temporal, and source constraints
+- Migrate existing Claude 4 prompts and LLM-targeted content to Claude 5 with a documented before/after
 
 ### Content Editing
 
@@ -103,6 +104,8 @@ Once installed, ask your coding assistant for help with prompts:
 "Adapt this prompt for Gemini"
 "Create a Gemini 3 prompt for [task]"
 "Create a Gemini deep research prompt for [topic]"
+"Migrate this Claude 4 prompt to Claude 5"
+"Re-tune this skill for Claude 5"
 ```
 
 ## Claude Web Project

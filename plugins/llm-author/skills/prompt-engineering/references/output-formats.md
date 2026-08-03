@@ -13,6 +13,7 @@ Templates for delivering prompts based on type and target.
 7. [Gemini 3 Prompts](#7-gemini-3-prompts)
 8. [Claude-to-Gemini Adaptations](#8-claude-to-gemini-adaptations)
 9. [Gemini Deep Research Prompts](#9-gemini-deep-research-prompts)
+10. [Claude 4 to Claude 5 Migrations](#10-claude-4-to-claude-5-migrations)
 
 ---
 
@@ -194,3 +195,23 @@ For prompts targeting Gemini's Deep Research feature (autonomous multi-step rese
 - Deep Research Notes section (execution expectations, verification reminders)
 - Iteration Suggestions section (prepared follow-up questions)
 - Prompt must include scope, temporal, source, and handling instructions
+
+---
+
+## 10. Claude 4 to Claude 5 Migrations
+
+For re-tuning an existing Claude 4 prompt or LLM-targeted content for Claude 5:
+
+```markdown
+## Before (Claude 4)
+[Original content]
+
+## After (Claude 5)
+[Re-tuned content]
+
+## Migration Rationale
+- [Change 1]: [Reason — which Claude 5 behavior it addresses]
+- [Change 2]: [Reason]
+```
+
+For LLM-targeted content (skills, agents, rules files), preserve the original document structure in the "After" block and report only the re-tuning changes in the rationale. Diagnose and remove carried-over Claude 4 scaffolding rather than rewriting from scratch.

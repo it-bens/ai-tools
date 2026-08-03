@@ -22,6 +22,7 @@ First, identify the prompt type using the Prompt Recognition section:
 - **Traditional prompts** → Follow full workflow starting at Phase 1
 - **LLM-targeted content** (skills, agents, instructions) → Skip to Phase 2, use streamlined output
 - **Editing existing LLM content** → Apply Content Editing principles below FIRST
+- **Migrating Claude 4 content to Claude 5** → Re-tune per `references/claude-5-guide.md`, deliver a before/after (`references/output-formats.md#10-claude-4-to-claude-5-migrations`)
 
 Then follow the phases:
 1. Phase 1: Prompt Scoping (traditional prompts only) - gather requirements about the prompt itself

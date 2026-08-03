@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.7.0] - 2026-08-03
+
+Added a first-class Claude 4 → Claude 5 migration path to `prompt-engineering`, mirroring the GLM and Gemini adaptation treatment: a named workflow branch, a before/after output format, and a worked example. Existing Claude 4 content that targets Claude 5 was previously reachable only through the generic "optimize LLM-targeted content" path; migration is now its own mode that diagnoses and removes carried-over Claude 4 scaffolding and delivers a reviewable before/after.
+
+### Added
+
+- `skills/prompt-engineering/examples/claude-4-to-5-migration.md` — before/after transformations for a system prompt, an LLM-targeted comment-writing skill, and a subagent-orchestration prompt, plus a migration checklist
+- Migration mode in the `prompt-engineering` workflow digraph — a "Migrating existing Claude 4 content to Claude 5?" branch that routes to a before/after delivery — and a matching "Claude 4 → Claude 5 Migration (When Requested)" section
+- `references/output-formats.md` section 10, "Claude 4 to Claude 5 Migrations" (Before/After comparison), with a matching row in the SKILL.md output-format table
+
+### Changed
+
+- `skills/prompt-engineering/SKILL.md` — frontmatter description gained a Claude 4 → 5 migration trigger
+- `README.md` (plugin) — Prompt Engineering triggers, capabilities, and usage examples now include Claude 4 → 5 migration
+- `project/system-prompt.md` — the Claude Web project recognizes the migration prompt type
+- Synchronized every included skill to plugin version `3.7.0`
+
 ## [3.6.0] - 2026-08-03
 
 Plugin hygiene plus a progressive-disclosure refactor of `prompt-engineering`: added workflow digraphs to the three skills that lacked one; aligned the `allowed-tools` frontmatter with what the field actually does (verified against the official skills docs at `code.claude.com/docs/en/skills`) and corrected the docs that mislabeled it; and reorganized the skill so each reference loads at its point of use, slimming SKILL.md from 517 to 349 lines and splitting the two largest reference files into per-section files.

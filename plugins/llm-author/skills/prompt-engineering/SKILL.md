@@ -1,7 +1,7 @@
 ---
 name: prompt-engineering
-version: 3.6.0
-description: Create, optimize, and debug high-performing prompts for Claude 5 and Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3 with production-ready templates and evidence-based techniques. Also optimize LLM-targeted content (skills, agents, instructions, documentation). Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, adapt a prompt for Gemini, create a Gemini deep research prompt, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
+version: 3.7.0
+description: Create, optimize, and debug high-performing prompts for Claude 5 and Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3 with production-ready templates and evidence-based techniques. Also optimize LLM-targeted content (skills, agents, instructions, documentation). Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, adapt a prompt for Gemini, create a Gemini deep research prompt, migrate a prompt or skill from Claude 4 to Claude 5, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 ---
 
 # Prompt Engineering Lab
@@ -59,6 +59,8 @@ digraph prompt_engineering {
     "Prompt request" [shape=doublecircle];
     "Refining a prompt already generated this conversation?" [shape=diamond];
     "Refinement mode: ask what changes, deliver the full refined prompt" [shape=box];
+    "Migrating existing Claude 4 content to Claude 5?" [shape=diamond];
+    "Migration mode: re-tune per claude-5-guide, deliver before/after" [shape=box];
     "Traditional prompt or LLM-targeted content?" [shape=diamond];
     "Phase 1: scope the prompt (purpose, audience, success criteria, platform, target model)" [shape=box];
     "Phase 2: design strategy (techniques by complexity + target-model adaptation)" [shape=box];
@@ -72,7 +74,10 @@ digraph prompt_engineering {
     "Prompt request" -> "Refining a prompt already generated this conversation?";
     "Refining a prompt already generated this conversation?" -> "Refinement mode: ask what changes, deliver the full refined prompt" [label="yes"];
     "Refinement mode: ask what changes, deliver the full refined prompt" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
-    "Refining a prompt already generated this conversation?" -> "Traditional prompt or LLM-targeted content?" [label="no"];
+    "Refining a prompt already generated this conversation?" -> "Migrating existing Claude 4 content to Claude 5?" [label="no"];
+    "Migrating existing Claude 4 content to Claude 5?" -> "Migration mode: re-tune per claude-5-guide, deliver before/after" [label="yes"];
+    "Migration mode: re-tune per claude-5-guide, deliver before/after" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
+    "Migrating existing Claude 4 content to Claude 5?" -> "Traditional prompt or LLM-targeted content?" [label="no"];
     "Traditional prompt or LLM-targeted content?" -> "Phase 1: scope the prompt (purpose, audience, success criteria, platform, target model)" [label="traditional"];
     "Traditional prompt or LLM-targeted content?" -> "Phase 2: design strategy (techniques by complexity + target-model adaptation)" [label="LLM-targeted (skip Phase 1)"];
     "Phase 1: scope the prompt (purpose, audience, success criteria, platform, target model)" -> "Phase 2: design strategy (techniques by complexity + target-model adaptation)";
@@ -88,7 +93,7 @@ digraph prompt_engineering {
 }
 ```
 
-LLM-targeted content skips Phase 1 and enters at Phase 2 with the streamlined output format. Refinement mode is a shortcut for a prompt already produced this conversation. Each node is elaborated below.
+LLM-targeted content skips Phase 1 and enters at Phase 2 with the streamlined output format. Refinement mode is a shortcut for a prompt already produced this conversation. Migration mode re-tunes existing Claude 4 content for Claude 5 and delivers a before/after. Each node is elaborated below.
 
 ### Phase 1: Prompt Scoping (Traditional Prompts Only)
 
@@ -243,6 +248,12 @@ Claude 4 needs "above and beyond" behavior requested explicitly:
 
 → Full guide: `references/claude-4-guide.md`
 
+## Claude 4 → Claude 5 Migration (When Requested)
+
+When the user asks to migrate, re-tune, or update existing Claude 4 content — a prompt, skill, agent, or rules file — for Claude 5: diagnose and remove the carried-over Claude 4 scaffolding that now over-steers, rather than rewriting from scratch. Apply the re-tuning moves from the Claude 5 sections above — remove verification scaffolding, soften aggressive triggers, give and cap subagent-delegation criteria, replace the 400-error API parameters (assistant prefill, `budget_tokens`, non-default `temperature`/`top_p`/`top_k`) — plus, for LLM-targeted content, the "less is more" optimization principle.
+
+Deliver a before/after so each change and its rationale stay visible: `references/output-formats.md#10-claude-4-to-claude-5-migrations`. Worked transformations: `examples/claude-4-to-5-migration.md`. Full per-model detail and the Claude 4 → 5 migration reference: `references/claude-5-guide.md`.
+
 ## GLM 4.7 Adaptation (When Requested)
 
 When the user explicitly targets GLM 4.7: it treats polite, buried instructions as optional, so make directives firm and front-loaded.
@@ -284,6 +295,7 @@ Select the appropriate format based on prompt type:
 | Gemini 3 prompts | Add API Configuration | `references/output-formats.md#7-gemini-3-prompts` |
 | Claude-to-Gemini adaptations | Before/After comparison | `references/output-formats.md#8-claude-to-gemini-adaptations` |
 | Gemini Deep Research prompts | Add Deep Research Notes + Iteration Suggestions | `references/output-formats.md#9-gemini-deep-research-prompts` |
+| Claude 4 → Claude 5 migrations | Before/After comparison | `references/output-formats.md#10-claude-4-to-claude-5-migrations` |
 
 ## Quality Checklist
 
