@@ -101,16 +101,6 @@
       "category": "development"
     },
     {
-      "name": "code-comment-writer",
-      "source": "./plugins/code-comment-writer",
-      "category": "development"
-    },
-    {
-      "name": "code-comment-writer-extension-setup",
-      "source": "./plugins/code-comment-writer-extension-setup",
-      "category": "development"
-    },
-    {
       "name": "web-fetching-with-pullmd",
       "source": "./plugins/web-fetching-with-pullmd",
       "category": "productivity"

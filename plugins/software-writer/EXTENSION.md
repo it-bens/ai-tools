@@ -75,7 +75,7 @@ One bullet per name. A value with internal structure is written as an indented b
   | <one row per wrapper the project maintains> |
 ```
 
-A name shared across skills (`project.stacks`) is assigned identically in every extension file that needs it. There is no inheritance between extension files.
+A name shared across skills — `project.stacks` between `writing-code` and `writing-tests`, `docs.surfaces` between `writing-code` and `writing-docs` — is assigned identically in every extension file that needs it. There is no inheritance between extension files.
 
 ## Mechanism 2: Workflow Positions
 
@@ -126,6 +126,11 @@ Every claim in an extension file is a fact about the current codebase, and drift
 | `code.export_conventions` | (none) | Project rules for new exported symbols, such as a package-index re-export surface. |
 | `code.footgun_additions` | (none) | Project-specific entries appended to the stack's footgun catalog in Step 5. |
 | `code.comment_enforcement` | (none) | Lint rules that require doc comments; comments they cover are never deleted. |
+| `comments.preserve_patterns` | (none) | Markers or patterns whose matching comments Step 6 always keeps, whatever the classification table would otherwise say. |
+| `comments.exemption_markers` | (none) | Markers whose comments Step 6 skips entirely, neither classified nor edited. |
+| `todo.ticket_format` | an owner plus a tracking reference | The shape a `TODO`/`FIXME` must take; every marker written or touched is held to it. |
+| `domain.terms` | (none registered) | Project vocabulary that must survive a comment rewrite verbatim rather than being replaced by a near-synonym. |
+| `docs.surfaces` | (built-in taxonomy) | Shared with `writing-docs`. In Step 6 it identifies the surfaces that own facts, so a comment restating one is cut to its local why plus a stable identifier. |
 
 ### writing-tests
 

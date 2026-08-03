@@ -46,7 +46,7 @@ plugins/software-writer/
 
 This plugin provides:
 
-- **Skill** (`skills/writing-code/`): the implementation-code workflow — API-consultation gate, new-dependency gate, in-repo primitives lookup, dependency entry shape, caller scope, stack footgun check, two-tier comment classification.
+- **Skill** (`skills/writing-code/`): the implementation-code workflow — API-consultation gate, new-dependency gate, in-repo primitives lookup, dependency entry shape, caller scope, stack footgun check, code-comment consistency gate, two-tier comment classification.
 - **Skill** (`skills/writing-tests/`): the test-authoring workflow — single behavior, seam decision, arrange-data sourcing, body shape, independence, redundancy and guard-clause gate.
 - **Skill** (`skills/writing-docs/`): the documentation workflow — surface confirmation, fixed surface shapes, style-while-writing, anti-slop subagent dispatch, cross-surface quality gate.
 
@@ -59,7 +59,7 @@ This plugin provides:
 | Task | Primary File | Key Concepts |
 |------|--------------|--------------|
 | Modify a workflow shape, step body, or named-value default | `skills/<skill>/SKILL.md` | Digraph, Steps 1-N, extension contract, named values |
-| Modify universal comment classification | `skills/writing-code/references/comments.md` | Six-bucket table, load-bearing why, negative invariant, banned patterns |
+| Modify universal comment classification | `skills/writing-code/references/comments.md` | Consistency gate, classification table, load-bearing why, negative invariant, regex exception, tightening, marker discipline, banned patterns |
 | Modify the primitives table shape or decision test | `skills/writing-code/references/primitives.md` | `code.primitives` rows, missing-wrapper rule |
 | Modify universal test rules | `skills/writing-tests/references/{behavior,data,shape,independence}.md` | Do/don't-test lists, seam patterns, DAMP, assertion rules, leak vectors |
 | Modify a language's doc-tool queries, footguns, or doc-comment convention | `skills/writing-code/references/stacks/<stack>.md` | One file per language; footguns are language-level |

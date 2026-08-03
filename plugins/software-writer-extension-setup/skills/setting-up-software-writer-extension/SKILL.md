@@ -1,6 +1,6 @@
 ---
 name: setting-up-software-writer-extension
-version: 2.0.1
+version: 2.1.0
 description: Use when the user explicitly asks to set up, install, configure, wire up, re-sync, or migrate the software-writer plugin's extension for the current project. Do not activate as a side effect of a code-, test-, or docs-writing task.
 ---
 
@@ -60,14 +60,14 @@ Probe checklists:
 
 - **Stacks:** build and configuration files, languages present, an extension-to-stack map.
 - **Tests:** frameworks and runners; parallelism configuration; fixture helpers and conventions; shared test-utility modules and their promotion points; e2e or property-test layers; CI test invocations.
-- **Code:** in-repo wrapper helpers over standard-library primitives in risk domains (path handling, user-owned config files, untrusted input, database access); the dependency-injection and composition pattern; export-surface conventions; lint rules that enforce comment or doc-comment conventions.
+- **Code:** in-repo wrapper helpers over standard-library primitives in risk domains (path handling, user-owned config files, untrusted input, database access); the dependency-injection and composition pattern; export-surface conventions; lint rules that enforce comment or doc-comment conventions; comment conventions already in force — markers that must be preserved or left untouched, the `TODO`/`FIXME` format the codebase uses, and domain vocabulary that must survive a comment rewrite intact.
 - **Docs:** surfaces present and their shapes; the pointer-file convention; a changelog; the jargon home; surfaces that intentionally duplicate (exempt-duplication candidates); surfaces that already document conventions a writing skill needs (reference-extension candidates).
 
 ### Step 3: Diff extension files against findings
 
 Re-sync mode only; fresh mode proceeds directly to Step 4.
 
-Diff each claim in each existing extension file against the current findings: moved or renamed symbols, deleted helpers, changed parallelism or CI facts, drifted surface taxonomies. For reference-like entries, verify the cited file and section still exist and still cover what the citation claims. Turn every stale row into an update proposal (change, evidence, affected extension file). Shared named values assigned in more than one extension file (`project.stacks`) are checked for consistency and re-synced together. An unchanged project produces no proposals; v1 artifacts recorded in Step 1 still get migrated in Step 7.
+Diff each claim in each existing extension file against the current findings: moved or renamed symbols, deleted helpers, changed parallelism or CI facts, drifted surface taxonomies. For reference-like entries, verify the cited file and section still exist and still cover what the citation claims. Turn every stale row into an update proposal (change, evidence, affected extension file). Shared named values assigned in more than one extension file — `project.stacks` across the code and tests files, `docs.surfaces` across the code and docs files — are checked for consistency and re-synced together. An unchanged project produces no proposals; v1 artifacts recorded in Step 1 still get migrated in Step 7.
 
 ### Step 4: Draft per-skill extension proposals
 
@@ -90,7 +90,8 @@ Work one skill family at a time, in the order tests → code → docs. For each 
 - Confirm or prune the fixture sources.
 - Accept or reject each proposed `code.primitives` row, each with its evidence.
 - Accept or reject each proposed reference-like entry, each with the cited surface and section.
-- Confirm the docs surface map, pointer-file convention, jargon home, and diagrams stance.
+- Confirm the comment conventions: preserved markers, exempt markers, the `TODO`/`FIXME` format, and the domain terms a rewrite must not paraphrase.
+- Confirm the docs surface map, pointer-file convention, jargon home, and diagrams stance. Settle `docs.surfaces` with this family and mirror the agreed assignment into the `writing-code` file, which reads the same name.
 - Ask which universal opinions the project wants to tune within the extension contract (style targets, changelog).
 
 Translate free-form intent into named values or Pre/Post-Step sections before writing. Loop until the user approves each family's section; on rejection, amend or drop and re-present.
@@ -115,7 +116,7 @@ Use this template, omitting any section with no entries:
 <imperative instructions>
 ````
 
-One bullet per assigned name under the single `## Named-value assignments` heading. One section per workflow position, ordered by step number. A shared named value (`project.stacks`) is written with an identical assignment into each extension file that needs it; this skill owns keeping those assignments in sync.
+One bullet per assigned name under the single `## Named-value assignments` heading. One section per workflow position, ordered by step number. A shared named value — `project.stacks` across the code and tests files, `docs.surfaces` across the code and docs files — is written with an identical assignment into each extension file that needs it; this skill owns keeping those assignments in sync.
 
 Verify after writing: every section in each file is one of the three template sections above and appears in the order shown.
 

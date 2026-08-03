@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.1.0] - 2026-08-03
+
+### Added
+
+- `writing-code` Step 6 opens with a code-comment consistency gate: a comment that contradicts the code it describes is corrected rather than left standing, and never deleted to resolve the mismatch. Systematic reviews of the code-comment literature rank comment/code inconsistency the top quality attribute, on the grounds that a misleading comment is worse than a missing one — the skill had no rule for it.
+- Five named values on `writing-code`: `comments.preserve_patterns`, `comments.exemption_markers`, `todo.ticket_format`, and `domain.terms` are new, and `docs.surfaces` is now read by `writing-code` as well as `writing-docs`, so a comment restating a registered surface is cut to its local why plus a stable identifier.
+- `references/comments.md` gained the rules the classification table had no bucket for: legal and license headers are never touched, commented-out code is deleted because version control holds it, non-trivial regular expressions are the documented exception to "explains-what gets removed", and marker discipline covers `TODO`/`FIXME` ownership and deprecation notices that name a replacement and a removal timeline.
+
+### Changed
+
+- The visibility rule now decides comment tier rather than syntax: structured tags on an exported or protected declaration are a contract, the same tags on a private declaration are an implementation comment and usually get deleted.
+- The negative-invariant shape extends to every construct that reads as a mistake and is not — intentional switch fall-through, a deliberately empty catch block, a discarded return kept for its side effect — since several linters suppress their diagnostic only because the comment is present.
+- The load-bearing-why section names the content that qualifies by construction however plainly worded: external spec/RFC/ticket citations, algorithm complexity and trade-offs, security and compliance constraints, thread-safety and lock-ordering requirements, workarounds with removal criteria, and design decisions that foreclose an alternative.
+- The banned doc-backlink pattern was contradictory with the doc-surface rules absorbed in this release and is now one rule: a comment whose entire content is a pointer is still deleted, while a stable identifier attached to a why that reads on its own (`— ADR-0007`) is kept. Section-heading backlinks remain banned because they rot on rename.
+- Over-specified why-comments gained tightening guidance (filler phrases, restatement, uniform enumerations) with an explicit floor: enumerations whose entries need different handling, thresholds, rule identifiers, and removal criteria survive at full length, and `domain.terms` entries are never swapped for a near-synonym.
+- `writing-code`'s description no longer excludes retrospective comment cleanup, and covers improving comments on code being edited.
+
+### Removed
+
+- The `code-comment-writer` and `code-comment-writer-extension-setup` plugins are deleted; their durable rules live in `writing-code` as of this release. The standalone retrospective audit does not carry over — there is no scope resolution over commits, ranges, or branches, no read-only reporting mode, and no uncertainty-classification pass. Comment work now happens on the code being edited. Projects that assigned `paths.ignore` or `paths.conservative` lose those names; both governed audit scope and have no meaning in a per-edit workflow.
+
 ## [2.0.2] - 2026-07-23
 
 ### Fixed

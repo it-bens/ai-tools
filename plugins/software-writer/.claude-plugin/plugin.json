@@ -1,7 +1,7 @@
 {
   "name": "software-writer",
-  "version": "2.0.2",
-  "description": "Three universal, opinionated skills for writing software: writing-code (API-consultation gate, dependency shape, stack footgun check, two-tier comment policy), writing-tests (classicist behavior-first workflow with stack-specific idioms), and writing-docs (single-owner surfaces, pointer-file discipline, anti-slop validation via the human-author:ai-slop-writing-fixer subagent). Each skill is extendable at every step via Pre-Step-N / Post-Step-N positions and via recognized named configuration values; the plugin ships hooks that deliver a project's extension files (.claude/extensions/software-writer/) wrapped in a structural envelope.",
+  "version": "2.1.0",
+  "description": "Three universal, opinionated skills for writing software: writing-code (API-consultation gate, dependency shape, stack footgun check, two-tier comment policy with a code-comment consistency gate), writing-tests (classicist behavior-first workflow with stack-specific idioms), and writing-docs (single-owner surfaces, pointer-file discipline, anti-slop validation via the human-author:ai-slop-writing-fixer subagent). Each skill is extendable at every step via Pre-Step-N / Post-Step-N positions and via recognized named configuration values; the plugin ships hooks that deliver a project's extension files (.claude/extensions/software-writer/) wrapped in a structural envelope.",
   "author": {
     "name": "Martin Bens",
     "email": "martin.bens@it-bens.de"

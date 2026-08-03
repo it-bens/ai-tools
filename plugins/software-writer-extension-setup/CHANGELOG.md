@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.1.0] - 2026-08-03
+
+### Added
+
+- Step 2's code probe checklist covers the comment conventions `writing-code` 2.1.0 exposes as named values: markers that must be preserved or left untouched, the `TODO`/`FIXME` format the codebase uses, and domain vocabulary a comment rewrite must not paraphrase. Step 5 confirms them with the code family.
+
+### Changed
+
+- `docs.surfaces` is now a shared named value: `writing-code` reads it alongside `writing-docs`. Step 3 re-syncs it across both extension files, Step 6 writes the same assignment into each, and Step 5 settles it with the docs family before mirroring it into the `writing-code` file.
+
 ## [2.0.1] - 2026-07-20
 
 ### Fixed

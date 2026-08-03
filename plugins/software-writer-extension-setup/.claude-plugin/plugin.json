@@ -1,6 +1,6 @@
 {
   "name": "software-writer-extension-setup",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "One-time setup skill that explores a project's codebase, drafts project-specific extension content conversationally, and writes the per-skill extension files for the software-writer plugin's writing-code, writing-tests, and writing-docs skills (delivery on Claude Code ships with software-writer 2.x; Codex delivery via AGENTS.override.md). Includes a re-sync mode that audits existing extension files for drift and migrates v1 hook-contexts setups. Long plugin and skill names are intentional to prevent accidental invocation.",
   "author": {
     "name": "Martin Bens",

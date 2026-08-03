@@ -20,9 +20,9 @@ Without project-specific additions, the skills run on universal defaults: stack 
 
 ### Writing Code
 
-**Triggers:** writing or editing implementation code — any change that adds, modifies, or removes logic, signatures, or comments on the lines being written. Retrospective comment cleanup belongs to the `code-comment-writer` plugin; test files and their fixtures belong to `writing-tests`.
+**Triggers:** writing or editing implementation code — any change that adds, modifies, or removes logic, signatures, or comments on the lines being written, including cleaning up the comments on code being edited. Test files and their fixtures belong to `writing-tests`.
 
-**Behavior:** consults the stack's doc tool before any uncertain API call, gates new package dependencies on registry verification, routes wrapped domains through in-repo primitives, enforces explicit dependency entry and a non-test caller for every new export, scans each line against the stack's footgun catalog, and classifies every comment into a two-tier policy (API doc comments as contract, implementation comments as point-of-use why).
+**Behavior:** consults the stack's doc tool before any uncertain API call, gates new package dependencies on registry verification, routes wrapped domains through in-repo primitives, enforces explicit dependency entry and a non-test caller for every new export, scans each line against the stack's footgun catalog, and classifies every comment into a two-tier policy (API doc comments as contract, implementation comments as point-of-use why) after checking it against the code it describes.
 
 ### Writing Tests
 

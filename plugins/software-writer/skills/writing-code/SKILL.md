@@ -1,7 +1,7 @@
 ---
 name: writing-code
-version: 2.0.2
-description: Use when writing or editing implementation code — any change that adds, modifies, or removes logic, signatures, or comments on the lines being written. Do NOT activate for retrospective cleanup or audits of existing comments (the code-comment-writer plugin owns those) or for test files and their fixtures (the writing-tests skill owns those).
+version: 2.1.0
+description: Use when writing or editing implementation code — any change that adds, modifies, or removes logic, signatures, or comments on the lines being written. Also covers reviewing, cleaning up, or improving the comments on code being edited. Do NOT activate for test files and their fixtures (the writing-tests skill owns those).
 ---
 
 # Writing Code
@@ -31,6 +31,8 @@ digraph writing_code {
     "Step 5: Stack footgun check" [shape=box];
     "Comment or doc comment proposed, kept, or edited?" [shape=diamond];
     "Step 6: Classify each comment" [shape=box];
+    "Comment contradicts the code?" [shape=diamond];
+    "Correct the comment or the code" [shape=box];
     "Apply the classified action" [shape=box];
     "More to write or edit?" [shape=diamond];
     "Done" [shape=doublecircle];
@@ -50,7 +52,11 @@ digraph writing_code {
     "Step 5: Stack footgun check" -> "Comment or doc comment proposed, kept, or edited?";
     "Comment or doc comment proposed, kept, or edited?" -> "Step 6: Classify each comment" [label="yes"];
     "Comment or doc comment proposed, kept, or edited?" -> "More to write or edit?" [label="no"];
-    "Step 6: Classify each comment" -> "Apply the classified action" -> "More to write or edit?";
+    "Step 6: Classify each comment" -> "Comment contradicts the code?";
+    "Comment contradicts the code?" -> "Correct the comment or the code" [label="yes"];
+    "Comment contradicts the code?" -> "Apply the classified action" [label="no"];
+    "Correct the comment or the code" -> "More to write or edit?";
+    "Apply the classified action" -> "More to write or edit?";
     "More to write or edit?" -> "Adding a new package dependency?" [label="yes"];
     "More to write or edit?" -> "Done" [label="no"];
 }
@@ -90,10 +96,12 @@ Scan the line just written against the stack's footgun catalog in the stack refe
 
 ### Step 6: Classify each comment
 
-Comments split into two tiers with different rules.
+Comments split into two tiers, and visibility decides which one applies rather than the syntax used: structured docs on an exported or protected declaration are a contract, the same tags on a private declaration are an implementation comment.
 
-**API/doc comments** (doc comments on public symbols) are the interface contract — the abstraction is what the doc comment says it is. Follow the stack's convention; the form and a minimal-correct example live in the stack reference. Compress a doc comment that purely paraphrases the signature to one identifier-prefixed line. Never delete doc comments where project lint requires them; `code.comment_enforcement` names such rules; default if not otherwise stated: none.
+**API/doc comments** are the interface contract — the abstraction is what the doc comment says it is. Follow the stack's convention; the form and a minimal-correct example live in the stack reference. Compress a doc comment that purely paraphrases the signature to one identifier-prefixed line. Never delete doc comments where project lint requires them; `code.comment_enforcement` names such rules; default if not otherwise stated: none.
 
 **Implementation comments** default to none. Write or keep one only when it carries point-of-use *why* — a hidden constraint, subtle invariant, bug workaround, or deliberate tradeoff the reader cannot infer from the code and types. When deleting code, delete its why-comment too; an orphaned why is dead weight.
 
-For every comment proposed, kept, or edited, load `references/comments.md` and classify it against the six-bucket table, then apply the bucket's action. The reference also carries the load-bearing-why worked shape, the negative-invariant shape, and the banned patterns.
+Check each comment against the code first: a comment that contradicts what the code does is corrected, never left standing and never deleted to resolve the mismatch. Then load `references/comments.md`, classify the comment against its table, and apply the bucket's action. The reference also carries the load-bearing-why worked shape, the negative-invariant shape, the regex exception, marker discipline, and the banned patterns.
+
+Skip any comment carrying a marker in `comments.exemption_markers`; default if not otherwise stated: none. Always keep a comment matching `comments.preserve_patterns`; default if not otherwise stated: none. Hold every `TODO`/`FIXME` written or touched to `todo.ticket_format`; default if not otherwise stated: an owner plus a tracking reference. Never swap a term listed in `domain.terms` for a near-synonym while rewriting a comment; default if not otherwise stated: none registered. When `docs.surfaces` is assigned, a comment restating what a listed surface owns is cut to its local why plus a stable identifier instead of duplicating the surface; default if not otherwise stated: comments are judged on their own merits.
