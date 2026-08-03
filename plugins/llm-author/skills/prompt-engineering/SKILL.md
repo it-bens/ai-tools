@@ -1,18 +1,18 @@
 ---
 name: prompt-engineering
-version: 3.4.0
-description: Create, optimize, and debug high-performing prompts for Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3 with production-ready templates and evidence-based techniques. Also optimize LLM-targeted content (skills, agents, instructions, documentation). Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, adapt a prompt for Gemini, create a Gemini deep research prompt, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
+version: 3.5.0
+description: Create, optimize, and debug high-performing prompts for Claude 5 and Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3 with production-ready templates and evidence-based techniques. Also optimize LLM-targeted content (skills, agents, instructions, documentation). Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, adapt a prompt for Gemini, create a Gemini deep research prompt, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 allowed-tools: AskUserQuestion, Read, Grep, Glob, WebSearch, WebFetch
 ---
 
 # Prompt Engineering Lab
 
-Expert prompt engineering service for Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3. Transform requirements into high-performing, production-ready prompts through evidence-based techniques and systematic optimization.
+Expert prompt engineering service for Claude 5 and Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3. Transform requirements into high-performing, production-ready prompts through evidence-based techniques and systematic optimization.
 
 ## Core Mission
 
 Create, optimize, and debug prompts by:
-- Applying Claude 4 best practices and advanced prompting techniques
+- Applying Claude 5 and Claude 4 best practices and advanced prompting techniques
 - Creating reusable prompt patterns and templates
 - Optimizing existing prompts for better accuracy, consistency, and efficiency
 - Providing actionable guidance for prompt debugging and iteration
@@ -51,6 +51,8 @@ Apply reasoning to understand:
 
 Then optimize for clarity and impact while preserving all substantive content. Personas and "You are …" identity openers are not substantive content.
 
+Because Claude 5 is the default target, apply "less is more" by default: Claude 5 exercises judgment, so cutting over-constraint (absolute rules, repetition, worked examples that narrow exploration) improves output. This relaxes the preserve-everything default above — keep substantive directives, but drop scaffolding that compensated for weaker instruction-following. For Claude 4 or earlier targets, keep the preserve-everything default. See `references/claude-5-guide.md#optimizing-llm-targeted-content-for-claude-5`.
+
 **Workflow selection:**
 - **LLM-targeted content** → Skip to Phase 2 (Design Strategy), use streamlined output format
 - **Traditional prompts** → Follow full workflow starting at Phase 1
@@ -68,7 +70,7 @@ Before generating the prompt, understand its intended purpose. Gather informatio
 - Who will use this prompt (technical level, domain expertise)?
 - What makes the prompt successful (output quality, format, completeness)?
 - Target platform: Claude Web, Claude Desktop, or API?
-- Target model: Claude 4 (default), GLM 4.7, or Gemini 3? (only ask if user mentions GLM, Z.ai, Gemini, or model adaptation)
+- Target model: Claude 5 (default), Claude 4, GLM 4.7, or Gemini 3? (only ask if user mentions Claude 4, GLM, Z.ai, Gemini, or model adaptation)
 
 **Clarify prompt ambiguities (stay at the prompt level, don't dive into subject matter):**
 - If variations might be beneficial, ask if user wants alternative prompt approaches
@@ -124,7 +126,7 @@ Deliver prompts as ready-to-copy markdown blocks optimized for the target platfo
 - Include usage instructions and testing suggestions
 
 **API format (only when explicitly requested):**
-- Include temperature, max_tokens recommendations
+- Include max_tokens and effort recommendations; temperature only for Claude 4 / earlier (Claude 5 rejects non-default temperature)
 - Separate system and user message components
 - Provide JSON structure if needed
 
@@ -142,13 +144,14 @@ Deliver prompts as ready-to-copy markdown blocks optimized for the target platfo
 - Structure outputs: `<thinking>`, `<answer>`, `<analysis>`
 - Nest tags for hierarchical content
 - Be consistent with tag naming
-→ Deep dive: `references/techniques-detailed.md#4-use-xml-tags`
+→ Deep dive: `references/techniques-detailed.md#4-xml-tags-for-structure`
 
 ### Chain of Thought
 - Basic: "Think step-by-step"
 - Guided: Outline specific thinking steps
 - Structured: Use `<thinking>` and `<answer>` tags
 - Use for complex reasoning, analysis, or multi-step tasks
+- Claude 5: thinking is adaptive and on by default; the `<thinking>`/`<answer>` scaffolding and manual `budget_tokens` are Claude 4 / earlier patterns (see `references/claude-5-guide.md#adaptive-thinking`)
 → Deep dive: `references/techniques-detailed.md#3-chain-of-thought-prompting`
 
 ### Multishot Prompting
@@ -166,14 +169,42 @@ Deliver prompts as ready-to-copy markdown blocks optimized for the target platfo
 - Sole exception: character roleplay, where the persona is the requested output
 → Deep dive: `references/techniques-detailed.md#5-system-prompts-and-role-prompting`
 
-### Prefilling (API only)
+### Prefilling (API only — Claude 4 and earlier)
 - Start assistant response to enforce format
 - Skip preambles by prefilling `{` for JSON
 - Maintain character in roleplay scenarios
 - Cannot end with trailing whitespace
+- Claude 5: prefill returns a 400 error — use Structured Outputs or a direct "respond without preamble" instruction instead
 → Deep dive: `references/techniques-detailed.md#6-prefilling-api-only`
 
-## Claude 4 Specific Optimizations
+## Model-Generation Optimizations
+
+Claude 5 (Opus 5, Sonnet 5, Fable 5) is the default target. Claude 4 (Opus 4.x, Sonnet 4.x) and Haiku 4.5 prompts often over-steer Claude 5 — re-tune when migrating.
+
+### Claude 5 (default)
+
+Claude 5 exercises more judgment and needs less scaffolding. Steer with the `effort` parameter and targeted, positive instructions.
+
+**Control length on Opus 5** — Opus 5 runs longer by default and effort doesn't reliably change visible length, so prompt for concision (Sonnet 5 is already concise; Fable 5 can over-elaborate at high effort):
+```
+Provide concise, focused responses. Skip non-essential context, and keep examples minimal.
+```
+
+**Remove carried-over verification** — Claude 5 self-verifies and self-corrects, so "double-check your answer", "add a verification step", and "use a subagent to verify" cause over-verification. Delete them.
+
+**Guide subagent delegation** — Claude 5 delegates readily; give explicit criteria. Cap spawn counts for cost-sensitive Opus 5 work; Fable 5 is built to delegate freely (see the guide):
+```
+Delegate to a subagent only for large, genuinely independent, parallelizable tasks.
+Keep spawn counts low.
+```
+
+**Soften aggressive language** — `CRITICAL: You MUST...` over-triggers; use "Use ... when ...".
+
+**Breaking changes** — assistant prefill, `budget_tokens`, and non-default `temperature`/`top_p`/`top_k` return a 400 error. Use adaptive thinking with `effort`, and Structured Outputs instead of prefill.
+
+→ Full guide, per-model specifics (Opus 5 / Sonnet 5 / Fable 5), and Claude 4 → 5 migration: `references/claude-5-guide.md`
+
+### Claude 4 and earlier
 
 Claude 4 models require explicit instruction for enhanced behaviors:
 
@@ -208,9 +239,9 @@ and determine optimal next steps before proceeding.
 
 When user explicitly requests GLM 4.7 as target model, apply these adaptations. GLM 4.7 treats polite, buried instructions as optional—causing generic responses.
 
-### Key Differences from Claude 4
+### Key Differences from Claude
 
-| Aspect | Claude 4 | GLM 4.7 |
+| Aspect | Claude | GLM 4.7 |
 |--------|----------|---------|
 | Instruction positioning | Flexible | Prioritizes first 200 words |
 | Directive language | Responds to nuanced prompts | Requires firm directives (MUST/ALWAYS/NEVER) |
@@ -277,15 +308,15 @@ When deep research detected, consult `references/gemini-3-deep-research-guide.md
 
 For standard interactive Gemini prompts, continue with the adaptations below.
 
-### Key Differences from Claude 4
+### Key Differences from Claude
 
-| Aspect | Claude 4 | Gemini 3 |
-|--------|----------|----------|
-| Temperature | 0.7-1.0 typical | Keep at 1.0 (changing causes issues) |
+| Aspect | Claude | Gemini 3 |
+|--------|--------|----------|
+| Temperature | Default only (Claude 5 rejects non-default; Claude 4: 0.7-1.0) | Keep at 1.0 (changing causes issues) |
 | Default verbosity | Moderate detail | Minimal (must explicitly request detail) |
 | Instruction position | Flexible | For long context: after data |
 | Few-shot examples | Often optional | Strongly recommended |
-| Response format control | Prefilling (API) | Prefix strings in prompt |
+| Response format control | Structured Outputs (Claude 5); prefilling (Claude 4) | Prefix strings in prompt |
 | Constraint adherence | Flexible positioning | End of prompt for best adherence |
 
 ### Essential Adaptations
@@ -432,6 +463,7 @@ Before I create this prompt, I have a few questions:
 
 ### Reference Files
 - **`references/techniques-detailed.md`** - Comprehensive prompting techniques
+- **`references/claude-5-guide.md`** - Claude 5 optimizations (Opus 5, Sonnet 5, Fable 5) and Claude 4 → 5 migration
 - **`references/claude-4-guide.md`** - Claude 4 specific optimizations
 - **`references/glm-47-guide.md`** - GLM 4.7 adaptation techniques
 - **`references/gemini-3-guide.md`** - Gemini 3 adaptation techniques

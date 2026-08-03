@@ -34,7 +34,7 @@ Full wrapper format for user-facing prompts:
 [Complete, ready-to-copy prompt in code block]
 
 ## Usage Notes
-- Target model: [Claude Opus 4 / Sonnet 4 / Haiku / GLM 4.7]
+- Target model: [Claude 5 (Opus 5 / Sonnet 5 / Fable 5) / Claude 4 / GLM 4.7 / Gemini 3]
 - [Platform-specific notes if applicable]
 
 ## Testing Guide
@@ -107,7 +107,7 @@ For prompts targeting GLM 4.7, add:
 For converting existing Claude prompts to GLM 4.7:
 
 ```markdown
-## Before (Claude 4)
+## Before (Claude)
 [Original prompt]
 
 ## After (GLM 4.7)
@@ -142,7 +142,7 @@ For prompts targeting Gemini 3, add:
 For converting existing Claude prompts to Gemini 3:
 
 ```markdown
-## Before (Claude 4)
+## Before (Claude)
 [Original prompt]
 
 ## After (Gemini 3)

@@ -152,6 +152,8 @@ Think before answering in <thinking> tags. First, analyze X.
 Then, evaluate Y. Finally, in <answer> tags, provide your recommendation.
 ```
 
+**Claude 5:** thinking is adaptive and on by default, so visible `<thinking>`/`<answer>` scaffolding is a Claude 4 / earlier pattern — on Claude 5 it can cause tag leakage (Opus 5) or a refusal (Fable 5). See `claude-5-guide.md#adaptive-thinking`.
+
 ### Example: Financial Analysis
 
 **Without CoT:**
@@ -274,6 +276,8 @@ Everything the General Counsel persona was supposed to evoke — depth, audience
 A persona that *is* the requested output (fiction, simulation, practice conversations) stays — it is the deliverable, not a prompting technique. Identity openers like "You are a TDD enforcement agent" are not an exception: they restate the task without adding a constraint. Delete them and state the task directly.
 
 ## 6. Prefilling (API Only)
+
+**Claude 4 and earlier only.** On Claude 5 models (Opus 5, Sonnet 5, Fable 5), prefilling the assistant message returns a 400 error — use Structured Outputs, `output_config.format`, or a direct "respond without preamble" system instruction instead. See `claude-5-guide.md#breaking-changes-api-errors-on-claude-5`.
 
 Guide responses by starting the assistant message with desired text.
 
@@ -399,10 +403,10 @@ If you find conflicting information, note the discrepancy.
 
 | Task Type | Primary Techniques |
 |-----------|-------------------|
-| Format-specific output | Examples, XML tags, Prefilling |
+| Format-specific output | Examples, XML tags, Prefilling (Claude 4 / earlier) |
 | Complex reasoning | Chain of thought, XML structure |
 | Domain expertise | Context, Domain material, Grounding |
 | Multi-step workflows | Prompt chaining |
 | Long documents | XML tags, Retrieval strategy |
-| Consistency | Examples, Prefilling |
+| Consistency | Examples, Prefilling (Claude 4 / earlier) |
 | Accuracy | Grounding, Verification |

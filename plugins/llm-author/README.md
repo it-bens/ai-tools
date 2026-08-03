@@ -1,10 +1,10 @@
 # LLM Author Plugin
 
-Author LLM-targeted content — prompts, skills, agents, and rules files — for Claude 4, GLM 4.7 (Z.ai), and Gemini 3 (including Deep Research).
+Author LLM-targeted content — prompts, skills, agents, and rules files — for Claude 5 and Claude 4, GLM 4.7 (Z.ai), and Gemini 3 (including Deep Research).
 
 ## Overview
 
-This plugin bundles the craft of authoring LLM-targeted content: designing high-performing prompts for Claude 4, GLM 4.7 (Z.ai), and Gemini 3; editing skills and agents without bloat; writing auto-loaded rule files for AI coding assistants; and packaging session-to-session prompts (handoffs forward to a fresh session, feedback backward to the session that defined the work). It transforms requirements into production-ready artifacts through evidence-based techniques and systematic optimization. Also adapts existing Claude prompts for GLM 4.7 or Gemini 3 when requested, and supports specialized Gemini Deep Research prompts for autonomous multi-source research.
+This plugin bundles the craft of authoring LLM-targeted content: designing high-performing prompts for Claude 5 and Claude 4, GLM 4.7 (Z.ai), and Gemini 3; editing skills and agents without bloat; writing auto-loaded rule files for AI coding assistants; and packaging session-to-session prompts (handoffs forward to a fresh session, feedback backward to the session that defined the work). It transforms requirements into production-ready artifacts through evidence-based techniques and systematic optimization. Also adapts existing Claude prompts for GLM 4.7 or Gemini 3 when requested, and supports specialized Gemini Deep Research prompts for autonomous multi-source research.
 
 The shared skills support Claude Code and Codex. Claude Code uses `.claude-plugin/plugin.json`; Codex uses `.codex-plugin/plugin.json` and the repository marketplace at `.agents/plugins/marketplace.json`. Claude-specific frontmatter remains available to improve Claude Code behavior, while Codex ignores fields it does not support.
 
@@ -122,6 +122,7 @@ The `docs/` directory contains the raw documentation files that were used to cre
 
 - Core prompting techniques (clarity, XML structure, system prompts, examples, prefilling, chain-of-thought)
 - Advanced strategies (prompt chaining, long context handling, output consistency, hallucination reduction)
+- Claude 5 model-specific optimization and best practices (Opus 5, Sonnet 5, Fable 5), and Claude 4 → 5 migration
 - Claude 4 model-specific optimization and best practices
 - GLM 4.7 adaptation techniques for achieving Claude parity
 - Gemini 3 adaptation techniques for achieving Claude parity

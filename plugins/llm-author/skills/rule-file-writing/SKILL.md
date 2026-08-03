@@ -1,6 +1,6 @@
 ---
 name: rule-file-writing
-version: 3.4.0
+version: 3.5.0
 description: Use when creating or optimizing a rule file for per-token behavioral steering. Rule files are instruction files that an AI coding assistant automatically loads for a matching user, project, or directory scope; they are NOT skills, agents, or commands. Trigger on "write a rule about X", "create a rules file", "optimize this rules file", "cut ballast from this rule file", or any request to author or refine an auto-loaded file whose purpose is persistent behavioral steering.
 allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
 ---

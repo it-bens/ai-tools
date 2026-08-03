@@ -30,6 +30,7 @@ This plugin must remain compatible with Claude Code and Codex.
 | Modify session-feedback writing behavior or triggers | `skills/writing-session-feedback/SKILL.md` |
 | Update core techniques or patterns | `skills/prompt-engineering/references/` |
 | Update output format templates | `skills/prompt-engineering/references/output-formats.md` |
+| Update Claude 5 guide (Opus 5, Sonnet 5, Fable 5) and Claude 4 → 5 migration | `skills/prompt-engineering/references/claude-5-guide.md` |
 | Update GLM 4.7 adaptation guide | `skills/prompt-engineering/references/glm-47-guide.md` |
 | Update Gemini 3 adaptation guide | `skills/prompt-engineering/references/gemini-3-guide.md` |
 | Update Gemini Deep Research guide | `skills/prompt-engineering/references/gemini-3-deep-research-guide.md` |

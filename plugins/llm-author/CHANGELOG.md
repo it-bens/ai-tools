@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.5.0] - 2026-08-03
+
+Added Claude 5 (Opus 5, Sonnet 5, Fable 5) support to the `prompt-engineering` skill and made Claude 5 the default target generation, with Claude 4 retained as a selectable path. Claude 5 shifts prompting from constraint toward judgment: the `effort` parameter and adaptive thinking replace manual thinking budgets and sampling parameters; assistant prefill, `budget_tokens`, and non-default `temperature`/`top_p`/`top_k` now return a 400 error; and the models self-verify, self-correct, and delegate to subagents more readily, so carried-over verification and aggressive tool-triggering prompts are removed rather than rewritten. Sourced from Anthropic's official prompting docs for Opus 5, Sonnet 5, and Fable 5, the prompting best-practices page, the model migration guide (`/docs/en/about-claude/models/migration-guide`), and the "new rules of context engineering for Claude 5 generation models" post on claude.com; verbatim copies are archived under `docs/`.
+
+### Added
+
+- `skills/prompt-engineering/references/claude-5-guide.md` — Claude 5 optimizations: an `effort`-parameter and adaptive-thinking primer, a breaking-changes table, per-model guidance (Opus 5, Sonnet 5, Fable 5), a Claude 5 model-selection table, and a "less is more" section for optimizing LLM-targeted content that targets Claude 5
+- `docs/prompting-claude-opus-5.md`, `docs/prompting-claude-sonnet-5.md`, `docs/prompting-claude-fable-5.md`, `docs/claude-5-best-practices.md`, `docs/claude-5-migration-guide.md`, `docs/context-engineering-claude-5-generation.md` — verbatim raw source pages
+
+### Changed
+
+- `skills/prompt-engineering/SKILL.md` — Claude 5 set as the default target (frontmatter description, intro, core mission, Phase 1 model selection); "Claude 4 Specific Optimizations" reworked into a generation-aware "Model-Generation Optimizations" section with Claude 5 primary and Claude 4 retained; prefilling and chain-of-thought entries flagged Claude 4 / earlier with Claude 5 replacements; the LLM-targeted-content optimization principle gained a Claude 5 "less is more" note; GLM/Gemini comparison columns relabeled generation-neutral, with the Gemini temperature and prefill cells corrected for Claude 5
+- `skills/prompt-engineering/references/techniques-detailed.md` — §6 Prefilling marked Claude 4 / earlier, noting the Claude 5 400 error and its replacements
+- `project/system-prompt.md`, `project/description.txt` — Claude Web project updated to Claude 5 default with Claude 4 selectable
+- `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json` — version `3.5.0`; added the `claude-5` keyword; Claude Code manifest description now includes Claude 5
+- `README.md` (plugin) and repository `README.md`, and the plugin's `AGENTS.md` — document Claude 5 support and add a file-navigation entry for the new guide
+- Synchronized every included skill to plugin version `3.5.0`
+
 ## [3.4.0] - 2026-07-12
 
 Generalized the plugin's runtime instructions for use by multiple AI coding assistants while preserving Claude-specific frontmatter and Claude Web assets.
