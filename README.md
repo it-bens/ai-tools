@@ -110,7 +110,7 @@ Keep component paths in `.claude-plugin/plugin.json` and `.codex-plugin/plugin.j
 
 ## Building Skills for Claude Web
 
-Skills in this marketplace use the `allowed-tools` frontmatter field to restrict tool access in Claude Code. However, this field is **only supported in Claude Code** and must be removed for Claude Web compatibility.
+Skills in this marketplace use the `allowed-tools` frontmatter field to pre-approve tools in Claude Code — it auto-approves the listed tools for the invoking turn so Claude is not prompted, and it does **not** restrict which tools are available (`disallowed-tools` is the field that removes tools). This field is **only supported in Claude Code** and must be removed for Claude Web compatibility.
 
 ### Opt-in with `.claude-web` Marker
 

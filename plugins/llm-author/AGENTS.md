@@ -28,7 +28,8 @@ This plugin must remain compatible with Claude Code and Codex.
 | Update the rules-file skeleton template | `skills/rule-file-writing/assets/templates/rules-file-skeleton.md` |
 | Modify handoff-prompt writing behavior or triggers | `skills/writing-handoff-prompts/SKILL.md` |
 | Modify session-feedback writing behavior or triggers | `skills/writing-session-feedback/SKILL.md` |
-| Update core techniques or patterns | `skills/prompt-engineering/references/` |
+| Update a prompting technique | `skills/prompt-engineering/references/techniques/<technique>.md` (index in `techniques/README.md`) |
+| Update a reusable prompt pattern | `skills/prompt-engineering/references/prompt-patterns/<pattern>.md` (index in `prompt-patterns/README.md`) |
 | Update output format templates | `skills/prompt-engineering/references/output-formats.md` |
 | Update Claude 5 guide (Opus 5, Sonnet 5, Fable 5) and Claude 4 → 5 migration | `skills/prompt-engineering/references/claude-5-guide.md` |
 | Update GLM 4.7 adaptation guide | `skills/prompt-engineering/references/glm-47-guide.md` |

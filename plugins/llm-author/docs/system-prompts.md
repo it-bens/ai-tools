@@ -1,6 +1,6 @@
 # Giving Claude a role with a system prompt
 
-> **Editorial note (2026-06-11, do not remove):** This doc's accuracy claims are superseded. Zheng et al. 2024 (arXiv:2311.10054) tested 162 personas across 4 model families on 2,410 factual questions and found personas do not improve factual correctness; per-question effects are unpredictable. Roles influence style at most, and style is better set via explicit output requirements. The skill (`references/techniques-detailed.md` §5) deliberately diverges from this doc — do not re-import its "Enhanced accuracy" framing when updating the skill.
+> **Editorial note (2026-06-11, do not remove):** This doc's accuracy claims are superseded. Zheng et al. 2024 (arXiv:2311.10054) tested 162 personas across 4 model families on 2,410 factual questions and found personas do not improve factual correctness; per-question effects are unpredictable. Roles influence style at most, and style is better set via explicit output requirements. The skill (`references/techniques/system-prompts-and-roles.md`) deliberately diverges from this doc — do not re-import its "Enhanced accuracy" framing when updating the skill.
 
 <Note>
   While these tips apply broadly to all Claude models, you can find prompting tips specific to extended thinking models [here](/en/docs/build-with-claude/prompt-engineering/extended-thinking-tips).

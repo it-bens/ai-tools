@@ -1,8 +1,7 @@
 ---
 name: rule-file-writing
-version: 3.5.0
+version: 3.6.0
 description: Use when creating or optimizing a rule file for per-token behavioral steering. Rule files are instruction files that an AI coding assistant automatically loads for a matching user, project, or directory scope; they are NOT skills, agents, or commands. Trigger on "write a rule about X", "create a rules file", "optimize this rules file", "cut ballast from this rule file", or any request to author or refine an auto-loaded file whose purpose is persistent behavioral steering.
-allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
 ---
 
 # Rule-File Writing and Optimization
@@ -14,6 +13,37 @@ A **rule file** is an instruction file that an AI coding assistant automatically
 Rule files are context tax paid whenever their scope matches. Optimize for behavioral steering per token: keep what changes generation, cut what justifies the rule to a human reader.
 
 This skill covers **rule files only**. For skills, agents, or commands, use the corresponding authoring workflow. For SKILL.md or agent content, defer to `content-editing`.
+
+## Workflow
+
+```dot
+digraph rule_file_writing {
+    "Rule-file request" [shape=doublecircle];
+    "Create or Optimize?" [shape=diamond];
+    "Conversation already supplies rule, failure mode, trigger, rationalizations, and path?" [shape=diamond];
+    "Interview the user (one question at a time)" [shape=box];
+    "Draft from the rules-file skeleton" [shape=box];
+    "Present the draft for a sanity check" [shape=box];
+    "Pass 1: content cuts (essential vs ballast, honesty gate)" [shape=box];
+    "Pass 2: structural alignment (family pattern, front-loaded gate, three-angle)" [shape=box];
+    "Report trajectory: original -> Pass 1 -> Pass 2" [shape=doublecircle];
+    "Stop — no third pass" [shape=octagon style=filled fillcolor=red];
+
+    "Rule-file request" -> "Create or Optimize?";
+    "Create or Optimize?" -> "Conversation already supplies rule, failure mode, trigger, rationalizations, and path?" [label="create"];
+    "Create or Optimize?" -> "Pass 1: content cuts (essential vs ballast, honesty gate)" [label="optimize"];
+    "Conversation already supplies rule, failure mode, trigger, rationalizations, and path?" -> "Draft from the rules-file skeleton" [label="yes"];
+    "Conversation already supplies rule, failure mode, trigger, rationalizations, and path?" -> "Interview the user (one question at a time)" [label="no"];
+    "Interview the user (one question at a time)" -> "Draft from the rules-file skeleton";
+    "Draft from the rules-file skeleton" -> "Present the draft for a sanity check";
+    "Present the draft for a sanity check" -> "Pass 1: content cuts (essential vs ballast, honesty gate)";
+    "Pass 1: content cuts (essential vs ballast, honesty gate)" -> "Pass 2: structural alignment (family pattern, front-loaded gate, three-angle)";
+    "Pass 2: structural alignment (family pattern, front-loaded gate, three-angle)" -> "Report trajectory: original -> Pass 1 -> Pass 2";
+    "Report trajectory: original -> Pass 1 -> Pass 2" -> "Stop — no third pass";
+}
+```
+
+Create flows into Optimize: draft, present, then run the two fixed passes. Mode detection, per-step substance, and the honest-reporting rule are elaborated below.
 
 ## Mode Detection
 

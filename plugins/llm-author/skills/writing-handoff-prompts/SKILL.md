@@ -1,10 +1,10 @@
 ---
 name: writing-handoff-prompts
-version: 3.5.0
+version: 3.6.0
 description: Use when the user explicitly asks to write a handoff prompt for a fresh, new, separate, or other session — for example to start a spec's implementation, apply review or report fixes, turn review findings into a change proposal, or continue work — in a session that will have none of this session's context. Invoke only on such an explicit request, never proactively. Produces a self-contained handoff prompt (every needed fact stated inline or reachable by an explicit file reference; the work type, branch, commit and verification policy, and scope deduced from context), then offers to save it to a file or copy it to the clipboard.
 model: sonnet
 user-invocable: false
-allowed-tools: Skill(llm-author:prompt-engineering), AskUserQuestion, Write
+allowed-tools: Skill(llm-author:prompt-engineering)
 ---
 
 # Writing Handoff Prompts

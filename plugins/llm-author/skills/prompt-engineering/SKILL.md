@@ -1,8 +1,7 @@
 ---
 name: prompt-engineering
-version: 3.5.0
+version: 3.6.0
 description: Create, optimize, and debug high-performing prompts for Claude 5 and Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3 with production-ready templates and evidence-based techniques. Also optimize LLM-targeted content (skills, agents, instructions, documentation). Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, adapt a prompt for Gemini, create a Gemini deep research prompt, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
-allowed-tools: AskUserQuestion, Read, Grep, Glob, WebSearch, WebFetch
 ---
 
 # Prompt Engineering Lab
@@ -53,15 +52,45 @@ Then optimize for clarity and impact while preserving all substantive content. P
 
 Because Claude 5 is the default target, apply "less is more" by default: Claude 5 exercises judgment, so cutting over-constraint (absolute rules, repetition, worked examples that narrow exploration) improves output. This relaxes the preserve-everything default above — keep substantive directives, but drop scaffolding that compensated for weaker instruction-following. For Claude 4 or earlier targets, keep the preserve-everything default. See `references/claude-5-guide.md#optimizing-llm-targeted-content-for-claude-5`.
 
-**Workflow selection:**
-- **LLM-targeted content** → Skip to Phase 2 (Design Strategy), use streamlined output format
-- **Traditional prompts** → Follow full workflow starting at Phase 1
-
 ## Workflow
 
-### Phase 1: Prompt Scoping (Traditional Prompts Only)
+```dot
+digraph prompt_engineering {
+    "Prompt request" [shape=doublecircle];
+    "Refining a prompt already generated this conversation?" [shape=diamond];
+    "Refinement mode: ask what changes, deliver the full refined prompt" [shape=box];
+    "Traditional prompt or LLM-targeted content?" [shape=diamond];
+    "Phase 1: scope the prompt (purpose, audience, success criteria, platform, target model)" [shape=box];
+    "Phase 2: design strategy (techniques by complexity + target-model adaptation)" [shape=box];
+    "Target model?" [shape=diamond];
+    "Claude 5 default -> claude-5-guide" [shape=box];
+    "Claude 4 -> claude-4-guide" [shape=box];
+    "GLM 4.7 -> glm-47-guide" [shape=box];
+    "Gemini 3 -> gemini-3-guide (Deep Research -> gemini-3-deep-research-guide)" [shape=box];
+    "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)" [shape=doublecircle];
 
-*Skip this phase for LLM-targeted content—proceed directly to Phase 2.*
+    "Prompt request" -> "Refining a prompt already generated this conversation?";
+    "Refining a prompt already generated this conversation?" -> "Refinement mode: ask what changes, deliver the full refined prompt" [label="yes"];
+    "Refinement mode: ask what changes, deliver the full refined prompt" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
+    "Refining a prompt already generated this conversation?" -> "Traditional prompt or LLM-targeted content?" [label="no"];
+    "Traditional prompt or LLM-targeted content?" -> "Phase 1: scope the prompt (purpose, audience, success criteria, platform, target model)" [label="traditional"];
+    "Traditional prompt or LLM-targeted content?" -> "Phase 2: design strategy (techniques by complexity + target-model adaptation)" [label="LLM-targeted (skip Phase 1)"];
+    "Phase 1: scope the prompt (purpose, audience, success criteria, platform, target model)" -> "Phase 2: design strategy (techniques by complexity + target-model adaptation)";
+    "Phase 2: design strategy (techniques by complexity + target-model adaptation)" -> "Target model?";
+    "Target model?" -> "Claude 5 default -> claude-5-guide";
+    "Target model?" -> "Claude 4 -> claude-4-guide";
+    "Target model?" -> "GLM 4.7 -> glm-47-guide";
+    "Target model?" -> "Gemini 3 -> gemini-3-guide (Deep Research -> gemini-3-deep-research-guide)";
+    "Claude 5 default -> claude-5-guide" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
+    "Claude 4 -> claude-4-guide" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
+    "GLM 4.7 -> glm-47-guide" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
+    "Gemini 3 -> gemini-3-guide (Deep Research -> gemini-3-deep-research-guide)" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
+}
+```
+
+LLM-targeted content skips Phase 1 and enters at Phase 2 with the streamlined output format. Refinement mode is a shortcut for a prompt already produced this conversation. Each node is elaborated below.
+
+### Phase 1: Prompt Scoping (Traditional Prompts Only)
 
 Before generating the prompt, understand its intended purpose. Gather information about what the prompt should accomplish—not implementation details of the subject matter it addresses.
 
@@ -104,21 +133,21 @@ Select appropriate techniques based on task complexity:
 
 **For complex tasks:**
 - Chain of thought prompting with XML structure
-  → See `references/techniques-detailed.md#3-chain-of-thought-prompting`
+  → See `references/techniques/chain-of-thought.md`
 - Multi-shot examples for consistency
-  → See `references/techniques-detailed.md#2-use-examples-multishot-prompting`
+  → See `references/techniques/multishot-prompting.md`
 - Prompt chaining for multi-step workflows
-  → See `references/techniques-detailed.md#7-prompt-chaining`
+  → Technique: `references/techniques/prompt-chaining.md`; ready template: `examples/prompt-chain-template.md`
 
 **For optimization:**
 - Analyze current prompt structure and gaps
 - Identify specific failure modes
 - Remove personas and "You are …" identity openers: state the task directly and convert whatever they implied (tone, depth, audience) into explicit requirements — keep a persona only where it is the requested output (character roleplay)
-- Apply targeted improvements with documented rationale
+- Apply targeted improvements with documented rationale; document the before/after with `examples/optimization-report.md`
 
 ### Phase 3: Prompt Delivery
 
-Deliver prompts as ready-to-copy markdown blocks optimized for the target platform.
+Deliver prompts as ready-to-copy markdown blocks optimized for the target platform. Choose the structure from the [Output Format](#output-format) table below (details in `references/output-formats.md`); for a system prompt, adapt `examples/system-prompt-template.md`.
 
 **Default (Claude Web / Claude Desktop):**
 - Complete prompt in a single code block
@@ -137,14 +166,14 @@ Deliver prompts as ready-to-copy markdown blocks optimized for the target platfo
 - Use numbered steps for sequential instructions
 - Specify exact output format requirements
 - Tell Claude what TO do, not what NOT to do
-→ Deep dive: `references/techniques-detailed.md#1-be-clear-and-direct`
+→ Deep dive: `references/techniques/be-clear-and-direct.md`
 
 ### Use XML Tags
 - Separate prompt components: `<instructions>`, `<context>`, `<examples>`
 - Structure outputs: `<thinking>`, `<answer>`, `<analysis>`
 - Nest tags for hierarchical content
 - Be consistent with tag naming
-→ Deep dive: `references/techniques-detailed.md#4-xml-tags-for-structure`
+→ Deep dive: `references/techniques/xml-tags.md`
 
 ### Chain of Thought
 - Basic: "Think step-by-step"
@@ -152,14 +181,14 @@ Deliver prompts as ready-to-copy markdown blocks optimized for the target platfo
 - Structured: Use `<thinking>` and `<answer>` tags
 - Use for complex reasoning, analysis, or multi-step tasks
 - Claude 5: thinking is adaptive and on by default; the `<thinking>`/`<answer>` scaffolding and manual `budget_tokens` are Claude 4 / earlier patterns (see `references/claude-5-guide.md#adaptive-thinking`)
-→ Deep dive: `references/techniques-detailed.md#3-chain-of-thought-prompting`
+→ Deep dive: `references/techniques/chain-of-thought.md`
 
 ### Multishot Prompting
 - Include 3-5 diverse, relevant examples
 - Wrap in `<examples>` tags with nested `<example>` tags
 - Cover edge cases and variations
 - Ensure examples match desired output format exactly
-→ Deep dive: `references/techniques-detailed.md#2-use-examples-multishot-prompting`
+→ Deep dive: `references/techniques/multishot-prompting.md`
 
 ### Roles (Do Not Use)
 - Do not write roles or personas into prompts
@@ -167,7 +196,7 @@ Deliver prompts as ready-to-copy markdown blocks optimized for the target platfo
 - State tone, format, length, and audience as explicit output requirements instead
 - For domain accuracy, provide domain context and reference material
 - Sole exception: character roleplay, where the persona is the requested output
-→ Deep dive: `references/techniques-detailed.md#5-system-prompts-and-role-prompting`
+→ Deep dive: `references/techniques/system-prompts-and-roles.md`
 
 ### Prefilling (API only — Claude 4 and earlier)
 - Start assistant response to enforce format
@@ -175,7 +204,7 @@ Deliver prompts as ready-to-copy markdown blocks optimized for the target platfo
 - Maintain character in roleplay scenarios
 - Cannot end with trailing whitespace
 - Claude 5: prefill returns a 400 error — use Structured Outputs or a direct "respond without preamble" instruction instead
-→ Deep dive: `references/techniques-detailed.md#6-prefilling-api-only`
+→ Deep dive: `references/techniques/prefilling.md`
 
 ## Model-Generation Optimizations
 
@@ -206,186 +235,39 @@ Keep spawn counts low.
 
 ### Claude 4 and earlier
 
-Claude 4 models require explicit instruction for enhanced behaviors:
-
-**Request thoroughness explicitly:**
-```
-Include as many relevant features and interactions as possible.
-Go beyond the basics to create a fully-featured implementation.
-```
-
-**Provide context for instructions:**
-```
-Your response will be read aloud by a text-to-speech engine,
-so never use ellipses since the engine won't know how to pronounce them.
-```
-
-**Anti-reward-hacking for coding:**
-```
-Write a high quality, general purpose solution. Do not hard-code
-test cases. If the task is unreasonable, tell me rather than
-creating a workaround.
-```
-
-**Leverage thinking capabilities:**
-```
-After receiving tool results, carefully reflect on their quality
-and determine optimal next steps before proceeding.
-```
+Claude 4 needs "above and beyond" behavior requested explicitly:
+- Request thoroughness ("Include as many relevant features and interactions as possible. Go beyond the basics.").
+- Explain *why* an instruction matters — Claude 4 generalizes from the reason.
+- Add anti-reward-hacking wording for coding ("high-quality, general-purpose solution; don't hard-code test cases; say so if the task is unreasonable").
+- Prompt reflection on tool results before the next step.
 
 → Full guide: `references/claude-4-guide.md`
 
 ## GLM 4.7 Adaptation (When Requested)
 
-When user explicitly requests GLM 4.7 as target model, apply these adaptations. GLM 4.7 treats polite, buried instructions as optional—causing generic responses.
+When the user explicitly targets GLM 4.7: it treats polite, buried instructions as optional, so make directives firm and front-loaded.
 
-### Key Differences from Claude
+- Front-load all mandatory rules in the first 200 words.
+- Convert soft language to hard directives (MUST / ALWAYS / NEVER).
+- Add explicit output templates and a FORBIDDEN-patterns block to block generic responses.
+- Add a self-verification block; force language with `ALWAYS respond in English`.
+- API: enable thinking, temperature 0.6–0.7, and GLM stop tokens.
 
-| Aspect | Claude | GLM 4.7 |
-|--------|----------|---------|
-| Instruction positioning | Flexible | Prioritizes first 200 words |
-| Directive language | Responds to nuanced prompts | Requires firm directives (MUST/ALWAYS/NEVER) |
-| Output specificity | Natural context reference | Needs explicit reference requirements |
-| Few-shot examples | Often unnecessary | Critical for patterns |
-| Reasoning mode | Built-in | Requires API parameter |
-
-### Essential Adaptations
-
-**1. Front-load mandatory instructions** - Place ALL critical rules in first 200 words
-
-**2. Convert soft language to directives:**
-- "Please consider..." → "You MUST..."
-- "Try to avoid..." → "NEVER..."
-- "It would be helpful..." → "ALWAYS..."
-
-**3. Add explicit output templates** with concrete examples of desired format
-
-**4. Include FORBIDDEN patterns section** to prevent generic responses:
-```
-FORBIDDEN:
-- "This violates [principle]. Please follow [methodology]."
-- "Remember to [general advice]."
-- Any response that applies to ANY similar situation
-```
-
-**5. Add self-verification block:**
-```
-BEFORE RESPONDING, VERIFY:
-- Does your response name the specific file/function?
-- Would this response work for any similar question? (If yes, make it more specific)
-```
-
-**6. Add language control:** `ALWAYS respond in English. Reason in English.`
-
-### GLM 4.7 API Configuration
-
-Include when delivering API-targeted prompts:
-- Enable thinking: `thinking={"type": "enabled"}`
-- Temperature: 0.6-0.7 for consistent rule application
-- Stop tokens: `["<|endoftext|>", "<|user|>", "<|observation|>"]`
-
-For detailed patterns and examples, consult `references/glm-47-guide.md` and `examples/glm-47-adaptation.md`.
+→ Full adaptations, patterns, and API config: `references/glm-47-guide.md`; transformation examples: `examples/glm-47-adaptation.md`
 
 ## Gemini 3 Adaptation (When Requested)
 
-When user explicitly requests Gemini 3 as target model, apply these adaptations. Gemini 3 defaults to minimal output and processes long context differently than Claude.
+When the user explicitly targets Gemini 3: it defaults to minimal output and handles long context differently than Claude.
 
-### Deep Research Mode (Gemini Only)
+**Deep Research mode** — if the user mentions "deep research", citation-backed literature reviews, or extended autonomous web research, use `references/gemini-3-deep-research-guide.md` and `examples/gemini-3-deep-research.md` (autonomous 5–60 min runs, plan review, ~10% citation-error, explicit scope/temporal/source constraints). Otherwise apply standard adaptations:
 
-**Detection signals** — activate deep research prompting when Gemini is the target model AND user mentions:
-- "deep research", "Gemini Deep Research"
-- Comprehensive literature reviews with citations
-- Multi-source research synthesis
-- Tasks requiring extended autonomous web research
+- Keep temperature at 1.0 — changing it causes looping or degraded output.
+- Place instructions after long context; put constraints at the prompt end.
+- Request verbosity explicitly and always include 2–3 few-shot examples.
+- Control format with response-prefix strings; add a self-verification block.
+- Flash (routine, high-volume) vs Pro (complex) — identical prompting.
 
-When deep research detected, consult `references/gemini-3-deep-research-guide.md` for specialized prompting patterns and `examples/gemini-3-deep-research.md` for ready-to-adapt templates.
-
-**Key differences from standard Gemini prompts:**
-- Runs autonomously for 5-60 minutes (not immediate response)
-- User reviews research plan before execution
-- Generates structured reports with citations (~10% citation error rate)
-- Requires explicit scope, temporal, and source quality constraints
-
-For standard interactive Gemini prompts, continue with the adaptations below.
-
-### Key Differences from Claude
-
-| Aspect | Claude | Gemini 3 |
-|--------|--------|----------|
-| Temperature | Default only (Claude 5 rejects non-default; Claude 4: 0.7-1.0) | Keep at 1.0 (changing causes issues) |
-| Default verbosity | Moderate detail | Minimal (must explicitly request detail) |
-| Instruction position | Flexible | For long context: after data |
-| Few-shot examples | Often optional | Strongly recommended |
-| Response format control | Structured Outputs (Claude 5); prefilling (Claude 4) | Prefix strings in prompt |
-| Constraint adherence | Flexible positioning | End of prompt for best adherence |
-
-### Essential Adaptations
-
-**1. Keep temperature at 1.0** - Adjusting temperature causes looping or degraded output
-
-**2. Place instructions after long context:**
-```
-<document>
-[Long content here]
-</document>
-
-Based on the document above, [your instruction].
-```
-
-**3. Request verbosity explicitly:**
-```
-Provide a detailed, comprehensive response. Include specific examples.
-Do not summarize briefly.
-```
-
-**4. Always include few-shot examples** - Show 2-3 examples of desired format
-
-**5. Use response prefixes for format control:**
-```
-Provide your analysis in the following format:
-
-JSON:
-{
-  "findings": [...],
-  "recommendations": [...]
-}
-```
-
-**6. Place constraints at prompt end:**
-```
-[Main instructions]
-
-CONSTRAINTS:
-- Maximum 500 words
-- Must include code examples
-- No introductory phrases
-```
-
-**7. Add self-verification block:**
-```
-VERIFICATION (complete before responding):
-- Does the response address all parts of the question?
-- Are all claims supported by the input data?
-- Does the format match the template?
-```
-
-### Gemini 3 Model Selection
-
-| Model | Best For | Notes |
-|-------|----------|-------|
-| Flash | Routine tasks, high volume, simple analysis | 15x cheaper, faster |
-| Pro | Complex reasoning, nuanced analysis, creative tasks | Better quality for hard problems |
-
-Both models use identical prompting techniques.
-
-### Gemini 3 API Configuration
-
-Include when delivering API-targeted prompts:
-- Temperature: 1.0 (always keep at default)
-- For JSON output: use `response_mime_type="application/json"` with schema
-- System instructions: use `system_instruction` parameter in model constructor
-
-For detailed patterns and examples, consult `references/gemini-3-guide.md` and `examples/gemini-3-adaptation.md`.
+→ Full adaptations, model selection, and API config: `references/gemini-3-guide.md`; transformation examples: `examples/gemini-3-adaptation.md`
 
 ## Output Format
 
@@ -435,49 +317,29 @@ Before I create this prompt, I have a few questions:
 
 ### Software Development
 - Code generation: completeness, error handling, best practices
-  → See `references/prompt-patterns.md#code-generation-pattern`
+  → See `references/prompt-patterns/code-generation.md`
 - Code review: structured criteria, actionable feedback
-  → See `references/prompt-patterns.md#code-review-pattern`
+  → See `references/prompt-patterns/code-review.md`
 - Architecture: systematic exploration, trade-off analysis
-  → See `references/prompt-patterns.md#comparative-analysis-pattern`
+  → See `references/prompt-patterns/comparative-analysis.md`
 - Debugging: methodical problem-solving, hypothesis testing
-  → See `references/prompt-patterns.md#root-cause-analysis-pattern`
+  → See `references/prompt-patterns/root-cause-analysis.md`
 
 ### Business & Analysis
 - Data analysis: clear insights, visualization recommendations
-  → See `references/prompt-patterns.md#structured-analysis-pattern`
+  → See `references/prompt-patterns/structured-analysis.md`
 - Report generation: professional formatting, executive summaries
-  → See `references/prompt-patterns.md#chain-patterns`
+  → See `references/prompt-patterns/chain-patterns.md`
 - Decision support: structured options, risk assessment
-  → See `references/prompt-patterns.md#comparative-analysis-pattern`
+  → See `references/prompt-patterns/comparative-analysis.md`
 
 ### Creative & Content
 - Writing: tone consistency, audience adaptation
-  → See `references/prompt-patterns.md#structured-content-generation-pattern`
+  → See `references/prompt-patterns/structured-content-generation.md`
 - Documentation: technical accuracy, user-friendliness
-  → See `references/prompt-patterns.md#documentation-generation-pattern`
+  → See `references/prompt-patterns/documentation-generation.md`
 - Marketing: brand voice, conversion optimization
-  → See `references/prompt-patterns.md#text-rewriting-pattern`
-
-## Additional Resources
-
-### Reference Files
-- **`references/techniques-detailed.md`** - Comprehensive prompting techniques
-- **`references/claude-5-guide.md`** - Claude 5 optimizations (Opus 5, Sonnet 5, Fable 5) and Claude 4 → 5 migration
-- **`references/claude-4-guide.md`** - Claude 4 specific optimizations
-- **`references/glm-47-guide.md`** - GLM 4.7 adaptation techniques
-- **`references/gemini-3-guide.md`** - Gemini 3 adaptation techniques
-- **`references/gemini-3-deep-research-guide.md`** - Gemini Deep Research prompting
-- **`references/prompt-patterns.md`** - Reusable prompt templates
-- **`references/output-formats.md`** - Output format templates by prompt type
-
-### Example Files
-- **`examples/system-prompt-template.md`** - Production-ready system prompt
-- **`examples/prompt-chain-template.md`** - Multi-step workflow template
-- **`examples/optimization-report.md`** - Prompt improvement documentation
-- **`examples/glm-47-adaptation.md`** - GLM 4.7 transformation examples
-- **`examples/gemini-3-adaptation.md`** - Gemini 3 transformation examples
-- **`examples/gemini-3-deep-research.md`** - Gemini Deep Research templates
+  → See `references/prompt-patterns/text-rewriting.md`
 
 ## Success Metrics
 

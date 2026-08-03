@@ -1,6 +1,6 @@
 ---
 name: content-editing
-version: 3.5.0
+version: 3.6.0
 description: Evaluates proposed changes to LLM-targeted content (skills, agents, commands) and guides toward corrections over additions. MUST invoke when editing SKILL.md files, modifying agent markdown in agents/, updating command markdown in commands/, adding new sections or instructions, expanding skill content, user says "is this too long", "content bloat", "should I add this", or improving/enhancing skills.
 ---
 
@@ -14,25 +14,45 @@ Undesired behavior stems from **incorrect** information, not missing information
 
 ## Decision Framework
 
-**Before adding new content, ask:**
+```dot
+digraph content_editing {
+    "Proposed change to LLM-targeted content" [shape=doublecircle];
+    "Existing content addresses this incorrectly?" [shape=diamond];
+    "Correct the existing content" [shape=box];
+    "Fixable by clarifying or rewording?" [shape=diamond];
+    "Modify existing wording" [shape=box];
+    "Would adding create redundancy or conflict?" [shape=diamond];
+    "Consolidate or remove conflicting content first" [shape=box];
+    "All three add-conditions met?" [shape=diamond];
+    "Add — orthogonal, via progressive disclosure" [shape=box];
+    "Do not add" [shape=octagon style=filled fillcolor=red];
 
-1. Does existing content already address this behavior incorrectly?
-   - If YES: Correct the existing content instead of adding
-2. Can the issue be fixed by clarifying or rewording current instructions?
-   - If YES: Modify existing wording instead of adding
-3. Would adding content create redundancy or conflict with existing guidance?
-   - If YES: Consolidate or remove conflicting content first
+    "Proposed change to LLM-targeted content" -> "Existing content addresses this incorrectly?";
+    "Existing content addresses this incorrectly?" -> "Correct the existing content" [label="yes"];
+    "Existing content addresses this incorrectly?" -> "Fixable by clarifying or rewording?" [label="no"];
+    "Fixable by clarifying or rewording?" -> "Modify existing wording" [label="yes"];
+    "Fixable by clarifying or rewording?" -> "Would adding create redundancy or conflict?" [label="no"];
+    "Would adding create redundancy or conflict?" -> "Consolidate or remove conflicting content first" [label="yes"];
+    "Consolidate or remove conflicting content first" -> "All three add-conditions met?";
+    "Would adding create redundancy or conflict?" -> "All three add-conditions met?" [label="no"];
+    "All three add-conditions met?" -> "Add — orthogonal, via progressive disclosure" [label="yes"];
+    "All three add-conditions met?" -> "Do not add" [label="no"];
+}
+```
 
-**Only add new content when ALL conditions are met:**
-- The capability genuinely doesn't exist in current instructions
-- Existing content cannot reasonably be extended to cover the case
-- The addition addresses a distinct, orthogonal concern
+Walk the checks in order; each resolves to a correct-over-add outcome the diagram pins.
+
+- **Existing content addresses this incorrectly?** Undesired behavior usually traces to a wrong instruction, not a missing one — correct that instruction.
+- **Fixable by clarifying or rewording?** A vague or ambiguous instruction is modified in place, not supplemented.
+- **Would adding create redundancy or conflict?** Consolidate or remove the conflicting guidance first.
+
+Add new content only when **all three** hold: the capability genuinely doesn't exist, existing content cannot reasonably be extended, and the addition is a distinct, orthogonal concern. Otherwise, do not add.
 
 ## When Addition is Warranted
 
 If adding is truly necessary:
-- Consider **progressive disclosure** - move detailed content to `references/`
-- Consider **agent delegation** - split responsibilities into focused agents
-- Keep additions **orthogonal** - distinct from existing content
+- Consider **progressive disclosure** — move detailed content to `references/`
+- Consider **agent delegation** — split responsibilities into focused agents
+- Keep additions **orthogonal** — distinct from existing content
 
-Balance is key—additions are appropriate when they fill genuine gaps.
+Balance is key — additions are appropriate when they fill genuine gaps.

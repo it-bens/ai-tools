@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.6.0] - 2026-08-03
+
+Plugin hygiene plus a progressive-disclosure refactor of `prompt-engineering`: added workflow digraphs to the three skills that lacked one; aligned the `allowed-tools` frontmatter with what the field actually does (verified against the official skills docs at `code.claude.com/docs/en/skills`) and corrected the docs that mislabeled it; and reorganized the skill so each reference loads at its point of use, slimming SKILL.md from 517 to 349 lines and splitting the two largest reference files into per-section files.
+
+### Added
+
+- Workflow digraphs (Graphviz `dot`) to the three skills that lacked one: `prompt-engineering` (recognition / refinement / phase / target-model routing), `rule-file-writing` (Create-vs-Optimize routing and the two-pass loop pinned by a "no third pass" terminal), and `content-editing` (the correct-over-add decision gate). `writing-handoff-prompts` and `writing-session-feedback` already had one.
+- Per-section reference files for on-demand loading: `references/techniques/` (nine technique files plus an index, from the former `techniques-detailed.md`) and `references/prompt-patterns/` (fifteen pattern files plus an index, from the former `prompt-patterns.md`). Citations point to the specific file so only the needed section loads.
+
+### Changed
+
+- `allowed-tools` now reflects that it pre-approves rather than restricts tools: removed it from `prompt-engineering` and `rule-file-writing`, and narrowed `writing-handoff-prompts` / `writing-session-feedback` to `Skill(llm-author:prompt-engineering)` alone. Every tool stays callable; unlisted tools are simply prompted for.
+- Repository `README.md` and `AGENTS.md` — corrected the claim that `allowed-tools` "restricts tool access"; it pre-approves the listed tools for the invoking turn and does not restrict which tools are available (`disallowed-tools` is the removal field).
+- `prompt-engineering` SKILL.md slimmed from 517 to 349 lines: the GLM 4.7, Gemini 3, and Claude 4 adaptation sections reduced to compact triggers plus pointers (full detail already lives in their guides); references named at their point of use, with `examples/system-prompt-template.md`, `examples/prompt-chain-template.md`, and `examples/optimization-report.md` wired into the phases that use them; and the redundant bottom "Additional Resources" list removed.
+- Repointed technique and pattern citations from section anchors in the old monolith files to the new per-section files.
+- Synchronized every included skill to plugin version `3.6.0`.
+
+### Removed
+
+- `references/techniques-detailed.md` and `references/prompt-patterns.md` — replaced by the per-section directories above.
+
 ## [3.5.0] - 2026-08-03
 
 Added Claude 5 (Opus 5, Sonnet 5, Fable 5) support to the `prompt-engineering` skill and made Claude 5 the default target generation, with Claude 4 retained as a selectable path. Claude 5 shifts prompting from constraint toward judgment: the `effort` parameter and adaptive thinking replace manual thinking budgets and sampling parameters; assistant prefill, `budget_tokens`, and non-default `temperature`/`top_p`/`top_k` now return a 400 error; and the models self-verify, self-correct, and delegate to subagents more readily, so carried-over verification and aggressive tool-triggering prompts are removed rather than rewritten. Sourced from Anthropic's official prompting docs for Opus 5, Sonnet 5, and Fable 5, the prompting best-practices page, the model migration guide (`/docs/en/about-claude/models/migration-guide`), and the "new rules of context engineering for Claude 5 generation models" post on claude.com; verbatim copies are archived under `docs/`.

@@ -1,6 +1,6 @@
 {
   "name": "llm-author",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "Author and refine LLM-targeted prompts, skills, rule files, session handoffs, and session feedback.",
   "author": {
     "name": "Martin Bens",

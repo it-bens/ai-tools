@@ -53,7 +53,7 @@ Plugins may support Claude Code, Codex, or both. Claim support only when the plu
 
 ## Claude Web Compatibility
 
-Skills use `allowed-tools` in frontmatter to restrict tool access in Claude Code. This field does not work in Claude Web.
+Skills use `allowed-tools` in frontmatter to pre-approve tools in Claude Code — it auto-approves the listed tools for the invoking turn so Claude is not prompted, and does **not** restrict which tools are available (`disallowed-tools` is the field that removes tools). This field does not work in Claude Web.
 
 To create Claude Web-compatible ZIPs that strip `allowed-tools`:
 
