@@ -1,7 +1,5 @@
 # Documentation Generation Pattern
 
-For creating technical documentation.
-
 ```markdown
 # Documentation Request
 

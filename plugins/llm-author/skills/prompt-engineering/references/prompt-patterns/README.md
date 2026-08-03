@@ -1,7 +1,5 @@
 # Prompt Patterns
 
-Index of reusable prompt patterns. Each entry links to a file containing that pattern's full template.
-
 ## Analysis Patterns
 
 - [Structured Analysis Pattern](structured-analysis.md)

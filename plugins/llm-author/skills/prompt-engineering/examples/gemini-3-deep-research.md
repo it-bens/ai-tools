@@ -1,19 +1,5 @@
 # Gemini Deep Research Prompt Examples
 
-## Purpose
-
-Ready-to-adapt templates for Gemini Deep Research prompts across common research types.
-
-## Best Used For
-
-- Creating prompts for Gemini's autonomous Deep Research feature
-- Academic literature reviews with proper citations
-- Market and industry analysis requiring multi-source synthesis
-- Technical comparisons with empirical data
-- Any research task requiring extended autonomous investigation
-
----
-
 ## Example 1: Academic Literature Review
 
 ### Weak Prompt (produces unfocused, hallucination-prone output)

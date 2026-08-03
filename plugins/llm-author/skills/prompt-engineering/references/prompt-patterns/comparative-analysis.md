@@ -1,7 +1,5 @@
 # Comparative Analysis Pattern
 
-For comparing options, approaches, or alternatives.
-
 ```markdown
 # Comparative Analysis
 

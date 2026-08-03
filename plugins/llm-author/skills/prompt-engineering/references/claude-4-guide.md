@@ -1,7 +1,5 @@
 # Claude 4 Prompt Engineering Guide
 
-Specific optimizations and best practices for Claude 4 models (Opus 4, Sonnet 4, Haiku 4).
-
 ## Table of Contents
 
 - [Key Differences from Previous Models](#key-differences-from-previous-models)

@@ -1,13 +1,5 @@
 # System Prompt Template
 
-## Purpose
-Production-ready system prompt structure for Claude projects (Claude Web, Desktop, or API).
-
-## Best Used For
-- Creating new Claude projects or custom assistants
-- Defining task scope, working style, and output standards
-- Setting up domain-specific context
-
 ## Prompt
 
 ```markdown

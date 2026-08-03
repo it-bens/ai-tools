@@ -1,17 +1,5 @@
 # GLM 4.7 Prompt Adaptation Examples
 
-## Purpose
-
-Before/after examples showing how to transform Claude 4 prompts for GLM 4.7 (Z.ai) to achieve reasoning and response parity.
-
-## Best Used For
-
-- Converting existing Claude prompts to work with GLM 4.7
-- Understanding GLM 4.7's instruction processing differences
-- Building new prompts optimized for GLM 4.7
-
----
-
 ## Example 1: TDD Enforcement Agent
 
 ### Claude 4 Prompt (produces generic responses on GLM 4.7)
@@ -207,7 +195,7 @@ ALWAYS respond in English. Reason in English.
 
 ## Example 5: Decision Prompt - TDD Guard
 
-This example shows adaptation for a **decision-making prompt** where the model must evaluate rules and make allow/block decisions. Standard techniques alone caused over-blocking; additional patterns were required.
+This **decision-making prompt** must evaluate rules and make allow/block decisions. Standard techniques alone caused over-blocking; additional patterns were required.
 
 ### Claude 4 Prompt
 

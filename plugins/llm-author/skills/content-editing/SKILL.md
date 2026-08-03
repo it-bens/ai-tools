@@ -1,6 +1,6 @@
 ---
 name: content-editing
-version: 3.7.0
+version: 3.8.0
 description: Evaluates proposed changes to LLM-targeted content (skills, agents, commands) and guides toward corrections over additions. MUST invoke when editing SKILL.md files, modifying agent markdown in agents/, updating command markdown in commands/, adding new sections or instructions, expanding skill content, user says "is this too long", "content bloat", "should I add this", or improving/enhancing skills.
 ---
 
@@ -10,7 +10,7 @@ Enforce the principle: **prefer correcting existing content over adding new inst
 
 ## Core Principle
 
-Undesired behavior stems from **incorrect** information, not missing information. Adding more instructions increases complexity without addressing root causes. Shorter is better.
+Undesired behavior stems from **incorrect** information, not missing information. Shorter is better.
 
 ## Decision Framework
 
@@ -40,7 +40,7 @@ digraph content_editing {
 }
 ```
 
-Walk the checks in order; each resolves to a correct-over-add outcome the diagram pins.
+Walk the checks in order.
 
 - **Existing content addresses this incorrectly?** Undesired behavior usually traces to a wrong instruction, not a missing one — correct that instruction.
 - **Fixable by clarifying or rewording?** A vague or ambiguous instruction is modified in place, not supplemented.
@@ -55,4 +55,4 @@ If adding is truly necessary:
 - Consider **agent delegation** — split responsibilities into focused agents
 - Keep additions **orthogonal** — distinct from existing content
 
-Balance is key — additions are appropriate when they fill genuine gaps.
+Additions are appropriate when they fill genuine gaps.

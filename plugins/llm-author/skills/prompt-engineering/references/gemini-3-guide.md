@@ -1,7 +1,5 @@
 # Gemini 3 Prompt Adaptation Guide
 
-Techniques for adapting Claude 4 prompts to achieve quality parity on Gemini 3 models.
-
 ## Table of Contents
 
 - [Core Differences: Claude 4 vs Gemini 3](#core-differences-claude-4-vs-gemini-3)

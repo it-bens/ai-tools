@@ -1,7 +1,5 @@
 # Code Generation Pattern
 
-For generating production-quality code.
-
 ```markdown
 # Code Generation Request
 

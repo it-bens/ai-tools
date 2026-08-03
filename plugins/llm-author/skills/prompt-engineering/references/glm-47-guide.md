@@ -1,7 +1,5 @@
 # GLM 4.7 Prompt Adaptation Guide
 
-Techniques for adapting Claude 4 prompts to achieve reasoning and response parity on GLM 4.7 (Z.ai).
-
 ## Table of Contents
 
 - [Core Differences: Claude 4 vs GLM 4.7](#core-differences-claude-4-vs-glm-47)

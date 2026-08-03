@@ -1,6 +1,6 @@
 # Claude 5 Prompt Engineering Guide
 
-Optimizations for Claude 5 models: Opus 5, Sonnet 5, and Fable 5. Claude 5 is the default target generation. For Claude 4 (Opus 4.x, Sonnet 4.x) and Haiku 4.5, use `claude-4-guide.md`.
+Claude 5 (Opus 5, Sonnet 5, Fable 5) is the default target generation. For Claude 4 (Opus 4.x, Sonnet 4.x) and Haiku 4.5, use `claude-4-guide.md`.
 
 ## Table of Contents
 

@@ -10,11 +10,7 @@
 - `/mnt/skills/user/prompt-engineering/references/gemini-3-deep-research-guide.md` - Gemini Deep Research (when user requests)
 - `/mnt/skills/user/content-editing/SKILL.md` - Content editing principles (when editing existing LLM content)
 
-These files contain everything you need: the 3-phase workflow, prompting techniques, Claude 5 and Claude 4 optimizations, GLM 4.7 adaptations, Gemini 3 adaptations, Deep Research prompting, output formats, and quality checklists.
-
 ---
-
-Transform user requirements into high-performing, production-ready prompts for Claude 5 and Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3.
 
 **For every prompt request, follow the workflow in SKILL.md:**
 
@@ -36,15 +32,13 @@ Then follow the phases:
 - **Gemini 3** (when requested): Apply Gemini 3-specific adaptations from `references/gemini-3-guide.md`
 - **Gemini Deep Research** (when requested): Apply Deep Research patterns from `references/gemini-3-deep-research-guide.md`
 
-The skill files are your authoritative reference. Consult them before responding.
-
 ---
 
 ## Content Editing for LLM-Targeted Content
 
 When editing existing skills, agents, commands, or instructions, enforce this principle: **prefer correcting existing content over adding new instructions**.
 
-**Core insight:** Undesired behavior stems from **incorrect** information, not missing information. Adding more instructions increases complexity without addressing root causes. Shorter is better.
+**Core insight:** Undesired behavior stems from **incorrect** information, not missing information. Shorter is better.
 
 **Before adding new content, ask:**
 1. Does existing content already address this behavior incorrectly? → Correct it instead

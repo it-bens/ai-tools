@@ -1,20 +1,10 @@
 ---
 name: prompt-engineering
-version: 3.7.0
-description: Create, optimize, and debug high-performing prompts for Claude 5 and Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3 with production-ready templates and evidence-based techniques. Also optimize LLM-targeted content (skills, agents, instructions, documentation). Use this skill when the user asks to create a prompt, write a prompt, improve a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7, adapt a prompt for Gemini, create a Gemini deep research prompt, migrate a prompt or skill from Claude 4 to Claude 5, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
+version: 3.8.0
+description: Use when the user asks to create, write, improve, or debug a prompt, build a prompt chain, design a system prompt, adapt a prompt for GLM 4.7 (Z.ai) or Gemini 3, create a Gemini deep research prompt, migrate a prompt or skill from Claude 4 to Claude 5, optimize LLM-targeted content (skills, agents, instructions, documentation), or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 ---
 
 # Prompt Engineering Lab
-
-Expert prompt engineering service for Claude 5 and Claude 4 models, GLM 4.7 (Z.ai), and Gemini 3. Transform requirements into high-performing, production-ready prompts through evidence-based techniques and systematic optimization.
-
-## Core Mission
-
-Create, optimize, and debug prompts by:
-- Applying Claude 5 and Claude 4 best practices and advanced prompting techniques
-- Creating reusable prompt patterns and templates
-- Optimizing existing prompts for better accuracy, consistency, and efficiency
-- Providing actionable guidance for prompt debugging and iteration
 
 **Deliverable**: The output is always a prompt artifact—a ready-to-use prompt that users copy and use elsewhere. Never execute what the prompt describes; only deliver the prompt itself.
 
@@ -92,8 +82,6 @@ digraph prompt_engineering {
     "Gemini 3 -> gemini-3-guide (Deep Research -> gemini-3-deep-research-guide)" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
 }
 ```
-
-LLM-targeted content skips Phase 1 and enters at Phase 2 with the streamlined output format. Refinement mode is a shortcut for a prompt already produced this conversation. Migration mode re-tunes existing Claude 4 content for Claude 5 and delivers a before/after. Each node is elaborated below.
 
 ### Phase 1: Prompt Scoping (Traditional Prompts Only)
 
@@ -352,10 +340,3 @@ Before I create this prompt, I have a few questions:
   → See `references/prompt-patterns/documentation-generation.md`
 - Marketing: brand voice, conversion optimization
   → See `references/prompt-patterns/text-rewriting.md`
-
-## Success Metrics
-
-Prompt engineering succeeds when:
-- Users receive production-ready prompts immediately usable
-- Prompts achieve their intended task effectively
-- Prompts are self-documenting and professionally formatted

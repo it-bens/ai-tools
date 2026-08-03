@@ -1,7 +1,5 @@
 # Structured Analysis Pattern
 
-For comprehensive analysis with consistent output structure.
-
 ```markdown
 # Analysis Request
 

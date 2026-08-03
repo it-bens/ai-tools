@@ -1,7 +1,5 @@
 # Code Review Pattern
 
-For systematic code analysis.
-
 ```markdown
 # Code Review Request
 

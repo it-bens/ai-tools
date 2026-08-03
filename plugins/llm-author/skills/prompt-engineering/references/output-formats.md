@@ -1,7 +1,5 @@
 # Output Formats
 
-Templates for delivering prompts based on type and target.
-
 ## Contents
 
 1. [Traditional Prompts](#1-traditional-prompts)

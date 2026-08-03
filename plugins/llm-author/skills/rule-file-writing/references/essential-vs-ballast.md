@@ -1,6 +1,6 @@
 # Essential vs Ballast (Pass 1 Reference)
 
-Loaded before Pass 1 of the rules-file optimization loop. The unit of analysis is a single paragraph or bullet.
+The unit of analysis is a single paragraph or bullet.
 
 ## The Per-Paragraph Decision Test
 

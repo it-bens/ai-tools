@@ -1,7 +1,5 @@
 # Document Review Pattern
 
-For reviewing written content.
-
 ```markdown
 # Document Review
 

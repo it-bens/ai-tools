@@ -1,17 +1,5 @@
 # Gemini 3 Prompt Adaptation Examples
 
-## Purpose
-
-Before/after examples showing how to transform Claude 4 prompts for Gemini 3 to achieve quality parity.
-
-## Best Used For
-
-- Converting existing Claude prompts to work with Gemini 3
-- Understanding Gemini 3's instruction processing differences
-- Building new prompts optimized for Gemini 3
-
----
-
 ## Example 1: Code Review Assistant
 
 ### Claude 4 Prompt (produces terse output on Gemini 3)

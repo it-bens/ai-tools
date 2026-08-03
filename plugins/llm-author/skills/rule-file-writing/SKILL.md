@@ -1,6 +1,6 @@
 ---
 name: rule-file-writing
-version: 3.7.0
+version: 3.8.0
 description: Use when creating or optimizing a rule file for per-token behavioral steering. Rule files are instruction files that an AI coding assistant automatically loads for a matching user, project, or directory scope; they are NOT skills, agents, or commands. Trigger on "write a rule about X", "create a rules file", "optimize this rules file", "cut ballast from this rule file", or any request to author or refine an auto-loaded file whose purpose is persistent behavioral steering.
 ---
 
@@ -42,8 +42,6 @@ digraph rule_file_writing {
     "Report trajectory: original -> Pass 1 -> Pass 2" -> "Stop — no third pass";
 }
 ```
-
-Create flows into Optimize: draft, present, then run the two fixed passes. Mode detection, per-step substance, and the honest-reporting rule are elaborated below.
 
 ## Mode Detection
 

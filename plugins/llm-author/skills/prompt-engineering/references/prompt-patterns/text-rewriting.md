@@ -1,7 +1,5 @@
 # Text Rewriting Pattern
 
-For adapting content for different contexts.
-
 ```markdown
 # Content Adaptation
 

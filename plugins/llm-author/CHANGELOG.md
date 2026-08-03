@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.8.0] - 2026-08-03
+
+Removed self-description and self-justification prose across every skill. A reference or example file becomes inlined content the moment its skill loads it, so a heading or subtitle that describes the file — a `## Purpose` block, a "what this guide covers" subtitle, a "Loaded before Pass N" note — is ballast that adds nothing the loaded content does not already show, and it pushes the executable instructions further from the model's attention. This release cuts that prose and keeps the imperative instructions, the substantive reference content, and the deliverable templates.
+
+### Changed
+
+- `skills/prompt-engineering/SKILL.md` — frontmatter description reduced to trigger-only (dropped the capability-summary preamble that overrides the workflow digraph); removed the "Expert prompt engineering service…" mission blurb, the `## Core Mission` capabilities list, the post-digraph workflow-summary paragraph, and the `## Success Metrics` section, leaving the `**Deliverable**` constraint and the imperative phases
+- `skills/content-editing/SKILL.md` — cut the "adding more instructions increases complexity" design-justification and the "Balance is key" platitude; trimmed the post-digraph narration to "Walk the checks in order."
+- `skills/rule-file-writing/SKILL.md` — removed the post-digraph workflow-summary line; its three references (`essential-vs-ballast.md`, `techniques.md`, `three-angle-pattern.md`) dropped their "Loaded before Pass N" timing narration for a direct opening statement
+- `skills/writing-handoff-prompts/SKILL.md` — removed the "a fresh session with a complete handoff outperforms a stale one" design-justification
+- `skills/prompt-engineering/references/` — removed the descriptor subtitle under the H1 of `claude-4-guide.md`, `gemini-3-guide.md`, `glm-47-guide.md`, `output-formats.md`, and `prompt-patterns/README.md`; rewrote the `claude-5-guide.md` and `gemini-3-deep-research-guide.md` openers to keep their routing/definition and drop the self-description framing; removed the "For X" one-line descriptor from the ten prompt-pattern template files
+- `skills/prompt-engineering/examples/` — removed the `## Purpose` and `## Best Used For` framing blocks from all seven example files, and restated the mid-file Example 5 intro in `glm-47-adaptation.md` as the scenario itself
+- `project/system-prompt.md` — same cleanup for the Claude Web project prompt: removed the "these files contain everything you need" file-list summary, the "transform requirements into high-performing…" mission blurb, the "authoritative reference — consult them before responding" restatement, and the "adding more instructions increases complexity" design-justification
+- Synchronized every included skill to plugin version `3.8.0`
+
 ## [3.7.0] - 2026-08-03
 
 Added a first-class Claude 4 → Claude 5 migration path to `prompt-engineering`, mirroring the GLM and Gemini adaptation treatment: a named workflow branch, a before/after output format, and a worked example. Existing Claude 4 content that targets Claude 5 was previously reachable only through the generic "optimize LLM-targeted content" path; migration is now its own mode that diagnoses and removes carried-over Claude 4 scaffolding and delivers a reviewable before/after.

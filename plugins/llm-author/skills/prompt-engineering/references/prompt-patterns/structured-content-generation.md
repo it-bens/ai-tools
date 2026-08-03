@@ -1,7 +1,5 @@
 # Structured Content Generation Pattern
 
-For creating content with specific format requirements.
-
 ```markdown
 # Content Generation Request
 

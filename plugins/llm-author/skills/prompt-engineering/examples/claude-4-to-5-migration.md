@@ -1,17 +1,5 @@
 # Claude 4 → Claude 5 Migration Examples
 
-## Purpose
-
-Before/after examples showing how to re-tune existing Claude 4 prompts and LLM-targeted content for Claude 5. Claude 5 exercises more judgment and self-verifies, so scaffolding that helped Claude 4 now over-steers — the migration removes it rather than adding to it.
-
-## Best Used For
-
-- Updating a Claude 4 prompt, skill, agent, or rules file to run well on Claude 5
-- Understanding which Claude 4 patterns over-steer Claude 5
-- Producing a documented before/after so each change is reviewable
-
----
-
 ## Example 1: Coding Assistant System Prompt
 
 ### Before (Claude 4)

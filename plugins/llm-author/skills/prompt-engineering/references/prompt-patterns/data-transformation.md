@@ -1,7 +1,5 @@
 # Data Transformation Pattern
 
-For converting data between formats.
-
 ```markdown
 # Data Transformation
 

@@ -1,16 +1,5 @@
 # Prompt Optimization Report Template
 
-## Purpose
-Document prompt improvements with clear before/after comparisons and rationale.
-
-## Best Used For
-- Tracking prompt iteration history
-- Documenting optimization decisions
-- Creating reproducible prompt improvement processes
-- Sharing prompt engineering learnings
-
----
-
 ## Report Structure
 
 # Prompt Optimization Report

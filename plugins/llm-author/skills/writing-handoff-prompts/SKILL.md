@@ -1,6 +1,6 @@
 ---
 name: writing-handoff-prompts
-version: 3.7.0
+version: 3.8.0
 description: Use when the user explicitly asks to write a handoff prompt for a fresh, new, separate, or other session — for example to start a spec's implementation, apply review or report fixes, turn review findings into a change proposal, or continue work — in a session that will have none of this session's context. Invoke only on such an explicit request, never proactively. Produces a self-contained handoff prompt (every needed fact stated inline or reachable by an explicit file reference; the work type, branch, commit and verification policy, and scope deduced from context), then offers to save it to a file or copy it to the clipboard.
 model: sonnet
 user-invocable: false
@@ -9,7 +9,7 @@ allowed-tools: Skill(llm-author:prompt-engineering)
 
 # Writing Handoff Prompts
 
-The receiving session starts with **zero context**: everything it needs must be in the prompt or in a file the prompt names. Hand off *state, not a transcript* — the operational facts the next session acts on, not the conversation that produced them. A fresh session with a complete handoff outperforms a stale one. Work from this session's context alone — do not open new files or search for more. Craft the prompt with the `llm-author:prompt-engineering` skill, scale its detail to the size of the work, then offer to deliver it.
+The receiving session starts with **zero context**: everything it needs must be in the prompt or in a file the prompt names. Hand off *state, not a transcript* — the operational facts the next session acts on, not the conversation that produced them. Work from this session's context alone — do not open new files or search for more. Craft the prompt with the `llm-author:prompt-engineering` skill, scale its detail to the size of the work, then offer to deliver it.
 
 ```dot
 digraph handoff {

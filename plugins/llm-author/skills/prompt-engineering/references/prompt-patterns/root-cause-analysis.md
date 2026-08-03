@@ -1,7 +1,5 @@
 # Root Cause Analysis Pattern
 
-For debugging and troubleshooting.
-
 ```markdown
 # Root Cause Analysis
 

@@ -1,6 +1,6 @@
 # Gemini Deep Research Prompt Guide
 
-Specialized prompting for Gemini's Deep Research feature—an agentic AI that autonomously conducts multi-step research over extended periods (5-60 minutes).
+Gemini Deep Research is an agentic AI that autonomously conducts multi-step research over extended periods (5-60 minutes).
 
 ## When This Guide Applies
 

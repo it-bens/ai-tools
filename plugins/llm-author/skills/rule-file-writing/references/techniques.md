@@ -1,6 +1,6 @@
 # Specific Techniques (Pass 2 Reference)
 
-Loaded before Pass 2 of the optimization loop. Each technique is a short named block Pass 2 can scan against when checking structural alignment with the family pattern.
+Each technique is a short named block to scan against when checking structural alignment with the family pattern.
 
 ## 1. Front-Load the Decision Gate
 

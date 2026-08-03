@@ -1,6 +1,6 @@
 # Three-Angle Pattern (Pass 2 Reference)
 
-Loaded before Pass 2. Describes how a rule can be represented three different ways and why that redundancy is load-bearing, not ballast.
+A rule can be represented three ways; the redundancy is load-bearing, not ballast.
 
 ## The Three Angles
 

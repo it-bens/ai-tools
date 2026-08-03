@@ -1,14 +1,5 @@
 # Prompt Chain Template
 
-## Purpose
-Multi-step workflow template for complex tasks requiring sequential processing.
-
-## Best Used For
-- Research-to-report workflows
-- Content creation pipelines
-- Analysis and recommendation processes
-- Any task where output from one step feeds the next
-
 ## Chain Overview
 
 ### Step 1: [PHASE NAME - e.g., "Research"]
