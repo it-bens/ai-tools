@@ -1,6 +1,6 @@
 # Worker prompts
 
-Every dispatched worker gets these blocks, whatever runs it. A codex worker and a subagent carrying the same scope get the same prompt, and a codex-less run keeps every block. Codex invocation mechanics live in `codex-dispatch.md`; nothing here is codex-specific.
+Every dispatched worker gets these blocks, whatever runs it. A codex worker and a subagent carrying the same scope get the same blocks and the same content; only the phrasing adapts to the model family the actor belongs to, per the ruleset derived for this task. A codex-less run keeps every block. Codex invocation mechanics live in `codex-dispatch.md`; nothing here is codex-specific.
 
 Every prompt is fully self-contained. A worker has no session context and must need none.
 

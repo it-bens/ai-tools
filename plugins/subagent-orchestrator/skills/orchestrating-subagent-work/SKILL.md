@@ -1,6 +1,7 @@
 ---
 name: orchestrating-subagent-work
-version: 3.0.0
+version: 3.1.0
+allowed-tools: Skill(llm-author:prompt-engineering)
 description: Use when implementation or review work will run through dispatched workers, before the first codex dispatch or subagent spawn. Takes the task plus the project's gates and fences; returns a stated strategy, the dispatched work, and per-item results each carrying its confirmation status. Routes every checkpoint to a codex tier or to a named agent definition that carries its model and reasoning effort, fences every worker write, and confirms every load-bearing result with a second independent worker. Does not dispatch before the strategy is stated, run without codex unless consent is on record in the conversation, or let a single-source result stand as final.
 ---
 
@@ -38,6 +39,7 @@ digraph orchestrating_subagent_work {
     "User consents to codex-less run?" [shape=diamond];
     "HALT: blocked on codex" [shape=octagon, style=filled, fillcolor=red];
     "Build task strategy in conversation" [shape=box];
+    "Derive worker-prompt rules for the assigned families" [shape=box];
     "Execute next strategy step" [shape=box];
     "Deviation or unforeseen problem?" [shape=diamond];
     "Adapt strategy and announce the delta" [shape=box];
@@ -58,7 +60,8 @@ digraph orchestrating_subagent_work {
     "Ask user: proceed without codex, or halt?" -> "User consents to codex-less run?";
     "User consents to codex-less run?" -> "Build task strategy in conversation" [label="yes"];
     "User consents to codex-less run?" -> "HALT: blocked on codex" [label="no"];
-    "Build task strategy in conversation" -> "Execute next strategy step";
+    "Build task strategy in conversation" -> "Derive worker-prompt rules for the assigned families";
+    "Derive worker-prompt rules for the assigned families" -> "Execute next strategy step";
     "Execute next strategy step" -> "Deviation or unforeseen problem?";
     "Deviation or unforeseen problem?" -> "All checkpoints closed?" [label="no"];
     "Deviation or unforeseen problem?" -> "Adapt strategy and announce the delta" [label="yes"];
@@ -106,11 +109,29 @@ Consult `routing.codex_bias` (unset = session decides per the table) when assign
 
 Dispatch immediately after stating the strategy; do not wait for approval or acknowledgement. The first arrival at this node always produces the full strategy message — including when it was reached through the consent gate. Only on re-entry after a mid-task adaptation does the announced delta serve as the strategy amendment; update the affected checkpoints and do not restate the rest.
 
+### Derive worker-prompt rules for the assigned families
+
+Invoke `llm-author:prompt-engineering` in Ruleset mode once, after the strategy has named its actors. One invocation covers every family the strategy assigned. State all three inputs it resolves so it asks for none:
+
+- The model families in play. `gpt-5.6-sol` / `gpt-5.6-terra` / `gpt-5.6-luna` are GPT-5.6; sonnet and opus definitions are Claude 5; haiku definitions are treated as the Claude 4 generation, an assumption of this plugin rather than a vendor statement.
+- The dispatch path per family: a CLI process receiving a piped string for codex, a subagent spawn for a claude worker. Neither takes API parameters.
+- The two artifact types to be authored: review prompts and implementer prompts, per `references/worker-prompts.md`.
+
+Require of the ruleset:
+
+- The lever order per family. Claude actors: set the rung first, then adapt wording only where behavior still misses at that rung. GPT-5.6 actors: check the prompt for a missing success criterion, dependency rule, tool-routing rule, or verification loop before raising the rung.
+- Leanness as each instruction stated once with contradictions removed — never as a dropped block.
+- A worker's verification duties are never removed; they come from `references/worker-prompts.md` and the agent definition.
+
+Write the returned ruleset to a non-permanent file outside the repository and state its path in one line. The file is session-scoped: never committed, never placed under a project path, never reused across tasks.
+
 ### Execute next strategy step
 
 Dispatch the current checkpoint's worker per the strategy.
 
 Read `references/worker-prompts.md` before the first dispatch of any checkpoint and build the prompt from it. It governs every worker — codex and subagent alike — and a codex-less run keeps every block; skipping it dispatches implementers with no fence and no gates.
+
+Read the derived ruleset file before building each worker prompt, and phrase the prompt per its rules for the family this checkpoint's actor belongs to. The blocks and their content do not change with the family.
 
 - Codex dispatches: additionally read `references/codex-dispatch.md` for invocation hygiene and the re-validation loop. Codex runs through the CLI only (`codex exec`); never through an MCP transport.
 - Subagent spawns: dispatch the agent definition the routing table names; it carries the model and the reasoning effort. Never set an effort on the spawn itself — to change the rung, dispatch a different definition. Include the honesty and fail-hard directives the worker must follow; workers inherit nothing from the session. The orchestrator stays the sole file writer unless a checkpoint explicitly fences a worker's write scope.

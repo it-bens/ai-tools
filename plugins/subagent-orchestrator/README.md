@@ -25,6 +25,8 @@ The skill is host-specific to Claude Code (it orchestrates Claude subagent spawn
 
 **Restart Claude Code** after installing or updating so the extension-delivery hooks and the agent definitions load.
 
+The `llm-author` plugin is declared as a dependency and auto-installs with this one; its `prompt-engineering` skill supplies the per-family worker-prompt rules.
+
 Codex CLI worker dispatch additionally requires an installed, authenticated `codex` binary. The skill detects its absence and asks for consent before running codex-less.
 
 Without a project extension, the skill runs on universal defaults: gates enumerated from the build configuration at dispatch time, the universal banned-command and conduct-rule lists, and the routing table as shipped.
@@ -40,6 +42,8 @@ Without a project extension, the skill runs on universal defaults: gates enumera
 - `references/model-routing.md` — the checkpoint-to-actor routing table, verification shape, effort ladder, severity-label calibration, and codex-less substitutions
 - `references/worker-prompts.md` — the review and implementer prompt-block protocols every worker receives, how extension content reaches a worker, and the trust boundaries on worker output
 - `references/codex-dispatch.md` — codex invocation hygiene and the `codex exec resume` re-validation loop
+
+Worker-prompt phrasing is not written into the skill. Once the strategy has named its actors, the skill invokes `llm-author:prompt-engineering` in Ruleset mode for the model families in play, writes the returned ruleset to a session-scoped file outside the repository, and re-reads it before building each worker prompt. Every worker still receives the same blocks with the same content; only the wording adapts to the family the checkpoint routes to.
 
 ## Agents
 

@@ -22,6 +22,7 @@ This plugin provides:
 | Re-derive the built-in agent duties after a Claude Code update | `docs/builtin-agent-duty-capture.md` | Capture prompt, boundary marker, exclusion list, per-model check, update mode |
 | Consult the effort evidence behind a rung choice | `docs/claude-effort-mechanism.md` | What binds where, the spawn-argument experiment, haiku's exclusion, per-rung measurements |
 | Modify what any worker receives in its prompt | `skills/orchestrating-subagent-work/references/worker-prompts.md` | Review/implementer blocks, trust boundaries, extension propagation into worker prompts |
+| Change how worker-prompt phrasing is derived per model family | `skills/orchestrating-subagent-work/SKILL.md` §Derive worker-prompt rules for the assigned families | Ruleset-mode invocation of `llm-author:prompt-engineering`, the three stated inputs, the session-scoped ruleset file re-read per dispatch |
 | Modify codex invocation flags or the re-validation loop | `skills/orchestrating-subagent-work/references/codex-dispatch.md` | Invocation hygiene, `exec resume`, codex-less re-validation |
 | Add, rename, or retire a named value or position | `EXTENSION.md` + the file that cites it | The recognized-values table and position table must match the names and inline defaults cited in `SKILL.md` and both references |
 | Document how projects extend the skill | `EXTENSION.md` | File layout, delivery, both mechanisms, the non-extendable surface, reference-like extensions, worked examples |
@@ -32,6 +33,7 @@ This plugin provides:
 ## Maintenance Rules
 
 - Keep provenance (experiment citations, source URLs) out of `SKILL.md` and `references/` — it lives in `docs/` and `CHANGELOG.md`.
+- The worker-prompt ruleset is derived, never authored here. Family-specific prompt wording comes from `llm-author:prompt-engineering` at task time; adding such wording to `SKILL.md` or `references/` duplicates a source that revs independently. What the plugin states is what the ruleset must cover — the lever order per family, leanness as deduplication rather than block removal, and that verification duties survive it.
 - The GPT-5.6 tier names in `references/model-routing.md` are durable tiers that rev independently; when a tier revs, re-validate the routing table against fresh evidence and record the change here and in `docs/`.
 - The skill body stays host-neutral about delivery mechanics and project specifics: project gates, protected paths, and banned command classes are named generically, cite their named values, and are filled in per project by the orchestrator at dispatch time.
 - The extension contract's fence is structural, not prose: the consent nodes, the halt state, and the deviation check carry no position name, and the verification shape and dual-confirmation closure have no named value. A change that gives any of them one removes the guarantee the plugin exists for.

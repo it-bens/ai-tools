@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.1.0] - 2026-08-05
+
+Worker prompts were phrased for one audience and dispatched to three. A codex worker reads everything it will ever know from its dispatch prompt; a claude worker arrives carrying its agent definition, and the two families respond to opposite tuning. So the rules are now derived rather than encoded: a node between the strategy and the first dispatch invokes `llm-author:prompt-engineering` in Ruleset mode for the families the strategy assigned, once per task, and the ruleset is re-read before each prompt is built. Blocks and content are unchanged; only wording adapts.
+
+Three requirements the plugin states itself, because none follows from a prompting guide. The lever order is inverted between families — Claude actors get the rung set first; GPT-5.6 actors get the prompt checked for a missing success criterion, dependency rule, tool-routing rule, or verification loop before the rung rises (`docs/claude-effort-mechanism.md` §Cross-vendor note). Leanness means deduplication, not block removal: OpenAI reports leaner system prompts scoring roughly 10–15% better at 41–66% fewer tokens, directional internal eval runs rather than a benchmark, and this plugin's FENCE-block ablation cut a two-fix implementer run from 405k to 186–192k tokens (`docs/codex-dispatch-experiments.md`). Verification duties survive the ruleset, since the Claude 5 guidance to strip verification scaffolding is scoped to Opus 5.
+
+Mapping haiku definitions to the Claude 4 generation is this repository's judgement, not a citation: Anthropic publishes no Haiku 4.5 prompting page, and its general best-practices page lists the model with no generation carve-out.
+
+### Added
+
+- `skills/orchestrating-subagent-work/SKILL.md` — the `Derive worker-prompt rules for the assigned families` node, in the digraph between `Build task strategy in conversation` and `Execute next strategy step`. It states the families in play, the dispatch path per family (a piped string for codex, a subagent spawn for claude — neither takes API parameters), and the two artifact types the plugin authors, so the skill resolves its three inputs without stopping to ask. The ruleset lands in a non-permanent file outside the repository: never committed, never under a project path, never reused across tasks
+- `allowed-tools: Skill(llm-author:prompt-engineering)` in the skill frontmatter, and `dependencies: ["llm-author"]` in the manifest, matching how `commit-message-writer`, `project-communication`, and `software-writer` declare `human-author`
+
+### Changed
+
+- `skills/orchestrating-subagent-work/SKILL.md` — `Execute next strategy step` reads the ruleset file before building each worker prompt and phrases it for the family the checkpoint's actor belongs to
+- `skills/orchestrating-subagent-work/references/worker-prompts.md` — the opening paragraph no longer claims a codex worker and a subagent get the same prompt. They get the same blocks and the same content; the phrasing adapts, and the ruleset is named as where the adaptation comes from
+
+The derivation node carries no position name and no named value configures it. The position table stays at five entries, the recognized-values table at eleven, and project-specific prompt content still reaches workers through the named values `worker-prompts.md` already cites. Projects with an extension file need no action.
+
 ## [3.0.0] - 2026-08-04
 
 The routing table assigned every claude checkpoint an effort of `—`, because there was no way to give a subagent one. Testing showed why: the Agent tool accepts an `effort` argument and silently discards it. Six sonnet dispatches, three declaring `low` and three declaring `max`, returned byte-identical answers to an eight-problem battery, with the `low` runs averaging *more* tokens (78.1k against 74.4k) and longer wall-clock (241s against 207s); `effort: "banana"` was accepted without complaint; and `CLAUDE_EFFORT` read the session's `xhigh` inside both. Reasoning effort binds in one place only — an agent definition — so the plugin now ships them.
