@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.10.1] - 2026-08-04
+
+Corrected two over-broad behavioral claims and removed one unsourced claim in the Claude 5 guidance. All three were written as properties of the Claude 5 generation; the sources scope them per model, and in one case two models point in opposite directions.
+
+The self-verification claim was the consequential one. Anthropic scopes over-verification to Opus 5 ([prompting Claude Opus 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5), *Task scope and over-verification*), and the cross-model page names Opus 5 as the exception to its own "ask Claude to self-check" advice ([prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)). Fable 5's guide asks for the reverse on long runs — *"Make self-verification explicit in long-run prompts. Separate, fresh-context verifier subagents tend to outperform self-critique"* ([prompting Claude Fable 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5), *Recommended scaffolding changes*). Sonnet 5's guide makes no over-verification claim in either direction. Applied to a long-horizon Fable 5 prompt, the generation-wide instruction deleted exactly the verification that model's own guidance asks for, under an authority that gave the reader no signal to stop.
+
+The guidance is now keyed by model, because that is where the evidence lives. Sonnet 5's silence is stated as silence rather than upgraded into support for adding self-checks.
+
+### Changed
+
+- `references/claude-5-guide.md` — the self-verification section is scoped to Opus 5 and states the other two positions at the decision point: Fable 5 runs the other way on long-horizon work, and Sonnet 5 has no finding either way, so its verification instructions stay as they are
+- `references/claude-5-guide.md` — the Fable 5 per-model section owns the actionable directive (interval self-verification, fresh-context verifier subagents), and distinguishes it from the section's existing long-lived-subagent advice: a subagent that carried the work's context is the wrong one to audit it
+- `references/claude-5-guide.md` — the subagent-delegation claim separates what holds generation-wide (Claude 5 spawns subagents unprompted) from what is model-specific (Opus 5 and Fable 5 delegate more readily than prior models; Sonnet 5's guide never discusses delegation tendency)
+- `references/claude-5-guide.md` — three Quick Reference Template headings name the models they apply to, since the concision, delegation-cap, and constrain-scope snippets are Opus-5-derived and the concision heading contradicted the body's "the generation trends concise; Opus 5 is the exception"
+- `skills/prompt-engineering/SKILL.md` — both mirrored statements (the Claude 5 section and the Claude 4 → Claude 5 migration section) carry the narrowed scope
+- `examples/claude-4-to-5-migration.md` — the two migration-rationale rows, Example 3's target label, and the migration checklist item no longer tell a reader to strip verification regardless of target model
+
+### Removed
+
+- `references/claude-5-guide.md` — the Opus 5 bullet "`effort` matters more here than on any prior Opus". No local or live source states it; the live Opus 5 page instead says to re-run an effort sweep against your own evals, which the guide's effort section already covers
+
 ## [3.10.0] - 2026-08-04
 
 Made `prompt-engineering` usable by a skill that consumes it, rather than only by a person asking for a prompt. Two paths were missing. A consumer whose output goes to a worker process was pulled toward a human-facing wrapper and toward usage and testing sections that a stateless recipient reads as instructions addressed to it, and the "never execute what the prompt describes" clause read as forbidding the consumer's own next step — dispatching the artifact. A consumer that wants the derived prompt-authoring rules for its session, rather than a prompt, had no path at all: every output format produced a prompt, and the workflow digraph had no terminal for a non-prompt artifact.

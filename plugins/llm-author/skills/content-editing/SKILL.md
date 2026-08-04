@@ -1,6 +1,6 @@
 ---
 name: content-editing
-version: 3.10.0
+version: 3.10.1
 description: Evaluates proposed changes to LLM-targeted content (skills, agents, commands) and guides toward corrections over additions. MUST invoke when editing SKILL.md files, modifying agent markdown in agents/, updating command markdown in commands/, adding new sections or instructions, expanding skill content, user says "is this too long", "content bloat", "should I add this", or improving/enhancing skills.
 ---
 

@@ -66,13 +66,15 @@ Positive concision examples steer better than "don't be verbose."
 
 Claude 5 does not silently generalize an instruction from one item to the rest, and does not infer unrequested work. State scope explicitly: "Apply this to every section, not just the first."
 
-### It self-verifies and self-corrects — remove old verification prompts
+### Opus 5 self-verifies and self-corrects — remove old verification prompts there
 
-Carried-over "double-check your answer", "add a final verification step", or "use a subagent to verify" now cause *over*-verification — wasted tokens with no quality gain. Remove them rather than rewriting. For narrow tasks, constrain the scope instead.
+On Opus 5, carried-over "double-check your answer", "add a final verification step", or "use a subagent to verify" cause *over*-verification — wasted tokens with no quality gain. Remove them rather than rewriting. For narrow tasks, constrain the scope instead.
 
-### It delegates to subagents more readily
+This does not generalize across the generation. Fable 5 runs the other way on long-horizon work — verification stays explicit there, with fresh-context verifier subagents (see its section). Sonnet 5 has no finding in either direction, so leave its verification instructions as they are rather than stripping them.
 
-All Claude 5 models delegate more readily and do so proactively — give explicit delegation criteria rather than leaving it implicit. For cost-sensitive Opus 5 work, cap spawn counts (Fable 5 is the exception — it is built for heavy parallel delegation; see its section):
+### It delegates to subagents natively
+
+Claude 5 models recognize when work is worth delegating and spawn subagents without being told to — give explicit delegation criteria rather than leaving it implicit. Opus 5 and Fable 5 go further and delegate *more readily than prior models* (Sonnet 5 has no such finding). For cost-sensitive Opus 5 work, cap spawn counts (Fable 5 is the exception — it is built for heavy parallel delegation; see its section):
 
 ```
 Delegate to a subagent only for large tasks that are genuinely independent and
@@ -100,7 +102,6 @@ Claude 5 gives good interim updates on its own. Delete "summarize progress every
 - Verifies and self-corrects unprompted — remove verification and double-check instructions.
 - Delegates to subagents readily — cap delegation.
 - With thinking disabled it can leak tool calls as plain text or internal XML tags into the output. Prefer keeping thinking on at `low` effort over disabling it. Do not add rules telling it "not to think" (that increases tag leakage), and do not name thinking tags specifically.
-- `effort` matters more here than on any prior Opus — experiment with it actively when you upgrade.
 
 ### Sonnet 5 — balanced coding and agentic work
 
@@ -116,7 +117,8 @@ Claude 5 gives good interim updates on its own. Delete "summarize progress every
 - The most capable tier, built for multiday, goal-directed autonomous runs and problems that were previously too complex or long-running. Start tasks at the top of your difficulty range.
 - Adaptive thinking is always on and cannot be disabled.
 - Turns can run for many minutes at higher effort, and autonomous runs can extend for hours. Use async patterns (streaming, scheduled check-ins) and generous client timeouts rather than blocking.
-- Dispatches parallel subagents reliably — delegate freely with explicit guidance; prefer asynchronous orchestrator-to-subagent communication over blocking, and use long-lived subagents that retain context across subtasks to save time and cost.
+- Dispatches parallel subagents reliably — delegate freely with explicit guidance; prefer asynchronous orchestrator-to-subagent communication over blocking. Use long-lived subagents that retain context across subtasks to save time and cost. Verification is the one exception: a subagent that carried the work's context is the wrong one to audit it.
+- Keep self-verification explicit on long-running work — unlike on Opus 5, do not strip it. Instruct it to establish a method for checking its own work at a stated interval as it builds, and to run that check with separate, fresh-context subagents against the specification; those outperform self-critique.
 - Give it a memory system (one lesson per file, with a one-line summary) and a way to surface user-facing content mid-run: a `send_to_user`-style tool paired with an explicit instruction to call it — without that instruction it rarely calls the tool, even when the tool is defined.
 - Do **not** instruct it to echo, transcribe, or explain its internal reasoning as response text — this can trigger a refusal. If you need reasoning visibility, read the summarized `thinking` blocks instead.
 - Ground long-run status reports: "Before reporting progress, audit each claim against a tool result from this session. Report outcomes faithfully: if tests fail, say so with the output; when something is done and verified, state it plainly."
@@ -150,12 +152,12 @@ For Claude 5 targets, cut scaffolding that existed to compensate for weaker inst
 
 ## Quick Reference Templates
 
-### Concision (Claude 5 runs long by default)
+### Concision (Opus 5; Fable 5 at high effort)
 ```
 Provide concise, focused responses. Skip non-essential context, and keep examples minimal.
 ```
 
-### Cap subagent delegation
+### Cap subagent delegation (Opus 5)
 ```
 Delegate to a subagent only for large, genuinely independent, parallelizable tasks. Do not
 delegate work you can finish in a handful of tool calls, and do not use subagents to verify
@@ -168,7 +170,7 @@ Respond directly with the requested format and no preamble.
 ```
 Or use Structured Outputs / `output_config.format`.
 
-### Constrain scope (damps self-verification and scope expansion)
+### Constrain scope (Opus 5 — damps over-verification and scope expansion)
 ```
 Deliver what was asked, at the scope intended. Make routine judgment calls yourself; check in
 only when different readings would lead to materially different work. Don't add verification

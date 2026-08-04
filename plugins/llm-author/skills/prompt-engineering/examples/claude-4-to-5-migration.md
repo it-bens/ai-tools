@@ -31,7 +31,7 @@ API: omit `thinking` (adaptive thinking runs by default); set `effort` (default 
 |--------|--------|
 | Dropped the persona opener | "You are an expert…" adds nothing; the task carries the behavior |
 | Removed `<thinking>` scaffolding and `budget_tokens` | Adaptive thinking is on by default; `budget_tokens` now returns a 400 error — steer with `effort` |
-| Removed "double-check" / "verification step" | Claude 5 self-verifies; carried-over verification causes over-verification |
+| Removed "double-check" / "verification step" | Opus 5 self-verifies; carried-over verification causes over-verification there. Keep it for a Fable 5 long-horizon target, and leave it in place for Sonnet 5 |
 | Softened `CRITICAL: You MUST` | Aggressive triggers over-fire on Claude 5 |
 | Replaced the prefill with "respond directly" | Assistant prefill returns a 400 error on Claude 5 |
 | Reset `temperature` to default | Non-default sampling returns a 400 error |
@@ -83,7 +83,7 @@ After each subagent returns, use another subagent to verify its output.
 CRITICAL: summarize your progress every 3 tool calls so the user can follow along.
 ```
 
-### After (Claude 5)
+### After (Claude 5, target Opus 5)
 
 ```markdown
 Delegate to a subagent only for large tasks that are genuinely independent and
@@ -96,8 +96,8 @@ Keep spawn counts low.
 
 | Change | Reason |
 |--------|--------|
-| "Delegate aggressively" → explicit criteria + cap | Claude 5 already delegates readily; unbounded delegation inflates cost (the cap applies to Opus 5; Fable 5 is built to delegate freely) |
-| Removed subagent-based verification | Claude 5 self-verifies; a verifier subagent is wasted work |
+| "Delegate aggressively" → explicit criteria + cap | Claude 5 already spawns subagents unprompted; unbounded delegation inflates cost (the cap applies to Opus 5; Fable 5 is built to delegate freely) |
+| Removed subagent-based verification | Opus 5 self-verifies, so a verifier subagent is wasted work there. For a Fable 5 long-horizon run, keep it — fresh-context verifier subagents outperform self-critique |
 | Removed forced progress summaries | Claude 5 gives good interim updates on its own |
 
 ---
@@ -108,7 +108,7 @@ When re-tuning Claude 4 content for Claude 5, remove or replace:
 
 - [ ] Persona / "You are …" identity openers → state the task directly
 - [ ] `<thinking>` / `<answer>` scaffolding and `budget_tokens` → adaptive thinking + `effort`
-- [ ] "Double-check" / "add a verification step" / verifier subagents → nothing (self-verifies)
+- [ ] "Double-check" / "add a verification step" / verifier subagents → nothing, when the target is Opus 5 (it self-verifies). Keep them for a Fable 5 long-horizon run; leave them as-is for Sonnet 5
 - [ ] `CRITICAL: You MUST` and stacked absolutes → "Use … when …" and judgment heuristics
 - [ ] Assistant prefill → "respond directly, without preamble" or Structured Outputs
 - [ ] Non-default `temperature` / `top_p` / `top_k` → default sampling; steer tone via the prompt

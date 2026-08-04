@@ -1,6 +1,6 @@
 ---
 name: prompt-engineering
-version: 3.10.0
+version: 3.10.1
 description: Use when the user asks to create, write, improve, or debug a prompt, build a prompt chain, design a system prompt, adapt a prompt for GPT-5.6 (OpenAI), GLM 4.7 (Z.ai), or Gemini 3, create a Gemini deep research prompt, migrate a prompt or skill from Claude 4 to Claude 5 or between GPT-5.x versions, optimize LLM-targeted content (skills, agents, instructions, documentation), author a prompt an invoking workflow dispatches to a worker process, distill prompt-authoring rules into a session-scoped ruleset, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 ---
 
@@ -239,9 +239,9 @@ Claude 5 exercises more judgment and needs less scaffolding. Steer with the `eff
 Provide concise, focused responses. Skip non-essential context, and keep examples minimal.
 ```
 
-**Remove carried-over verification** — Claude 5 self-verifies and self-corrects, so "double-check your answer", "add a verification step", and "use a subagent to verify" cause over-verification. Delete them.
+**Remove carried-over verification on Opus 5** — Opus 5 self-verifies and self-corrects, so "double-check your answer", "add a verification step", and "use a subagent to verify" cause over-verification. Delete them. Do not generalize this: Fable 5 long-horizon runs keep verification explicit with fresh-context verifier subagents, and Sonnet 5 has no finding either way — leave its verification instructions alone (see the guide).
 
-**Guide subagent delegation** — Claude 5 delegates readily; give explicit criteria. Cap spawn counts for cost-sensitive Opus 5 work; Fable 5 is built to delegate freely (see the guide):
+**Guide subagent delegation** — Claude 5 spawns subagents without being told to; give explicit criteria. Opus 5 and Fable 5 delegate more readily than prior models (Sonnet 5 has no such finding). Cap spawn counts for cost-sensitive Opus 5 work; Fable 5 is built to delegate freely (see the guide):
 ```
 Delegate to a subagent only for large, genuinely independent, parallelizable tasks.
 Keep spawn counts low.
@@ -265,7 +265,7 @@ Claude 4 needs "above and beyond" behavior requested explicitly:
 
 ## Claude 4 → Claude 5 Migration (When Requested)
 
-When the user asks to migrate, re-tune, or update existing Claude 4 content — a prompt, skill, agent, or rules file — for Claude 5: diagnose and remove the carried-over Claude 4 scaffolding that now over-steers, rather than rewriting from scratch. Apply the re-tuning moves from the Claude 5 sections above — remove verification scaffolding, soften aggressive triggers, give and cap subagent-delegation criteria, replace the 400-error API parameters (assistant prefill, `budget_tokens`, non-default `temperature`/`top_p`/`top_k`) — plus, for LLM-targeted content, the "less is more" optimization principle.
+When the user asks to migrate, re-tune, or update existing Claude 4 content — a prompt, skill, agent, or rules file — for Claude 5: diagnose and remove the carried-over Claude 4 scaffolding that now over-steers, rather than rewriting from scratch. Apply the re-tuning moves from the Claude 5 sections above — remove verification scaffolding when the target is Opus 5 (Fable 5 long-horizon runs keep it; Sonnet 5 keeps what it has), soften aggressive triggers, give and cap subagent-delegation criteria, replace the 400-error API parameters (assistant prefill, `budget_tokens`, non-default `temperature`/`top_p`/`top_k`) — plus, for LLM-targeted content, the "less is more" optimization principle.
 
 Deliver a before/after so each change and its rationale stay visible: `references/output-formats.md#10-claude-4-to-claude-5-migrations`. Worked transformations: `examples/claude-4-to-5-migration.md`. Full per-model detail and the Claude 4 → 5 migration reference: `references/claude-5-guide.md`.
 
