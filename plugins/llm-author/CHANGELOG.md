@@ -23,7 +23,6 @@ Added OpenAI model support to the `prompt-engineering` skill, with explicit guid
 - Repository `README.md` — llm-author plugin description includes GPT-5.6 (OpenAI)
 - `project/system-prompt.md`, `project/description.txt` — Claude Web project recognizes GPT-5.6 as a requested target
 - `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json` — version `3.9.0`; added the `gpt-5.6` and `openai` keywords; Claude Code manifest description includes GPT-5.6
-- Synchronized every included skill to plugin version `3.9.0`
 
 ## [3.8.0] - 2026-08-03
 
@@ -38,7 +37,6 @@ Removed self-description and self-justification prose across every skill. A refe
 - `skills/prompt-engineering/references/` — removed the descriptor subtitle under the H1 of `claude-4-guide.md`, `gemini-3-guide.md`, `glm-47-guide.md`, `output-formats.md`, and `prompt-patterns/README.md`; rewrote the `claude-5-guide.md` and `gemini-3-deep-research-guide.md` openers to keep their routing/definition and drop the self-description framing; removed the "For X" one-line descriptor from the ten prompt-pattern template files
 - `skills/prompt-engineering/examples/` — removed the `## Purpose` and `## Best Used For` framing blocks from all seven example files, and restated the mid-file Example 5 intro in `glm-47-adaptation.md` as the scenario itself
 - `project/system-prompt.md` — same cleanup for the Claude Web project prompt: removed the "these files contain everything you need" file-list summary, the "transform requirements into high-performing…" mission blurb, the "authoritative reference — consult them before responding" restatement, and the "adding more instructions increases complexity" design-justification
-- Synchronized every included skill to plugin version `3.8.0`
 
 ## [3.7.0] - 2026-08-03
 
@@ -55,7 +53,6 @@ Added a first-class Claude 4 → Claude 5 migration path to `prompt-engineering`
 - `skills/prompt-engineering/SKILL.md` — frontmatter description gained a Claude 4 → 5 migration trigger
 - `README.md` (plugin) — Prompt Engineering triggers, capabilities, and usage examples now include Claude 4 → 5 migration
 - `project/system-prompt.md` — the Claude Web project recognizes the migration prompt type
-- Synchronized every included skill to plugin version `3.7.0`
 
 ## [3.6.0] - 2026-08-03
 
@@ -72,7 +69,6 @@ Plugin hygiene plus a progressive-disclosure refactor of `prompt-engineering`: a
 - Repository `README.md` and `AGENTS.md` — corrected the claim that `allowed-tools` "restricts tool access"; it pre-approves the listed tools for the invoking turn and does not restrict which tools are available (`disallowed-tools` is the removal field).
 - `prompt-engineering` SKILL.md slimmed from 517 to 349 lines: the GLM 4.7, Gemini 3, and Claude 4 adaptation sections reduced to compact triggers plus pointers (full detail already lives in their guides); references named at their point of use, with `examples/system-prompt-template.md`, `examples/prompt-chain-template.md`, and `examples/optimization-report.md` wired into the phases that use them; and the redundant bottom "Additional Resources" list removed.
 - Repointed technique and pattern citations from section anchors in the old monolith files to the new per-section files.
-- Synchronized every included skill to plugin version `3.6.0`.
 
 ### Removed
 
@@ -94,7 +90,6 @@ Added Claude 5 (Opus 5, Sonnet 5, Fable 5) support to the `prompt-engineering` s
 - `project/system-prompt.md`, `project/description.txt` — Claude Web project updated to Claude 5 default with Claude 4 selectable
 - `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json` — version `3.5.0`; added the `claude-5` keyword; Claude Code manifest description now includes Claude 5
 - `README.md` (plugin) and repository `README.md`, and the plugin's `AGENTS.md` — document Claude 5 support and add a file-navigation entry for the new guide
-- Synchronized every included skill to plugin version `3.5.0`
 
 ## [3.4.0] - 2026-07-12
 
@@ -108,7 +103,6 @@ Generalized the plugin's runtime instructions for use by multiple AI coding assi
 
 - Generalized rule-file authoring around the shared rule-file concept and the active assistant's discovery conventions
 - Replaced named tool calls in skill bodies with host-neutral actions while retaining the helpful Claude Code frontmatter
-- Synchronized every included skill to plugin version `3.4.0`
 - Moved shared development guidance to `AGENTS.md`, with `CLAUDE.md` loading it through `@AGENTS.md`
 
 ### Removed
