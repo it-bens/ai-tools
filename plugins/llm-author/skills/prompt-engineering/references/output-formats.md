@@ -14,6 +14,8 @@
 10. [Claude 4 to Claude 5 Migrations](#10-claude-4-to-claude-5-migrations)
 11. [GPT-5.6 Prompts](#11-gpt-56-prompts)
 12. [Claude-to-GPT-5.6 Adaptations](#12-claude-to-gpt-56-adaptations)
+13. [Dispatched Prompts](#13-dispatched-prompts)
+14. [Session-Scoped Rulesets](#14-session-scoped-rulesets)
 
 ---
 
@@ -251,3 +253,42 @@ For converting existing Claude prompts to GPT-5.6:
 - [Change 1]: [Reason]
 - [Change 2]: [Reason]
 ```
+
+---
+
+## 13. Dispatched Prompts
+
+For a prompt whose recipient is a process — an invoking workflow passes it to a worker, subagent, CLI process, or API call, and no person reads it.
+
+Deliver the prompt body alone, in one code block:
+
+- Omit every wrapper section — Purpose, Best Used For, Usage Notes, Testing Guide, Adaptation Notes, Iteration Suggestions. The recipient reads them as instructions addressed to it.
+- Add an API Configuration block only when the dispatch path accepts API parameters. A CLI process receives a string; naming `reasoning.effort` or `text.verbosity` there invents configuration the path cannot apply.
+- Keep the caller's required block names, block order, and output contract verbatim. The caller parses the result.
+- State every fact inline — repo root, branch, commit, paths, exact commands, counts. The recipient holds no session context and cannot ask.
+- Report anything the caller's specification left unresolved alongside the artifact, outside the code block, so the caller fixes it before dispatch. A change report for a refinement or a migration before/after goes there too — inside the artifact the recipient reads it as its own instructions.
+
+---
+
+## 14. Session-Scoped Rulesets
+
+For a distilled set of prompt-authoring rules that the invoking session writes to a non-permanent file and re-reads each time it authors a prompt later in the same session. The consumer is the authoring session itself, so the artifact is derived guidance rather than a prompt.
+
+```markdown
+# Prompt-authoring rules — [target model and dispatch path]
+
+## Always
+- [Directive, stated so it can be applied without reloading the source guide]
+
+## Never
+- [Directive]
+
+## Per artifact type
+- [Artifact type the session will author]: [what changes for it]
+
+## Before delivering
+- [ ] [Check the session runs against each authored prompt]
+```
+
+- Derive from the output format the session's later artifacts use as well as the target-model guide, so the rules cover delivery shape and not only model tuning.
+- Keep only rules that change what the session writes. A rule it cannot act on at authoring time is ballast, and this file is re-read on every prompt.

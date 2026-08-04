@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.10.0] - 2026-08-04
+
+Made `prompt-engineering` usable by a skill that consumes it, rather than only by a person asking for a prompt. Two paths were missing. A consumer whose output goes to a worker process was pulled toward a human-facing wrapper and toward usage and testing sections that a stateless recipient reads as instructions addressed to it, and the "never execute what the prompt describes" clause read as forbidding the consumer's own next step — dispatching the artifact. A consumer that wants the derived prompt-authoring rules for its session, rather than a prompt, had no path at all: every output format produced a prompt, and the workflow digraph had no terminal for a non-prompt artifact.
+
+The deliverable is now defined by recipient — a person who copies the artifact, or a process an invoking workflow passes it to — and the artifact may be a prompt or the ruleset a session authors prompts from. The person-as-recipient path is unchanged and remains the default.
+
+### Added
+
+- `references/output-formats.md` section 13 "Dispatched Prompts" — prompt body alone; the wrapper, usage, and testing sections omitted because the recipient reads them as its own instructions; API Configuration only when the dispatch path accepts API parameters; the caller's block names, order, and output contract kept verbatim; every fact inline; the recipient's authority and boundaries stated
+- `references/output-formats.md` section 14 "Session-Scoped Rulesets" — a rules template (Always / Never / Per artifact type / Before delivering) for the distilled prompt-authoring rules an invoking session writes to a session file and re-reads at each later authoring step
+- Ruleset mode in the workflow digraph — a "Distilled ruleset for the invoking session to author prompts from?" branch routing through the target-model guides to delivery — and a matching `### Ruleset Mode` section
+- Phase 3 gained a "Process as recipient" delivery shape beside the existing person-as-recipient default, and the digraph gained a matching recipient diamond ahead of delivery — a recipient choice reachable only from Phase 3 prose is one a digraph-following consumer skips. The diamond has three exits, since the skill serves three recipients: a person, a dispatching workflow's process, and the invoking session itself
+- Phase 1 gained a recipient clarification, so the recipient diamond has a gathered input rather than defaulting to the person branch; it resolves from context (a request naming a worker, subagent, CLI, or dispatch path is a process) and asks only when neither reading fits
+- Output-format table rows for both new sections
+
+### Changed
+
+- `skills/prompt-engineering/SKILL.md` — the `**Deliverable**` clause no longer asserts the output is always a prompt that "users copy and use elsewhere"; it names both artifact classes and both recipient kinds, and states that an invoking workflow dispatching the artifact is that workflow's own step rather than execution by the skill
+- `skills/prompt-engineering/SKILL.md` — the Phase 3 delivery block formerly labeled "Default (Claude Web / Claude Desktop)" is now labeled by recipient, since "Default" pulled process-recipient work toward usage instructions and testing suggestions; the Phase 3 digraph node and lead sentence say "artifact" rather than "ready-to-copy prompt artifact"
+- `skills/prompt-engineering/SKILL.md` — the "Roles (Do Not Use)" section distinguishes a persona from capability context: a process recipient is told its authority and boundaries (act or report, what it may write, which tools), which names authority rather than identity and so survives the no-personas rule
+- `skills/prompt-engineering/SKILL.md` — frontmatter description gained dispatched-prompt and session-scoped-ruleset triggers
+- `skills/prompt-engineering/SKILL.md` — "prompt" carried through to "artifact" where the generalization now applies: the Phase 3 heading, the Output Format table's lead-in, and the Quality Checklist preamble. A ruleset is not a prompt type
+- `references/output-formats.md` — §13's unresolved-specification bullet also covers a refinement's change report and a migration before/after, which belong outside the artifact for the same reason the wrapper does
+- `README.md` (plugin), repository `README.md` — Prompt Engineering triggers and capabilities cover both new paths
+- `project/system-prompt.md` — the Claude Web project recognizes both artifact types and formats delivery by recipient
+- `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json` — version `3.10.0`
+
 ## [3.9.0] - 2026-08-04
 
 Added OpenAI model support to the `prompt-engineering` skill, with explicit guidance for the GPT-5.6 family (Sol, Terra, Luna) and the GPT-5 family baseline (GPT-5 through GPT-5.5). GPT-5.6 prompting is outcome-first: define the outcome, constraints, evidence, and completion bar, then leave the path to the model — leaner prompts outperform, contradictions destabilize more than gaps, and proactivity is steered through autonomy/approval boundaries rather than repeated "ask first" rules. Sourced from OpenAI's official GPT-5.6 prompting guidance, the "Using GPT-5.6" developer guide, the GPT-5.6 Sol migration guide, the launch announcement, and the original GPT-5 prompting guide from the OpenAI Cookbook; verbatim copies are archived under `docs/`.

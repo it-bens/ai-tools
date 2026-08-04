@@ -20,11 +20,13 @@ First, identify the prompt type using the Prompt Recognition section:
 - **LLM-targeted content** (skills, agents, instructions) → Skip to Phase 2, use streamlined output
 - **Editing existing LLM content** → Apply Content Editing principles below FIRST
 - **Migrating Claude 4 content to Claude 5** → Re-tune per `references/claude-5-guide.md`, deliver a before/after (`references/output-formats.md#10-claude-4-to-claude-5-migrations`)
+- **A prompt an invoking workflow dispatches to a worker process** → Deliver the prompt body alone (`references/output-formats.md#13-dispatched-prompts`)
+- **Distilled prompt-authoring rules an invoking session reuses within its session** → Deliver the ruleset alone (`references/output-formats.md#14-session-scoped-rulesets`)
 
 Then follow the phases:
 1. Phase 1: Prompt Scoping (traditional prompts only) - gather requirements about the prompt itself
 2. Phase 2: Design Strategy - select techniques based on complexity and target model
-3. Phase 3: Prompt Delivery - deliver production-ready prompt with appropriate format
+3. Phase 3: Delivery - deliver the production-ready artifact in the format its recipient needs; a person who copies it gets the full wrapper, a process an invoking workflow dispatches it to gets the body alone
 
 **Target Model Support:**
 - **Claude 5** (default): Opus 5, Sonnet 5, Fable 5 — apply Claude 5 optimizations from `references/claude-5-guide.md`

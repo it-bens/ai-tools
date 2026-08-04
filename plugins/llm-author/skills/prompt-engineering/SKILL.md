@@ -1,12 +1,12 @@
 ---
 name: prompt-engineering
-version: 3.9.0
-description: Use when the user asks to create, write, improve, or debug a prompt, build a prompt chain, design a system prompt, adapt a prompt for GPT-5.6 (OpenAI), GLM 4.7 (Z.ai), or Gemini 3, create a Gemini deep research prompt, migrate a prompt or skill from Claude 4 to Claude 5 or between GPT-5.x versions, optimize LLM-targeted content (skills, agents, instructions, documentation), or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
+version: 3.10.0
+description: Use when the user asks to create, write, improve, or debug a prompt, build a prompt chain, design a system prompt, adapt a prompt for GPT-5.6 (OpenAI), GLM 4.7 (Z.ai), or Gemini 3, create a Gemini deep research prompt, migrate a prompt or skill from Claude 4 to Claude 5 or between GPT-5.x versions, optimize LLM-targeted content (skills, agents, instructions, documentation), author a prompt an invoking workflow dispatches to a worker process, distill prompt-authoring rules into a session-scoped ruleset, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 ---
 
 # Prompt Engineering Lab
 
-**Deliverable**: The output is always a prompt artifact—a ready-to-use prompt that users copy and use elsewhere. Never execute what the prompt describes; only deliver the prompt itself.
+**Deliverable**: Deliver the artifact and never carry out the task it describes — a prompt, or the ruleset an invoking session authors prompts from. Its recipient is a person who copies it, a process an invoking workflow passes it to, or the invoking session itself; dispatching it is that workflow's own next step, not execution by this skill. Shape the delivery to the recipient via the [Output Format](#output-format) table.
 
 ## Prompt Recognition
 
@@ -51,6 +51,8 @@ digraph prompt_engineering {
     "Refinement mode: ask what changes, deliver the full refined prompt" [shape=box];
     "Migrating existing Claude 4 content to Claude 5?" [shape=diamond];
     "Migration mode: re-tune per claude-5-guide, deliver before/after" [shape=box];
+    "Distilled ruleset for the invoking session to author prompts from?" [shape=diamond];
+    "Ruleset mode: derive rules from the target-model guide and the session's artifact types" [shape=box];
     "Traditional prompt or LLM-targeted content?" [shape=diamond];
     "Phase 1: scope the prompt (purpose, audience, success criteria, platform, target model)" [shape=box];
     "Phase 2: design strategy (techniques by complexity + target-model adaptation)" [shape=box];
@@ -60,15 +62,19 @@ digraph prompt_engineering {
     "GPT-5.6 (OpenAI) -> gpt-56-guide" [shape=box];
     "GLM 4.7 -> glm-47-guide" [shape=box];
     "Gemini 3 -> gemini-3-guide (Deep Research -> gemini-3-deep-research-guide)" [shape=box];
-    "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)" [shape=doublecircle];
+    "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?" [shape=diamond];
+    "Phase 3: deliver the artifact (format by type, recipient, and platform)" [shape=doublecircle];
 
     "Prompt request" -> "Refining a prompt already generated this conversation?";
     "Refining a prompt already generated this conversation?" -> "Refinement mode: ask what changes, deliver the full refined prompt" [label="yes"];
-    "Refinement mode: ask what changes, deliver the full refined prompt" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
+    "Refinement mode: ask what changes, deliver the full refined prompt" -> "Phase 3: deliver the artifact (format by type, recipient, and platform)";
     "Refining a prompt already generated this conversation?" -> "Migrating existing Claude 4 content to Claude 5?" [label="no"];
     "Migrating existing Claude 4 content to Claude 5?" -> "Migration mode: re-tune per claude-5-guide, deliver before/after" [label="yes"];
-    "Migration mode: re-tune per claude-5-guide, deliver before/after" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
-    "Migrating existing Claude 4 content to Claude 5?" -> "Traditional prompt or LLM-targeted content?" [label="no"];
+    "Migration mode: re-tune per claude-5-guide, deliver before/after" -> "Phase 3: deliver the artifact (format by type, recipient, and platform)";
+    "Migrating existing Claude 4 content to Claude 5?" -> "Distilled ruleset for the invoking session to author prompts from?" [label="no"];
+    "Distilled ruleset for the invoking session to author prompts from?" -> "Ruleset mode: derive rules from the target-model guide and the session's artifact types" [label="yes"];
+    "Ruleset mode: derive rules from the target-model guide and the session's artifact types" -> "Target model?";
+    "Distilled ruleset for the invoking session to author prompts from?" -> "Traditional prompt or LLM-targeted content?" [label="no"];
     "Traditional prompt or LLM-targeted content?" -> "Phase 1: scope the prompt (purpose, audience, success criteria, platform, target model)" [label="traditional"];
     "Traditional prompt or LLM-targeted content?" -> "Phase 2: design strategy (techniques by complexity + target-model adaptation)" [label="LLM-targeted (skip Phase 1)"];
     "Phase 1: scope the prompt (purpose, audience, success criteria, platform, target model)" -> "Phase 2: design strategy (techniques by complexity + target-model adaptation)";
@@ -78,11 +84,14 @@ digraph prompt_engineering {
     "Target model?" -> "GPT-5.6 (OpenAI) -> gpt-56-guide";
     "Target model?" -> "GLM 4.7 -> glm-47-guide";
     "Target model?" -> "Gemini 3 -> gemini-3-guide (Deep Research -> gemini-3-deep-research-guide)";
-    "Claude 5 default -> claude-5-guide" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
-    "Claude 4 -> claude-4-guide" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
-    "GPT-5.6 (OpenAI) -> gpt-56-guide" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
-    "GLM 4.7 -> glm-47-guide" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
-    "Gemini 3 -> gemini-3-guide (Deep Research -> gemini-3-deep-research-guide)" -> "Phase 3: deliver ready-to-copy prompt artifact (format by type and platform)";
+    "Claude 5 default -> claude-5-guide" -> "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?";
+    "Claude 4 -> claude-4-guide" -> "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?";
+    "GPT-5.6 (OpenAI) -> gpt-56-guide" -> "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?";
+    "GLM 4.7 -> glm-47-guide" -> "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?";
+    "Gemini 3 -> gemini-3-guide (Deep Research -> gemini-3-deep-research-guide)" -> "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?";
+    "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?" -> "Phase 3: deliver the artifact (format by type, recipient, and platform)" [label="person: full wrapper, usage + testing"];
+    "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?" -> "Phase 3: deliver the artifact (format by type, recipient, and platform)" [label="process: body only, no wrapper"];
+    "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?" -> "Phase 3: deliver the artifact (format by type, recipient, and platform)" [label="invoking session: ruleset only"];
 }
 ```
 
@@ -95,6 +104,7 @@ Before generating the prompt, understand its intended purpose. Gather informatio
 - Who will use this prompt (technical level, domain expertise)?
 - What makes the prompt successful (output quality, format, completeness)?
 - Target platform: Claude Web, Claude Desktop, or API?
+- Recipient: a person who copies the artifact, or a process an invoking workflow dispatches it to? Take it from context — a request naming a worker, subagent, CLI, or dispatch path is a process; ask only when neither reading fits.
 - Target model: Claude 5 (default), Claude 4, GPT-5.6 (OpenAI), GLM 4.7, or Gemini 3? (only ask if user mentions Claude 4, GPT, OpenAI, GLM, Z.ai, Gemini, or model adaptation)
 
 **Clarify prompt ambiguities (stay at the prompt level, don't dive into subject matter):**
@@ -117,6 +127,14 @@ When the user is modifying a prompt that was previously generated in this conver
 - Focus on the delta, not full re-specification
 - Preserve unchanged aspects of the original prompt
 - Deliver the complete refined prompt (not just the changes)
+
+### Ruleset Mode
+
+When an invoking session asks for the distilled prompt-authoring rules it will write to a session file and re-read at each later authoring step:
+
+- Resolve the target model, the dispatch path, and the artifact types the session will author; ask when any of the three is unstated.
+- Derive the rules from that target model's guide, and state each as a directive the session applies without reloading the guide.
+- Deliver the ruleset per `references/output-formats.md#14-session-scoped-rulesets`.
 
 ### Phase 2: Design Strategy
 
@@ -141,14 +159,19 @@ Select appropriate techniques based on task complexity:
 - Remove personas and "You are …" identity openers: state the task directly and convert whatever they implied (tone, depth, audience) into explicit requirements — keep a persona only where it is the requested output (character roleplay)
 - Apply targeted improvements with documented rationale; document the before/after with `examples/optimization-report.md`
 
-### Phase 3: Prompt Delivery
+### Phase 3: Delivery
 
-Deliver prompts as ready-to-copy markdown blocks optimized for the target platform. Choose the structure from the [Output Format](#output-format) table below (details in `references/output-formats.md`); for a system prompt, adapt `examples/system-prompt-template.md`.
+Deliver the artifact as a markdown block optimized for its recipient and target platform. Choose the structure from the [Output Format](#output-format) table below (details in `references/output-formats.md`); for a system prompt, adapt `examples/system-prompt-template.md`.
 
-**Default (Claude Web / Claude Desktop):**
+**Person as recipient (Claude Web / Claude Desktop) — default:**
 - Complete prompt in a single code block
 - No API parameters unless requested
 - Include usage instructions and testing suggestions
+
+**Process as recipient (an invoking workflow dispatches the artifact):**
+- Artifact body only — no wrapper, no usage instructions, no testing suggestions, and no API parameters the dispatch path cannot take
+- Every fact the recipient needs stated inline, and the caller's block names, order, and output contract kept verbatim
+- Details: `references/output-formats.md#13-dispatched-prompts`
 
 **API format (only when explicitly requested):**
 - Include max_tokens and effort recommendations; temperature only for Claude 4 / earlier (Claude 5 rejects non-default temperature)
@@ -191,6 +214,7 @@ Deliver prompts as ready-to-copy markdown blocks optimized for the target platfo
 - "You are …" identity openers add nothing — state the task and constraints directly
 - State tone, format, length, and audience as explicit output requirements instead
 - For domain accuracy, provide domain context and reference material
+- For a process recipient, state its authority and boundaries — act or report, what it may write, which tools it may use; that is capability context, not a persona
 - Sole exception: character roleplay, where the persona is the requested output
 → Deep dive: `references/techniques/system-prompts-and-roles.md`
 
@@ -286,7 +310,7 @@ When the user explicitly targets Gemini 3: it defaults to minimal output and han
 
 ## Output Format
 
-Select the appropriate format based on prompt type:
+Select the appropriate format based on artifact type:
 
 | Type | Format | Reference |
 |------|--------|-----------|
@@ -302,10 +326,12 @@ Select the appropriate format based on prompt type:
 | Claude 4 → Claude 5 migrations | Before/After comparison | `references/output-formats.md#10-claude-4-to-claude-5-migrations` |
 | GPT-5.6 prompts | Add API Configuration | `references/output-formats.md#11-gpt-56-prompts` |
 | Claude-to-GPT-5.6 adaptations | Before/After comparison | `references/output-formats.md#12-claude-to-gpt-56-adaptations` |
+| Dispatched prompts (process recipient) | Prompt body only, no wrapper or usage sections | `references/output-formats.md#13-dispatched-prompts` |
+| Session-scoped rulesets | Rules only, no wrapper and no prompt | `references/output-formats.md#14-session-scoped-rulesets` |
 
 ## Quality Checklist
 
-Before delivering any prompt, verify:
+Before delivering any artifact, verify:
 - [ ] Instructions are unambiguous and complete
 - [ ] Proper use of XML tags and formatting
 - [ ] Relevant examples included where helpful

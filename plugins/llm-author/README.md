@@ -30,7 +30,7 @@ Then install `llm-author` from the Codex plugin browser and start a new session.
 
 ### Prompt Engineering
 
-**Triggers:** "create a prompt", "write a prompt", "optimize a prompt", "debug a prompt", "improve my prompt", "help with prompting", "build a prompt chain", "make a system prompt", "design a prompt", "optimize this skill", "improve this agent", "adapt prompt for GPT-5.6", "convert to GPT-5.6", "adapt prompt for GLM", "convert to GLM 4.7", "adapt prompt for Gemini", "convert to Gemini", "deep research prompt", "Gemini deep research", "migrate prompt to Claude 5", "re-tune this skill for Claude 5", "migrate to GPT-5.6"
+**Triggers:** "create a prompt", "write a prompt", "optimize a prompt", "debug a prompt", "improve my prompt", "help with prompting", "build a prompt chain", "make a system prompt", "design a prompt", "optimize this skill", "improve this agent", "adapt prompt for GPT-5.6", "convert to GPT-5.6", "adapt prompt for GLM", "convert to GLM 4.7", "adapt prompt for Gemini", "convert to Gemini", "deep research prompt", "Gemini deep research", "migrate prompt to Claude 5", "re-tune this skill for Claude 5", "migrate to GPT-5.6", "write a prompt to dispatch to a worker", "give me the prompt-authoring rules for this session"
 
 **Capabilities:**
 - Create new prompts from scratch for specific use cases
@@ -44,6 +44,8 @@ Then install `llm-author` from the Codex plugin browser and start a new session.
 - Adapt Claude prompts for Gemini 3 (Flash/Pro) with quality parity
 - Create Gemini Deep Research prompts with scope, temporal, and source constraints
 - Migrate existing Claude 4 prompts and LLM-targeted content to Claude 5 with a documented before/after
+- Serve a consuming skill as well as a person: deliver a prompt body alone when an invoking workflow dispatches it to a worker process, with no human-facing wrapper for the recipient to misread
+- Distill prompt-authoring rules into a session-scoped ruleset that an invoking session writes to a session file and re-reads at each later authoring step
 
 ### Content Editing
 
@@ -109,6 +111,8 @@ Once installed, ask your coding assistant for help with prompts:
 "Create a Gemini deep research prompt for [topic]"
 "Migrate this Claude 4 prompt to Claude 5"
 "Re-tune this skill for Claude 5"
+"Write the prompt I'll dispatch to a codex worker for this fix"
+"Give me the prompt-authoring rules to reuse for the rest of this session"
 ```
 
 ## Claude Web Project
