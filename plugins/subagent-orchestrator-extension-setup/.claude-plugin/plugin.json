@@ -1,6 +1,6 @@
 {
   "name": "subagent-orchestrator-extension-setup",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "One-time setup skill that explores a project's gates, protected paths, conduct rules, and recurring checkpoint types, drafts the extension content conversationally, and writes the extension file for the subagent-orchestrator plugin's orchestrating-subagent-work skill (delivery ships with subagent-orchestrator 1.1.0 or later). Includes a re-sync mode that audits an existing extension file for drift against the current project. Long plugin and skill names are intentional to prevent accidental invocation.",
   "author": {
     "name": "Martin Bens",

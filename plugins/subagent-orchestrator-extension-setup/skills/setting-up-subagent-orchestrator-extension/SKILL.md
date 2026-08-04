@@ -1,6 +1,6 @@
 ---
 name: setting-up-subagent-orchestrator-extension
-version: 1.1.0
+version: 1.2.0
 description: Use when the user explicitly asks to set up, install, configure, wire up, or re-sync the subagent-orchestrator plugin's extension for the current project. Do not activate as a side effect of an orchestration task.
 ---
 
@@ -94,7 +94,7 @@ Work one family at a time, in the order gates → fence → rules and lenses →
 - Confirm each gate's exact command, and whether it runs inside a `workspace-write` sandbox. For a gate that does not, get its one permitted fallback and whether an independent worker re-runs it outside.
 - Accept or reject each protected path and each banned command class, with evidence.
 - Confirm which conduct rules and project skill files a worker must receive, and the scope condition for each.
-- Accept or reject each proposed routing addition and effort override — an effort override needs the project's own evidence, not a preference. Ask whether the project wants a persistent codex/claude bias; offer `codex-heavy`, `claude-lean`, or none, and record `routing.codex_bias` when selected. Treat this bias as a preference, not a Step 2 probe target, and exempt it from the effort-override evidence requirement.
+- Accept or reject each proposed routing addition and effort override — an effort override needs the project's own evidence, not a preference. An override on a codex checkpoint sets the invocation flag, so any level is expressible. An override on a claude checkpoint selects one of the agent definitions the parent plugin ships, so only the rungs those definitions carry are expressible — propose a rung none of them carries as an improvement candidate for the parent plugin, not as an assignment. Ask whether the project wants a persistent codex/claude bias; offer `codex-heavy`, `claude-lean`, or none, and record `routing.codex_bias` when selected. Treat this bias as a preference, not a Step 2 probe target, and exempt it from the effort-override evidence requirement.
 - Confirm each proposed deviation trigger.
 
 Translate free-form intent into named values or positions before writing. Loop until the user approves each family; on rejection, amend or drop and re-present.

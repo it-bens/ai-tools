@@ -1,7 +1,7 @@
 ---
 name: orchestrating-subagent-work
-version: 2.2.0
-description: Use when a task will be executed or reviewed through dispatched workers — before the first codex dispatch, subagent spawn, or workflow run of any implementation or review task.
+version: 3.0.0
+description: Use when implementation or review work will run through dispatched workers, before the first codex dispatch or subagent spawn. Takes the task plus the project's gates and fences; returns a stated strategy, the dispatched work, and per-item results each carrying its confirmation status. Routes every checkpoint to a codex tier or to a named agent definition that carries its model and reasoning effort, fences every worker write, and confirms every load-bearing result with a second independent worker. Does not dispatch before the strategy is stated, run without codex unless consent is on record in the conversation, or let a single-source result stand as final.
 ---
 
 # Orchestrating Subagent Work
@@ -98,7 +98,7 @@ Report the pre-flight evidence verbatim (command, exit code, error line) and sto
 Read `references/model-routing.md` and apply it. State the strategy as a compact chat message — never write it to a file. One line per checkpoint; no explanations, no justifications. It covers:
 
 1. The checkpoints (review rounds, fix batches, verification passes, sweeps).
-2. Per checkpoint: actor (codex model / sonnet / haiku / session), effort, and dispatch order (codex dispatches sequential; read-only subagent fan-outs may run parallel to a background codex run) — plus any routing-table optional pass being omitted.
+2. Per checkpoint: actor (codex model / agent definition / session), effort, and dispatch order (codex dispatches sequential; read-only subagent fan-outs may run parallel to a background codex run) — plus any routing-table optional pass being omitted.
 3. Verification: which independent worker confirms which output. Default shape: every load-bearing result reaches two-worker confirmation — producer plus an independent confirmer. A result is load-bearing when it feeds a write to the tree, a reported conclusion, or a checkpoint closure; when unsure, it is load-bearing. Sandbox gate claims are re-run outside the sandbox by a worker, not the orchestrator.
 4. Named assumptions whose breach triggers adaptation — always including any stated deadline or token/quota budget.
 
@@ -113,7 +113,7 @@ Dispatch the current checkpoint's worker per the strategy.
 Read `references/worker-prompts.md` before the first dispatch of any checkpoint and build the prompt from it. It governs every worker — codex and subagent alike — and a codex-less run keeps every block; skipping it dispatches implementers with no fence and no gates.
 
 - Codex dispatches: additionally read `references/codex-dispatch.md` for invocation hygiene and the re-validation loop. Codex runs through the CLI only (`codex exec`); never through an MCP transport.
-- Subagent spawns: include the routing, honesty, and fail-hard directives the worker must follow; workers inherit nothing from the session. Spawn with an explicit model; the orchestrator stays the sole file writer unless a checkpoint explicitly fences a worker's write scope.
+- Subagent spawns: dispatch the agent definition the routing table names; it carries the model and the reasoning effort. Never set an effort on the spawn itself — to change the rung, dispatch a different definition. Include the honesty and fail-hard directives the worker must follow; workers inherit nothing from the session. The orchestrator stays the sole file writer unless a checkpoint explicitly fences a worker's write scope.
 - Any result handed to the user mid-task carries an explicit per-item confirmation status (dual-confirmed / single-source / unverified); single-source and unverified items are labeled as such and never presented as final.
 
 ### Deviation or unforeseen problem?

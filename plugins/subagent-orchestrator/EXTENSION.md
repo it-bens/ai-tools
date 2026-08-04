@@ -130,7 +130,7 @@ Every claim in an extension file is a fact about the current codebase — a gate
 | `project.review_lenses` | (name three to four per scope) | Project lenses added to the per-scope LENS block. Appends. |
 | `codex.extra_config` | (the pinned flags only) | Additional `-c key=value` flags appended to every codex invocation. Appends; rejects the contract-carrying flags named above. |
 | `routing.additions` | (none) | Checkpoint-type rows appended to the routing table. Appends; never rewrites an existing row. |
-| `routing.effort_defaults` | (the table's efforts, then the effort ladder) | Per-checkpoint-type effort overrides. Going below an assigned effort at dispatch time is still an announced adaptation. |
+| `routing.effort_defaults` | (the table's efforts, then the effort ladder) | Per-checkpoint-type effort overrides. On a codex checkpoint the assignment sets the invocation flag; on a claude checkpoint it selects the shipped agent definition carrying that rung, and a rung no definition carries cannot be honored. Going below an assigned effort at dispatch time is still an announced adaptation. |
 | `routing.codex_bias` | (unset — session decides per the routing table) | Biases the discretionary codex/claude split at the strategy node across `codex-heavy` / `claude-lean` / `codex-less`; `codex-less` routes through the existing consent path; bounded by cross-family independence. |
 | `deviation.additional_triggers` | (the listed triggers only) | Project deviation triggers appended to the trigger list. Appends. |
 
@@ -165,11 +165,13 @@ A project whose work includes a checkpoint the universal table has no profile fo
 - `routing.additions` =
   | Checkpoint type | Actor | Effort |
   |---|---|---|
-  | <the project checkpoint> | <codex tier or subagent model> | <effort> |
+  | <the project checkpoint> | <codex tier, or one of the agent definitions the plugin ships in `agents/`> | <effort> |
 - `routing.effort_defaults` = <checkpoint type> = <effort>, for existing rows whose default the project has evidence to change
 - `deviation.additional_triggers` = <what makes this checkpoint go wrong in a way the universal trigger list does not name>
 ```
 
 Add a workflow position only for a step the named values cannot express — for example a `## Post-Dispatch` that files each worker's run record into a project log, which is behavior around the node rather than a value inside it. Keep it repeat-safe: `Dispatch` fires once per checkpoint, and a task has many.
+
+A claude actor must be one of the shipped definitions. A project cannot name a model and a rung directly, because the rung binds inside the definition and nowhere else — a checkpoint that needs a combination `agents/` does not carry is a plugin change, not an addition, and belongs in the improvement-candidates report.
 
 A routing addition names an actor but does not get to name a verification shape. The added checkpoint's results reach two-worker confirmation like every other load-bearing result; there is no named value that says otherwise, and that is deliberate.

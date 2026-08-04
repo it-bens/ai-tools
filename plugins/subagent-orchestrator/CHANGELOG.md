@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.0.0] - 2026-08-04
+
+The routing table assigned every claude checkpoint an effort of `—`, because there was no way to give a subagent one. Testing showed why: the Agent tool accepts an `effort` argument and silently discards it. Six sonnet dispatches, three declaring `low` and three declaring `max`, returned byte-identical answers to an eight-problem battery, with the `low` runs averaging *more* tokens (78.1k against 74.4k) and longer wall-clock (241s against 207s); `effort: "banana"` was accepted without complaint; and `CLAUDE_EFFORT` read the session's `xhigh` inside both. Reasoning effort binds in one place only — an agent definition — so the plugin now ships them.
+
+This is a workaround for open Claude Code issues, not a design preference. If per-spawn effort lands upstream, most of `agents/` becomes unnecessary.
+
+### Added
+
+- `agents/` — 15 definitions across four duties and three models, each pinning a model and a reasoning effort. `search-haiku`, `investigate-haiku`, `gate-run-haiku`; `investigate-sonnet-{low,medium,high}`, `implement-sonnet-{medium,high}`; `investigate-opus-{medium,high,xhigh}`, `implement-opus-{medium,high,xhigh}`, `design-opus-xhigh`. Names state model and rung because neither is settable at dispatch. Read-only duties enforce that with `disallowedTools` rather than with a prohibition paragraph, and every definition blocks re-delegation
+- `docs/claude-effort-mechanism.md` — where effort binds and where it silently does not, the spawn-argument experiment with its sample sizes and its limits, haiku's unconditional exclusion from the parameter and the `thinking_mode` directives it receives instead, and the per-rung measurements behind each choice: Opus 5's 19-point spread across the ladder with its coding peak at `medium`, sonnet's documented under-thinking risk at `low`, and the evidence that a stronger model at a lower rung beats a weaker model at a higher one
+- `docs/builtin-agent-duty-capture.md` — how the duties were derived from Claude Code's built-in agent types, the capture prompt and its boundary marker, the harness-injected content to exclude, the per-model check (duty prose is byte-identical between sonnet and opus; haiku recites unreliably), and the update procedure for a Claude Code upgrade
+
+### Changed
+
+- `skills/orchestrating-subagent-work/references/model-routing.md` — every claude row names an agent definition and its rung instead of `—`; new rows for self-contained substantial batches, cross-file fix batches, mechanism-reworking batches, escalated verification, root-cause reads, and source contradictions; the escalation criterion is now stated (skipped scope or stopped early needs a higher rung, had everything and still got it wrong needs a stronger model); `max` is documented as deliberately unrouted; `routing.effort_defaults` resolves to an invocation flag on codex checkpoints and to a definition selection on claude ones; where a substantial self-contained batch matches both the codex and the opus implementer row, that pair is named as one discretionary choice `routing.codex_bias` arbitrates, with the strategy declaring which side it took
+- `skills/orchestrating-subagent-work/SKILL.md` — the description is a contract rather than a trigger list, stating what the skill takes, returns, can do, and refuses; the dispatch node routes to the named definition instead of spawning with an explicit model, and forbids setting an effort on the spawn
+- `EXTENSION.md` — `routing.effort_defaults` documents its two resolutions, and that a rung no shipped definition carries cannot be honored; the `routing.additions` example names a shipped definition as its claude actor rather than a bare model, since a project cannot pair a model with a rung directly
+- `README.md` and `CLAUDE.md` — the plugin states plainly that it is opinionated and partly grounded in one maintainer's experience; the false "no agents" claim is corrected; agent-authoring rules are recorded (contract descriptions, no roles, no worked examples, standing content in the definition and specific content in the dispatch prompt)
+
+### Breaking
+
+- A claude checkpoint is no longer dispatched by naming a model. It routes to an agent definition, which requires a Claude Code restart after install or update before it resolves
+- Projects assigning `routing.effort_defaults` for a claude checkpoint type now select among shipped definitions. An assignment naming a rung none of them carries is reported rather than approximated
+- No extension-file format, position name, or other named value changed. Projects with an extension file need no action beyond the restart
+
 ## [2.2.0] - 2026-08-03
 
 Adds `routing.codex_bias`, the eleventh recognized named value: an override-shaped codex/claude calibration read at the strategy node. It accepts `codex-heavy`, `claude-lean`, or `codex-less`; unset preserves current behavior. Cross-family independence bounds every bias, and `codex-less` routes through the existing consent gate. The digraph adds that route, and the consent-question halt wording now also covers dropping the bias.
