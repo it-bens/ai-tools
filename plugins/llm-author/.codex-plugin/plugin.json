@@ -1,13 +1,13 @@
 {
   "name": "llm-author",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "description": "Author and refine LLM-targeted prompts, skills, rule files, session handoffs, and session feedback.",
   "author": {
     "name": "Martin Bens",
     "email": "martin.bens@it-bens.de"
   },
   "license": "MIT",
-  "keywords": ["llm-author", "prompt-engineering", "content-editing", "rule-file-writing", "handoff-prompts", "session-feedback", "prompting", "templates", "claude-5", "claude-4", "glm-4.7", "z-ai", "gemini-3", "deep-research"],
+  "keywords": ["llm-author", "prompt-engineering", "content-editing", "rule-file-writing", "handoff-prompts", "session-feedback", "prompting", "templates", "claude-5", "claude-4", "gpt-5.6", "openai", "glm-4.7", "z-ai", "gemini-3", "deep-research"],
   "skills": "./skills/",
   "interface": {
     "displayName": "LLM Author",

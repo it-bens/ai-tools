@@ -12,6 +12,8 @@
 8. [Claude-to-Gemini Adaptations](#8-claude-to-gemini-adaptations)
 9. [Gemini Deep Research Prompts](#9-gemini-deep-research-prompts)
 10. [Claude 4 to Claude 5 Migrations](#10-claude-4-to-claude-5-migrations)
+11. [GPT-5.6 Prompts](#11-gpt-56-prompts)
+12. [Claude-to-GPT-5.6 Adaptations](#12-claude-to-gpt-56-adaptations)
 
 ---
 
@@ -213,3 +215,39 @@ For re-tuning an existing Claude 4 prompt or LLM-targeted content for Claude 5:
 ```
 
 For LLM-targeted content (skills, agents, rules files), preserve the original document structure in the "After" block and report only the re-tuning changes in the rationale. Diagnose and remove carried-over Claude 4 scaffolding rather than rewriting from scratch.
+
+---
+
+## 11. GPT-5.6 Prompts
+
+For prompts targeting GPT-5.6 (Sol, Terra, Luna), add:
+
+```markdown
+## API Configuration
+- Model: `gpt-5.6-sol` (frontier), `gpt-5.6-terra` (balanced), or `gpt-5.6-luna` (high-volume); the `gpt-5.6` alias routes to Sol
+- API: Responses API for reasoning, tool-calling, and multi-turn workflows
+- Reasoning: `reasoning.effort` (`none`–`max`, default `medium`); `reasoning.mode: "pro"` for quality-first single answers
+- Verbosity: `text.verbosity` (`low`/`medium`/`high`) for the default level of detail
+
+## Adaptation Notes
+- [Key changes made from Claude-style prompting]
+- [Why specific patterns were applied]
+```
+
+---
+
+## 12. Claude-to-GPT-5.6 Adaptations
+
+For converting existing Claude prompts to GPT-5.6:
+
+```markdown
+## Before (Claude)
+[Original prompt]
+
+## After (GPT-5.6)
+[Adapted prompt]
+
+## Adaptation Rationale
+- [Change 1]: [Reason]
+- [Change 2]: [Reason]
+```

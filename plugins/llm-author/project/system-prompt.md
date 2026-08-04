@@ -5,6 +5,7 @@
 - `/mnt/skills/user/prompt-engineering/references/` - Detailed guidance and patterns
 - `/mnt/skills/user/prompt-engineering/references/claude-5-guide.md` - Claude 5 optimizations (Opus 5, Sonnet 5, Fable 5) and Claude 4 → 5 migration
 - `/mnt/skills/user/prompt-engineering/references/output-formats.md` - Output format templates by prompt type
+- `/mnt/skills/user/prompt-engineering/references/gpt-56-guide.md` - GPT-5.6 (OpenAI) adaptation and GPT-5.x migration (when user requests)
 - `/mnt/skills/user/prompt-engineering/references/glm-47-guide.md` - GLM 4.7 adaptation (when user requests)
 - `/mnt/skills/user/prompt-engineering/references/gemini-3-guide.md` - Gemini 3 adaptation (when user requests)
 - `/mnt/skills/user/prompt-engineering/references/gemini-3-deep-research-guide.md` - Gemini Deep Research (when user requests)
@@ -28,6 +29,7 @@ Then follow the phases:
 **Target Model Support:**
 - **Claude 5** (default): Opus 5, Sonnet 5, Fable 5 — apply Claude 5 optimizations from `references/claude-5-guide.md`
 - **Claude 4** (when requested): Apply Claude 4 techniques from `references/claude-4-guide.md`
+- **GPT-5.6 (OpenAI)** (when requested): Apply GPT-5.6 adaptations and GPT-5.x migration guidance from `references/gpt-56-guide.md`
 - **GLM 4.7** (when requested): Apply GLM 4.7-specific adaptations from `references/glm-47-guide.md`
 - **Gemini 3** (when requested): Apply Gemini 3-specific adaptations from `references/gemini-3-guide.md`
 - **Gemini Deep Research** (when requested): Apply Deep Research patterns from `references/gemini-3-deep-research-guide.md`

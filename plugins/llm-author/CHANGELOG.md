@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.9.0] - 2026-08-04
+
+Added OpenAI model support to the `prompt-engineering` skill, with explicit guidance for the GPT-5.6 family (Sol, Terra, Luna) and the GPT-5 family baseline (GPT-5 through GPT-5.5). GPT-5.6 prompting is outcome-first: define the outcome, constraints, evidence, and completion bar, then leave the path to the model — leaner prompts outperform, contradictions destabilize more than gaps, and proactivity is steered through autonomy/approval boundaries rather than repeated "ask first" rules. Sourced from OpenAI's official GPT-5.6 prompting guidance, the "Using GPT-5.6" developer guide, the GPT-5.6 Sol migration guide, the launch announcement, and the original GPT-5 prompting guide from the OpenAI Cookbook; verbatim copies are archived under `docs/`.
+
+### Added
+
+- `skills/prompt-engineering/references/gpt-56-guide.md` — GPT-5.6 optimizations: model family and selection (Sol/Terra/Luna), core prompting posture, API parameters (`reasoning.effort` incl. the new `max`, `reasoning.mode: "pro"`, `reasoning.context`, `text.verbosity`, prompt-caching changes), behavioral guidance (conciseness, autonomy boundaries, retrieval budgets), tool use incl. Programmatic Tool Calling and multi-agent beta, a Claude-to-GPT-5.6 adaptation table, GPT-5.x migration steps and hazards, a pre-5.6 GPT-5 family baseline, and quick-reference templates
+- `skills/prompt-engineering/examples/gpt-56-adaptation.md` — before/after transformations (step-prescriptive → outcome-first, approval-heavy → autonomy policy, vague thoroughness → retrieval budget) plus an adaptation checklist
+- `references/output-formats.md` sections 11 "GPT-5.6 Prompts" (API Configuration) and 12 "Claude-to-GPT-5.6 Adaptations" (Before/After comparison), with matching rows in the SKILL.md output-format table
+- `docs/gpt-5-6-prompting-guidance.md`, `docs/using-gpt-5-6.md`, `docs/upgrading-to-gpt-5-6-sol.md`, `docs/introducing-gpt-5-6.md`, `docs/gpt-5-prompting-guide.md` — verbatim raw source pages
+
+### Changed
+
+- `skills/prompt-engineering/SKILL.md` — frontmatter description gained GPT-5.6 (OpenAI) adaptation and GPT-5.x migration triggers; workflow digraph gained a "GPT-5.6 (OpenAI) -> gpt-56-guide" target-model branch; Phase 1 target-model question lists GPT-5.6; new "GPT-5.6 (OpenAI) Adaptation (When Requested)" section with compact triggers plus pointers
+- `README.md` (plugin) — GPT-5.6 in the tagline, overview, Prompt Engineering triggers, capabilities, usage examples, and documentation sources
+- `AGENTS.md` (plugin) — file-navigation row for the GPT-5.6 guide
+- Repository `README.md` — llm-author plugin description includes GPT-5.6 (OpenAI)
+- `project/system-prompt.md`, `project/description.txt` — Claude Web project recognizes GPT-5.6 as a requested target
+- `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json` — version `3.9.0`; added the `gpt-5.6` and `openai` keywords; Claude Code manifest description includes GPT-5.6
+- Synchronized every included skill to plugin version `3.9.0`
+
 ## [3.8.0] - 2026-08-03
 
 Removed self-description and self-justification prose across every skill. A reference or example file becomes inlined content the moment its skill loads it, so a heading or subtitle that describes the file — a `## Purpose` block, a "what this guide covers" subtitle, a "Loaded before Pass N" note — is ballast that adds nothing the loaded content does not already show, and it pushes the executable instructions further from the model's attention. This release cuts that prose and keeps the imperative instructions, the substantive reference content, and the deliverable templates.
