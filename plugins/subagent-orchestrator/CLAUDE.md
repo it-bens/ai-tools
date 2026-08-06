@@ -21,6 +21,7 @@ This plugin provides:
 | Add or retire a model-and-effort combination | `agents/` + the routing table row that names it | The name states model and rung because neither is settable at dispatch; `max` is deliberately absent |
 | Re-derive the built-in agent duties after a Claude Code update | `docs/builtin-agent-duty-capture.md` | Capture prompt, boundary marker, exclusion list, per-model check, update mode |
 | Consult the effort evidence behind a rung choice | `docs/claude-effort-mechanism.md` | What binds where, the spawn-argument experiment, haiku's exclusion, per-rung measurements |
+| Consult the evidence behind spawning workers unnamed | `docs/subagent-delivery-mechanism.md` | The three dispatch shapes, per-run results, the send contract, transcript recovery, the idle signal |
 | Modify what any worker receives in its prompt | `skills/orchestrating-subagent-work/references/worker-prompts.md` | Review/implementer blocks, trust boundaries, extension propagation into worker prompts |
 | Change how worker-prompt phrasing is derived per model family | `skills/orchestrating-subagent-work/SKILL.md` §Derive worker-prompt rules for the assigned families | Ruleset-mode invocation of `llm-author:prompt-engineering`, the three stated inputs, the session-scoped ruleset file re-read per dispatch |
 | Modify codex invocation flags or the re-validation loop | `skills/orchestrating-subagent-work/references/codex-dispatch.md` | Invocation hygiene, `exec resume`, codex-less re-validation |

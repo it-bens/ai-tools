@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.2.0] - 2026-08-06
+
+A dispatched worker can finish its work, write a complete report as its final text, and deliver nothing — and the orchestrator sees only that the worker went idle. Five dispatches of `gate-run-haiku` on the same small task, varying whether the spawn carried a name and, among the named runs, whether the REPORT block contracted a send, separated the cases. An unnamed spawn's report reaches the dispatcher on its own, synchronously and in the background alike. A named spawn becomes an addressable teammate whose plain final text reaches nobody; two named workers each produced a full report as final text and delivered none of it, and a follow-up poke reading "Report." made each regenerate the report as text and still not send it. A named spawn whose REPORT block named the send as its final action delivered on the first pass. So the skill now says: spawn without a name, and when a name is genuinely needed, contract the send.
+
+Two consequences worth stating. The message-sending tool is not loaded by default — the worker that did deliver had to look up its schema before it could call it — so a worker can believe it reported when nothing left it, and its claim to have reported is not the report. And an undelivered report is recoverable: the worker's transcript persists under `~/.claude/projects/<project-slug>/<session-id>/subagents/`, but only its final assistant block is worth extracting, since reading one whole would spend more context than the dispatch saved. The evidence, its per-run results, and its limits are in `docs/subagent-delivery-mechanism.md`.
+
+### Added
+
+- `docs/subagent-delivery-mechanism.md` — the three dispatch shapes and which of them deliver, the per-run results, the sending tool needing to be loaded before it can be called, the deduction — not an observed run — that a no-tool worker's report could only have arrived via the automatic path, the idle signal's summary field as a positive delivery indicator, and the limits of a five-run single-definition experiment
+
+### Changed
+
+- `skills/orchestrating-subagent-work/SKILL.md` — the subagent-spawn bullet in `Execute next strategy step` now directs spawning without a name, contracts the send inside the REPORT block for the named case, gives the final-assistant-block recovery path for a report that never arrived, and states that a claim to have sent a report is not the report
+- `skills/orchestrating-subagent-work/SKILL.md` — the deviation trigger list adds a worker finishing without its report arriving, alongside the existing empty-output trigger that only covered a worker returning the wrong thing
+- `README.md` and `CLAUDE.md` — a spawn name is named as the second dispatch-time argument that fails silently: `effort` is accepted and discarded without an error, and a spawn name changes where the report goes without an error, and the navigation table routes to the new evidence file
+
+No named value, position, or extension-file format changed. Projects with an extension file need no action.
+
 ## [3.1.0] - 2026-08-05
 
 Worker prompts were phrased for one audience and dispatched to three. A codex worker reads everything it will ever know from its dispatch prompt; a claude worker arrives carrying its agent definition, and the two families respond to opposite tuning. So the rules are now derived rather than encoded: a node between the strategy and the first dispatch invokes `llm-author:prompt-engineering` in Ruleset mode for the families the strategy assigned, once per task, and the ruleset is re-read before each prompt is built. Blocks and content are unchanged; only wording adapts.
