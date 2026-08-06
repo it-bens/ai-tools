@@ -1,6 +1,6 @@
 {
   "name": "subagent-orchestrator",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "Opinionated orchestration of implementation and review work through dispatched workers — Codex CLI (GPT-5.6) and Claude subagents — with a task-strategy workflow, model and reasoning-effort routing, fenced write scopes, and independent two-worker verification. Ships 15 agent definitions that pin model and reasoning effort per checkpoint type, because effort cannot be set at spawn time. Extendable at five workflow positions and via recognized named configuration values; the plugin ships hooks that deliver a project's extension file (.claude/extensions/subagent-orchestrator/) wrapped in a structural envelope",
   "author": {
     "name": "Martin Bens",

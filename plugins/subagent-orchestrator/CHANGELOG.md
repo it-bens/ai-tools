@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.2.1] - 2026-08-06
+
+The flag set passed to every codex invocation was closed only as the default of a configuration value — the `codex.extra_config` bullet stated `none — the flags above only` as its default rather than the invocation itself carrying the closure. That let a dispatch add an unauthorized flag and record it as a note instead of a deviation: `-c mcp_servers='{}'` was added on the belief that MCP transport failures would otherwise kill `codex exec`, and a single control invocation at codex-cli 0.146.1 with MCP servers configured completed cleanly without it, so the flag was unnecessary in that one run.
+
+A second defect surfaced in the same bullet: it closed the flag set over "every invocation," but `codex exec resume` in the same file's `Re-validation loop` section passes none of `-m`, `--sandbox`, or `-C`, and that section already states plainly what `exec resume` accepts. The closure was true of a fresh dispatch and false of a resume, in one sentence claiming both — a latent inconsistency predating this change, since the previous wording required a workdir and model flag of every invocation while the documented resume command passed neither.
+
+### Changed
+
+- `skills/orchestrating-subagent-work/references/codex-dispatch.md` — the `Invocation hygiene` bullet listing the flags now states the closure on the invocation itself: exactly the listed flags plus whatever `codex.extra_config` assigns and nothing else, with an environment appearing to need another flag registered as `codex.extra_config` or announced as a deviation before dispatch, never added silently at dispatch time. The bullet's closed set is scoped to a fresh `codex exec` dispatch and points to `Re-validation loop` for the resume form; the `exec resume` accept-list already stated there — `--model`, `--config` (`-c`), and `--disable` — is now phrased as that form's own closed set rather than a plain description
+
 ## [3.2.0] - 2026-08-06
 
 A dispatched worker can finish its work, write a complete report as its final text, and deliver nothing — and the orchestrator sees only that the worker went idle. Five dispatches of `gate-run-haiku` on the same small task, varying whether the spawn carried a name and, among the named runs, whether the REPORT block contracted a send, separated the cases. An unnamed spawn's report reaches the dispatcher on its own, synchronously and in the background alike. A named spawn becomes an addressable teammate whose plain final text reaches nobody; two named workers each produced a full report as final text and delivered none of it, and a follow-up poke reading "Report." made each regenerate the report as text and still not send it. A named spawn whose REPORT block named the send as its final action delivered on the first pass. So the skill now says: spawn without a name, and when a name is genuinely needed, contract the send.
