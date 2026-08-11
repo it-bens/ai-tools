@@ -68,20 +68,20 @@ Then install `llm-author` from the Codex plugin browser and start a new session.
 
 ### Writing Handoff Prompts
 
-**Invocation:** Invoked by the coding assistant only when the user explicitly asks to write a handoff prompt for a fresh / new / separate session — never proactively.
+**Invocation:** Invoked by the coding assistant when the user explicitly asks to write a handoff prompt for a fresh / new / separate session, or when an invoking workflow's step calls for a handoff body to dispatch — never proactively otherwise.
 
 **Claude Code frontmatter:** `model: sonnet`, `user-invocable: false`, and `allowed-tools` improve model selection, menu visibility, and tool approval in Claude Code. Codex can ignore these fields; the skill body carries the portable workflow. The skill gathers no new context and works from what the session already holds.
 
 **What it does:**
 - Deduces the contextual requirements from context rather than hardcoding them: the kind of work (implement a spec, apply review/report fixes, turn review findings into a change proposal, continue an analysis, hand off the next phase), the branch, the commit and verification policy, and the in/out scope
 - Crafts a self-contained handoff prompt with the `llm-author:prompt-engineering` skill (nested), so every needed fact is stated inline or reachable by an explicit file reference
-- Includes (research-informed) a one-line mission, an explicit first action, a "settled vs. open" list, a "trust the code, not this prompt" directive, an escalation / stop-and-ask boundary, and evidence-based done criteria
+- Includes (research-informed) a one-line mission, an explicit first action, a "settled vs. open" list, a "trust the code, not this prompt" directive, an escalation / stop-and-ask boundary, and evidence-based done criteria — omitting any section or clause an invoking wrapper declares its own blocks own
 - Uses only values that are concrete (no placeholders) and real (not invented) — for anything unknown, it writes how the receiver obtains the value
-- Presents the prompt, then asks whether to save it to a file or copy it to the clipboard (no default)
+- Presents the prompt, then asks whether to save it to a file or copy it to the clipboard (no default); when a workflow step invoked it for a body to dispatch, it hands the finished prompt back to that workflow instead of asking
 
 ### Writing Session Feedback
 
-**Invocation:** Invoked by the coding assistant only when the user explicitly asks to write feedback / a report / a note for another session — never proactively.
+**Invocation:** Invoked by the coding assistant when the user explicitly asks to write feedback / a report / a note for another session, or when the dispatch message that defined this session's work directs a feedback note as part of its report contract — never proactively otherwise.
 
 **Claude Code frontmatter:** `model: sonnet`, `user-invocable: false`, and `allowed-tools` improve model selection, menu visibility, and tool approval in Claude Code. Codex can ignore these fields; the skill body carries the portable workflow. The skill gathers no new context.
 
@@ -89,7 +89,7 @@ Then install `llm-author` from the Codex plugin browser and start a new session.
 - Crafts a calibration note addressed to the upstream session (spec author, reviewer, or planner) with the `llm-author:prompt-engineering` skill (nested), anchored to the concrete change (branch, commit(s), verification state)
 - Leads with a one-line verdict, then divergences from the upstream's framing and why, where reading the code changed the reasoning, and what was under-specified — a calibration, not a status summary
 - Counters self-evaluation leniency (research-informed): a session over-praises its own work, so it defaults to scrutiny, tags each item with confidence/uncertainty, and shows before/after verification deltas
-- Presents the note, then asks whether to save it to a file or copy it to the clipboard (no default)
+- Presents the note, then asks whether to save it to a file or copy it to the clipboard (no default); when a dispatch's report contract directed the note, it sends it to the directing session per that contract instead of asking
 
 ## Usage
 

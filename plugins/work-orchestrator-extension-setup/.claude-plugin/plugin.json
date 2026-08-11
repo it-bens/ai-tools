@@ -1,0 +1,11 @@
+{
+  "name": "work-orchestrator-extension-setup",
+  "version": "2.0.0",
+  "description": "One-time setup skill that explores a project's gates, protected paths, conduct rules, recurring checkpoint types, and session topology, drafts the extension content conversationally, and writes the per-skill extension files for the work-orchestrator plugin (orchestrating-subagent-work and orchestrating-session-work; delivery ships with work-orchestrator 4.0.0 or later). Includes a re-sync mode that audits existing extension files for drift against the current project. Long plugin and skill names are intentional to prevent accidental invocation. Renamed from subagent-orchestrator-extension-setup",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["orchestration", "subagents", "codex", "setup", "extension", "skill"]
+}

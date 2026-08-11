@@ -1,0 +1,28 @@
+{
+  "description": "Delivers a project's extension content to the orchestrating-subagent-work and orchestrating-session-work skills. Both hooks call a self-gating script that stays silent unless one of those skills is invoked and the project has that skill's extension file under .claude/extensions/work-orchestrator/.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/inject-extension.sh post-tool-use",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/inject-extension.sh user-prompt",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

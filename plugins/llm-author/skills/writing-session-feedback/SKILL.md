@@ -1,7 +1,7 @@
 ---
 name: writing-session-feedback
-version: 3.10.1
-description: Use when the user explicitly asks to write feedback, a report, or a note for another session — typically the upstream session that defined the work this session just executed (it wrote the spec, performed the review, or made the plan), so that session can confirm the work was done correctly and calibrate its future specs and reviews. Invoke only on such an explicit request, never proactively. Produces a calibration note addressed to that session, anchored to the concrete change (branch, commit(s), verification state), then offers to save it to a file or copy it to the clipboard.
+version: 3.11.0
+description: Use when the user explicitly asks to write feedback, a report, or a note for another session — typically the upstream session that defined the work this session just executed (it wrote the spec, performed the review, or made the plan), so that session can confirm the work was done correctly and calibrate its future specs and reviews. Invoke on such an explicit request or when the dispatch message that defined this session's work directs a feedback note as part of its report contract — never proactively otherwise. Produces a calibration note addressed to that session, anchored to the concrete change (branch, commit(s), verification state), then offers to save it to a file or copy it to the clipboard — or, when a dispatch's report contract directed the note, sends it to the directing session per that contract instead of asking.
 model: sonnet
 user-invocable: false
 allowed-tools: Skill(llm-author:prompt-engineering)
@@ -11,16 +11,18 @@ allowed-tools: Skill(llm-author:prompt-engineering)
 
 Write **calibration feedback** for the upstream session that defined the work (it wrote the spec, performed the review, or made the plan): where execution diverged from its framing and why, where reading the code changed the reasoning, and what it under-specified — so its next spec or review is sharper.
 
-You are reporting on your **own execution**, and a session reliably over-praises work it produced. Counter that: default to scrutiny, not approval; look as hard for what you got wrong, deviated on, or could not verify as for what you got right; and treat "it works" as a claim that needs evidence, not a conclusion. Address the recipient directly ("your spec", "you framed item 1.2 as…"), confirm what was sound and flag what was not, and anchor every claim to the concrete change. Work from this session's context alone. Craft the note with the `llm-author:prompt-engineering` skill, then offer to deliver it.
+You are reporting on your **own execution**, and a session reliably over-praises work it produced. Counter that: default to scrutiny, not approval; look as hard for what you got wrong, deviated on, or could not verify as for what you got right; and treat "it works" as a claim that needs evidence, not a conclusion. Address the recipient directly ("your spec", "you framed item 1.2 as…"), confirm what was sound and flag what was not, and anchor every claim to the concrete change. Work from this session's context alone. Craft the note with the `llm-author:prompt-engineering` skill, then deliver it per the recipient: sent to the directing session when a dispatch's report contract directed the note, offered to the user otherwise.
 
 ```dot
 digraph feedback {
-  start    [shape=doublecircle, label="User asks for feedback for another session"];
+  start    [shape=doublecircle, label="User asks for feedback for another session,\nor the dispatch that defined this work directs one"];
   deduce   [shape=box, label="Deduce recipient, what they must\nevaluate, and the anchor"];
   craft    [shape=box, label="Craft the note with\nllm-author:prompt-engineering"];
   cal      [shape=diamond, label="Does each item teach the recipient\nsomething — and did I scrutinize my own\nwork as hard as I confirmed it?"];
   val      [shape=diamond, label="Does every claim carry real evidence\nfrom this session, with a confidence signal?"];
   fix      [shape=box, label="Send it back through prompt-engineering\nwith the item recast or the evidence supplied"];
+  directed [shape=diamond, label="Directed by the dispatch message's\nreport contract?"];
+  send     [shape=box, label="Send the note to the directing session\nper that contract; no delivery question"];
   ask      [shape=box, label="Ask the user:\nsave to a file or copy to the clipboard?"];
   deliver  [shape=box, label="Write the file or copy to the clipboard\nper the answer"];
   done     [shape=doublecircle, label="Done"];
@@ -30,7 +32,10 @@ digraph feedback {
   fix -> craft;
   cal -> val [label="yes"];
   val -> fix [label="no"];
-  val -> ask [label="yes"];
+  val -> directed [label="yes"];
+  directed -> send [label="yes"];
+  send -> done;
+  directed -> ask [label="no"];
   ask -> deliver -> done;
 }
 ```
@@ -72,6 +77,10 @@ Reread each item and keep only those that tell the recipient something it could 
 
 Take every commit hash, file path, symbol name, and test count from this session's context, and show verification as before/after deltas with the evidence behind each "works" claim. When a check was not run or a value is not known, say so plainly ("integration suite not run") rather than implying it passed. Mark each non-obvious claim with how sure you are, so the recipient scrutinizes the shaky ones and trusts the verified ones. If you find an invented anchor or an unsupported claim, send the draft back through prompt-engineering to correct it.
 
+## Send the note to the directing session
+
+When the dispatch message that defined this session's work directed the feedback note as part of its report contract, that contract owns delivery: send the note to the directing session at the reply address the dispatch names, and stop. Do not ask about files or the clipboard.
+
 ## Ask how to deliver, then deliver
 
-Present the finished note in your reply. Then ask whether to save it to a file or copy it to the clipboard — choose neither by default. Deliver it according to the answer.
+On a direct user request, present the finished note in your reply. Then ask whether to save it to a file or copy it to the clipboard — choose neither by default. Deliver it according to the answer.

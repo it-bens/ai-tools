@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Deprecated] - 2026-08-11
+
+Renamed to `work-orchestrator-extension-setup`, which continues this plugin's history from 2.0.0 and covers the parent plugin's second skill. This copy is frozen and receives no further changes.
+
 ## [1.2.0] - 2026-08-04
 
 Mirrors the `routing.effort_defaults` contract change in `subagent-orchestrator` 3.0.0. Claude checkpoints now take their reasoning effort from an agent definition the parent plugin ships, so an effort override on one selects among those definitions rather than setting a free-form level. Step 5 states both resolutions and routes an inexpressible rung to the improvement-candidates report instead of writing it into the extension file.

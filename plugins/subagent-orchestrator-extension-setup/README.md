@@ -1,5 +1,7 @@
 # Subagent Orchestrator Extension Setup
 
+> **Renamed to [`work-orchestrator-extension-setup`](../work-orchestrator-extension-setup/).** This copy is frozen and receives no further changes — install the renamed plugin.
+
 Setup skill that wires up a project to extend the `subagent-orchestrator` plugin's `orchestrating-subagent-work` skill. It explores the project's gates, protected paths, conduct rules, and recurring checkpoint types, drafts the extension content conversationally with you, and writes `.claude/extensions/subagent-orchestrator/orchestrating-subagent-work.md`. Delivery ships with the `subagent-orchestrator` plugin (2.0.0 or later), so no project delivery configuration is written. A re-sync mode audits an existing extension file for drift against the current project.
 
 The plugin name and the skill name are intentionally long so neither activates by accident; invoke the skill explicitly when you want to set the extension up in a project.

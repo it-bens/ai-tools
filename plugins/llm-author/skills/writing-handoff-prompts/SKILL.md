@@ -1,7 +1,7 @@
 ---
 name: writing-handoff-prompts
-version: 3.10.1
-description: Use when the user explicitly asks to write a handoff prompt for a fresh, new, separate, or other session — for example to start a spec's implementation, apply review or report fixes, turn review findings into a change proposal, or continue work — in a session that will have none of this session's context. Invoke only on such an explicit request, never proactively. Produces a self-contained handoff prompt (every needed fact stated inline or reachable by an explicit file reference; the work type, branch, commit and verification policy, and scope deduced from context), then offers to save it to a file or copy it to the clipboard.
+version: 3.11.0
+description: Use when the user explicitly asks to write a handoff prompt for a fresh, new, separate, or other session — for example to start a spec's implementation, apply review or report fixes, turn review findings into a change proposal, or continue work — in a session that will have none of this session's context. Invoke on such an explicit request or when an invoking workflow's step calls for a handoff body to dispatch — never proactively otherwise. Produces a self-contained handoff prompt (every needed fact stated inline or reachable by an explicit file reference; the work type, branch, commit and verification policy, and scope deduced from context), then offers to save it to a file or copy it to the clipboard — or, when a workflow step invoked it for a body to dispatch, hands the finished prompt back to that workflow instead of asking.
 model: sonnet
 user-invocable: false
 allowed-tools: Skill(llm-author:prompt-engineering)
@@ -9,16 +9,18 @@ allowed-tools: Skill(llm-author:prompt-engineering)
 
 # Writing Handoff Prompts
 
-The receiving session starts with **zero context**: everything it needs must be in the prompt or in a file the prompt names. Hand off *state, not a transcript* — the operational facts the next session acts on, not the conversation that produced them. Work from this session's context alone — do not open new files or search for more. Craft the prompt with the `llm-author:prompt-engineering` skill, scale its detail to the size of the work, then offer to deliver it.
+The receiving session starts with **zero context**: everything it needs must be in the prompt or in a file the prompt names. Hand off *state, not a transcript* — the operational facts the next session acts on, not the conversation that produced them. Work from this session's context alone — do not open new files or search for more. Craft the prompt with the `llm-author:prompt-engineering` skill, scale its detail to the size of the work, then deliver it per the recipient: handed back to an invoking workflow, offered to the user otherwise.
 
 ```dot
 digraph handoff {
-  start    [shape=doublecircle, label="User asks for a handoff prompt"];
+  start    [shape=doublecircle, label="User asks for a handoff prompt,\nor a workflow step calls for one"];
   deduce   [shape=box, label="Deduce the contextual requirements\n(work, sources, branch, commits, verify,\nscope, what's settled, what's uncertain)"];
   craft    [shape=box, label="Craft the prompt with\nllm-author:prompt-engineering"];
   ctx      [shape=diamond, label="Does it stand alone for a zero-context\nreader — every fact inline or in a named file?"];
   val      [shape=diamond, label="Is every hash, path, name, and count\nconcrete and taken from this session?"];
   fix      [shape=box, label="Send it back through prompt-engineering\nwith the gap named"];
+  caller   [shape=diamond, label="Invoked by a workflow step\nfor a body to dispatch?"];
+  return   [shape=box, label="Hand the finished prompt to the\ninvoking workflow; no delivery question"];
   ask      [shape=box, label="Ask the user:\nsave to a file or copy to the clipboard?"];
   deliver  [shape=box, label="Write the file or copy to the clipboard\nper the answer"];
   done     [shape=doublecircle, label="Done"];
@@ -28,7 +30,10 @@ digraph handoff {
   fix -> craft;
   ctx -> val [label="yes"];
   val -> fix [label="no"];
-  val -> ask [label="yes"];
+  val -> caller [label="yes"];
+  caller -> return [label="yes"];
+  return -> done;
+  caller -> ask [label="no"];
   ask -> deliver -> done;
 }
 ```
@@ -50,7 +55,7 @@ Read the current session and the user's request, then settle each dimension from
 
 ## What the handoff must contain
 
-This is the specification you hand to the crafting skill. Include each section the deduced work type needs, in this order.
+This is the specification you hand to the crafting skill. Include each section the deduced work type needs, in this order. When a workflow step invoked this skill and declares that its own wrapper blocks own a section's content — an escalation boundary, a report contract, receiver framing — omit that section from the body: the wrapper carries it, and a body that restates it contradicts the wrapper. Where the wrapper owns only part of a section's content — a definition of done whose reporting clause the wrapper carries — omit that part and keep the rest.
 
 1. **Mission** — one sentence the receiver can hold the whole task against.
 2. **Framing** — it is a fresh session; all context is in the prompt and the referenced files; it should read them first and not re-derive the design.
@@ -78,6 +83,10 @@ Reread the draft as the receiver — a session that knows only what the prompt s
 
 Take every commit hash, file path, class or symbol name, line number, and test count from this session's context, and write the exact value — not a vague placeholder ("the config file") and not an invented one that merely looks right. For anything this session does not hold, the prompt must tell the receiver how to obtain it — run the command, read the file. If you find a placeholder or an invented value, send the draft back through prompt-engineering to fix it.
 
+## Hand the finished prompt to the invoking workflow
+
+When a workflow step invoked this skill for a body to dispatch, the finished prompt is the deliverable to that workflow: state it in full and stop. The invoking workflow owns delivery — do not ask about files or the clipboard, and do not dispatch anything yourself.
+
 ## Ask how to deliver, then deliver
 
-Present the finished prompt in your reply. Then ask whether to save it to a file or copy it to the clipboard — choose neither by default. Deliver it according to the answer.
+On a direct user request, present the finished prompt in your reply. Then ask whether to save it to a file or copy it to the clipboard — choose neither by default. Deliver it according to the answer.

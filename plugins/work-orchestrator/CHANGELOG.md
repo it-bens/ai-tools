@@ -4,11 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Deprecated] - 2026-08-11
+## [4.0.0] - 2026-08-11
 
-Renamed to `work-orchestrator`, which continues this plugin's history from 4.0.0 and adds session orchestration. This copy is frozen and receives no further changes.
+The plugin is renamed from `subagent-orchestrator` to `work-orchestrator` and gains a second delegation surface: sibling Claude Code sessions. A sibling session is a full session with its own rules, memory, plugins, and skills — the only thing it lacks is the distributing conversation's context — and handing it work is a different discipline from dispatching a stateless worker. The new `orchestrating-session-work` skill pins that discipline down: sessions are enumerated before the first dispatch, every dispatch message carries three structural blocks (SIBLING, SKILL, REPORT), and closure is an explicit stand-down message rather than silence. The rename exists because the old name described one of the two surfaces.
+
+This directory is a copy of `plugins/subagent-orchestrator/`, which remains in the marketplace frozen and deprecated. There is no migration tooling: the extension path moves to `.claude/extensions/work-orchestrator/`, the delivery hook reads only the new path, and a project moves its extension file by hand (or re-runs the setup plugin).
+
+### Added
+
+- `skills/orchestrating-session-work/` — the session-distribution workflow: session enumeration with the `Name [ref]` first-contact requirement and the two send-failure recoveries, topology resolution with per-tree write ownership, strategy-before-dispatch, handoff composition through `llm-author:writing-handoff-prompts` wrapped in the three mandatory blocks, a deviation loop with session-specific triggers, and explicit stand-down closure. Extendable at `Strategy`, `Compose`, `Dispatch`, `Adapt`, and `Report`; session enumeration, the mandatory blocks, and the deviation check are fenced
+- `skills/orchestrating-session-work/references/sessions-vs-subagents.md` — the sibling-session vs dispatched-worker contrast table, addressing mechanics, envelope-based traffic classification, and the three failure modes the skill prevents
+- Named values `sessions.topology` (roles, duties, message flow, write ownership; conversational statements override it) and `sessions.additional_triggers` (append-only deviation triggers)
+- BATS coverage for the second skill's extension delivery and cross-skill isolation
+
+### Changed
+
+- Plugin name: `subagent-orchestrator` → `work-orchestrator`; every internal citation, the extension directory, and the test directory follow
+- `skills/orchestrating-subagent-work/SKILL.md` — the description triggers on the shape of the work (substantial implementation or review work, including when it arrives as an assignment message from another session) rather than on an already-made decision to dispatch workers, and the body carries a scope cross-pointer to `orchestrating-session-work`
+- `hooks/scripts/inject-extension.sh` — resolves the invoked skill to its own extension file under `.claude/extensions/work-orchestrator/`, one file per skill; gating and envelope semantics are unchanged. `hooks/hooks.json`'s description states the two-skill contract
+- `EXTENSION.md` — the worked topology example pins each writing role to its own tree, the `project.review_lenses` default matches its consumption site in `worker-prompts.md`, and the protected-paths note scopes the orchestrator's sole-writer status around explicitly fenced worker write scopes (the latter two correcting text inherited from the pre-rename tree)
+- `EXTENSION.md` — restructured into one section per skill; the owner/implementer/reviewer topology is the worked example for `sessions.topology`
 
 ## [3.2.1] - 2026-08-06
+
 
 The flag set passed to every codex invocation was closed only as the default of a configuration value — the `codex.extra_config` bullet stated `none — the flags above only` as its default rather than the invocation itself carrying the closure. That let a dispatch add an unauthorized flag and record it as a note instead of a deviation: `-c mcp_servers='{}'` was added on the belief that MCP transport failures would otherwise kill `codex exec`, and a single control invocation at codex-cli 0.146.1 with MCP servers configured completed cleanly without it, so the flag was unnecessary in that one run.
 
@@ -108,10 +126,10 @@ Adds the project extension surface, modeled on the one `software-writer` 2.x shi
 ### Added
 
 - `EXTENSION.md` — the contract: extension file layout, delivery envelope, both mechanisms, the non-extendable surface, reference-like extensions, the recognized-values table, and worked examples for registering gates and a project checkpoint type
-- `hooks/hooks.json`, `hooks/scripts/inject-extension.sh` — Claude Code delivery of `.claude/extensions/subagent-orchestrator/orchestrating-subagent-work.md` on `PostToolUse` (matcher `Skill`) and `UserPromptSubmit`, wrapped in a `<project_extension>` envelope; silent for every other skill, prompt, and project
+- `hooks/hooks.json`, `hooks/scripts/inject-extension.sh` — Claude Code delivery of `.claude/extensions/work-orchestrator/orchestrating-subagent-work.md` on `PostToolUse` (matcher `Skill`) and `UserPromptSubmit`, wrapped in a `<project_extension>` envelope; silent for every other skill, prompt, and project
 - Ten recognized named values: `project.gates`, `project.protected_paths`, `project.banned_commands`, `project.skill_files`, `project.conduct_rules`, `project.review_lenses`, `codex.extra_config`, `routing.additions`, `routing.effort_defaults`, `deviation.additional_triggers`
 - Five workflow positions — `Preflight`, `Strategy`, `Dispatch`, `Adapt`, `Report` — each with a `Pre-` and `Post-` form
-- `plugin-tests/subagent-orchestrator/inject_extension.bats` — gating, delivery, non-Claude-host, and failure coverage for the delivery script
+- `plugin-tests/work-orchestrator/inject_extension.bats` — gating, delivery, non-Claude-host, and failure coverage for the delivery script
 
 ### Changed
 

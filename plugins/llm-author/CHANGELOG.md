@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.11.0] - 2026-08-11
+
+Both session-to-session skills carried a trigger clause narrower than their real use: field usage shows handoff bodies being composed inside an orchestration workflow's dispatch step, and feedback notes being directed by the dispatch message that defined the work — both previously outside "only on an explicit user request". The descriptions now license those two paths, and the handoff skill's delivery step gains the recipient branch the new trigger requires: a workflow that invoked the skill for a body to dispatch receives the finished prompt back instead of being interrupted by the save-or-clipboard question — the same person-vs-process distinction `prompt-engineering` already carries at its delivery step.
+
+### Changed
+
+- `skills/writing-handoff-prompts/SKILL.md` — the description also triggers when an invoking workflow's step calls for a handoff body to dispatch (the `work-orchestrator:orchestrating-session-work` Compose node is such a step); still never proactive otherwise. The workflow branches at delivery: invoked by a workflow step, the finished prompt is handed back to the invoking workflow, which owns delivery; on a direct user request the save-or-clipboard question is unchanged
+- `skills/writing-session-feedback/SKILL.md` — the description also triggers when the dispatch message that defined this session's work directs a feedback note as part of its report contract; still never proactive otherwise. Delivery branches the same way: a directed note is sent to the directing session at the reply address the dispatch names; the save-or-clipboard question remains for direct user requests
+- `writing-handoff-prompts`' content specification defers to an invoking wrapper: a section — or clause of one — whose content the caller's wrapper blocks own (receiver framing, escalation boundary, report contract) is omitted from the body. Both skills' digraph entry nodes depict the workflow/dispatch trigger alongside the user trigger, and both intros state recipient-dependent delivery rather than an unconditional offer
+
 ## [3.10.1] - 2026-08-04
 
 Corrected two over-broad behavioral claims and removed one unsourced claim in the Claude 5 guidance. All three were written as properties of the Claude 5 generation; the sources scope them per model, and in one case two models point in opposite directions.
