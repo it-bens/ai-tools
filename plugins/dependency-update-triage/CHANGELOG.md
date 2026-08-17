@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.0] - 2026-08-17
+
+### Removed
+
+- Clipboard delivery of the assessment. The report is presented inline; the clipboard companion and its degradation row are gone.
+
 ## [1.0.0] - 2026-07-31
 
 ### Added

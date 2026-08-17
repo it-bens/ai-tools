@@ -1,6 +1,6 @@
 ---
 name: triaging-a-dependency-update
-version: 1.0.0
+version: 1.1.0
 description: Use when a dependency update needs assessing before adoption. Covers a user asking whether to upgrade a package to a new version, a manual version bump, a lockfile change under review, or a bot-opened update PR (Renovate, Dependabot, or similar). Also fires on "is version X worth adopting", "what does this update change for us", or "review this dependency bump". Do NOT use to apply the update, fix a broken build, or replace an abandoned dependency.
 ---
 
@@ -8,7 +8,7 @@ description: Use when a dependency update needs assessing before adoption. Cover
 
 Assess one dependency update and report whether it requires changes, enables improvements, or surfaces a latent bug. The assessment is read-only: investigate and report, never modify code, the lockfile, the dependency graph, or git state.
 
-**Output scope:** Produces an assessment delivered to the clipboard for the user to post.
+**Output scope:** Produces an assessment presented to the user, who decides where it goes.
 
 A grouped update that bumps several packages is assessed per-package under one report: Steps 4–10 run once per package; Step 11 composes once.
 
@@ -42,7 +42,7 @@ digraph triaging_a_dependency_update {
     allpass   [shape=diamond, label="All checks pass?"];
     morepkgs  [shape=diamond, label="More packages\nin the group?"];
     compose   [shape=box, label="Compose the report\n(sections per output.md)"];
-    out       [shape=doublecircle, label="OUTPUT: assessment\nto clipboard (user posts it)"];
+    out       [shape=doublecircle, label="OUTPUT: assessment\npresented (user posts it)"];
 
     entry -> gather -> detect -> src_ok;
     src_ok -> stop_ask [label="no"];
@@ -115,6 +115,6 @@ Before composing, run four checks over the assessment:
 
 Failure edges: an ungrounded or uncited claim returns to the step that introduced it (Step 4 for an inventory claim; Step 6, 7, or 8 for a prong claim; Step 9 for the conclusion); a missing before→after returns to Step 7; an undispositioned candidate returns to Step 5. Re-run the gate after fixing; compose only when all four pass for every package.
 
-### Step 11: Compose and deliver
+### Step 11: Compose and present
 
-Compose the report to the shape in `references/output.md` and deliver it to the clipboard for the user to post; never post to the forge automatically. Apply the reference's companion-degradation rules when a companion is missing.
+Compose the report to the shape in `references/output.md` and present it to the user; never post to the forge automatically. Apply the reference's companion-degradation rules when a companion is missing.

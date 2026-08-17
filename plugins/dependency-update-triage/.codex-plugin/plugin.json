@@ -1,6 +1,6 @@
 {
   "name": "dependency-update-triage",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Assess a single dependency update before adopting it, across three prongs: required code changes, enabled improvements, and latent-bug reach from an upstream fix.",
   "author": {
     "name": "Martin Bens",

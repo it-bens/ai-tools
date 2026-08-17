@@ -1,6 +1,6 @@
 # Output
 
-One output shape: an assessment, delivered to the clipboard for the user to post. The assessment never posts itself and never edits the repo.
+One output shape: an assessment, presented to the user for them to post. The assessment never posts itself and never edits the repo.
 
 ## Report shape
 
@@ -14,9 +14,9 @@ Write the report for a human deciding what to do with the update. Include only t
 - **Not fully verified.** Any candidate dispositioned unverified, listed as a limitation. An unverified candidate blocks an unconditional "no changes needed" conclusion.
 - **Sources.** Every changelog and web reference the assessment relied on, named inline where the claim is made and collected here.
 
-## Clipboard delivery
+## Delivery
 
-Deliver the report to the clipboard so the user can post it themselves. Where a clipboard capability is available, copy the report there and tell the user it is on the clipboard. Where none is available, present the report inline for manual copy and say so. Never post to the forge automatically; the user decides where it goes.
+Present the report inline so the user can post it themselves. Never post to the forge automatically; the user decides where it goes.
 
 ## Companion degradation
 
@@ -26,4 +26,3 @@ Every companion is optional. At each point where one would be used, check availa
 |---|---|---|
 | Git-forge tooling | reading the update PR, its diff, and release notes | fall back to the user-provided details and the web reader; note the gap |
 | Web reader | fetching changelogs and migration notes | ask the user for the changelog rather than guessing |
-| Clipboard capability | delivering the report | present the report inline and say so |

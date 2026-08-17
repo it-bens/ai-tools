@@ -33,7 +33,7 @@ The skill triages a single update through one read-only path: gather the update 
 2. **Enables an improvement.** A change the update newly unlocks that leaves the code simpler, safer, more correct, or better tested, including improvements that only make existing code easier to test. Surfaced only with a concrete before-to-after.
 3. **Latent-bug watch.** When the update fixes a bug, whether that bug could have reached your application, flagged as something to investigate because updating the dependency does not undo effects the bug already produced.
 
-**Output:** one assessment, delivered to the clipboard for you to post. The skill never posts it for you.
+**Output:** one assessment, presented for you to post. The skill never posts it for you.
 
 ## Handling large changesets
 
@@ -51,7 +51,6 @@ All companions are soft. The skill checks for each and degrades with an explicit
 |---|---|---|---|
 | Git-forge tooling | reading the update PR, diff, and release notes | a GitHub/GitLab CLI or MCP | the host's git tooling |
 | Web reader | fetching changelogs and migration notes | `web-fetching-with-pullmd` or similar | PullMD MCP or similar |
-| Clipboard | delivering the report | `clipboard-copy` or the host clipboard | the host clipboard |
 
 ## License
 
