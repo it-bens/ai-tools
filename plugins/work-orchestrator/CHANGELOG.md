@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [4.2.0] - 2026-08-21
+
+A handoff composed from session recall can cite referents its sources do not hold. The extension contract gains a worked example guarding against that at the compose loop, for projects whose receiving sessions read authoritative persistent artifacts end to end.
+
+### Added
+
+- `EXTENSION.md` — worked example "Guarding Handoff Referents at Compose": a `Post-Compose` verify-or-mark section for `orchestrating-session-work.md` (verify every cited referent against its source or mark it unverified; cite required-reading facts by section instead of restating; never re-type enumerated sets; label sourceless connective claims as author premises), with the worker-side counterpart as a `project.conduct_rules` entry
+
+No named value, position, or extension-file format changed. Projects with an extension file need no action.
+
 ## [4.1.0] - 2026-08-21
 
 Implementer reports are now two-tier. The full report — per-fix evidence, verbatim gate tails, quotes, diffs — goes to a dispatch-named file outside the repository; the final message carries only the verdict (per-item status, files touched, deviations, the honest not-verified list, and the report file path), bounded at 2,000 characters. Inline reports occupied the orchestrating session's context for the rest of the task — about 317k characters over 32 reports in one measured session — while their evidence serves the independent confirmer, which now receives the producer's report file path as required reading. The orchestrator adjudicates on the verdict and reads a report file only on a deviation trigger or dispute. Review dispatches and `investigate-haiku` (no write tool) stay inline.

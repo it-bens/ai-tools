@@ -1,6 +1,6 @@
 ---
 name: orchestrating-subagent-work
-version: 4.1.0
+version: 4.2.0
 allowed-tools: Skill(llm-author:prompt-engineering)
 description: Use for substantial implementation or review work — multi-file changes, review rounds, verification passes — including when the work arrives as an assignment message from another session; invoke before the first codex dispatch, subagent spawn, or inline write. Takes the task plus the project's gates and fences; returns a stated strategy, the dispatched work, and per-item results each carrying its confirmation status. Routes every checkpoint to a codex tier or to a named agent definition that carries its model and reasoning effort, fences every worker write, and confirms every load-bearing result with a second independent worker. Does not dispatch before the strategy is stated, run without codex unless consent is on record in the conversation, or let a single-source result stand as final.
 ---

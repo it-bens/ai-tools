@@ -209,6 +209,18 @@ A project that routinely splits work across an owner, an implementer, and a revi
 
 The `Writes` column is what makes the topology honest: every working tree has exactly one owner, and a role without write ownership works read-only against a clone or worktree pinned to a commit. Roles name duties, not session names — session names come from the `ListAgents` listing at task time.
 
+### Example: Guarding Handoff Referents at Compose
+
+A project whose receiving sessions read authoritative persistent artifacts end to end — a spec file, a branch memory — registers a referent guard on the compose loop:
+
+```markdown
+## Post-Compose
+
+Verify every referent the handoff body cites — path, symbol, line, enumerated set — against its source, or mark it unverified for the receiver. A fact a required-reading file holds is cited by its section, never restated; an enumerated set a named source holds is never re-typed into the body. Label any connective claim no source states as an author premise.
+```
+
+`Compose` fires per dispatch item, so this content re-runs on every handoff — it is safe to repeat by construction. The worker-side counterpart is a `project.conduct_rules` entry in the `orchestrating-subagent-work` file, which travels verbatim into every implementer's RULES block.
+
 ## Reference-Like Extensions
 
 An extension file may point at further project files instead of inlining their content. Two rules make references work here, and the second differs from how a session-only skill would treat them:
