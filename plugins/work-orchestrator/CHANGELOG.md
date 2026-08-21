@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [4.1.0] - 2026-08-21
+
+Implementer reports are now two-tier. The full report — per-fix evidence, verbatim gate tails, quotes, diffs — goes to a dispatch-named file outside the repository; the final message carries only the verdict (per-item status, files touched, deviations, the honest not-verified list, and the report file path), bounded at 2,000 characters. Inline reports occupied the orchestrating session's context for the rest of the task — about 317k characters over 32 reports in one measured session — while their evidence serves the independent confirmer, which now receives the producer's report file path as required reading. The orchestrator adjudicates on the verdict and reads a report file only on a deviation trigger or dispute. Review dispatches and `investigate-haiku` (no write tool) stay inline.
+
+### Changed
+
+- `skills/orchestrating-subagent-work/references/worker-prompts.md` — REPORT states the two-tier contract with the bound; FENCE and the new `Report files` section carve out the dispatch's report file and fix its location convention
+- `skills/orchestrating-subagent-work/SKILL.md` — dispatches name the report file; the read rule (deviation or dispute only); the write fences carve out the report file; a deviation trigger for a report file missing or empty when its verdict arrives; the delivered artifact is consistently named `final message`, and the named-worker send instruction maps REPORT/OUT per dispatch type
+- `agents/implement-{sonnet-medium,sonnet-high,opus-medium,opus-high,opus-xhigh}.md` — the evidence tier moves to the report file, the verdict stays the final message with each rung's flags, and the file-list fence names the report file as the one write allowed outside it; the numeric bound stays in `worker-prompts.md` only
+- `README.md` and `CLAUDE.md` — follow the two-tier contract
+
+No named value, position, or extension-file format changed. Projects with an extension file need no action.
+
 ## [4.0.0] - 2026-08-11
 
 The plugin is renamed from `subagent-orchestrator` to `work-orchestrator` and gains a second delegation surface: sibling Claude Code sessions. A sibling session is a full session with its own rules, memory, plugins, and skills — the only thing it lacks is the distributing conversation's context — and handing it work is a different discipline from dispatching a stateless worker. The new `orchestrating-session-work` skill pins that discipline down: sessions are enumerated before the first dispatch, every dispatch message carries three structural blocks (SIBLING, SKILL, REPORT), and closure is an explicit stand-down message rather than silence. The rename exists because the old name described one of the two surfaces.

@@ -15,7 +15,7 @@ When significant implementation or review work runs through dispatched workers, 
 - **Pre-flight and consent gate** — codex availability is checked before any planning or dispatch; a codex-less run requires explicit user consent in the current conversation.
 - **Strategy before dispatch** — every task states its checkpoints, actors, efforts, dispatch order, verification shape, and named assumptions as a compact chat message before the first worker runs.
 - **Model and effort routing** — checkpoints route to codex tiers (`gpt-5.6-sol` / `terra` / `luna`) or to one of the plugin's agent definitions, each pinning a model and a reasoning effort, with codex-less substitutions.
-- **Fenced writes** — workers never write by default; a worker writes only inside an explicitly fenced write scope, and every worker-written change is diff-reviewed by an independent worker.
+- **Fenced writes, two-tier reports** — workers never write repo files by default; a worker writes only inside an explicitly fenced write scope plus the report file its dispatch names, and every worker-written change is diff-reviewed by an independent worker. An implementer's full evidence goes to the report file; its final message carries only a bounded verdict, and the orchestrator reads the file only on deviation or dispute.
 - **Two-worker verification** — every load-bearing result reaches producer-plus-independent-confirmer confirmation; a dual-confirmed result is final and the orchestrator does not re-verify it. Time pressure adapts scope, never verification.
 - **Deviation handling** — dispatch failures, contradicted assumptions, scope surprises, and disputed results route through an explicit adapt-and-announce loop instead of silent plan changes.
 
@@ -51,7 +51,7 @@ Without a project extension, the skill runs on universal defaults: gates enumera
 **References** (loaded on demand):
 
 - `references/model-routing.md` — the checkpoint-to-actor routing table, verification shape, effort ladder, severity-label calibration, and codex-less substitutions
-- `references/worker-prompts.md` — the review and implementer prompt-block protocols every worker receives, how extension content reaches a worker, and the trust boundaries on worker output
+- `references/worker-prompts.md` — the review and implementer prompt-block protocols every worker receives, the two-tier implementer report contract and its report-file convention, how extension content reaches a worker, and the trust boundaries on worker output
 - `references/codex-dispatch.md` — codex invocation hygiene and the `codex exec resume` re-validation loop
 
 Worker-prompt phrasing is not written into the skill. Once the strategy has named its actors, the skill invokes `llm-author:prompt-engineering` in Ruleset mode for the model families in play, writes the returned ruleset to a session-scoped file outside the repository, and re-reads it before building each worker prompt. Every worker still receives the same blocks with the same content; only the wording adapts to the family the checkpoint routes to.
