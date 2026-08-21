@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] - 2026-08-21
+
+The setup skill knows the parent plugin's handoff referent guard. When receiving sessions read authoritative persistent artifacts end to end, a handoff composed from session recall can cite referents those artifacts do not hold; the parent's `EXTENSION.md` now carries a `Post-Compose` guard example for that setup, and this skill proposes it.
+
+### Changed
+
+- `skills/setting-up-work-orchestrator-extension/SKILL.md` — Step 2 gains a handoff-referent-guard probe (session-work only): detect authoritative persistent artifacts and propose the parent's `Post-Compose` guard example plus a citation-discipline `project.conduct_rules` entry; Step 5's family order and confirmation list carry the guard
+
 ## [2.0.0] - 2026-08-11
 
 The plugin is renamed from `subagent-orchestrator-extension-setup` to `work-orchestrator-extension-setup`, following the parent plugin's rename, and the setup skill now covers both of the parent's skills. This directory is a copy of `plugins/subagent-orchestrator-extension-setup/`, which remains in the marketplace frozen and deprecated. There is no migration tooling: re-sync reads nothing under `.claude/extensions/subagent-orchestrator/`.

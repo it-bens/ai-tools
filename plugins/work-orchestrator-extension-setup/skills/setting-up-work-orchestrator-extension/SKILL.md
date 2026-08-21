@@ -1,6 +1,6 @@
 ---
 name: setting-up-work-orchestrator-extension
-version: 2.0.0
+version: 2.1.0
 description: Use when the user explicitly asks to set up, install, configure, wire up, or re-sync the work-orchestrator plugin's extensions for the current project. Do not activate as a side effect of an orchestration task.
 ---
 
@@ -60,6 +60,7 @@ Probe checklists:
 - **Review lenses:** recurring defect classes visible in git history and issue labels; directories with a security or privacy flavor that route away from `gpt-5.6-sol` under the universal table.
 - **Checkpoint types and deviation triggers:** recurring work types the routing table has no profile for (schema migrations, generated clients, translation catalogs), and project failure modes the universal trigger list does not name.
 - **Session topology** (only when `orchestrating-session-work` is selected): the roles the project distributes work across, per-role duties, who messages whom, and write ownership — which role owns which working tree or branch, and which roles work read-only against a clone or pinned worktree. This checklist is conversational rather than probed: roles and duties come from the user; exploration contributes only the working-tree and branch facts (worktrees in use, long-lived branches, formatter or build steps that rewrite files).
+- **Handoff referent guard** (only when `orchestrating-session-work` is selected): whether receiving sessions read authoritative persistent artifacts end to end — spec files, a branch memory, a standing plan document. When they do, propose the parent plugin's `Post-Compose` referent-guard example (`EXTENSION.md` §Example: Guarding Handoff Referents at Compose) for the session-work file, and a citation-discipline `project.conduct_rules` entry for the subagent-work file when that skill is also selected. Evidence is the artifact files themselves; name them in the proposal.
 
 ### Step 3: Diff existing extension files against findings
 
@@ -92,7 +93,7 @@ Do not author `routing.codex_bias = codex-less`. Treat a persistent from-file va
 
 ### Step 5: Refine conversationally
 
-Work one family at a time, in the order gates → fence → rules and lenses → routing → topology (topology only when `orchestrating-session-work` is selected). For each, present the findings with their evidence and the proposed content, then ask targeted questions via AskUserQuestion:
+Work one family at a time, in the order gates → fence → rules and lenses → routing → topology → handoff referent guard (the last two only when `orchestrating-session-work` is selected). For each, present the findings with their evidence and the proposed content, then ask targeted questions via AskUserQuestion:
 
 - Confirm each gate's exact command, and whether it runs inside a `workspace-write` sandbox. For a gate that does not, get its one permitted fallback and whether an independent worker re-runs it outside.
 - Accept or reject each protected path and each banned command class, with evidence.
@@ -100,6 +101,7 @@ Work one family at a time, in the order gates → fence → rules and lenses →
 - Accept or reject each proposed routing addition and effort override — an effort override needs the project's own evidence, not a preference. An override on a codex checkpoint sets the invocation flag, so any level is expressible. An override on a claude checkpoint selects one of the agent definitions the parent plugin ships, so only the rungs those definitions carry are expressible — propose a rung none of them carries as an improvement candidate for the parent plugin, not as an assignment. Ask whether the project wants a persistent codex/claude bias; offer `codex-heavy`, `claude-lean`, or none, and record `routing.codex_bias` when selected. Treat this bias as a preference, not a Step 2 probe target, and exempt it from the effort-override evidence requirement.
 - Confirm each proposed deviation trigger.
 - For the topology: confirm the roles, per-role duties, and message flow with the user (they are the source, not exploration), and confirm write ownership against the explored working-tree facts — every tree has exactly one writing role, and read-only roles get the clone-or-pinned-worktree instruction.
+- For the handoff referent guard: confirm the authoritative artifacts by name, and whether the project wants the `Post-Compose` guard, the `project.conduct_rules` entry, or both.
 
 Translate free-form intent into named values or positions before writing. Loop until the user approves each family; on rejection, amend or drop and re-present.
 
