@@ -2,7 +2,7 @@
   "tools": [
     {
       "name": "clipboard_copy",
-      "description": "Copy text to the system clipboard.",
+      "description": "Copy text to the system clipboard. After the call, report the returned byte count and backend and do not reprint the copied text in the session.",
       "inputSchema": {
         "type": "object",
         "required": ["text"],
@@ -16,7 +16,7 @@
     },
     {
       "name": "clipboard_copy_file",
-      "description": "Copy the contents of a file to the system clipboard. Use this when the content is already on disk (e.g. a temp file you just wrote) instead of inlining it as text.",
+      "description": "Copy the contents of a file to the system clipboard. Use this when the content is already on disk (e.g. a temp file you just wrote) instead of inlining it as text. After the call, report the returned byte count, backend, and path and do not reprint the file contents in the session.",
       "inputSchema": {
         "type": "object",
         "required": ["path"],

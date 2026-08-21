@@ -74,6 +74,15 @@ extract_context() {
     [[ "$context" == *"clip"* ]]
 }
 
+@test "directive bans reprinting copied content into the session" {
+    run_session_start
+    assert_success
+    local context
+    context=$(extract_context)
+    [[ "$context" == *"NEVER print the copied content into the session"* ]]
+    [[ "$context" == *"overrides an instruction to output that same content"* ]]
+}
+
 @test "directive notes paste-mode reads remain available via Bash" {
     run_session_start
     assert_success

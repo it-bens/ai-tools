@@ -54,6 +54,8 @@ Writes the contents of a file to the system clipboard. Useful when the content i
 
 The path must be absolute, point to an existing regular file, and be readable. On success returns `Copied N bytes from <path> to clipboard via <backend>`.
 
+Both tool descriptions carry the no-echo rule described under [SessionStart Hook](#sessionstart-hook), so it applies even on a host that registers the MCP server without the plugin's hooks.
+
 ## Backend Detection
 
 The server picks the first available backend in this order, scoped to the OS:
@@ -68,6 +70,8 @@ The server picks the first available backend in this order, scoped to the OS:
 ## SessionStart Hook
 
 A `SessionStart` hook injects a short directive into the conversation context at the start of every session, naming `clipboard_copy` / `clipboard_copy_file` as the right way to write to the clipboard and listing the Bash commands that are blocked. This complements the reactive `PreToolUse` block message below: the model sees the directive *before* it ever reaches for `pbcopy`, instead of only being corrected after the fact.
+
+The directive also bans reprinting copied content into the session. After a copy the model reports the tool result — byte count, backend, and the path for `clipboard_copy_file` — and stays silent about the content itself, even when the surrounding instruction asks for that content to be output. Printing it is correct only when the user asks for it after the copy has already happened.
 
 The directive text lives in `hooks/prompts/mcp-tool-directives.md`. The hook script (`hooks/scripts/session-start.sh`) emits it via `hookSpecificOutput.additionalContext`.
 

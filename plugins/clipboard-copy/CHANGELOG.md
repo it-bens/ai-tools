@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0] - 2026-08-21
+
+### Added
+
+- **No-echo directive** in `hooks/prompts/mcp-tool-directives.md` — after a clipboard copy the agent reports the tool result (byte count, backend, path) and does not reprint the copied content, overriding an instruction to output that same content. Covered by `plugin-tests/clipboard-copy/session_start.bats`.
+- **No-echo clause in both tool descriptions** (`mcp-server-clipboard/tools.json`) — carries the same rule on the channel that survives context summarization and reaches hosts that register the MCP server without the hooks.
+
 ## [1.2.1] - 2026-07-13
 
 ### Fixed
