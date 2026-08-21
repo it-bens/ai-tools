@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.12.0] - 2026-08-21
+
+A handoff author working from context alone fabricates referents: a recalled path or re-typed list reads exactly like a verified one, and the skill's own checks validated provenance ("from this session") rather than agreement with a source. Observed in the field as an invented template path and a re-typed migration list that drifted from the spec they restated. The skill is a writing skill, so it no longer mandates or validates recall-only work — it marks what it did not verify — and the verification discipline ships alongside it as a rule the plugin's new hooks deliver whenever a handoff is being written.
+
+### Changed
+
+- `skills/writing-handoff-prompts/SKILL.md` — "do not open new files" narrows to "do not gather new scope", so a verification read is no longer forbidden; the validation diamond and "Write concrete, real values" check concreteness plus marking (a referent the session did not verify is marked for the receiver, never presented as fact) instead of provenance-from-session; build-order units pin to contract citations instead of "pin the contract precisely"; the trust section also labels author-added connective claims no source states as author premises
+
+### Added
+
+- `rules/referent-verification.md` — the verification discipline as a rule file: verify a cited referent against its source or mark it unverified, never re-type an enumerated set a named source holds. Shipped in the plugin; copy it to `~/.claude/rules/` to apply it session-wide
+- `hooks/` — a self-gating hook script delivering that rule when `writing-handoff-prompts` is invoked, and reminding on handoff-shaped prompts to invoke the skill. Claude Code delivery; Codex sessions do not receive it
+- BATS coverage for the hook script under `plugin-tests/llm-author/`
+
 ## [3.11.0] - 2026-08-11
 
 Both session-to-session skills carried a trigger clause narrower than their real use: field usage shows handoff bodies being composed inside an orchestration workflow's dispatch step, and feedback notes being directed by the dispatch message that defined the work — both previously outside "only on an explicit user request". The descriptions now license those two paths, and the handoff skill's delivery step gains the recipient branch the new trigger requires: a workflow that invoked the skill for a body to dispatch receives the finished prompt back instead of being interrupted by the save-or-clipboard question — the same person-vs-process distinction `prompt-engineering` already carries at its delivery step.

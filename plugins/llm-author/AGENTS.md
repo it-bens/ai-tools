@@ -11,6 +11,7 @@ This plugin must remain compatible with Claude Code and Codex.
 - Skill bodies and loaded references use host-neutral actions and rule-file concepts.
 - Preserve helpful Claude-specific frontmatter such as `model`, `user-invocable`, and `allowed-tools`; Codex may ignore unsupported fields.
 - Keep `.claude-web` markers and `project/` as intentional Claude Web compatibility assets.
+- The `hooks/` delivery of `rules/referent-verification.md` is Claude Code wiring; Codex sessions do not receive it. The rule file itself is host-neutral.
 
 ## File Navigation
 
@@ -27,6 +28,8 @@ This plugin must remain compatible with Claude Code and Codex.
 | Update Pass 2 techniques or three-angle pattern | `skills/rule-file-writing/references/techniques.md`, `skills/rule-file-writing/references/three-angle-pattern.md` |
 | Update the rules-file skeleton template | `skills/rule-file-writing/assets/templates/rules-file-skeleton.md` |
 | Modify handoff-prompt writing behavior or triggers | `skills/writing-handoff-prompts/SKILL.md` |
+| Update the referent-verification rule | `rules/referent-verification.md` |
+| Change handoff-rule delivery events or gating | `hooks/hooks.json`, `hooks/scripts/inject-handoff-rule.sh` (tests in `plugin-tests/llm-author/`) |
 | Modify session-feedback writing behavior or triggers | `skills/writing-session-feedback/SKILL.md` |
 | Update a prompting technique | `skills/prompt-engineering/references/techniques/<technique>.md` (index in `techniques/README.md`) |
 | Update a reusable prompt pattern | `skills/prompt-engineering/references/prompt-patterns/<pattern>.md` (index in `prompt-patterns/README.md`) |

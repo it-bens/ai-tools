@@ -1,6 +1,6 @@
 {
   "name": "llm-author",
-  "version": "3.11.0",
+  "version": "3.12.0",
   "description": "Author LLM-targeted content — prompts, skills, agents, rules files, session handoffs, and session feedback — for Claude 5 and Claude 4, GPT-5.6 (OpenAI), GLM 4.7 (Z.ai), and Gemini 3 (including Deep Research)",
   "author": {
     "name": "Martin Bens",

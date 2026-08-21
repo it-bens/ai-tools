@@ -1,0 +1,28 @@
+{
+  "description": "Delivers the referent-verification rule when a handoff prompt is being written. Both hooks call a self-gating script that stays silent unless the writing-handoff-prompts skill is invoked or the user's prompt asks for a handoff.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/inject-handoff-rule.sh post-tool-use",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/inject-handoff-rule.sh user-prompt",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
