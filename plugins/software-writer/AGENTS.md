@@ -21,7 +21,7 @@ plugins/software-writer/
     │   └── references/
     │       ├── comments.md
     │       ├── primitives.md
-    │       └── stacks/{go,python,typescript,php}.md
+    │       └── stacks/{bash,go,python,typescript,php}.md
     ├── writing-tests/
     │   ├── SKILL.md
     │   └── references/

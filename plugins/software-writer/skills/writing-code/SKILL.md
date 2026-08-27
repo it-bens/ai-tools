@@ -1,6 +1,6 @@
 ---
 name: writing-code
-version: 2.1.0
+version: 2.2.0
 description: Use when writing or editing implementation code — any change that adds, modifies, or removes logic, signatures, or comments on the lines being written. Also covers reviewing, cleaning up, or improving the comments on code being edited. Do NOT activate for test files and their fixtures (the writing-tests skill owns those).
 ---
 
@@ -66,7 +66,9 @@ digraph writing_code {
 
 Detect the stack from the file(s) being edited: file extension plus project signals such as `go.mod`, `pyproject.toml`, `tsconfig.json`, or `composer.json`. `project.stacks` overrides detection; default if not otherwise stated: detect from the files and project signals.
 
-Load `references/stacks/<stack>.md` for the detected stack (`go`, `python`, `typescript`, `php`) — only the matching one. For a stack without a reference file, apply the universal rules plus any project content earlier in context.
+A shell file is the `bash` stack on the file alone, ahead of every project signal: extension `.sh`, `.bash`, or `.bats`, or an extensionless file whose shebang names `sh` or `bash`. Shell scripts carry no manifest of their own and routinely sit inside a project of another stack, so a project signal must never route them to that stack.
+
+Load `references/stacks/<stack>.md` for the detected stack (`bash`, `go`, `python`, `typescript`, `php`) — only the matching one. For a stack without a reference file, apply the universal rules plus any project content earlier in context.
 
 ### Step 2: Confirm the API call
 

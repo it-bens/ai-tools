@@ -1,6 +1,6 @@
 # Software Writer
 
-Three universal, opinionated skills for writing software: `writing-code`, `writing-tests`, and `writing-docs`. Each ships a workflow with universal rules and an extension contract through which projects register their own conventions. `writing-code` carries one reference per language (Go, Python, TypeScript, PHP); `writing-tests` carries one per **test framework**, since table idioms, isolation models, and cleanup mechanisms differ per framework rather than per language.
+Three universal, opinionated skills for writing software: `writing-code`, `writing-tests`, and `writing-docs`. Each ships a workflow with universal rules and an extension contract through which projects register their own conventions. `writing-code` carries one reference per language (Bash, Go, Python, TypeScript, PHP); `writing-tests` carries one per **test framework**, since table idioms, isolation models, and cleanup mechanisms differ per framework rather than per language.
 
 The skills are opinionated by design. Opinions can be tuned within the extension contract; a project that disagrees beyond that should copy the plugin and go its own way.
 

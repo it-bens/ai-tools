@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0] - 2026-08-27
+
+### Added
+
+- `writing-code` reference `references/stacks/bash.md`: the shell's introspection builtins as the doc-consultation surface (`type`, `declare -p`, `shopt`/`set -o`, `help`, `BASH_VERSINFO`) with the escalation paths past them, a 16-entry footgun catalog covering quoting and expansion, exit status under `set -e`, subshells and streams, input reading, and the BSD/GNU and bash-3.2/bash-4 portability splits, plus the Google Shell Style Guide function header as the doc-comment convention.
+- `writing-code` Step 1 routes the `bash` stack, and detects it from the file alone — `.sh`, `.bash`, `.bats`, or a `sh`/`bash` shebang — ahead of every project signal, because shell scripts carry no manifest and routinely sit inside a project of another stack.
+
 ## [2.1.0] - 2026-08-03
 
 ### Added
