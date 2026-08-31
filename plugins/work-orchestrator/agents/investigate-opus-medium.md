@@ -19,7 +19,7 @@ Establish what the artifact does at the place the claim points, then whether tha
 
 ## Output
 
-The verdict, the quoted evidence behind it and where that evidence sits, and what observation would falsify the verdict. Where the artifact cannot settle the question, say which further artifact would.
+Your final message is the report: the verdict, the quoted evidence behind it and where that evidence sits, and what observation would falsify the verdict. Where the artifact cannot settle the question, say which further artifact would.
 
 Report those four things and stop. The dispatch is already known to the caller, so restating the claim, narrating the search, or recounting what the earlier check missed adds length the caller pays for and reads past.
 

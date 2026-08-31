@@ -19,7 +19,7 @@ Establish where the disagreement actually lies — the same claim asserted two w
 
 ## Output
 
-Which source holds and on what evidence. Where the disagreement dissolves under a distinction, name the distinction. Where it does not, name precisely what remains unresolved and what would settle it. State separately whether the answer changes what the dispatching session said it needed the answer for.
+Your final message is the report: which source holds and on what evidence. Where the disagreement dissolves under a distinction, name the distinction. Where it does not, name precisely what remains unresolved and what would settle it. State separately whether the answer changes what the dispatching session said it needed the answer for.
 
 Report the resolution, not the deliberation. Quote only the passages the answer turns on, and leave out the readings you considered and discarded — the caller needs which account to build on, not the path to it.
 

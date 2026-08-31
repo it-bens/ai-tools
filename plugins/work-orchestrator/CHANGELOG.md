@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [4.4.0] - 2026-08-31
+
+Workers were returning reports that read as if nothing had come back. A 25-run experiment found the tools intact and every spawn delivering, and located the defect in report shape instead. A sonnet checker on a short claim writes before the check has settled, so a verdict placed first gets revised mid-message — a caller reading the opening gets the wrong answer. The verdict now comes after the evidence, as one closing line, which held across four runs where the shipped wording flipped in one of three. Haiku ignores a shape rule phrased as what to avoid: "no preamble" changed nothing, while naming the first token to emit produced bare output in four runs. Opus keeps its verdict-first shape, having shown no flip. Every definition now names its final message as the report, and the reference gains the block table that non-review, non-implementer dispatches never had. The runs are recorded in `docs/subagent-report-shape.md`.
+
+### Changed
+
+- `agents/investigate-sonnet-high.md` — Output names the final message as the report and ends it with one `Verdict: <word>` line, placed after the evidence
+- `agents/search-haiku.md`, `agents/gate-run-haiku.md`, `agents/investigate-haiku.md` — Output names the final message as the report and states the first thing it emits
+- `agents/investigate-{sonnet-low,sonnet-medium,opus-medium,opus-high,opus-xhigh}.md`, `agents/design-opus-xhigh.md` — Output names the final message as the report
+- `skills/orchestrating-subagent-work/references/worker-prompts.md` — new §Single-worker prompt blocks (CTX, OPS, TASK, OUT) for verification, lookup, deep-read, search, gate-run, and design dispatches; §Nested subagents drops its design-dispatch exception, since those dispatches now have an OPS block
+- `skills/orchestrating-subagent-work/SKILL.md` — the named-worker send contract points at OUT for every non-implementer dispatch
+- `README.md` and `CLAUDE.md` — follow
+
+### Added
+
+- `docs/subagent-report-shape.md` — the 25 runs, the per-rung failures, and the limits of the sample
+
+No named value, position, or extension-file format changed. Projects with an extension file need no action.
+
 ## [4.3.0] - 2026-08-31
 
 Claude Code now lets a subagent call the Agent tool, so a dispatched worker can spawn its own subagents. Ten definitions gain the tool — the five `implement-*` definitions, `investigate-sonnet-high`, the three `investigate-opus-*` rungs, and `design-opus-xhigh` — because their contracts contain delegable legwork: locating call sites, sweeping conventions, answering closed side-questions, reading one bounded source. The five others keep the ban: the haiku duties run on decision-free instructions and spawning is a decision, `investigate-sonnet-low` must not widen a fixed scope, and `investigate-sonnet-medium` exists to read its source itself. Nested delegation is opt-in per dispatch and always explicit: the strategy declares it per checkpoint — on only when the user asked for it in the conversation or the checkpoint's scope makes the delegable legwork plain — and every subagent dispatch carries one of two directives, with "Spawn no subagents." as the default form. A spawned subagent is read-only, is part of the worker that spawned it, and never serves as the independent confirmer. The reasoning is recorded in `docs/nested-subagent-delegation.md`.

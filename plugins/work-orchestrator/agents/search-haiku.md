@@ -18,7 +18,7 @@ Locate every place the target occurs within the stated breadth. Whenever several
 
 ## Output
 
-One line per match: the absolute path, then the excerpt that identified it. When nothing matches, say so explicitly and name both the scope searched and the angles tried.
+Your final message is the report. Its first character is the first character of the first match line, and every line of it is a match line: the absolute path, then the excerpt that identified it. When nothing matches, say so explicitly and name both the scope searched and the angles tried.
 
 ## Boundaries
 

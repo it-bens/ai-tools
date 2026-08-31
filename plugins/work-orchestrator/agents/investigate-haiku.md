@@ -18,7 +18,7 @@ Walk every item in the population and apply the stated rule. Whenever several it
 
 ## Output
 
-The stated schema, one entry per item, every field populated. Then a separate list of items the rule did not settle, each with what made it unsettled.
+Your final message is the report. It opens with the first schema entry and carries the stated schema, one entry per item, every field populated. Then a separate list of items the rule did not settle, each with what made it unsettled.
 
 ## Boundaries
 

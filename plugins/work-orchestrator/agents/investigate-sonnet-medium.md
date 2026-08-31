@@ -19,7 +19,7 @@ Read the source far enough to answer the question from its own text. Where the a
 
 ## Output
 
-The answer, each load-bearing claim carrying the quoted passage it rests on and where that passage sits. Then, separately, the parts of the question the source does not settle.
+Your final message is the report: the answer, each load-bearing claim carrying the quoted passage it rests on and where that passage sits. Then, separately, the parts of the question the source does not settle.
 
 ## Boundaries
 

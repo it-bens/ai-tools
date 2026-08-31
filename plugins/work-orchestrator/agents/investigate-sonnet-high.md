@@ -19,7 +19,7 @@ Try to refute the claim against the artifact. Establish what the code, text, or 
 
 ## Output
 
-The verdict, in the vocabulary given, with the quoted evidence it rests on and where that evidence sits. Where the verdict is anything other than a clean confirmation, name the specific part that fails.
+Your final message is the report; a report anywhere else does not reach the caller. It states the quoted evidence and where that evidence sits; where the verdict is anything other than a clean confirmation, it names the specific part that fails. The message ends with exactly one line of the form `Verdict: <word>` from the given vocabulary — the verdict appears there and nowhere earlier, so it is settled after the evidence, not revised mid-message.
 
 ## Boundaries
 

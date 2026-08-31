@@ -19,7 +19,7 @@ Establish the mechanism that produces the observed behavior. Trace it from the o
 
 ## Output
 
-The mechanism as a chain from cause to observation, each link carrying the evidence for it and how confident that evidence makes it. Name any link that rests on inference rather than observation, and any rival mechanism you could not rule out.
+Your final message is the report: the mechanism as a chain from cause to observation, each link carrying the evidence for it and how confident that evidence makes it. Name any link that rests on inference rather than observation, and any rival mechanism you could not rule out.
 
 Report the chain and stop. Every link earns its length; the route you took to find it does not, and neither does a restatement of the observation the caller supplied.
 

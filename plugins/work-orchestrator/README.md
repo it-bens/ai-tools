@@ -51,7 +51,7 @@ Without a project extension, the skill runs on universal defaults: gates enumera
 **References** (loaded on demand):
 
 - `references/model-routing.md` — the checkpoint-to-actor routing table, verification shape, effort ladder, severity-label calibration, and codex-less substitutions
-- `references/worker-prompts.md` — the review and implementer prompt-block protocols every worker receives, the two-tier implementer report contract and its report-file convention, how extension content reaches a worker, and the trust boundaries on worker output
+- `references/worker-prompts.md` — the review, implementer, and single-worker prompt-block protocols every worker receives, the two-tier implementer report contract and its report-file convention, how extension content reaches a worker, and the trust boundaries on worker output
 - `references/codex-dispatch.md` — codex invocation hygiene and the `codex exec resume` re-validation loop
 
 Worker-prompt phrasing is not written into the skill. Once the strategy has named its actors, the skill invokes `llm-author:prompt-engineering` in Ruleset mode for the model families in play, writes the returned ruleset to a session-scoped file outside the repository, and re-reads it before building each worker prompt. Every worker still receives the same blocks with the same content; only the wording adapts to the family the checkpoint routes to.
@@ -110,6 +110,7 @@ The `docs/` directory holds the findings the plugin's directives derive from, in
 - `docs/builtin-agent-duty-capture.md` — how the agent duties were derived from Claude Code's built-in types, what to exclude as harness-injected, which parts vary by model, and the procedure for re-checking after a Claude Code update
 - `docs/subagent-delivery-mechanism.md` — the five-run experiment separating the dispatch shapes whose reports come back on their own from the one whose report does not, the sending tool's absence from a worker's default tools, the transcript recovery path, and the limits of a single-definition sample
 - `docs/nested-subagent-delegation.md` — which definitions carry the Agent tool and why, the opt-in-per-dispatch rationale, and the invariants nested spawns preserve; judgement rather than measurement
+- `docs/subagent-report-shape.md` — the 25-run experiment behind the report-shape wording: tool availability ruled out as a cause, the sonnet verdict revised mid-message when placed first, and haiku ignoring a shape rule phrased as what to avoid
 
 These source materials are preserved for reference and can be used to update or extend the plugin when a model tier revs or Claude Code changes. They are not loaded at runtime.
 
@@ -145,7 +146,8 @@ work-orchestrator/
 │   ├── codex-dispatch-experiments.md
 │   ├── gpt-5-6-model-family.md
 │   ├── nested-subagent-delegation.md
-│   └── subagent-delivery-mechanism.md
+│   ├── subagent-delivery-mechanism.md
+│   └── subagent-report-shape.md
 ├── hooks/
 │   ├── hooks.json                       # PostToolUse (Skill) + UserPromptSubmit delivery hooks
 │   └── scripts/

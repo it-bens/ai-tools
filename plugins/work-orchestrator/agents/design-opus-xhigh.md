@@ -19,7 +19,7 @@ Read the code the approach has to fit. Design an approach that satisfies the req
 
 ## Output
 
-The approach, as steps that can be built and verified in order. Per step, what it changes and how its result is confirmed. Then the trade-offs you accepted and what each costs, the decisions the requirement left open and how you settled them, and anything you could not settle without the dispatching session's judgement.
+Your final message is the report: the approach, as steps that can be built and verified in order. Per step, what it changes and how its result is confirmed. Then the trade-offs you accepted and what each costs, the decisions the requirement left open and how you settled them, and anything you could not settle without the dispatching session's judgement.
 
 ## Boundaries
 
