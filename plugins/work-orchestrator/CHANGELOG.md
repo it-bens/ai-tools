@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [4.3.0] - 2026-08-31
+
+Claude Code now lets a subagent call the Agent tool, so a dispatched worker can spawn its own subagents. Ten definitions gain the tool — the five `implement-*` definitions, `investigate-sonnet-high`, the three `investigate-opus-*` rungs, and `design-opus-xhigh` — because their contracts contain delegable legwork: locating call sites, sweeping conventions, answering closed side-questions, reading one bounded source. The five others keep the ban: the haiku duties run on decision-free instructions and spawning is a decision, `investigate-sonnet-low` must not widen a fixed scope, and `investigate-sonnet-medium` exists to read its source itself. Nested delegation is opt-in per dispatch and always explicit: the strategy declares it per checkpoint — on only when the user asked for it in the conversation or the checkpoint's scope makes the delegable legwork plain — and every subagent dispatch carries one of two directives, with "Spawn no subagents." as the default form. A spawned subagent is read-only, is part of the worker that spawned it, and never serves as the independent confirmer. The reasoning is recorded in `docs/nested-subagent-delegation.md`.
+
+### Changed
+
+- `agents/implement-{sonnet-medium,sonnet-high,opus-medium,opus-high,opus-xhigh}.md`, `agents/investigate-{sonnet-high,opus-medium,opus-high,opus-xhigh}.md`, `agents/design-opus-xhigh.md` — `Agent` removed from `disallowedTools`; Boundaries gains the dispatch-directed spawning rule (spawn only as directed, spawned subagents read-only/gathering-only, verdict and writes stay with the worker)
+- `skills/orchestrating-subagent-work/references/worker-prompts.md` — OPS (review) and FENCE (implementer) carry the nested-subagent directive for subagent actors, and a design dispatch carries it among its operational constraints; new §Nested subagents defines the two directive forms
+- `skills/orchestrating-subagent-work/SKILL.md` — the strategy declares nested delegation per checkpoint with its reason; the dispatch node attaches the directive with spawn-none as the absent-declaration form
+- `skills/orchestrating-subagent-work/references/model-routing.md` — nested-delegation routing rule carrying the eligible-definition roster (read at strategy time): a worker's spawned subagent never confirms and relaxes no verification requirement
+- `README.md` and `CLAUDE.md` — follow
+
+### Added
+
+- `docs/nested-subagent-delegation.md` — the roster and its per-duty reasoning, marked as judgement rather than measurement
+
+No named value, position, or extension-file format changed. Projects with an extension file need no action.
+
 ## [4.2.0] - 2026-08-21
 
 A handoff composed from session recall can cite referents its sources do not hold. The extension contract gains a worked example guarding against that at the compose loop, for projects whose receiving sessions read authoritative persistent artifacts end to end.

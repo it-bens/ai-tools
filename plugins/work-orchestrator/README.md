@@ -70,6 +70,8 @@ The skill governs the distributing session only. Receiving sessions need no skil
 
 Claude Code does not let a reasoning effort be set when a subagent is spawned. The Agent tool accepts an `effort` argument and silently discards it — no error, no effect — so the worker runs at whatever the session happens to be set to. Effort binds in one place only: an agent definition. These 15 definitions exist for that reason, and most of them become unnecessary if the open upstream issues are fixed.
 
+Ten definitions carry the Agent tool — the five `implement-*` definitions, `investigate-sonnet-high`, the three `investigate-opus-*` rungs, and `design-opus-xhigh` — so a dispatched worker can spawn its own read-only subagents for legwork: locating call sites, sweeping conventions, answering closed side-questions. Nested delegation is opt-in per dispatch and always explicit: the strategy declares it per checkpoint, every dispatch to a subagent actor carries one of two directives, and the default form is "Spawn no subagents." A spawned subagent is part of the worker that spawned it — it never serves as the independent confirmer. The haiku definitions and the sonnet `low`/`medium` investigate rungs keep the Agent tool disallowed; the roster's reasoning is in `docs/nested-subagent-delegation.md`.
+
 A spawn name is the second dispatch-time argument that fails silently: `effort` is accepted and discarded without an error, and a spawn name changes where the report goes without an error. A named worker is an addressable teammate whose report does not come back on its own — it finishes, writes a complete report as its final text, and delivers nothing unless it calls a message-sending tool. So the skill spawns workers unnamed, and contracts the send explicitly on the rare checkpoint that needs a name. The runs behind that are in `docs/subagent-delivery-mechanism.md`.
 
 | Duty | haiku | sonnet | opus |
@@ -107,6 +109,7 @@ The `docs/` directory holds the findings the plugin's directives derive from, in
 - `docs/claude-effort-mechanism.md` — where reasoning effort binds and where it silently does not, the six-run experiment establishing that a spawn-time `effort` argument has no effect, haiku's exclusion from the parameter, and the per-rung measurements behind each definition's rung
 - `docs/builtin-agent-duty-capture.md` — how the agent duties were derived from Claude Code's built-in types, what to exclude as harness-injected, which parts vary by model, and the procedure for re-checking after a Claude Code update
 - `docs/subagent-delivery-mechanism.md` — the five-run experiment separating the dispatch shapes whose reports come back on their own from the one whose report does not, the sending tool's absence from a worker's default tools, the transcript recovery path, and the limits of a single-definition sample
+- `docs/nested-subagent-delegation.md` — which definitions carry the Agent tool and why, the opt-in-per-dispatch rationale, and the invariants nested spawns preserve; judgement rather than measurement
 
 These source materials are preserved for reference and can be used to update or extend the plugin when a model tier revs or Claude Code changes. They are not loaded at runtime.
 
@@ -141,6 +144,7 @@ work-orchestrator/
 │   ├── claude-effort-mechanism.md
 │   ├── codex-dispatch-experiments.md
 │   ├── gpt-5-6-model-family.md
+│   ├── nested-subagent-delegation.md
 │   └── subagent-delivery-mechanism.md
 ├── hooks/
 │   ├── hooks.json                       # PostToolUse (Skill) + UserPromptSubmit delivery hooks
