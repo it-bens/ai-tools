@@ -1,6 +1,6 @@
 # Nested subagent delegation
 
-Which agent definitions may spawn their own subagents, and why the plugin makes that opt-in per dispatch. This file records judgement, not measurement: no experiment was run for it. The enabling fact — Claude Code permits the Agent tool inside a subagent — is a harness capability observed by the maintainer, re-checkable by spawning any definition without `Agent` in `disallowedTools` and asking it to call the tool.
+Which agent definitions may spawn their own subagents, and why the plugin makes that opt-in per dispatch. Most of this file records judgement, not measurement: no experiment was run for the roster split. The enabling fact — Claude Code permits the Agent tool inside a subagent — is a harness capability observed by the maintainer, re-checkable by spawning any definition without `Agent` in `disallowedTools` and asking it to call the tool. The Definition-named spawn invariant below is the exception: it is read directly from Claude Code's shipped internal type declarations (`mods/types/claude-code.d.ts` in `anthropics/claude-code`, `AgentSpawnInput`/`AgentSpec`) and the published `@anthropic-ai/claude-agent-sdk` `.d.ts`, not inferred from behavior.
 
 ## The roster
 
@@ -25,4 +25,4 @@ A spawn multiplies cost and adds an unverified voice, so the orchestrating sessi
 - **Fence**: a spawned subagent is read-only. Repo writes stay with the dispatched worker, inside its fenced file list plus its report file.
 - **Confirmation independence**: a subagent a worker spawned is part of that worker. It never serves as the independent confirmer, and its output relaxes no verification requirement.
 - **Non-delegable duties**: verdict, report contract, and gate execution stay with the worker its dispatch named.
-- **Model explicitness**: each nested spawn names an explicit model — haiku for mechanical enumeration, sonnet for a bounded judgement. Effort still binds only in a definition, so a nested spawn of a built-in type runs at that type's default; a nested spawn cannot select a rung.
+- **Definition-named spawn**: each nested spawn sets `subagent_type` to the plugin's own leaf-duty definition for the purpose (`search-haiku`, `investigate-haiku`, `investigate-sonnet-low`, `investigate-sonnet-medium`), never a bare model and never a built-in type. Confirmed against Claude Code's internal `AgentSpawnInput`/`AgentSpec` types: a plugin's own named agent resolves through `subagentType` exactly like a built-in, and `effort` lives only on the static definition, never on the spawn call. So the definition's own effort binds the nested spawn exactly as it would a top-level dispatch — a nested spawn selects a rung by selecting the definition that carries it.

@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [4.4.1] - 2026-09-22
+
+Nested delegation directed a dispatched worker to spawn "an explicit model," never naming one of the plugin's own leaf-duty definitions. A worker's `Agent` call therefore left `subagent_type` at its own default and never reached `search-haiku`, `investigate-haiku`, `investigate-sonnet-low`, or `investigate-sonnet-medium` — nested delegation ran, but always on a built-in type, not the plugin's roster. Claude Code's own internal type declarations (`mods/types/claude-code.d.ts`'s `AgentSpawnInput`/`AgentSpec`, mirrored in the published `@anthropic-ai/claude-agent-sdk` `.d.ts`) show a plugin's named agent resolves through `subagentType` exactly like a built-in, so nothing on the platform side forced the fallback.
+
+### Fixed
+
+- `skills/orchestrating-subagent-work/references/worker-prompts.md` — the "Delegating" nested-subagent directive now names the plugin's own leaf-duty definition per purpose, read off `model-routing.md`'s routing table, instead of a bare model tier
+- `docs/nested-subagent-delegation.md` — the "Model explicitness" invariant is replaced by "Definition-named spawn": a nested spawn selects a rung by selecting the definition that carries it, since that definition's static `effort` field binds the same way a top-level dispatch's does
+
+### Changed
+
+- `README.md` — follows
+
+No named value, position, or extension-file format changed. Projects with an extension file need no action.
+
 ## [4.4.0] - 2026-08-31
 
 Workers were returning reports that read as if nothing had come back. A 25-run experiment found the tools intact and every spawn delivering, and located the defect in report shape instead. A sonnet checker on a short claim writes before the check has settled, so a verdict placed first gets revised mid-message — a caller reading the opening gets the wrong answer. The verdict now comes after the evidence, as one closing line, which held across four runs where the shipped wording flipped in one of three. Haiku ignores a shape rule phrased as what to avoid: "no preamble" changed nothing, while naming the first token to emit produced bare output in four runs. Opus keeps its verdict-first shape, having shown no flip. Every definition now names its final message as the report, and the reference gains the block table that non-review, non-implementer dispatches never had. The runs are recorded in `docs/subagent-report-shape.md`.
