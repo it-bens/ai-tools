@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [4.4.2] - 2026-09-22
+
+Re-running the built-in agent duty capture on Claude Code 2.1.278 returned refusals rather than duty text. The capture prompt asked for everything after the tool-schema section, beginning at a boundary sentence that no built-in type's prompt contains any more: the instruction prose now precedes the tool schemas, and each type opens with its own persona line. Two of four captures declined on that ground rather than fabricate the slice they were told to quote, which is the response this document wants. The prompt now names the slice by position instead.
+
+No definition in `agents/` changes. `Explore` and `Plan` state the same duties they stated before, and `general-purpose`'s only change is an explicit report expectation that is weaker than the per-duty report contracts the definitions already carry. Re-capturing undercut one claim in the effort documentation instead: a haiku probe returned a prose block matching sonnet's, with no `thinking_mode` tag, no `max_thinking_length` budget, and no depth directive on any model. Haiku's exclusion from the effort parameter is unaffected, resting as it does on the API rejecting the parameter rather than on any injected instruction.
+
+### Changed
+
+- `docs/builtin-agent-duty-capture.md` — the capture prompt asks for the instruction prose block by position rather than by a boundary sentence, and records the three opening lines as captured; a refusal naming a mismatched opening sentence is documented as the signal to re-ask with the marker gone; §What to exclude gains the SDK identity line and the report-delivery contract, and states which `Notes:` bullets are harness convention; §What varies by model drops the haiku-only depth directive; the duties table gains `general-purpose`'s report expectation and its narrowed re-delegation rule; update mode step 5 updates the table whenever the captured duty text moves, not only when a definition does
+- `docs/claude-effort-mechanism.md` — the paragraph claiming haiku receives depth instructions the other models do not is removed, no 2.1.278 capture carrying one on any model
+- `CLAUDE.md` — the navigation row for the capture document no longer names a boundary marker
+
+`agents/` is untouched. No named value, position, or extension-file format changed. Projects with an extension file need no action.
+
 ## [4.4.1] - 2026-09-22
 
 Nested delegation directed a dispatched worker to spawn "an explicit model," never naming one of the plugin's own leaf-duty definitions. A worker's `Agent` call therefore left `subagent_type` at its own default and never reached `search-haiku`, `investigate-haiku`, `investigate-sonnet-low`, or `investigate-sonnet-medium` — nested delegation ran, but always on a built-in type, not the plugin's roster. Claude Code's own internal type declarations (`mods/types/claude-code.d.ts`'s `AgentSpawnInput`/`AgentSpec`, mirrored in the published `@anthropic-ai/claude-agent-sdk` `.d.ts`) show a plugin's named agent resolves through `subagentType` exactly like a built-in, so nothing on the platform side forced the fallback.
