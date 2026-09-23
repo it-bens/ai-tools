@@ -1,4 +1,6 @@
-# GPT-5.6 Prompt Adaptation Examples
+# OpenAI GPT Prompt Adaptation Examples (GPT-5.6, GPT-6)
+
+Examples 1–3 adapt Claude-style prompts for GPT-5.6; Example 4 migrates GPT-5.6-era instruction files to GPT-6.
 
 ## Example 1: Support Agent (step-prescriptive → outcome-first)
 
@@ -37,7 +39,7 @@ the refund request.
 | Numbered step script → outcome + success criteria | GPT-5.6 chooses an efficient path when given the destination and completion bar |
 | Removed duplicate eligibility/policy rules (steps 2, 5, 7) | State each instruction once — repeated rules create contract conflicts and burn reasoning tokens |
 | Removed "double-check" re-verification | The success criteria already define done; redundant verification instructions add loops |
-| Removed "Be concise. Keep responses short." | GPT-5.6 is more concise than GPT-5.5 by default; blanket brevity can over-truncate — set `text.verbosity` instead |
+| Removed "Be concise. Keep responses short." | GPT-5.6 is more concise than GPT-5.5 by default; blanket brevity can over-truncate — set `text.verbosity` instead (documented for GPT-5.6) |
 | Added confirmation boundary | GPT-5.6 is proactive and persistent; autonomy boundaries define what each request authorizes |
 
 ## Example 2: Coding Agent (approval-heavy → autonomy policy)
@@ -110,12 +112,47 @@ absence of evidence is not a "no".
 | Added citation and inference-labeling rules | GPT-5.6 follows evidence contracts literally when they are stated as decision rules |
 | Added missing-evidence handling | Prevents unsupported claims from filling gaps silently |
 
+## Example 4: Repository Instructions (GPT-5.6 → GPT-6, blanket → conditional)
+
+### GPT-5.6-era AGENTS.md block (blocks or over-tests on GPT-6 Astra)
+
+```markdown
+Before every edit, read architecture.md, database.md, and deployment.md.
+Always run the full test suite after any change and verify your work thoroughly.
+Ask for approval before running commands or changing files.
+```
+
+### GPT-6 adapted block
+
+```markdown
+Use architecture.md for service boundaries, database.md for schema changes, and
+deployment.md when preparing a deployment.
+
+The local tests use disposable fixtures and have no production access. Run them, fix
+failures caused by the requested change, and rerun affected tests without asking for
+approval at each step. Once required checks pass, broaden or repeat testing only when
+new changes, failures, or unresolved concerns justify it.
+
+Require confirmation for external writes, destructive actions, or a material expansion
+of scope.
+```
+
+### Adaptation Rationale
+
+| Change | Reason |
+|--------|--------|
+| "Before every edit, read …" → one conditional pointer per doc | Astra works out what it needs to read; a standing read-everything order burns context and slows small changes |
+| "Always run the full test suite … verify thoroughly" → bounded re-verification | Astra tests on its own; carried-over test encouragement leads to unnecessary testing |
+| Blanket "ask for approval" → standing permission for the safe local test workflow | Astra can be tentative about how far to take a task and may treat strong boundary language as a reason to stop |
+| Kept the confirmation tier for external writes and destructive actions | Autonomy boundaries stay explicit on GPT-6 agentic prompts; only the blanket form is removed |
+
 ## Adaptation Checklist
 
 - [ ] Outcome, success criteria, and stop rules stated; step scripts removed
 - [ ] Each instruction stated once; contradictions and duplicates removed
 - [ ] ALWAYS / NEVER / MUST only on true invariants; decision rules for judgment calls
-- [ ] Blanket brevity instructions re-checked; `text.verbosity` used for the default
+- [ ] Blanket brevity instructions re-checked; `text.verbosity` used for the default (GPT-5.6)
 - [ ] Autonomy/approval boundaries defined (report vs. act vs. confirm)
 - [ ] Retrieval and tool-call budgets replace "be thorough" framing
-- [ ] `reasoning.effort` chosen deliberately (default `medium`; `max` only for hardest quality-first work)
+- [ ] `reasoning.effort` chosen deliberately (default `medium` on GPT-5.6 and GPT-6 Sol/Luna; no `none` on GPT-6 Astra; `max` only for hardest quality-first work)
+- [ ] GPT-6 target: blanket instruction-file orders made conditional; re-verification bounded; user-over-skill precedence stated

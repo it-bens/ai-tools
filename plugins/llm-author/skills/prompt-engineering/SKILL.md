@@ -1,7 +1,7 @@
 ---
 name: prompt-engineering
-version: 3.11.0
-description: Use when the user asks to create, write, improve, or debug a prompt, build a prompt chain, design a system prompt, adapt a prompt for GPT-5.6 (OpenAI), GLM 4.7 (Z.ai), or Gemini 3, create a Gemini deep research prompt, migrate a prompt or skill from Claude 4 to Claude 5 or between GPT-5.x versions, optimize LLM-targeted content (skills, agents, instructions, documentation), author a prompt an invoking workflow dispatches to a worker process, distill prompt-authoring rules into a session-scoped ruleset, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
+version: 3.13.0
+description: Use when the user asks to create, write, improve, or debug a prompt, build a prompt chain, design a system prompt, adapt a prompt for GPT-6 or GPT-5.6 (OpenAI), GLM 4.7 (Z.ai), or Gemini 3, create a Gemini deep research prompt, migrate a prompt or skill from Claude 4 to Claude 5, from Opus 5 to Opus 5.5, or between GPT versions (e.g. GPT-5.6 to GPT-6), optimize LLM-targeted content (skills, agents, instructions, documentation), author a prompt an invoking workflow dispatches to a worker process, distill prompt-authoring rules into a session-scoped ruleset, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 ---
 
 # Prompt Engineering Lab
@@ -59,7 +59,7 @@ digraph prompt_engineering {
     "Target model?" [shape=diamond];
     "Claude 5 default -> claude-5-guide" [shape=box];
     "Claude 4 -> claude-4-guide" [shape=box];
-    "GPT-5.6 (OpenAI) -> gpt-56-guide" [shape=box];
+    "GPT-6 / GPT-5.x (OpenAI) -> openai-gpt-guide" [shape=box];
     "GLM 4.7 -> glm-47-guide" [shape=box];
     "Gemini 3 -> gemini-3-guide (Deep Research -> gemini-3-deep-research-guide)" [shape=box];
     "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?" [shape=diamond];
@@ -81,12 +81,12 @@ digraph prompt_engineering {
     "Phase 2: design strategy (techniques by complexity + target-model adaptation)" -> "Target model?";
     "Target model?" -> "Claude 5 default -> claude-5-guide";
     "Target model?" -> "Claude 4 -> claude-4-guide";
-    "Target model?" -> "GPT-5.6 (OpenAI) -> gpt-56-guide";
+    "Target model?" -> "GPT-6 / GPT-5.x (OpenAI) -> openai-gpt-guide";
     "Target model?" -> "GLM 4.7 -> glm-47-guide";
     "Target model?" -> "Gemini 3 -> gemini-3-guide (Deep Research -> gemini-3-deep-research-guide)";
     "Claude 5 default -> claude-5-guide" -> "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?";
     "Claude 4 -> claude-4-guide" -> "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?";
-    "GPT-5.6 (OpenAI) -> gpt-56-guide" -> "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?";
+    "GPT-6 / GPT-5.x (OpenAI) -> openai-gpt-guide" -> "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?";
     "GLM 4.7 -> glm-47-guide" -> "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?";
     "Gemini 3 -> gemini-3-guide (Deep Research -> gemini-3-deep-research-guide)" -> "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?";
     "Recipient: a person, a process a workflow dispatches it to, or the invoking session itself?" -> "Phase 3: deliver the artifact (format by type, recipient, and platform)" [label="person: full wrapper, usage + testing"];
@@ -105,7 +105,7 @@ Before generating the prompt, understand its intended purpose. Gather informatio
 - What makes the prompt successful (output quality, format, completeness)?
 - Target platform: Claude Web, Claude Desktop, or API?
 - Recipient: a person who copies the artifact, or a process an invoking workflow dispatches it to? Take it from context — a request naming a worker, subagent, CLI, or dispatch path is a process; ask only when neither reading fits.
-- Target model: Claude 5 (default), Claude 4, GPT-5.6 (OpenAI), GLM 4.7, or Gemini 3? (only ask if user mentions Claude 4, GPT, OpenAI, GLM, Z.ai, Gemini, or model adaptation)
+- Target model: Claude 5 (default; Opus 5.5 recommended), Claude 4, GPT-6 or GPT-5.6 (OpenAI), GLM 4.7, or Gemini 3? (only ask if user mentions Claude 4, GPT, OpenAI, GLM, Z.ai, Gemini, or model adaptation)
 
 **Clarify prompt ambiguities (stay at the prompt level, don't dive into subject matter):**
 - If variations might be beneficial, ask if user wants alternative prompt approaches
@@ -228,7 +228,7 @@ Deliver the artifact as a markdown block optimized for its recipient and target 
 
 ## Model-Generation Optimizations
 
-Claude 5 (Opus 5, Sonnet 5, Fable 5) is the default target. Claude 4 (Opus 4.x, Sonnet 4.x) and Haiku 4.5 prompts often over-steer Claude 5 — re-tune when migrating.
+Claude 5 (Opus 5.5, Opus 5, Sonnet 5, Fable 5.1) is the default target; Opus 5.5 is the recommended default model. Claude 4 (Opus 4.x, Sonnet 4.x) and Haiku 4.5 prompts often over-steer Claude 5 — re-tune when migrating.
 
 ### Claude 5 (default)
 
@@ -249,9 +249,9 @@ Keep spawn counts low.
 
 **Soften aggressive language** — `CRITICAL: You MUST...` over-triggers; use "Use ... when ...".
 
-**Breaking changes** — assistant prefill, `budget_tokens`, and non-default `temperature`/`top_p`/`top_k` return a 400 error. Use adaptive thinking with `effort`, and Structured Outputs instead of prefill.
+**Breaking changes** — assistant prefill, `budget_tokens`, and non-default `temperature`/`top_p`/`top_k` return a 400 error; on Opus 5.5 and Fable 5.1 so does forced `tool_choice` (`any` / `tool`). Use adaptive thinking with `effort`, Structured Outputs instead of prefill, and `tool_choice: auto` plus strict tool use instead of forced tool choice.
 
-→ Full guide, per-model specifics (Opus 5 / Sonnet 5 / Fable 5), and Claude 4 → 5 migration: `references/claude-5-guide.md`
+→ Full guide, per-model specifics (Opus 5.5 / Opus 5 / Sonnet 5 / Fable 5), the Opus 5 → Opus 5.5 checklist, and Claude 4 → 5 migration: `references/claude-5-guide.md`
 
 ### Claude 4 and earlier
 
@@ -269,18 +269,19 @@ When the user asks to migrate, re-tune, or update existing Claude 4 content — 
 
 Deliver a before/after so each change and its rationale stay visible: `references/output-formats.md#10-claude-4-to-claude-5-migrations`. Worked transformations: `examples/claude-4-to-5-migration.md`. Full per-model detail and the Claude 4 → 5 migration reference: `references/claude-5-guide.md`.
 
-## GPT-5.6 (OpenAI) Adaptation (When Requested)
+## GPT-6 / GPT-5.6 (OpenAI) Adaptation (When Requested)
 
-When the user explicitly targets GPT-5.6 (Sol, Terra, Luna) or another OpenAI GPT-5-family model: define the outcome, constraints, evidence, and completion bar, then leave the path to the model.
+When the user explicitly targets GPT-6 (Astra, Sol, Luna), GPT-5.6 (Sol, Terra, Luna), or another OpenAI GPT-5-family model: define the outcome, constraints, evidence, and completion bar, then leave the path to the model.
 
 - Write outcome-first prompts with explicit success criteria and stop rules; remove step scripts.
 - State each instruction once and remove contradictions — conflicting rules destabilize GPT-5.6 more than missing detail.
 - Reserve ALWAYS/NEVER/MUST for true invariants; give decision rules for judgment calls.
 - Re-check blanket brevity instructions (GPT-5.6 is concise by default); set `text.verbosity` for the default level of detail.
 - Define autonomy and approval boundaries (report vs. act vs. confirm) instead of repeating "ask first".
-- API: Responses API, `reasoning.effort` (`none`–`max`, default `medium`), `reasoning.mode: "pro"` for quality-first single answers.
+- API: Responses API, `reasoning.effort` (`none`–`max`, default `medium`; GPT-6 Astra has no `none`), `reasoning.mode: "pro"` for quality-first single answers.
+- GPT-6: choose Astra, Sol, or Luna by workload (no Terra; Astra is the top tier); state that action requests authorize the work and that the user's instructions take precedence over skill guidelines; make instruction-file guidance conditional rather than blanket; bound re-verification; keep the confirmation tier for external writes and destructive actions. Evaluate each pattern per model — the guidance was observed on Astra.
 
-→ Full guide, API parameters, per-tier selection, GPT-5.x migration, and pre-5.6 baseline: `references/gpt-56-guide.md`; transformation examples: `examples/gpt-56-adaptation.md`
+→ Full guide, API parameters, per-tier selection, GPT-6 and GPT-5.x migration, and pre-5.6 baseline: `references/openai-gpt-guide.md`; transformation examples: `examples/openai-gpt-adaptation.md`
 
 ## GLM 4.7 Adaptation (When Requested)
 
@@ -324,8 +325,8 @@ Select the appropriate format based on artifact type:
 | Claude-to-Gemini adaptations | Before/After comparison | `references/output-formats.md#8-claude-to-gemini-adaptations` |
 | Gemini Deep Research prompts | Add Deep Research Notes + Iteration Suggestions | `references/output-formats.md#9-gemini-deep-research-prompts` |
 | Claude 4 → Claude 5 migrations | Before/After comparison | `references/output-formats.md#10-claude-4-to-claude-5-migrations` |
-| GPT-5.6 prompts | Add API Configuration | `references/output-formats.md#11-gpt-56-prompts` |
-| Claude-to-GPT-5.6 adaptations | Before/After comparison | `references/output-formats.md#12-claude-to-gpt-56-adaptations` |
+| GPT-6 and GPT-5.6 prompts | Add API Configuration | `references/output-formats.md#11-gpt-6-and-gpt-56-prompts` |
+| Claude-to-GPT adaptations (GPT-6, GPT-5.6) | Before/After comparison | `references/output-formats.md#12-claude-to-gpt-adaptations-gpt-6-gpt-56` |
 | Dispatched prompts (process recipient) | Prompt body only, no wrapper or usage sections | `references/output-formats.md#13-dispatched-prompts` |
 | Session-scoped rulesets | Rules only, no wrapper and no prompt | `references/output-formats.md#14-session-scoped-rulesets` |
 

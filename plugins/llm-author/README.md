@@ -1,10 +1,10 @@
 # LLM Author Plugin
 
-Author LLM-targeted content — prompts, skills, agents, and rules files — for Claude 5 and Claude 4, GPT-5.6 (OpenAI), GLM 4.7 (Z.ai), and Gemini 3 (including Deep Research).
+Author LLM-targeted content — prompts, skills, agents, and rules files — for Claude 5 (including Opus 5.5) and Claude 4, GPT-6 and GPT-5.6 (OpenAI), GLM 4.7 (Z.ai), and Gemini 3 (including Deep Research).
 
 ## Overview
 
-This plugin bundles the craft of authoring LLM-targeted content: designing high-performing prompts for Claude 5 and Claude 4, GPT-5.6 (OpenAI), GLM 4.7 (Z.ai), and Gemini 3; editing skills and agents without bloat; writing auto-loaded rule files for AI coding assistants; and packaging session-to-session prompts (handoffs forward to a fresh session, feedback backward to the session that defined the work). It transforms requirements into production-ready artifacts through evidence-based techniques and systematic optimization. Also adapts existing Claude prompts for GPT-5.6, GLM 4.7, or Gemini 3 when requested, and supports specialized Gemini Deep Research prompts for autonomous multi-source research.
+This plugin bundles the craft of authoring LLM-targeted content: designing high-performing prompts for Claude 5 (including Opus 5.5) and Claude 4, GPT-6 and GPT-5.6 (OpenAI), GLM 4.7 (Z.ai), and Gemini 3; editing skills and agents without bloat; writing auto-loaded rule files for AI coding assistants; and packaging session-to-session prompts (handoffs forward to a fresh session, feedback backward to the session that defined the work). It transforms requirements into production-ready artifacts through evidence-based techniques and systematic optimization. Also adapts existing Claude prompts for GPT-6, GPT-5.6, GLM 4.7, or Gemini 3 when requested, and supports specialized Gemini Deep Research prompts for autonomous multi-source research.
 
 The shared skills support Claude Code and Codex. Claude Code uses `.claude-plugin/plugin.json`; Codex uses `.codex-plugin/plugin.json` and the repository marketplace at `.agents/plugins/marketplace.json`. Claude-specific frontmatter remains available to improve Claude Code behavior, while Codex ignores fields it does not support.
 
@@ -30,7 +30,7 @@ Then install `llm-author` from the Codex plugin browser and start a new session.
 
 ### Prompt Engineering
 
-**Triggers:** "create a prompt", "write a prompt", "optimize a prompt", "debug a prompt", "improve my prompt", "help with prompting", "build a prompt chain", "make a system prompt", "design a prompt", "optimize this skill", "improve this agent", "adapt prompt for GPT-5.6", "convert to GPT-5.6", "adapt prompt for GLM", "convert to GLM 4.7", "adapt prompt for Gemini", "convert to Gemini", "deep research prompt", "Gemini deep research", "migrate prompt to Claude 5", "re-tune this skill for Claude 5", "migrate to GPT-5.6", "write a prompt to dispatch to a worker", "give me the prompt-authoring rules for this session"
+**Triggers:** "create a prompt", "write a prompt", "optimize a prompt", "debug a prompt", "improve my prompt", "help with prompting", "build a prompt chain", "make a system prompt", "design a prompt", "optimize this skill", "improve this agent", "adapt prompt for GPT-6", "adapt prompt for GPT-5.6", "convert to GPT-6", "adapt prompt for GLM", "convert to GLM 4.7", "adapt prompt for Gemini", "convert to Gemini", "deep research prompt", "Gemini deep research", "migrate prompt to Claude 5", "re-tune this skill for Claude 5", "migrate to GPT-6", "migrate to Opus 5.5", "write a prompt to dispatch to a worker", "give me the prompt-authoring rules for this session"
 
 **Capabilities:**
 - Create new prompts from scratch for specific use cases
@@ -39,11 +39,11 @@ Then install `llm-author` from the Codex plugin browser and start a new session.
 - Debug problematic prompts and identify root causes
 - Build prompt chains for complex, multi-step workflows
 - Provide ready-to-copy prompts for Claude Web and Desktop
-- Adapt Claude prompts for GPT-5.6 (OpenAI Sol/Terra/Luna) and migrate prompts between GPT-5.x versions
+- Adapt Claude prompts for GPT-6 (OpenAI Astra/Sol/Luna) or GPT-5.6 (Sol/Terra/Luna) and migrate prompts between GPT versions, including GPT-5.6 to GPT-6
 - Adapt Claude prompts for GLM 4.7 (Z.ai) with reasoning parity
 - Adapt Claude prompts for Gemini 3 (Flash/Pro) with quality parity
 - Create Gemini Deep Research prompts with scope, temporal, and source constraints
-- Migrate existing Claude 4 prompts and LLM-targeted content to Claude 5 with a documented before/after
+- Migrate existing Claude 4 prompts and LLM-targeted content to Claude 5 with a documented before/after, and Opus 5 integrations to Opus 5.5
 - Serve a consuming skill as well as a person: deliver a prompt body alone when an invoking workflow dispatches it to a worker process, with no human-facing wrapper for the recipient to misread
 - Distill prompt-authoring rules into a session-scoped ruleset that an invoking session writes to a session file and re-reads at each later authoring step
 
@@ -103,8 +103,9 @@ Once installed, ask your coding assistant for help with prompts:
 "Improve this agent definition"
 "Debug why my prompt isn't working"
 "Build a prompt chain for research-to-report workflow"
-"Adapt this Claude prompt for GPT-5.6"
-"Migrate this prompt from GPT-5.4 to GPT-5.6"
+"Adapt this Claude prompt for GPT-6"
+"Migrate this prompt from GPT-5.6 to GPT-6"
+"Update this Opus 5 prompt for Opus 5.5"
 "Adapt this Claude prompt for GLM 4.7"
 "Create a prompt for GLM 4.7 that does [task]"
 "Adapt this prompt for Gemini"
@@ -133,9 +134,9 @@ The `docs/` directory contains the raw documentation files that were used to cre
 
 - Core prompting techniques (clarity, XML structure, system prompts, examples, prefilling, chain-of-thought)
 - Advanced strategies (prompt chaining, long context handling, output consistency, hallucination reduction)
-- Claude 5 model-specific optimization and best practices (Opus 5, Sonnet 5, Fable 5), and Claude 4 → 5 migration
+- Claude 5 model-specific optimization and best practices (Opus 5.5, Opus 5, Sonnet 5, Fable 5), the current Claude lineup, and Claude 4 → 5 and Opus 5 → 5.5 migration
 - Claude 4 model-specific optimization and best practices
-- GPT-5.6 (OpenAI) model-specific optimization, best practices, and GPT-5.x migration (Sol, Terra, Luna)
+- GPT-6 (Astra, Sol, Luna) and GPT-5.6 (Sol, Terra, Luna) model-specific optimization, best practices, and GPT-6 / GPT-5.x migration (OpenAI)
 - GLM 4.7 adaptation techniques for achieving Claude parity
 - Gemini 3 adaptation techniques for achieving Claude parity
 - Gemini Deep Research prompting for autonomous multi-source research
@@ -153,7 +154,7 @@ llm-author/
 │   └── plugin.json              # Claude Code plugin manifest
 ├── .codex-plugin/
 │   └── plugin.json              # Codex plugin manifest
-├── docs/                        # Source documentation (28 files)
+├── docs/                        # Source documentation (37 files)
 ├── hooks/
 │   ├── hooks.json               # PostToolUse (Skill) + UserPromptSubmit rule delivery
 │   └── scripts/

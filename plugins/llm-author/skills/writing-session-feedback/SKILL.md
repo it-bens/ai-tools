@@ -1,6 +1,6 @@
 ---
 name: writing-session-feedback
-version: 3.11.0
+version: 3.13.0
 description: Use when the user explicitly asks to write feedback, a report, or a note for another session — typically the upstream session that defined the work this session just executed (it wrote the spec, performed the review, or made the plan), so that session can confirm the work was done correctly and calibrate its future specs and reviews. Invoke on such an explicit request or when the dispatch message that defined this session's work directs a feedback note as part of its report contract — never proactively otherwise. Produces a calibration note addressed to that session, anchored to the concrete change (branch, commit(s), verification state), then offers to save it to a file or copy it to the clipboard — or, when a dispatch's report contract directed the note, sends it to the directing session per that contract instead of asking.
 model: sonnet
 user-invocable: false

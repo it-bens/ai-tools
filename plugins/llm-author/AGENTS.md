@@ -34,8 +34,8 @@ This plugin must remain compatible with Claude Code and Codex.
 | Update a prompting technique | `skills/prompt-engineering/references/techniques/<technique>.md` (index in `techniques/README.md`) |
 | Update a reusable prompt pattern | `skills/prompt-engineering/references/prompt-patterns/<pattern>.md` (index in `prompt-patterns/README.md`) |
 | Update output format templates | `skills/prompt-engineering/references/output-formats.md` |
-| Update Claude 5 guide (Opus 5, Sonnet 5, Fable 5) and Claude 4 → 5 migration | `skills/prompt-engineering/references/claude-5-guide.md` |
-| Update GPT-5.6 (OpenAI) guide (Sol, Terra, Luna) and GPT-5.x migration | `skills/prompt-engineering/references/gpt-56-guide.md` |
+| Update Claude 5 guide (Opus 5.5, Opus 5, Sonnet 5, Fable 5.1) and Claude 4 → 5 and Opus 5 → 5.5 migration | `skills/prompt-engineering/references/claude-5-guide.md` |
+| Update OpenAI guide (GPT-6 Astra, Sol, Luna; GPT-5.6 Sol, Terra, Luna) and GPT-6 / GPT-5.x migration | `skills/prompt-engineering/references/openai-gpt-guide.md` |
 | Update GLM 4.7 adaptation guide | `skills/prompt-engineering/references/glm-47-guide.md` |
 | Update Gemini 3 adaptation guide | `skills/prompt-engineering/references/gemini-3-guide.md` |
 | Update Gemini Deep Research guide | `skills/prompt-engineering/references/gemini-3-deep-research-guide.md` |
