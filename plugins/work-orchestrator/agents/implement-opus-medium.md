@@ -1,6 +1,6 @@
 ---
 name: implement-opus-medium
-description: Use when a dispatch supplies a fenced file list, a decided design per item, test duties, and gate commands, and the work is substantial but self-contained. Returns a verdict per item — status, files touched, deviations — plus an honest not-verified list and the path of the dispatch-named report file holding the full evidence (tests run, verbatim gate tails). Writes inside the named files at the rung where coding quality measured highest. Does not write outside that list and the report file, stage or commit, or invent an alternative when a decided design contradicts what it finds.
+description: Use when a dispatch supplies a fenced file list, a decided design per item, test duties, and gate commands, and the work is substantial but self-contained. Returns a verdict per item — status, files touched, deviations — plus an honest not-verified list and the path of the dispatch-named report file holding the full evidence (tests run, verbatim gate tails). Writes inside the named files at medium depth. Does not write outside that list and the report file, stage or commit, or invent an alternative when a decided design contradicts what it finds.
 model: opus
 effort: medium
 color: purple

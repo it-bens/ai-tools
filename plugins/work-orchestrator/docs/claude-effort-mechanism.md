@@ -13,7 +13,9 @@ This is a workaround. Claude Code has open issues on per-spawn reasoning effort;
 | Subagent | `effort` in an agent definition (`agents/*.md` frontmatter, or `--agents` JSON) | Per definition |
 | Subagent spawn | **nothing** | — |
 
-Levels are `low`, `medium`, `high`, `xhigh`, `max`. The default is `high` on every effort-capable model, and setting `high` explicitly is identical to omitting the parameter. Precedence runs environment variable, then configured or frontmatter level, then model default.
+Levels are `low`, `medium`, `high`, `xhigh`, `max`. The default is `high` on Opus 5, Sonnet 5, and Fable 5.1 — setting `high` explicitly on those models is identical to omitting the parameter. Opus 5.5 defaults to `medium` instead: omitting the parameter on Opus 5.5 is identical to setting `medium`, not `high`. Precedence runs environment variable, then configured or frontmatter level, then model default.
+
+Observed 2026-09-23 in this repository's session, on Claude Code 2.1.280: the `opus` alias resolves to `claude-opus-5-5` (seen as `message.model` in subagent transcripts spawned with `model: opus`) — the opus definitions in `agents/` run on Opus 5.5's defaults, not Opus 5's.
 
 A subagent with no `effort` in its definition inherits the session level. That is the documented default, not an inference.
 
@@ -52,7 +54,11 @@ The vendor discriminator between the two dials, which the routing table applies:
 
 **Opus 5 is the most effort-sensitive model measured, which is why three rungs ship.** From its system card: on FrontierBench v0.1 (74 terminal and agentic tasks under a mini-SWE-agent harness) mean reward runs 25% at `low`, 39% at `high`, and 44.4% at `xhigh`, with `max` at roughly 43% — inside the noise of `xhigh`. On FrontierCode v1.1 (150 real-pull-request coding tasks, run with Cognition) the best score on both the main and extended sets falls at `medium`, at 53.4% and 63.6%. A 19-point spread across rungs on one model is the largest effort sensitivity in any source gathered here, and the peak is not at the top.
 
-**`max` ships on nothing.** It measures within noise of `xhigh` on the one benchmark that separates them, Anthropic documents it as prone to overthinking on structured-output and less intelligence-sensitive work, and every agent here receives a bounded subtask rather than an open problem.
+These measurements are Opus 5's and are unvalidated on Opus 5.5. Effort level names don't correspond to the same amount of thinking across models: in Anthropic's own testing, "Claude Opus 5.5 at `medium` matches or exceeds Claude Opus 5 at `high` on coding and knowledge-work evaluations, and on several coding evaluations `low` comes close to it at much lower cost." The 19-point spread and the medium coding peak describe Opus 5's ladder; re-measuring the opus definitions' rungs on Opus 5.5 is unfinished work, not a carried-over fact.
+
+**2026-09-23: Opus 5.5's safety classifiers can decline a dispatch outright, which is a routing fact, not a rung fact.** Vendor documentation: "Claude Opus 5.5 runs safety classifiers, including for biology, cybersecurity, and reasoning extraction" — on cybersecurity specifically, "Finding vulnerabilities in source code is allowed. High-risk dual-use cybersecurity activities are not" (https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5, §Safeguard refusals). The migration guide states the classifiers widen on this model: "Its classifiers cover a broader set of categories than Claude Opus 5's, so expect `stop_details.category` values such as `"bio"` and `"reasoning_extraction"` in addition to `"cyber"`" (https://platform.claude.com/docs/en/models/opus-5-5/migration-guide, §Safety classifiers and fallback). Anecdotal and consistent with these documented classifiers: on 2026-09-22 and 2026-09-23 three Reddit users separately reported Opus 5.5 declining requests — signing in to test accounts for integration testing (r/ClaudeCode, post 1wny92q), biomedical animal-model data analysis (r/ClaudeCode, post 1wnxryk), and a cybersecurity task from a member of the Cyber Verification Program (r/codex, post 1wnkq8w). None of these reports carries the vendor's own methodology; they are read here as consistent with the documented biology and cybersecurity classifiers, not as independent confirmation of them.
+
+**`max` ships on nothing.** It measures within noise of `xhigh` on the one benchmark that separates them, Anthropic documents it as prone to overthinking on structured-output and less intelligence-sensitive work, and every agent here receives a bounded subtask rather than an open problem. At a given effort level, Opus 5.5 tends to think more per turn than Opus 5, most of all at `xhigh` and `max` (vendor). Independent measurement, cited as such: Artificial Analysis measured roughly 1.6x the output tokens on Opus 5.5 versus Opus 5 (https://artificialanalysis.ai/articles/claude-opus-5-5), and Simon Willison's max-effort runs hit the 128K output cap while the model was still reasoning, twice (https://simonwillison.net/2026/Sep/22/opus-and-sol-and-luna/).
 
 **Sonnet's ceiling is `xhigh` by its own guidance**, which names it for the hardest coding and agentic use cases. Its documented risk at `low` is under-thinking on moderately complex tasks, so `investigate-sonnet-low` is scoped to closed questions. Anthropic's own effort table names subagent work as a canonical `low`-effort case, which is the argument for having a cheap rung at all.
 
@@ -77,10 +83,13 @@ Vendor documentation and first-party measurement:
 - Model versus effort selection: https://claude.com/blog/claude-model-and-effort-level-in-claude-code
 - FrontierBench and FrontierCode effort figures: Claude Opus 5 System Card, https://www-cdn.anthropic.com/c5fbac3f0b1280a933ebd26d3cb8bb9f5bdeaf48/Claude%20Opus%205%20System%20Card.pdf
 - Per-model prompting guides: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/
+- Per-model default effort table, Opus 5.5 behavior differences: https://platform.claude.com/docs/en/models/overview, https://platform.claude.com/docs/en/models/opus-5-5/whats-new-opus-5-5, https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5
 
 Independent measurement, cited as such:
 
 - Effort ablations and pass@4 versus pass^4 on agentic tool use: MCPMark, https://arxiv.org/pdf/2509.24002
 - Effort-versus-cost on code editing: Aider polyglot leaderboard, https://aider.chat/docs/leaderboards/
+- Opus 5.5 versus Opus 5 output-token volume at `max`: Artificial Analysis, https://artificialanalysis.ai/articles/claude-opus-5-5
+- Opus 5.5 `max`-effort runs hitting the 128K output cap while still reasoning: Simon Willison, https://simonwillison.net/2026/Sep/22/opus-and-sol-and-luna/
 
 The spawn-time experiment above is local and unpublished, run once at the sample sizes stated.

@@ -50,3 +50,5 @@ Observed token volumes: focused review 137–312k (median ≈200k); broad review
 ## Named confounds
 
 The experiment arm ran with `--disable memories` and an adjudication list; the reference arm ran memories-on without the list — per-model recall deltas between the arms cannot be attributed cleanly. Within-condition variance is demonstrated (one finding appeared in 1 of 6 identical runs). The codebase had already been through four review rounds, so absolute recall numbers are floors on hardened code, not representative rates.
+
+All results above are GPT-5.6 (sol/terra/luna) at the stated effort on Codex CLI 0.144.4, and do not transfer to GPT-6 models by tier name — this covers `model-routing.md`'s severity-label calibration and its "never sol" rule for security- or privacy-flavored review, whose basis (`gpt-5-6-model-family.md`) is GPT-5.6 Sol's safeguard behavior specifically.

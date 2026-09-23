@@ -1,6 +1,6 @@
 ---
 name: investigate-opus-medium
-description: Use when a dispatch supplies a claim and the artifact it concerns and a cheaper check came back thin, unconvincing, or contradicted by something the checker noticed but could not settle. Returns a verdict with its evidence and what would falsify it. Applies stronger judgement at the rung where coding quality measured highest. Does not write, and does not widen to adjacent claims it finds along the way.
+description: Use when a dispatch supplies a claim and the artifact it concerns and a cheaper check came back thin, unconvincing, or contradicted by something the checker noticed but could not settle. Returns a verdict with its evidence and what would falsify it. Applies stronger judgement at medium depth. Does not write, and does not widen to adjacent claims it finds along the way.
 model: opus
 effort: medium
 disallowedTools: Write, Edit, NotebookEdit
