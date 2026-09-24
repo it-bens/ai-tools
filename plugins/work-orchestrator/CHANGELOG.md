@@ -4,6 +4,72 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [4.4.2] - 2026-09-22
+
+Re-running the built-in agent duty capture on Claude Code 2.1.278 returned refusals rather than duty text. The capture prompt asked for everything after the tool-schema section, beginning at a boundary sentence that no built-in type's prompt contains any more: the instruction prose now precedes the tool schemas, and each type opens with its own persona line. Two of four captures declined on that ground rather than fabricate the slice they were told to quote, which is the response this document wants. The prompt now names the slice by position instead.
+
+No definition in `agents/` changes. `Explore` and `Plan` state the same duties they stated before, and `general-purpose`'s only change is an explicit report expectation that is weaker than the per-duty report contracts the definitions already carry. Re-capturing undercut one claim in the effort documentation instead: a haiku probe returned a prose block matching sonnet's, with no `thinking_mode` tag, no `max_thinking_length` budget, and no depth directive on any model. Haiku's exclusion from the effort parameter is unaffected, resting as it does on the API rejecting the parameter rather than on any injected instruction.
+
+### Changed
+
+- `docs/builtin-agent-duty-capture.md` — the capture prompt asks for the instruction prose block by position rather than by a boundary sentence, and records the three opening lines as captured; a refusal naming a mismatched opening sentence is documented as the signal to re-ask with the marker gone; §What to exclude gains the SDK identity line and the report-delivery contract, and states which `Notes:` bullets are harness convention; §What varies by model drops the haiku-only depth directive; the duties table gains `general-purpose`'s report expectation and its narrowed re-delegation rule; update mode step 5 updates the table whenever the captured duty text moves, not only when a definition does
+- `docs/claude-effort-mechanism.md` — the paragraph claiming haiku receives depth instructions the other models do not is removed, no 2.1.278 capture carrying one on any model
+- `CLAUDE.md` — the navigation row for the capture document no longer names a boundary marker
+
+`agents/` is untouched. No named value, position, or extension-file format changed. Projects with an extension file need no action.
+
+## [4.4.1] - 2026-09-22
+
+Nested delegation directed a dispatched worker to spawn "an explicit model," never naming one of the plugin's own leaf-duty definitions. A worker's `Agent` call therefore left `subagent_type` at its own default and never reached `search-haiku`, `investigate-haiku`, `investigate-sonnet-low`, or `investigate-sonnet-medium` — nested delegation ran, but always on a built-in type, not the plugin's roster. Claude Code's own internal type declarations (`mods/types/claude-code.d.ts`'s `AgentSpawnInput`/`AgentSpec`, mirrored in the published `@anthropic-ai/claude-agent-sdk` `.d.ts`) show a plugin's named agent resolves through `subagentType` exactly like a built-in, so nothing on the platform side forced the fallback.
+
+### Fixed
+
+- `skills/orchestrating-subagent-work/references/worker-prompts.md` — the "Delegating" nested-subagent directive now names the plugin's own leaf-duty definition per purpose, read off `model-routing.md`'s routing table, instead of a bare model tier
+- `docs/nested-subagent-delegation.md` — the "Model explicitness" invariant is replaced by "Definition-named spawn": a nested spawn selects a rung by selecting the definition that carries it, since that definition's static `effort` field binds the same way a top-level dispatch's does
+
+### Changed
+
+- `README.md` — follows
+
+No named value, position, or extension-file format changed. Projects with an extension file need no action.
+
+## [4.4.0] - 2026-08-31
+
+Workers were returning reports that read as if nothing had come back. A 25-run experiment found the tools intact and every spawn delivering, and located the defect in report shape instead. A sonnet checker on a short claim writes before the check has settled, so a verdict placed first gets revised mid-message — a caller reading the opening gets the wrong answer. The verdict now comes after the evidence, as one closing line, which held across four runs where the shipped wording flipped in one of three. Haiku ignores a shape rule phrased as what to avoid: "no preamble" changed nothing, while naming the first token to emit produced bare output in four runs. Opus keeps its verdict-first shape, having shown no flip. Every definition now names its final message as the report, and the reference gains the block table that non-review, non-implementer dispatches never had. The runs are recorded in `docs/subagent-report-shape.md`.
+
+### Changed
+
+- `agents/investigate-sonnet-high.md` — Output names the final message as the report and ends it with one `Verdict: <word>` line, placed after the evidence
+- `agents/search-haiku.md`, `agents/gate-run-haiku.md`, `agents/investigate-haiku.md` — Output names the final message as the report and states the first thing it emits
+- `agents/investigate-{sonnet-low,sonnet-medium,opus-medium,opus-high,opus-xhigh}.md`, `agents/design-opus-xhigh.md` — Output names the final message as the report
+- `skills/orchestrating-subagent-work/references/worker-prompts.md` — new §Single-worker prompt blocks (CTX, OPS, TASK, OUT) for verification, lookup, deep-read, search, gate-run, and design dispatches; §Nested subagents drops its design-dispatch exception, since those dispatches now have an OPS block
+- `skills/orchestrating-subagent-work/SKILL.md` — the named-worker send contract points at OUT for every non-implementer dispatch
+- `README.md` and `CLAUDE.md` — follow
+
+### Added
+
+- `docs/subagent-report-shape.md` — the 25 runs, the per-rung failures, and the limits of the sample
+
+No named value, position, or extension-file format changed. Projects with an extension file need no action.
+
+## [4.3.0] - 2026-08-31
+
+Claude Code now lets a subagent call the Agent tool, so a dispatched worker can spawn its own subagents. Ten definitions gain the tool — the five `implement-*` definitions, `investigate-sonnet-high`, the three `investigate-opus-*` rungs, and `design-opus-xhigh` — because their contracts contain delegable legwork: locating call sites, sweeping conventions, answering closed side-questions, reading one bounded source. The five others keep the ban: the haiku duties run on decision-free instructions and spawning is a decision, `investigate-sonnet-low` must not widen a fixed scope, and `investigate-sonnet-medium` exists to read its source itself. Nested delegation is opt-in per dispatch and always explicit: the strategy declares it per checkpoint — on only when the user asked for it in the conversation or the checkpoint's scope makes the delegable legwork plain — and every subagent dispatch carries one of two directives, with "Spawn no subagents." as the default form. A spawned subagent is read-only, is part of the worker that spawned it, and never serves as the independent confirmer. The reasoning is recorded in `docs/nested-subagent-delegation.md`.
+
+### Changed
+
+- `agents/implement-{sonnet-medium,sonnet-high,opus-medium,opus-high,opus-xhigh}.md`, `agents/investigate-{sonnet-high,opus-medium,opus-high,opus-xhigh}.md`, `agents/design-opus-xhigh.md` — `Agent` removed from `disallowedTools`; Boundaries gains the dispatch-directed spawning rule (spawn only as directed, spawned subagents read-only/gathering-only, verdict and writes stay with the worker)
+- `skills/orchestrating-subagent-work/references/worker-prompts.md` — OPS (review) and FENCE (implementer) carry the nested-subagent directive for subagent actors, and a design dispatch carries it among its operational constraints; new §Nested subagents defines the two directive forms
+- `skills/orchestrating-subagent-work/SKILL.md` — the strategy declares nested delegation per checkpoint with its reason; the dispatch node attaches the directive with spawn-none as the absent-declaration form
+- `skills/orchestrating-subagent-work/references/model-routing.md` — nested-delegation routing rule carrying the eligible-definition roster (read at strategy time): a worker's spawned subagent never confirms and relaxes no verification requirement
+- `README.md` and `CLAUDE.md` — follow
+
+### Added
+
+- `docs/nested-subagent-delegation.md` — the roster and its per-duty reasoning, marked as judgement rather than measurement
+
+No named value, position, or extension-file format changed. Projects with an extension file need no action.
+
 ## [4.2.0] - 2026-08-21
 
 A handoff composed from session recall can cite referents its sources do not hold. The extension contract gains a worked example guarding against that at the compose loop, for projects whose receiving sessions read authoritative persistent artifacts end to end.

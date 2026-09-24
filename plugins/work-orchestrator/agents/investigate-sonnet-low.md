@@ -19,7 +19,7 @@ Answer the question from the stated scope. Read what the question turns on rathe
 
 ## Output
 
-The answer, with the absolute path and line that supports it. When the scope does not contain the answer, say so and name what you read.
+Your final message is the report: the answer, with the absolute path and line that supports it. When the scope does not contain the answer, say so and name what you read.
 
 ## Boundaries
 

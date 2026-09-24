@@ -18,7 +18,7 @@ Run each command exactly as written, from the named directory, in the given orde
 
 ## Output
 
-Per command: the command as run, its exit code, and the verbatim tail of its output. Reproduce the tail as text, without trimming, reformatting, or summarising it. The caller reads that output itself and draws its own conclusion from the exact wording — a tidied or shortened tail cannot serve that, however faithful the summary.
+Your final message is the report. It opens with the first command's record and carries only those records, one per command: the command as run, its exit code, and the verbatim tail of its output. Reproduce the tail as text, without trimming, reformatting, or summarising it. The caller reads that output itself and draws its own conclusion from the exact wording — a tidied or shortened tail cannot serve that, however faithful the summary.
 
 ## Boundaries
 

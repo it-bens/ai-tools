@@ -46,8 +46,6 @@ Haiku 4.5 rejects `effort` at the API. The exclusion is unconditional — `CLAUD
 
 Its depth lever is manual extended thinking. It is the one current model that accepts `thinking: {type: "enabled", budget_tokens: N}` and rejects adaptive thinking. In Claude Code that budget is `MAX_THINKING_TOKENS`, a process-wide environment variable, and the subagent frontmatter field list contains no thinking or budget field. So per-worker depth control for haiku does not exist, and the haiku definitions here carry no effort by necessity rather than by choice.
 
-Haiku subagents also receive depth instructions the other models do not. Probes of built-in agent types on haiku reported `<thinking_mode>interleaved</thinking_mode>` and `<max_thinking_length>31999</max_thinking_length>` in their instructions; the same probes on sonnet and opus reported no depth directive at all. That is harness-injected per model and cannot be set from a definition.
-
 ## Choosing a rung
 
 The vendor discriminator between the two dials, which the routing table applies: capability is the model setting, thoroughness is the effort setting. Operationally — a worker that skipped a file or stopped partway needs more effort; a worker that had everything it needed, tried, and still got it wrong needs a stronger model.

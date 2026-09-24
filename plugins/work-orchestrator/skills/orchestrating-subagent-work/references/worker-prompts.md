@@ -1,6 +1,6 @@
 # Worker prompts
 
-Every dispatched worker gets these blocks, whatever runs it. A codex worker and a subagent carrying the same scope get the same blocks and the same content; only the phrasing adapts to the model family the actor belongs to, per the ruleset derived for this task. A codex-less run keeps every block. Codex invocation mechanics live in `codex-dispatch.md`; nothing here is codex-specific.
+Every dispatched worker gets the blocks of its dispatch shape — review, implementer, or single-worker — whatever runs it. A codex worker and a subagent carrying the same scope get the same blocks and the same content; only the phrasing adapts to the model family the actor belongs to, per the ruleset derived for this task. A codex-less run keeps every block. Codex invocation mechanics live in `codex-dispatch.md`; nothing here is codex-specific.
 
 Every prompt is fully self-contained. A worker has no session context and must need none.
 
@@ -15,7 +15,7 @@ A named value that cites a project file by path passes as a path in SKILLS, not 
 | Block | Content |
 |---|---|
 | CTX | Repo root, branch, commit; "No session context — everything you need is here or on disk." |
-| OPS | Approval never; read-only; no writes, no network, no test execution; never wait for approval; finish with what you have and list anything missing. |
+| OPS | Approval never; read-only; no writes, no network, no test execution; never wait for approval; finish with what you have and list anything missing. For a subagent actor, the nested-subagent directive per §Nested subagents. |
 | SCOPE | File list or commit range; "the working tree is authoritative." Keep orchestration meta-files (run records, strategy documents) out of this block. |
 | CONTRACT | The governing spec contract, quoted verbatim. |
 | ADJ | Every adjudicated decision relevant to the scope, phrased: "documented accepted decisions — do not re-report unless the documented rationale no longer holds." The list must be complete for the scope; append every accepted-decision triage outcome to it and carry it into every subsequent review prompt. |
@@ -30,7 +30,7 @@ OUT and ADJ are mandatory in every review prompt.
 | Block | Content |
 |---|---|
 | CTX | Repo root, branch, commit, tree state (clean, or the dirty-tree fence). |
-| FENCE | Named allowed files, plus the dispatch's report file (see §Report files) as a standing allowed write; no commit/stage/push; banned git verbs on a dirty tree; protected paths (`project.protected_paths`; default if not otherwise stated: none registered — name them per dispatch); banned command classes (`project.banned_commands`; default if not otherwise stated: e2e suites, containers, device tooling, deployments — assignments append to that list). |
+| FENCE | Named allowed files, plus the dispatch's report file (see §Report files) as a standing allowed write; no commit/stage/push; banned git verbs on a dirty tree; protected paths (`project.protected_paths`; default if not otherwise stated: none registered — name them per dispatch); banned command classes (`project.banned_commands`; default if not otherwise stated: e2e suites, containers, device tooling, deployments — assignments append to that list); for a subagent actor, the nested-subagent directive per §Nested subagents. |
 | SKILLS | Project skill files as required reading, per `project.skill_files` as above. |
 | RULES | Verbatim extracts of the project's conduct rules: fail-hard (no silent fallbacks), calibrated honesty (never claim an unrun gate passed), doc drift (every touched doc claim verified in the same change). `project.conduct_rules` adds further rules; default if not otherwise stated: those three — assignments append. |
 | DESIGN | Per fix: defect with evidence, the decided design, explicit test duties, and the stop-and-report clause: "if the decided design contradicts what you find, STOP that item and report the contradiction; do not invent an alternative." |
@@ -38,6 +38,26 @@ OUT and ADJ are mandatory in every review prompt.
 | REPORT | Two tiers. The worker writes the full report — per-fix evidence, verbatim gate tails, quotes, diffs — to the report file named in this block. The worker's final message carries only the verdict: per-fix status, files touched, deviations, the honest not-verified list, and the report file path — at most 2,000 characters, nothing more. |
 
 When a fix's true scope crosses packages, enumerate every affected file AND state the scope quantifier; a quantifier contradicted by a shorter file list gets implemented file-scoped.
+
+## Single-worker prompt blocks (in this order)
+
+Every dispatch that is neither a review nor an implementer batch — verification of a finding, a bounded lookup, a deep read of one source, a location sweep, a gate re-run, a design pass — takes these blocks.
+
+| Block | Content |
+|---|---|
+| CTX | Repo root, branch, commit; "No session context — everything you need is here or on disk." |
+| OPS | Approval never; read-only, no writes; never wait for approval; finish with what you have and list anything missing. For a subagent actor, the nested-subagent directive per §Nested subagents. |
+| TASK | The actor definition's stated input, supplied in full: the claim and the artifact, the question and the scope holding its answer, the source and the question to put to it, the target and the breadth, the exact commands and their directory, or the requirement with its constraints and the code to design against. A dispatch short of that input gets the gap reported back instead of the work. |
+| OUT | Output contract: the actor definition's output shape restated for this dispatch, and the worker's final message named as the report. Where the duty returns a verdict, give the vocabulary and place the verdict at the end of the message, after the evidence. |
+
+## Nested subagents
+
+Every prompt dispatched to a subagent actor carries one of these two directives, verbatim intent, in OPS (review and single-worker) or FENCE (implementer). Codex actors get neither — a codex process spawns no subagents.
+
+- **Default:** "Spawn no subagents." This form goes out unless the strategy declared nested delegation for this checkpoint.
+- **Delegating:** name the purposes the worker may spawn for (locating code or call sites, sweeping a convention, answering a closed question, reading one bounded source) and direct the worker to use them for that legwork. State: every spawned subagent is read-only; each spawn sets `subagent_type` to the plugin's own leaf-duty definition matching the purpose, per `model-routing.md`'s routing table — never a bare model and never a built-in type; the worker checks a spawned result against source before building on it; the worker's own verdict, fence, and report duties do not delegate.
+
+The strategy declares nested delegation per checkpoint, and only for a checkpoint whose actor's definition permits the Agent tool; the eligible-definition roster lives in `model-routing.md`'s nested-delegation routing rule, which the strategy node already reads.
 
 ## Report files
 
@@ -48,4 +68,5 @@ Every implementer dispatch names one report file in its REPORT block: an absolut
 - A worker's own gate claim is never final, whatever produced it: an independent worker re-runs every gate before a green is accepted. For a codex implementer that re-run happens outside its sandbox.
 - Review findings are hypotheses until an independent worker confirms them against source.
 - An independent worker diff-reviews every worker-written change against each fix's decided design and test duties, and confirms the diff touches only fenced files and that no new untracked files appeared. The diff review and the independent gate re-run both happen after the batch returns; the checkpoint closes only when both pass.
+- A subagent a worker spawned is part of that worker: its output confirms nothing, and the independent confirmer is always a fresh worker the orchestrator dispatches.
 - A worker result plus one independent worker confirmation is final; the orchestrator re-verifies only items routed to it by a deviation.
