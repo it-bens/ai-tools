@@ -23,7 +23,7 @@ Fix the reported bug: identify the root cause, apply the fix, and state what cha
 Respond directly, without preamble.
 ```
 
-API: omit `thinking` (adaptive thinking runs by default); set `effort` (default `high`, lower for cost); no prefill; default sampling.
+API: omit `thinking` (adaptive thinking runs by default); set `effort` explicitly — the default is per model (`high` on Opus 5, Sonnet 5, and Fable 5.1; `medium` on Opus 5.5), so sweep rather than copy a level; no prefill; default sampling.
 
 ### Migration Rationale
 
@@ -114,6 +114,7 @@ When re-tuning Claude 4 content for Claude 5, remove or replace:
 - [ ] Non-default `temperature` / `top_p` / `top_k` → default sampling; steer tone via the prompt
 - [ ] Forced progress-update scaffolding → nothing (good updates by default)
 - [ ] Worked examples that only narrow behavior → an interface/spec or a judgment heuristic
+- [ ] Opus 5.5 target: forced `tool_choice` (`any` / `tool`) → `auto` plus strict tool use; `max_tokens` up to 128K at `xhigh`/`max`
 
 Then, if the target is Opus 5 (or Fable 5 at high effort), add a concision instruction — those run long; Sonnet 5 calibrates length on its own. Recount tokens against the target model rather than reusing Claude 4 limits.
 

@@ -37,7 +37,7 @@ These runs finish in five to eight seconds. The worker starts writing before the
 
 The definition's own "default to refuted where the evidence is absent" supplies the opening stance that gets revised. That directive earns its place — it is the reason to dispatch an adversarial checker — so the fix moved the verdict rather than removing the default.
 
-Opus does not share the failure. The unedited `investigate-opus-medium` stated its verdict first, correctly, and added a falsifier and a working-tree-versus-HEAD caveat. Verdict-last is therefore applied where it was measured to be needed, not across every rung.
+Opus did not share the failure in one unedited run. The unedited `investigate-opus-medium` stated its verdict first, correctly, and added a falsifier and a working-tree-versus-HEAD caveat. Verdict-last is therefore applied where it was measured to be needed, not across every rung.
 
 ## Haiku ignores a negatively phrased shape rule
 
@@ -48,7 +48,7 @@ Opus does not share the failure. The unedited `investigate-opus-medium` stated i
 | "contains nothing but it — no preamble, no narration" | 1 | preamble persisted |
 | "its first character is the first character of the first match line" | 4 (2 prompt-side, 2 from the definition) | bare match lines, no preamble |
 
-Naming the first token to emit binds; naming the thing to avoid does not. `gate-run-haiku` and `investigate-haiku` carry the same positive form for consistency of duty wording — `gate-run-haiku` had no shape defect in evidence before or after, and `investigate-haiku` still opened one run with a `## Report` heading, so that definition's edit is unconfirmed.
+Naming the first token to emit bound in four positive-phrasing runs; naming the thing to avoid did not bind in the one negative-phrasing run. `gate-run-haiku` and `investigate-haiku` carry the same positive form for consistency of duty wording — `gate-run-haiku` had no shape defect in evidence before or after, and `investigate-haiku` still opened one run with a `## Report` heading, so that definition's edit is unconfirmed.
 
 ## Limits
 

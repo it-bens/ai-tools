@@ -33,11 +33,12 @@ This plugin provides:
 | Document how projects extend the skill | `EXTENSION.md` | File layout, delivery, both mechanisms, the non-extendable surface, reference-like extensions, worked examples |
 | Change the delivery envelope, gating, skill-to-file mapping, or failure behavior | `hooks/scripts/inject-extension.sh` | `<project_extension>` envelope, per-skill extension files, position variants, silent gates vs loud failures |
 | Change delivery events or timeout | `hooks/hooks.json` | `PostToolUse` matcher `Skill`, `UserPromptSubmit` |
-| Consult the evidence behind a directive | `docs/codex-dispatch-experiments.md`, `docs/gpt-5-6-model-family.md`, `docs/claude-effort-mechanism.md` | Experiment findings, tier design intent, effort mechanics and measurements |
+| Consult the evidence behind a directive | `docs/codex-dispatch-experiments.md`, `docs/gpt-5-6-model-family.md`, `docs/claude-effort-mechanism.md` | Experiment findings, tier design intent, effort mechanics and measurements; the per-row basis of the routing table in `docs/codex-dispatch-experiments.md` §Routing-table basis (codex rows) and `docs/claude-effort-mechanism.md` §Routing-table basis (claude rows) |
 
 ## Maintenance Rules
 
 - Keep provenance (experiment citations, source URLs) out of `SKILL.md` and `references/` — it lives in `docs/` and `CHANGELOG.md`.
+- A per-model capability statement in `docs/` states its sample size and conditions; `references/` and `SKILL.md` phrase per-model behavior as working defaults, not traits. A rule resting on one run is re-checked before it is tightened.
 - The worker-prompt ruleset is derived, never authored here. Family-specific prompt wording comes from `llm-author:prompt-engineering` at task time; adding such wording to `SKILL.md` or `references/` duplicates a source that revs independently. What the plugin states is what the ruleset must cover — the lever order per family, leanness as deduplication rather than block removal, and that verification duties survive it.
 - The GPT-5.6 tier names in `references/model-routing.md` are durable tiers that rev independently; when a tier revs, re-validate the routing table against fresh evidence and record the change here and in `docs/`.
 - The skill body stays host-neutral about delivery mechanics and project specifics: project gates, protected paths, and banned command classes are named generically, cite their named values, and are filled in per project by the orchestrator at dispatch time.

@@ -1,6 +1,6 @@
 ---
 name: orchestrating-subagent-work
-version: 4.4.0
+version: 4.6.0
 allowed-tools: Skill(llm-author:prompt-engineering)
 description: Use for substantial implementation or review work — multi-file changes, review rounds, verification passes — including when the work arrives as an assignment message from another session; invoke before the first codex dispatch, subagent spawn, or inline write. Takes the task plus the project's gates and fences; returns a stated strategy, the dispatched work, and per-item results each carrying its confirmation status. Routes every checkpoint to a codex tier or to a named agent definition that carries its model and reasoning effort, fences every worker write, and confirms every load-bearing result with a second independent worker. Does not dispatch before the strategy is stated, run without codex unless consent is on record in the conversation, or let a single-source result stand as final.
 ---
@@ -113,7 +113,7 @@ Dispatch immediately after stating the strategy; do not wait for approval or ack
 
 Invoke `llm-author:prompt-engineering` in Ruleset mode once, after the strategy has named its actors. One invocation covers every family the strategy assigned. State all three inputs it resolves so it asks for none:
 
-- The model families in play. `gpt-5.6-sol` / `gpt-5.6-terra` / `gpt-5.6-luna` are GPT-5.6; sonnet and opus definitions are Claude 5; haiku definitions are treated as the Claude 4 generation, an assumption of this plugin rather than a vendor statement.
+- The model families in play. `gpt-5.6-sol` / `gpt-5.6-terra` / `gpt-5.6-luna` are GPT-5.6; sonnet definitions are Claude 5; opus definitions resolve to Opus 5.5, a later Claude 5 release whose effort names are not calibrated the same way Opus 5's are; haiku definitions are treated as the Claude 4 generation, an assumption of this plugin rather than a vendor statement.
 - The dispatch path per family: a CLI process receiving a piped string for codex, a subagent spawn for a claude worker. Neither takes API parameters.
 - The two artifact types to be authored: review prompts and implementer prompts, per `references/worker-prompts.md`.
 

@@ -1,6 +1,6 @@
 ---
 name: implement-opus-high
-description: Use when a dispatch supplies a fenced file list, a decided design per item, test duties, and gate commands, and the surrounding code is dense or unfamiliar enough that reading it correctly is most of the work. Returns a verdict per item — status, files touched, deviations — plus an honest not-verified list and the path of the dispatch-named report file holding the full evidence (tests run, verbatim gate tails). Writes inside the named files at the model default rung. Does not write outside that list and the report file, stage or commit, or invent an alternative when a decided design contradicts what it finds.
+description: Use when a dispatch supplies a fenced file list, a decided design per item, test duties, and gate commands, and the surrounding code is dense or unfamiliar enough that reading it correctly is most of the work. Returns a verdict per item — status, files touched, deviations — plus an honest not-verified list and the path of the dispatch-named report file holding the full evidence (tests run, verbatim gate tails). Writes inside the named files at high depth. Does not write outside that list and the report file, stage or commit, or invent an alternative when a decided design contradicts what it finds.
 model: opus
 effort: high
 color: purple

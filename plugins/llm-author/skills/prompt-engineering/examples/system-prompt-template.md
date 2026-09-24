@@ -55,7 +55,7 @@ When providing responses:
 ```
 
 ## Usage Notes
-- Target model: Claude 5 (Opus 5 / Sonnet 5 / Fable 5), Claude 4, GLM 4.7, or Gemini 3
+- Target model: Claude 5 (Opus 5.5 / Opus 5 / Sonnet 5 / Fable 5.1), Claude 4, GPT-6 or GPT-5.6, GLM 4.7, or Gemini 3
 - Copy the template and replace all [BRACKETED ITEMS] with your specifics
 - Remove sections not relevant to your use case
 - Add domain-specific sections as needed

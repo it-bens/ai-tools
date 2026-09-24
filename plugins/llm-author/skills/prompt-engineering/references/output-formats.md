@@ -12,8 +12,8 @@
 8. [Claude-to-Gemini Adaptations](#8-claude-to-gemini-adaptations)
 9. [Gemini Deep Research Prompts](#9-gemini-deep-research-prompts)
 10. [Claude 4 to Claude 5 Migrations](#10-claude-4-to-claude-5-migrations)
-11. [GPT-5.6 Prompts](#11-gpt-56-prompts)
-12. [Claude-to-GPT-5.6 Adaptations](#12-claude-to-gpt-56-adaptations)
+11. [GPT-6 and GPT-5.6 Prompts](#11-gpt-6-and-gpt-56-prompts)
+12. [Claude-to-GPT Adaptations (GPT-6, GPT-5.6)](#12-claude-to-gpt-adaptations-gpt-6-gpt-56)
 13. [Dispatched Prompts](#13-dispatched-prompts)
 14. [Session-Scoped Rulesets](#14-session-scoped-rulesets)
 
@@ -37,7 +37,7 @@ Full wrapper format for user-facing prompts:
 [Complete, ready-to-copy prompt in code block]
 
 ## Usage Notes
-- Target model: [Claude 5 (Opus 5 / Sonnet 5 / Fable 5) / Claude 4 / GLM 4.7 / Gemini 3]
+- Target model: [Claude 5 (Opus 5.5 / Opus 5 / Sonnet 5 / Fable 5.1) / Claude 4 / GPT-6 or GPT-5.6 / GLM 4.7 / Gemini 3]
 - [Platform-specific notes if applicable]
 
 ## Testing Guide
@@ -220,16 +220,16 @@ For LLM-targeted content (skills, agents, rules files), preserve the original do
 
 ---
 
-## 11. GPT-5.6 Prompts
+## 11. GPT-6 and GPT-5.6 Prompts
 
-For prompts targeting GPT-5.6 (Sol, Terra, Luna), add:
+For prompts targeting GPT-6 (Astra, Sol, Luna) or GPT-5.6 (Sol, Terra, Luna), add:
 
 ```markdown
 ## API Configuration
-- Model: `gpt-5.6-sol` (frontier), `gpt-5.6-terra` (balanced), or `gpt-5.6-luna` (high-volume); the `gpt-5.6` alias routes to Sol
+- Model: GPT-6 — `gpt-6-astra` (most capable), `gpt-6-sol` (everyday and complex agentic work), or `gpt-6-luna` (focused, high-volume); GPT-5.6 — `gpt-5.6-sol` (frontier), `gpt-5.6-terra` (balanced), or `gpt-5.6-luna` (high-volume), with the `gpt-5.6` alias routing to Sol
 - API: Responses API for reasoning, tool-calling, and multi-turn workflows
-- Reasoning: `reasoning.effort` (`none`–`max`, default `medium`); `reasoning.mode: "pro"` for quality-first single answers
-- Verbosity: `text.verbosity` (`low`/`medium`/`high`) for the default level of detail
+- Reasoning: `reasoning.effort` (`none`–`max`, default `medium`; `low`–`max` on `gpt-6-astra`); `reasoning.mode: "pro"` for quality-first single answers
+- Verbosity (GPT-5.6): `text.verbosity` (`low`/`medium`/`high`) for the default level of detail
 
 ## Adaptation Notes
 - [Key changes made from Claude-style prompting]
@@ -238,15 +238,15 @@ For prompts targeting GPT-5.6 (Sol, Terra, Luna), add:
 
 ---
 
-## 12. Claude-to-GPT-5.6 Adaptations
+## 12. Claude-to-GPT Adaptations (GPT-6, GPT-5.6)
 
-For converting existing Claude prompts to GPT-5.6:
+For converting existing Claude prompts to GPT-6 or GPT-5.6:
 
 ```markdown
 ## Before (Claude)
 [Original prompt]
 
-## After (GPT-5.6)
+## After (GPT-6 or GPT-5.6)
 [Adapted prompt]
 
 ## Adaptation Rationale

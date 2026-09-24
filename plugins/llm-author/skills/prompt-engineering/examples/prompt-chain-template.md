@@ -228,7 +228,7 @@ Mark any areas needing additional research with [RESEARCH NEEDED].
 ---
 
 ## Usage Notes
-- Target model: Claude 5 (Opus 5 / Sonnet 5 / Fable 5), Claude 4, GLM 4.7, or Gemini 3
+- Target model: Claude 5 (Opus 5.5 / Opus 5 / Sonnet 5 / Fable 5.1), Claude 4, GPT-6 or GPT-5.6, GLM 4.7, or Gemini 3
 - Each step should complete fully before proceeding
 - Preserve exact tag names between steps for consistent parsing
 - Consider adding validation prompts between steps for critical workflows

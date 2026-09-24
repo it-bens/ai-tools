@@ -32,7 +32,7 @@ Think before answering in <thinking> tags. First, analyze X.
 Then, evaluate Y. Finally, in <answer> tags, provide your recommendation.
 ```
 
-**Claude 5:** thinking is adaptive and on by default, so visible `<thinking>`/`<answer>` scaffolding is a Claude 4 / earlier pattern — on Claude 5 it can cause tag leakage (Opus 5) or a refusal (Fable 5). See `claude-5-guide.md#adaptive-thinking`.
+**Claude 5:** thinking is adaptive and on by default, so visible `<thinking>`/`<answer>` scaffolding is a Claude 4 / earlier pattern — on Claude 5 it can cause tag leakage (Opus 5) or a refusal (Fable 5, Opus 5.5). See `claude-5-guide.md#adaptive-thinking`.
 
 ### Example: Financial Analysis
 
