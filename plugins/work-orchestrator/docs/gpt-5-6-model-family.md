@@ -14,10 +14,10 @@ Official-positioning leg behind the `orchestrating-subagent-work` skill's routin
 
 GPT-5.6 Sol's price above is promotional; the pricing page states it holds at least through November 21, 2026.
 
-- Killed claim (3/3 refute votes): "Sol and Luna are smaller and faster variants compared to Terra" — the hierarchy is Sol > Terra > Luna.
+- Killed claim (3/3 refute votes): "Sol and Luna are smaller and faster variants compared to Terra" — OpenAI positions the hierarchy as Sol > Terra > Luna; that ordering is vendor positioning, not a local measurement.
 - Shared limits: ≈1.05M-token context, 128K max output, text+image input, tools (functions, web search, file search, computer use). The bare alias `gpt-5.6` routes to Sol.
 - The capability ladder is not uniform per task: on some agentic benchmarks Luna scores within a point of Terra (Agents' Last Exam 50.3 vs 50.4) while trailing badly on others (Big Finance Bench 36 vs 51). Official tie-breaker: "If you are unsure, start with Sol."
-- Sol's cybersecurity safeguards "block roughly ten times more potentially harmful activity" than previous models — security-flavored prompts may hit safeguard friction on Sol, which is why the routing table sends security- and privacy-flavored review scopes to Terra.
+- Sol's cybersecurity safeguards "block roughly ten times more potentially harmful activity" than previous models — security-flavored prompts may hit safeguard friction on Sol, which is why the routing table sends security- and privacy-flavored review scopes to Terra. The 2026-09-24 replication (`codex-dispatch-experiments.md`) saw no friction in four security reviews including gpt-5.6-sol, on a scope without offensive-security content, so the exclusion of Sol was dropped from the routing table while the safeguard risk remains untested.
 - Sol is additionally served on Cerebras infrastructure at up to 750 tokens/s; the Codex fast-mode claim for GPT-5.6 is weakly sourced (one refute vote) — verify before relying on it.
 - Plan gating in Codex: Free/Go get Terra only; Plus and up choose Sol/Terra/Luna with per-model effort. Under ChatGPT-plan auth each model draws on its own usage pool; Sol's pool is the scarcest (launch-week pool sizes circulated as Sol 15–90 / Terra 20–110 / Luna 50–280 per 5-hour window — unverified, treat as an ordering only).
 

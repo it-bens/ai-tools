@@ -12,7 +12,7 @@ Ten definitions carry the Agent tool; five keep the ban. The split follows each 
 | `investigate-sonnet-high` | yes | Adversarial claim-checking across a repository benefits from search fan-out; the verdict stays with the checker. |
 | `investigate-opus-medium`, `investigate-opus-high`, `investigate-opus-xhigh` | yes | Judgement across artifacts sits on top of enumerable evidence-gathering; the evidence chain and the verdict stay with the worker. |
 | `design-opus-xhigh` | yes | Designing against unfamiliar code is mostly exploration; fan-out reading serves it, and every decision stays with the designer. |
-| `search-haiku`, `investigate-haiku`, `gate-run-haiku` | no | The routing table gives haiku decision-free instructions because it does not recover from its own wrong guesses. Choosing what to spawn, with which prompt and model, is a decision. These are also the leaf duties other workers would spawn. |
+| `search-haiku`, `investigate-haiku`, `gate-run-haiku` | no | The routing table gives haiku decision-free instructions because haiku gets no decisions, so its output reaches a decision only through verification (`model-routing.md`). Choosing what to spawn, with which prompt and model, is a decision. These are also the leaf duties other workers would spawn. The earlier framing of this row as a haiku recovery trait was never measured — no experiment was run for the roster split. |
 | `investigate-sonnet-low` | no | Its contract forbids widening a fixed scope; a spawn is a widening. |
 | `investigate-sonnet-medium` | no | Its contract is to read one source end to end itself. A subagent's summary of a chunk substitutes a paraphrase for the reading, which is the failure the definition exists to avoid. |
 
