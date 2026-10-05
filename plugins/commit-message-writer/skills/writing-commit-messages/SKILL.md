@@ -1,6 +1,6 @@
 ---
 name: writing-commit-messages
-version: 1.4.0
+version: 1.5.0
 description: Use when the user asks to generate, write, draft, or validate a commit message, squash commit, or merge commit message. Detects mode (staged, squash, rewrite) from arguments and message context. Do NOT activate during implementation work; only when the user is ready to capture a finished change or validate an existing one.
 model: sonnet
 effort: high
@@ -204,7 +204,7 @@ BREAKING CHANGE: description (when breaking)
 <footer lines>
 ```
 
-**Footer:** emit `footer.template` with `{model}` substituted by the active model's name (e.g., `Opus 4.7 (1M context)`, `Sonnet 4.6`). Default if not otherwise stated: `Co-Authored-By: Claude {model} <noreply@anthropic.com>`. If `footer.template` is the empty string, suppress the template line.
+**Footer:** emit `footer.template`. Default if not otherwise stated: `Co-Authored-By: Claude <noreply@anthropic.com>`. If `footer.template` is the empty string, suppress the template line.
 
 After the template line, emit each entry of `footer.extra_lines` on its own line. Default if not otherwise stated: no extra lines.
 

@@ -12,7 +12,7 @@ Claude Code installs the `human-author` plugin dependency automatically. Codex u
 
 For Codex, install the required custom agent first, then install `commit-message-writer` from the Codex marketplace.
 
-Without project-specific additions, the skill runs with universal defaults: Conventional Commits format, scope inferred from changed-file directories, kebab-case scope naming, 72-character subject cap, and a `Co-Authored-By: Claude {model}` footer.
+Without project-specific additions, the skill runs with universal defaults: Conventional Commits format, scope inferred from changed-file directories, kebab-case scope naming, 72-character subject cap, and a `Co-Authored-By: Claude <noreply@anthropic.com>` footer.
 
 ## Skills
 
@@ -50,10 +50,10 @@ Use the companion plugin `commit-message-writer-extension-setup` to provision an
 | `scope.naming_convention`      | `kebab-case`                                             | Allowed character set for an inferred scope. Scopes that violate the convention warn during validation.                                    |
 | `subject.max_length`           | `72`                                                     | Hard cap on subject length, including the `type(scope): ` prefix. Drafts exceeding the cap are rewritten shorter.                          |
 | `body.breaking_change_handoff` | (none)                                                   | String appended to the body whenever a `BREAKING CHANGE:` footer is emitted. Useful for delegating migration notes to a separate workflow. |
-| `footer.template`              | `Co-Authored-By: Claude {model} <noreply@anthropic.com>` | Footer line template. `{model}` substitutes the active model's name. Set to the empty string to suppress the line.                         |
+| `footer.template`              | `Co-Authored-By: Claude <noreply@anthropic.com>`         | Footer line, emitted verbatim. Set to the empty string to suppress the line.                                                               |
 | `footer.extra_lines`           | (none)                                                   | Additional footer lines emitted after the template, one per entry. Use for trailers like `Refs: TICKET-123`.                               |
 
-In the footer template, `{model}` is substituted at runtime with the active model's name. To suppress the footer template line, assign `footer.template` the empty string; `footer.extra_lines` still emits when present.
+To suppress the footer template line, assign `footer.template` the empty string; `footer.extra_lines` still emits when present.
 
 ## License
 

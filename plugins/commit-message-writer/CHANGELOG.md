@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.5.0] - 2026-10-06
+
+### Changed
+
+- The default `footer.template` is now `Co-Authored-By: Claude <noreply@anthropic.com>` without the model name.
+
+### Removed
+
+- `{model}` substitution in `footer.template`. The skill emits the template verbatim, so a project template that contains `{model}` now emits the literal placeholder.
+
 ## [1.4.0] - 2026-07-13
 
 ### Added
