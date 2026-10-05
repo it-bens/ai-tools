@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.3.0] - 2026-10-06
+
+### Added
+
+- `writing-code` bash footgun catalog entry for `jq empty`: it exits 0 on empty, whitespace-only, and `null` input, so a parse check does not prove a document is present. The entry names the test per question: parseability, exactly one document, object shape, or both at once with `jq -se 'length == 1 and (.[0] | type == "object")'`, and the `// empty` versus `has()` split for a present `false`.
+
 ## [2.2.0] - 2026-08-27
 
 ### Added
