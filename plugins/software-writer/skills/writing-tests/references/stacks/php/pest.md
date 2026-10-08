@@ -58,3 +58,8 @@ it('rejects a route with no waypoints', function () {
 | `getmypid()`, `gethostname()` | asserted |
 
 Skip: fixed date constants; a seeded generator; a clock value passed through opaquely and never asserted.
+
+## Referenced by name, not by call
+
+- `dataset('name', [...])` is referenced by `->with('name')`.
+- `Pest.php` attaches base classes and traits by directory (`pest()->extend(TestCase::class)->in('Feature')`, `uses(...)->in(...)`).

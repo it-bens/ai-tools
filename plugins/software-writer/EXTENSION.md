@@ -124,6 +124,7 @@ Every claim in an extension file is a fact about the current codebase, and drift
 | `code.primitives` | (none registered) | Table of in-repo wrapper rows: call shape, raw primitive, helper, and the invariant the wrapper carries. Drives the Step 2 primitives lookup. |
 | `code.di_pattern` | parameter or constructor injection | Names the project's concrete dependency-injection pattern for the Step 4 entry-shape check. |
 | `code.export_conventions` | (none) | Project rules for new exported symbols, such as a package-index re-export surface. |
+| `code.dead_code_check` | (none) | A project command that reports unused code. Step 4 runs it after the orphaned-symbol search and handles its findings in the edited scope. |
 | `code.footgun_additions` | (none) | Project-specific entries appended to the stack's footgun catalog in Step 5. |
 | `code.comment_enforcement` | (none) | Lint rules that require doc comments; comments they cover are never deleted. |
 | `comments.preserve_patterns` | (none) | Markers or patterns whose matching comments Step 6 always keeps, whatever the classification table would otherwise say. |

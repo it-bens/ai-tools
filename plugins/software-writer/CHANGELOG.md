@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.4.0] - 2026-10-08
+
+### Added
+
+- `writing-code` Step 4 runs Caller scope in reverse: when an edit removes a call, replaces an implementation, or changes a signature, every symbol that lost a reference keeps a non-test reference or is deleted in the same edit, with the tests whose only subject it was. The search covers the plain name, the stack's indirect-reference forms, and non-code files, and repeats until a pass deletes nothing. Replaced implementations go in the same change; symbols on a published surface are reported instead of deleted.
+- `code.dead_code_check` named value: a project command that reports unused code, run after the orphaned-symbol search.
+- `writing-code` references `stacks/<stack>-indirect-references.md` for all five stacks: the language and framework forms that reach a symbol without its plain name at the call site. Step 4 loads the matching file for the orphaned-symbol search.
+- `writing-tests` Step 2 stops before writing a test whose subject has no production caller and is no entry point, and reports it to the user or the invoking workflow as a dead-code candidate. Step 3 stops the same way when the arrange needs a state no production caller produces. The skill never edits production code.
+- `writing-tests` references `stacks/<stack>/indirect-references.md` for Go, PHP, Python, and TypeScript, the same lists `writing-code` uses. Both skills hold a copy, generated from one repository template and checked in CI, so neither skill cites the other's files.
+- Every `writing-tests` framework reference gained a "Referenced by name, not by call" section: data providers, fixtures, hooks, mock targets, and config entries that reference test code by name.
+
+### Changed
+
+- `writing-code` Step 4 no longer skips an edit that removes a call or reference, and the Step 3 → Step 4 diamond routes removals.
+- `writing-tests` Step 6 redundancy deletes the data provider, fixture, or helper a deleted case alone referenced.
+
 ## [2.3.0] - 2026-10-06
 
 ### Added

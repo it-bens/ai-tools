@@ -50,3 +50,7 @@ require.ErrorAs(t, err, &pathErr)
 ## Suites
 
 `suite.Suite` offers xUnit-style `SetupTest` / `TearDownTest` / `SetupSuite` / `TearDownSuite` hooks as an alternative to `t.Cleanup`. It is a stylistic choice, not a capability: prefer plain functions plus `t.Cleanup` unless the project already standardizes on suites, since suite state is shared across the suite's methods and reintroduces the ordering coupling `t.Cleanup` avoids.
+
+## Referenced by name, not by call
+
+- `SetupSuite`, `SetupTest`, `TearDownTest`, `SetupSubTest`, and `Test*` methods are run by `suite.Run` with no call naming them.

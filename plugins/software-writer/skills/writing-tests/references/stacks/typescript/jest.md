@@ -61,3 +61,8 @@ For an async test that must reach the thrown error itself, assert the expected a
 | Performance timers | asserted |
 
 Skip: fixed date constants; an injected clock returning a constant; generated identifiers asserted for shape or presence rather than value.
+
+## Referenced by name, not by call
+
+- `jest.mock('path')` names a module by string; a `__mocks__/` file adjacent to a module is used when that module is mocked, and `__mocks__/` adjacent to `node_modules` mocks node modules automatically.
+- Config `setupFiles`, `setupFilesAfterEnv`, `globalSetup`, and `moduleNameMapper` reference files by path or pattern.

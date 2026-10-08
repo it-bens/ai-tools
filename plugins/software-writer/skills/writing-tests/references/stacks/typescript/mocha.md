@@ -71,3 +71,7 @@ The explicit `expect.fail` is mandatory: without it, a call that unexpectedly re
 | Performance timers | asserted |
 
 Skip: fixed date constants; an injected clock returning a constant; a fake-timer clock installed and uninstalled within the same test.
+
+## Referenced by name, not by call
+
+- `.mocharc.*` (or the `package.json` `mocha` key) selects test files by `spec` globs and loads modules by path through `require` entries.

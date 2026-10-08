@@ -68,3 +68,9 @@ Version-gated API removals worth knowing when reading older tests: `setMethods()
 | `getmypid()`, `gethostname()` | asserted |
 
 Skip: `new \DateTimeImmutable('2024-01-01')` fixed values; a seeded generator; a clock value passed through opaquely and never asserted.
+
+## Referenced by name, not by call
+
+- `#[DataProvider('name')]`, `#[DataProviderExternal(Cls::class, 'name')]`, `#[Depends('name')]`, and `#[DependsExternal(...)]` name methods as strings; older versions use the `@dataProvider` and `@depends` docblock forms.
+- `setUp`, `tearDown`, and methods marked `#[Before]`, `#[After]`, or `#[BeforeClass]` run with no caller.
+- `#[CoversClass]` and `#[UsesClass]` name a production class without calling it; they are test-only references.

@@ -21,7 +21,9 @@ plugins/software-writer/
     │   └── references/
     │       ├── comments.md
     │       ├── primitives.md
-    │       └── stacks/{bash,go,python,typescript,php}.md
+    │       └── stacks/
+    │           ├── {bash,go,python,typescript,php}.md
+    │           └── {bash,go,python,typescript,php}-indirect-references.md
     ├── writing-tests/
     │   ├── SKILL.md
     │   └── references/
@@ -30,10 +32,10 @@ plugins/software-writer/
     │       ├── shape.md
     │       ├── independence.md
     │       └── stacks/                    # one file per test framework
-    │           ├── go/{stdlib-testing,testify,ginkgo-gomega}.md
-    │           ├── python/{pytest,unittest}.md
-    │           ├── typescript/{vitest,jest,node-test,mocha}.md
-    │           └── php/{phpunit,pest}.md
+    │           ├── go/{stdlib-testing,testify,ginkgo-gomega,indirect-references}.md
+    │           ├── python/{pytest,unittest,indirect-references}.md
+    │           ├── typescript/{vitest,jest,node-test,mocha,indirect-references}.md
+    │           └── php/{phpunit,pest,indirect-references}.md
     └── writing-docs/
         ├── SKILL.md
         └── references/
@@ -46,8 +48,8 @@ plugins/software-writer/
 
 This plugin provides:
 
-- **Skill** (`skills/writing-code/`): the implementation-code workflow — API-consultation gate, new-dependency gate, in-repo primitives lookup, dependency entry shape, caller scope, stack footgun check, code-comment consistency gate, two-tier comment classification.
-- **Skill** (`skills/writing-tests/`): the test-authoring workflow — single behavior, seam decision, arrange-data sourcing, body shape, independence, redundancy and guard-clause gate.
+- **Skill** (`skills/writing-code/`): the implementation-code workflow — API-consultation gate, new-dependency gate, in-repo primitives lookup, dependency entry shape, caller scope and orphaned-symbol sweep, stack footgun check, code-comment consistency gate, two-tier comment classification.
+- **Skill** (`skills/writing-tests/`): the test-authoring workflow — single behavior, production-caller stop, seam decision, arrange-data sourcing, body shape, independence, redundancy and guard-clause gate.
 - **Skill** (`skills/writing-docs/`): the documentation workflow — surface confirmation, fixed surface shapes, style-while-writing, anti-slop subagent dispatch, cross-surface quality gate.
 
 - **Hooks** (`hooks/`): Claude Code extension delivery — a `PostToolUse` hook (matcher `Skill`) and a `UserPromptSubmit` hook run `inject-extension.sh`, which delivers a project's `.claude/extensions/software-writer/<skill>.md` wrapped in the `<project_extension>` envelope and stays silent for every other skill, prompt, or project.
@@ -63,7 +65,8 @@ This plugin provides:
 | Modify the primitives table shape or decision test | `skills/writing-code/references/primitives.md` | `code.primitives` rows, missing-wrapper rule |
 | Modify universal test rules | `skills/writing-tests/references/{behavior,data,shape,independence}.md` | Do/don't-test lists, seam patterns, DAMP, assertion rules, leak vectors |
 | Modify a language's doc-tool queries, footguns, or doc-comment convention | `skills/writing-code/references/stacks/<stack>.md` | One file per language; footguns are language-level |
-| Modify a test framework's idioms or isolation model | `skills/writing-tests/references/stacks/<stack>/<framework>.md` | One file per framework; table idiom, error-path idiom, isolation constraints, version pin |
+| Modify a language's indirect-reference forms | `templates/software-writer/indirect-references/<stack>.md` (repo root) | Source of truth for the copies in `writing-code` and `writing-tests`; refresh them with `.github/scripts/validate-file-sync.sh --fix`, which CI runs in check mode. Never edit a copy |
+| Modify a test framework's idioms or isolation model | `skills/writing-tests/references/stacks/<stack>/<framework>.md` | One file per framework; table idiom, error-path idiom, isolation constraints, name-referenced test code, version pin |
 | Add support for a new test framework | `skills/writing-tests/references/stacks/<stack>/<framework>.md` + the routing table in `skills/writing-tests/SKILL.md` Step 1 | A framework gets its own file even when it is the only one for its stack; never fold it into a sibling's file |
 | Modify documentation surface shapes | `skills/writing-docs/references/surface-shapes.md` | README shapes, Handled/Refused/Not covered, §Limitations anti-pattern |
 | Modify pointer-file rules | `skills/writing-docs/references/pointer-file.md` | Existence gate, bullet discipline, per-bullet decision test |

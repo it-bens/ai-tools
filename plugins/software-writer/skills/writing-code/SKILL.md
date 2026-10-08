@@ -1,6 +1,6 @@
 ---
 name: writing-code
-version: 2.3.0
+version: 2.4.0
 description: Use when writing or editing implementation code — any change that adds, modifies, or removes logic, signatures, or comments on the lines being written. Also covers reviewing, cleaning up, or improving the comments on code being edited. Do NOT activate for test files and their fixtures (the writing-tests skill owns those).
 ---
 
@@ -26,7 +26,7 @@ digraph writing_code {
     "100% certain of signature and semantics?" [shape=diamond];
     "Step 2: Confirm the API call" [shape=box];
     "Step 3: Write the line" [shape=box];
-    "New dependency or exported symbol?" [shape=diamond];
+    "New dependency, new export, or a caller removed?" [shape=diamond];
     "Step 4: Confirm dependencies and surface scope" [shape=box];
     "Step 5: Stack footgun check" [shape=box];
     "Comment or doc comment proposed, kept, or edited?" [shape=diamond];
@@ -45,9 +45,9 @@ digraph writing_code {
     "100% certain of signature and semantics?" -> "Step 3: Write the line" [label="yes"];
     "100% certain of signature and semantics?" -> "Step 2: Confirm the API call" [label="no"];
     "Step 2: Confirm the API call" -> "Step 3: Write the line";
-    "Step 3: Write the line" -> "New dependency or exported symbol?";
-    "New dependency or exported symbol?" -> "Step 4: Confirm dependencies and surface scope" [label="yes"];
-    "New dependency or exported symbol?" -> "Step 5: Stack footgun check" [label="no"];
+    "Step 3: Write the line" -> "New dependency, new export, or a caller removed?";
+    "New dependency, new export, or a caller removed?" -> "Step 4: Confirm dependencies and surface scope" [label="yes"];
+    "New dependency, new export, or a caller removed?" -> "Step 5: Stack footgun check" [label="no"];
     "Step 4: Confirm dependencies and surface scope" -> "Step 5: Stack footgun check";
     "Step 5: Stack footgun check" -> "Comment or doc comment proposed, kept, or edited?";
     "Comment or doc comment proposed, kept, or edited?" -> "Step 6: Classify each comment" [label="yes"];
@@ -86,11 +86,13 @@ Write the call or edit the line.
 
 ### Step 4: Confirm dependencies and surface scope
 
-Skip this step when the edit is a single statement inside an existing function that introduces neither a new dependency nor a new exported symbol.
+Skip this step when the edit is a single statement inside an existing function that introduces neither a new dependency nor a new exported symbol and removes no call or reference.
 
 **Dependency entry shape.** When the line introduces a new dependency — a callable, an external service, configuration, a time source, a randomness source, an output stream — it enters via parameter, option, or constructor field (the Explicit Dependencies principle); wiring concrete implementations together happens at the composition root, not deep in the call tree. Reach-for forms — module-level singletons, free environment reads, inline clock or stdout references — hide test seams and bind shared code to one environment. `code.di_pattern` names the project's concrete pattern; default if not otherwise stated: parameter or constructor injection.
 
 **Caller scope.** Every new exported/public symbol needs at least one non-test caller within the same coordinated unit of work — the smallest closed change that ships together. A symbol whose only callers are tests is Speculative Generality: delete it, keep it module-local, or hold the export until the caller is part of the same coordinated change (YAGNI — holding is acceptable, speculative exports are not). Hyrum's Law makes every export a permanent implicit contract, so an export is a liability the moment it ships. `code.export_conventions` adds project rules such as a package-index re-export surface; default if not otherwise stated: none.
+
+**Orphaned symbols.** Caller scope runs in reverse when the edit removes a call, replaces an implementation, or changes a signature. Every symbol that lost a reference — the replaced function, its helpers, imports, parameters, types, constants, configuration keys, files — keeps at least one non-test reference, or it is deleted in this edit together with the tests whose only subject it was; deleting such a test stays in this skill, while editing a surviving test belongs to `writing-tests`. Search the plain name, the forms listed in `references/stacks/<stack>-indirect-references.md`, and non-code files (configuration, manifests, templates, CI). Repeat the search for whatever a deletion orphans until a pass deletes nothing. A replaced implementation is deleted in the same change; keep it only when the user asked for it. A symbol on a published surface — a library's public API, a documented CLI flag or route — is reported to the user, not deleted. `code.dead_code_check` names a project command that reports unused code; default if not otherwise stated: none. When it is set, run it after the search and handle its findings in the edited scope the same way.
 
 ### Step 5: Stack footgun check
 

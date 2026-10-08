@@ -51,3 +51,8 @@ Synchronous: `expect(() => Route.fromWaypoints([])).toThrow('at least one waypoi
 | Performance timers | asserted |
 
 Skip: fixed date constants; an injected clock returning a constant; generated identifiers asserted for shape or presence rather than value.
+
+## Referenced by name, not by call
+
+- `vi.mock(path)` names a module by string and is hoisted; without a factory it uses a same-named file in an adjacent `__mocks__` folder (the project-root `__mocks__` for dependencies).
+- Config `setupFiles` references files by path.

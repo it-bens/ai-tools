@@ -20,15 +20,15 @@ Without project-specific additions, the skills run on universal defaults: stack 
 
 ### Writing Code
 
-**Triggers:** writing or editing implementation code — any change that adds, modifies, or removes logic, signatures, or comments on the lines being written, including cleaning up the comments on code being edited. Test files and their fixtures belong to `writing-tests`.
+**Triggers:** writing or editing implementation code — any change that adds, modifies, or removes logic, signatures, or comments on the lines being written, including cleaning up the comments on code being edited. Test files and their fixtures belong to `writing-tests`, except deleting a test whose only subject a `writing-code` edit deleted.
 
-**Behavior:** consults the stack's doc tool before any uncertain API call, gates new package dependencies on registry verification, routes wrapped domains through in-repo primitives, enforces explicit dependency entry and a non-test caller for every new export, scans each line against the stack's footgun catalog, and classifies every comment into a two-tier policy (API doc comments as contract, implementation comments as point-of-use why) after checking it against the code it describes.
+**Behavior:** consults the stack's doc tool before any uncertain API call, gates new package dependencies on registry verification, routes wrapped domains through in-repo primitives, enforces explicit dependency entry and a non-test caller for every new export, deletes symbols an edit leaves without a non-test reference (searching the stack's indirect-reference forms, repeating until nothing more is orphaned), scans each line against the stack's footgun catalog, and classifies every comment into a two-tier policy (API doc comments as contract, implementation comments as point-of-use why) after checking it against the code it describes.
 
 ### Writing Tests
 
 **Triggers:** authoring, editing, or reviewing an automated test — any change to a test file or its fixtures.
 
-**Behavior:** identifies the single behavior under test, takes the classicist position (state verification through the public API, seams over mocks), sources arrange data so the test is self-explanatory, structures bodies as AAA or stack-idiomatic tables, guards order/parallel independence, and runs a final gate for case redundancy and guard-clause isolation.
+**Behavior:** identifies the single behavior under test, stops and reports to the caller when the subject has no production caller or the arrange needs a state no caller produces, takes the classicist position (state verification through the public API, seams over mocks), sources arrange data so the test is self-explanatory, structures bodies as AAA or stack-idiomatic tables, guards order/parallel independence, and runs a final gate for case redundancy and guard-clause isolation.
 
 ### Writing Docs
 
@@ -57,7 +57,7 @@ The opinions the skills own, with their honest status:
 | Every fact has one owning surface | Aligned with the docs-DRY "define once" principle; stricter than ARID; per-surface exemptions supported via `docs.surfaces`. |
 | Pointer file ≤30 lines, pointer-only, existence-gated | House style for context economy; the public AGENTS.md convention sets no ceiling and trends verbose. |
 | Sentence-length / FK style targets | House numbers; near, not identical to, industry consensus. |
-| No new export without a non-test caller | Speculative Generality diagnostic plus YAGNI, sharpened by Hyrum's Law. |
+| No symbol without a non-test caller: new exports need one, symbols an edit orphans are deleted | Speculative Generality diagnostic plus YAGNI, sharpened by Hyrum's Law; the orphan rule is the same diagnostic applied to removals. |
 
 ## License
 

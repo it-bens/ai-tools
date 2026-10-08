@@ -64,3 +64,7 @@ Import from `node:assert/strict` so equality assertions are strict by default; t
 | `process.hrtime`, performance timers | asserted |
 
 Skip: fixed date constants; an injected clock returning a constant; generated identifiers asserted for shape or presence rather than value.
+
+## Referenced by name, not by call
+
+- `node --test` with no arguments selects test-source files by name pattern (`*.test.*`, `*-test.*`, `*_test.*`, `test-*.*`, `test.*`) and test-source files under a `test/` directory.
