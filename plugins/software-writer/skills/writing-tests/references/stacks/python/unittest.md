@@ -61,8 +61,3 @@ Skip: fixed date constants; a seeded generator; a wall-clock value passed throug
 ## Doctest complement
 
 `doctest` verifies that interactive examples in docstrings still produce what they claim. It is a documentation-drift guard, not a test framework: fold it into the suite through `doctest.DocTestSuite()` rather than treating a docstring example as coverage for a behavior.
-
-## Referenced by name, not by call
-
-- `setUp`, `tearDown`, `setUpClass`, `tearDownClass`, and `test*` methods are called by the runner by name convention.
-- `mock.patch("pkg.module.Name")` names a production symbol by string; it is a test-only reference.

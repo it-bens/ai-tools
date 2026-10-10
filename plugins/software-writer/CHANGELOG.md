@@ -1,15 +1,19 @@
 # Changelog
 
-## [2.4.0] - 2026-10-08
+## [2.4.0] - 2026-10-10
 
 ### Added
 
-- `writing-code` Step 4 runs Caller scope in reverse: when an edit removes a call, replaces an implementation, or changes a signature, every symbol that lost a reference keeps a non-test reference or is deleted in the same edit, with the tests whose only subject it was. The search covers the plain name, the stack's indirect-reference forms, and non-code files, and repeats until a pass deletes nothing. Replaced implementations go in the same change; symbols on a published surface are reported instead of deleted.
+- `writing-code` Step 4 runs Caller scope in reverse: when an edit removes a call, replaces an implementation, or changes a signature, every symbol that lost a reference keeps a non-test reference or is deleted in the same edit, with the tests whose only subject it was. The search covers the plain name, the stack's indirect-reference forms, and non-code files, and repeats until a pass deletes nothing. Replaced implementations go in the same change. Symbols on a published surface are reported instead of deleted.
 - `code.dead_code_check` named value: a project command that reports unused code, run after the orphaned-symbol search.
 - `writing-code` references `stacks/<stack>-indirect-references.md` for all five stacks: the language and framework forms that reach a symbol without its plain name at the call site. Step 4 loads the matching file for the orphaned-symbol search.
 - `writing-tests` Step 2 stops before writing a test whose subject has no production caller and is no entry point, and reports it to the user or the invoking workflow as a dead-code candidate. Step 3 stops the same way when the arrange needs a state no production caller produces. The skill never edits production code.
 - `writing-tests` references `stacks/<stack>/indirect-references.md` for Go, PHP, Python, and TypeScript, the same lists `writing-code` uses. Both skills hold a copy, generated from one repository template and checked in CI, so neither skill cites the other's files.
-- Every `writing-tests` framework reference gained a "Referenced by name, not by call" section: data providers, fixtures, hooks, mock targets, and config entries that reference test code by name.
+- `writing-tests` references `stacks/<stack>/<framework>-referenced-by-name.md` for each of the 11 frameworks: data providers, fixtures, hooks, mock targets, and config entries that reference test code by name. Each is a copy of a repository template.
+- `sweeping-dead-code` skill: a report-only sweep for unused code across a path, the repository, or a branch, triggered only by an explicit request. It enumerates definitions with per-stack search commands into a JSON Lines ledger in the system temporary directory, runs the dead-code tools the project already has behind a write guard that stops the sweep when a run changes a tracked or unignored file, classifies each row `published`, `live`, `uncertain`, `test-only`, or `dead` by reachability from published roots, and sends every `dead` and `test-only` row to an independent refutation subagent before reporting it. Named values: `project.stacks`, `sweep.exclude`, `sweep.tools`, `sweep.entry_points`, `sweep.refutation_batch_size`.
+- `sweeping-dead-code` references `tools/<stack>.md` for Bash, Go, PHP, Python, and TypeScript: the definition-search commands and, per tool (ShellCheck; staticcheck and deadcode; shipmonk/dead-code-detector, Psalm, and PHPStan core; vulture, ruff, and pylint; knip), the run command, the flags never to pass, test handling, how to read findings, and limits. It also references `refutation-prompt.md` and holds copies of the five indirect-reference lists.
+- Repository templates `templates/software-writer/test-references/<stack>/<framework>.md` for the 11 test frameworks, each copied into `writing-tests` and `sweeping-dead-code` as `references/stacks/<stack>/<framework>-referenced-by-name.md` and checked in CI.
+- `inject-extension.sh` delivers `.claude/extensions/software-writer/sweeping-dead-code.md` on both the Skill-tool and the slash-command path.
 
 ### Changed
 

@@ -24,7 +24,7 @@ if [[ "$MODE" == "post-tool-use" ]]; then
         fail "stdin is not valid JSON"
     fi
     case "$FIELD" in
-        software-writer:writing-code|software-writer:writing-tests|software-writer:writing-docs)
+        software-writer:writing-code|software-writer:writing-tests|software-writer:writing-docs|software-writer:sweeping-dead-code)
             SKILL="${FIELD#software-writer:}" ;;
         *) exit 0 ;;
     esac
@@ -35,7 +35,7 @@ else
     if ! FIELD=$(printf '%s' "$INPUT" | jq -r '.prompt // empty' 2>/dev/null); then
         fail "stdin is not valid JSON"
     fi
-    if [[ "$FIELD" =~ ^/software-writer:(writing-code|writing-tests|writing-docs)([[:space:]]|$) ]]; then
+    if [[ "$FIELD" =~ ^/software-writer:(writing-code|writing-tests|writing-docs|sweeping-dead-code)([[:space:]]|$) ]]; then
         SKILL="${BASH_REMATCH[1]}"
     else
         exit 0

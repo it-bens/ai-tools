@@ -90,7 +90,3 @@ For code that sleeps, times out, or coordinates goroutines, `testing/synctest` (
 | `os.Hostname()`, `os.Getpid()` | asserted |
 
 Skip: `time.Date(2024, 1, 1, ...)` fixed values; a deterministically seeded generator; `time.Now()` written into a fixture field the test never asserts on.
-
-## Referenced by name, not by call
-
-- `TestMain`, `Example*`, `Benchmark*`, and `Fuzz*` functions are run by `go test` by naming convention; an `Example` function's name encodes the identifier it documents (`ExampleFoo_bar`).

@@ -1,6 +1,6 @@
 # Software Writer
 
-Three universal, opinionated skills for writing software: `writing-code`, `writing-tests`, and `writing-docs`. Each ships a workflow with universal rules and an extension contract through which projects register their own conventions. `writing-code` carries one reference per language (Bash, Go, Python, TypeScript, PHP); `writing-tests` carries one per **test framework**, since table idioms, isolation models, and cleanup mechanisms differ per framework rather than per language.
+Four universal, opinionated skills for writing software: `writing-code`, `writing-tests`, `writing-docs`, and `sweeping-dead-code`. Each ships a workflow with universal rules and an extension contract through which projects register their own conventions. `writing-code` carries one reference per language (Bash, Go, Python, TypeScript, PHP); `writing-tests` carries one per **test framework**, since table idioms, isolation models, and cleanup mechanisms differ per framework rather than per language. `sweeping-dead-code` carries one tool reference per language, holding the definition-search commands and the read-only invocation of each dead-code tool.
 
 The skills are opinionated by design. Opinions can be tuned within the extension contract; a project that disagrees beyond that should copy the plugin and go its own way.
 
@@ -36,7 +36,13 @@ Without project-specific additions, the skills run on universal defaults: stack 
 
 **Behavior:** enforces the single-owner invariant (every fact has exactly one owning surface; other surfaces point), applies fixed surface shapes (Handled / Refused / Not covered contracts, existence-gated pointer files), applies house writing-style targets while writing, dispatches the `human-author:ai-slop-writing-fixer` subagent on prose surfaces, and closes with a cross-surface quality gate (single-owner, cross-ref integrity, code-vs-claim drift).
 
-**Model:** none of the three skills pins a model or effort level. They guide live implementation turns, so they run on whatever model the session uses.
+### Sweeping Dead Code
+
+**Triggers:** an explicit request to find, list, audit, or sweep unused or dead code across a path, the repository, or a branch. It does not activate during implementation work. Code an edit orphans belongs to `writing-code`.
+
+**Behavior:** reports only and never edits, deletes, stages, or formats a project file. It asks for the scope when the request names none, enumerates every definition in scope with the stack's search commands into a JSON Lines ledger in the system temporary directory, and runs the dead-code tools the project already has (knip, staticcheck, deadcode, vulture, ruff, pylint, the shipmonk PHPStan extension, Psalm, ShellCheck) in the read-only form its tool reference gives, or as a `sweep.tools` command the user approved, stopping the sweep when a tool run changes a tracked or unignored file. It collects plain-name, indirect-reference, and non-code evidence per row, marks reachability from published roots through production references, and classifies each row `published`, `live`, `uncertain`, `test-only`, or `dead`. Every `dead` and `test-only` row goes to an independent refutation subagent before the report lists it.
+
+**Model:** none of the four skills pins a model or effort level, so they run on whatever model the session uses. `sweeping-dead-code` spawns its refutation subagents on the session's model and pins none.
 
 ## Extension Contract
 

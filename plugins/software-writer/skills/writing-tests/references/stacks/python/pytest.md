@@ -63,8 +63,3 @@ Skip: `datetime(2024, 1, 1, tzinfo=timezone.utc)` fixed values; `random.Random(s
 ## Property-based complement
 
 Hypothesis is a library layered on the runner, not a competing framework: `@given(...)` decorates a test that pytest still executes. Properties complement example tests — the examples encode the specification's anchor values, the properties encode the invariants. Pin regressions found by a property with its explicit-example mechanism rather than relying on a replayed seed.
-
-## Referenced by name, not by call
-
-- Fixtures are injected by parameter name; `conftest.py` fixtures need no import; `autouse=True` fixtures are never requested.
-- `@pytest.mark.usefixtures("name")` names a fixture as a string; `pytest_*` hook functions are found by name; `pytest_plugins` lists modules as strings.

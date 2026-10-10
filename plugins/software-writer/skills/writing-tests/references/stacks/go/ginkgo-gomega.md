@@ -63,7 +63,3 @@ Gomega's `Eventually` and `Consistently` poll rather than sleep — use them for
 | `os.Hostname()`, `os.Getpid()` | asserted |
 
 Skip: `time.Date(2024, 1, 1, ...)` fixed values; a deterministically seeded generator; `time.Now()` written into a fixture field the spec never asserts on.
-
-## Referenced by name, not by call
-
-- `BeforeEach`, `AfterEach`, `JustBeforeEach`, and `It` closures are stored during tree construction and run by the runner; the suite starts from `RunSpecs` in an ordinary `Test*` function.
