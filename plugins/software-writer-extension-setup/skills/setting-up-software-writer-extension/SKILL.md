@@ -1,6 +1,6 @@
 ---
 name: setting-up-software-writer-extension
-version: 2.2.0
+version: 2.1.0
 description: Use when the user explicitly asks to set up, install, configure, wire up, re-sync, or migrate the software-writer plugin's extension for the current project. Do not activate as a side effect of a code-, test-, or docs-writing task.
 ---
 

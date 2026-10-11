@@ -1,6 +1,6 @@
 ---
 name: sweeping-dead-code
-version: 2.4.0
+version: 2.3.0
 description: Use when the user explicitly asks to find, list, audit, or sweep unused or dead code across a path, the repository, or a branch. Reports only and never edits code. Do NOT activate during implementation work; writing-code handles code an edit orphans.
 ---
 
