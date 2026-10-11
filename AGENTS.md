@@ -69,8 +69,11 @@ To create Claude Web-compatible ZIPs that strip `allowed-tools`:
 | `AGENTS.override.md` | Codex project override that instructs reading `AGENTS.md` before project-specific additions |
 | `CLAUDE.md` | Claude Code wrapper that inlines `AGENTS.md` |
 | `plugins/` | Plugin implementations (skills, agents, commands, hooks, and MCP servers) |
-| `plugin-tests/` | BATS tests for hook scripts |
+| `plugin-tests/` | BATS tests for hook scripts and repository scripts |
+| `templates/` | Source-of-truth files copied into plugins; edit here, never in a copy |
 | `.agents/plugins/marketplace.json` | Codex marketplace registry |
 | `.claude-plugin/marketplace.json` | Claude Code marketplace registry |
+| `.github/file-sync.manifest` | Source → copy pairs for files kept identical across plugins and skills |
 | `.github/scripts/setup-bats.sh` | BATS test framework setup |
+| `.github/scripts/validate-file-sync.sh` | Checks the manifest pairs (CI) or refreshes the copies (`--fix`) |
 | `build-skill-for-web.sh` | Creates Claude Web ZIPs |

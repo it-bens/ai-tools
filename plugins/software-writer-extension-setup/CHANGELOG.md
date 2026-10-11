@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- The setup covers `software-writer`'s fourth skill, `sweeping-dead-code`. Step 2 probes the dead-code tools the project already has, the paths a sweep must never enumerate, and the project's entry-point conventions. Step 5 confirms `sweep.exclude`, `sweep.tools`, and `sweep.entry_points` with the user. Step 6 writes `.claude/extensions/software-writer/sweeping-dead-code.md` with the same `project.stacks` assignment as the other extension files. Step 7 adds its `<project_extension>` block to the Codex `AGENTS.override.md`. Re-sync mode audits the file like the other three.
+
 ## [2.1.0] - 2026-08-03
 
 ### Added

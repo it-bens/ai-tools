@@ -1,6 +1,6 @@
 # Extending Software Writer
 
-How a project registers its own conventions with `writing-code`, `writing-tests`, and `writing-docs` without forking the plugin.
+How a project registers its own conventions with `writing-code`, `writing-tests`, `writing-docs`, and `sweeping-dead-code` without forking the plugin.
 
 Two surfaces are extendable, and they are not interchangeable:
 
@@ -19,6 +19,7 @@ One file per skill in the project, holding everything that skill's extension con
 .claude/extensions/software-writer/writing-code.md
 .claude/extensions/software-writer/writing-tests.md
 .claude/extensions/software-writer/writing-docs.md
+.claude/extensions/software-writer/sweeping-dead-code.md
 ```
 
 Only sections with entries appear; a skill with nothing to add gets no file. The file's existence is the opt-in: delivery activates per skill exactly when its file exists.
@@ -43,7 +44,7 @@ The `software-writer-extension-setup` plugin explores the codebase and writes th
 
 ## Delivery
 
-**Claude Code.** The plugin ships its own delivery: a `PostToolUse` hook (Skill tool invocations) and a `UserPromptSubmit` hook (slash invocations) run `hooks/scripts/inject-extension.sh`, which stays silent unless one of the three skills is invoked and the project has a matching extension file. Projects carry no delivery configuration.
+**Claude Code.** The plugin ships its own delivery: a `PostToolUse` hook (Skill tool invocations) and a `UserPromptSubmit` hook (slash invocations) run `hooks/scripts/inject-extension.sh`, which stays silent unless one of the four skills is invoked and the project has a matching extension file. Projects carry no delivery configuration.
 
 The script wraps the file content in a structural envelope that states what the block is, which skill it belongs to, and whether that skill's body is loaded yet:
 
@@ -75,7 +76,7 @@ One bullet per name. A value with internal structure is written as an indented b
   | <one row per wrapper the project maintains> |
 ```
 
-A name shared across skills — `project.stacks` between `writing-code` and `writing-tests`, `docs.surfaces` between `writing-code` and `writing-docs` — is assigned identically in every extension file that needs it. There is no inheritance between extension files.
+A name shared across skills — `project.stacks` among `writing-code`, `writing-tests`, and `sweeping-dead-code`, `docs.surfaces` between `writing-code` and `writing-docs` — is assigned identically in every extension file that needs it. There is no inheritance between extension files.
 
 ## Mechanism 2: Workflow Positions
 
@@ -124,6 +125,7 @@ Every claim in an extension file is a fact about the current codebase, and drift
 | `code.primitives` | (none registered) | Table of in-repo wrapper rows: call shape, raw primitive, helper, and the invariant the wrapper carries. Drives the Step 2 primitives lookup. |
 | `code.di_pattern` | parameter or constructor injection | Names the project's concrete dependency-injection pattern for the Step 4 entry-shape check. |
 | `code.export_conventions` | (none) | Project rules for new exported symbols, such as a package-index re-export surface. |
+| `code.dead_code_check` | (none) | A project command that reports unused code. Step 4 runs it after the orphaned-symbol search and handles its findings in the edited scope. |
 | `code.footgun_additions` | (none) | Project-specific entries appended to the stack's footgun catalog in Step 5. |
 | `code.comment_enforcement` | (none) | Lint rules that require doc comments; comments they cover are never deleted. |
 | `comments.preserve_patterns` | (none) | Markers or patterns whose matching comments Step 6 always keeps, whatever the classification table would otherwise say. |
@@ -152,6 +154,16 @@ Every claim in an extension file is a fact about the current codebase, and drift
 | `docs.diagrams` | (table-first) | Diagram stance; the default adds a diagram only when a table cannot express the relationship. |
 | `docs.style` | (house targets) | Overrides the writing-style targets (sentence lengths, FK band). |
 | `docs.changelog` | (none) | Registers a changelog surface maintained with Keep a Changelog discipline. |
+
+### sweeping-dead-code
+
+| Name | Default | Effect |
+|---|---|---|
+| `project.stacks` | (detect from files and project signals) | Overrides stack detection; names the stacks in play. |
+| `sweep.exclude` | dependency and build directories (`vendor/`, `node_modules/`, `.venv/`, `venv/`, `dist/`, `build/`, `target/`) and files whose header marks them as generated | Paths Step 1 never enumerates. |
+| `sweep.tools` | (the commands in the tool reference) | Replaces or adds tool commands per stack. Step 4 rejects a command carrying a never-pass flag or a shell operator, and runs each remaining command only after the user approves it. |
+| `sweep.entry_points` | (none) | Names Step 5 treats as published roots, alongside the built-in entry points. |
+| `sweep.refutation_batch_size` | 10 | Rows per refutation subagent in Step 6. |
 
 ## Example: Registering a Code Framework
 

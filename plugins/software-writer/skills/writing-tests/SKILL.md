@@ -1,6 +1,6 @@
 ---
 name: writing-tests
-version: 2.0.2
+version: 2.3.0
 description: Use when authoring, editing, or reviewing an automated test — any change to a test file or its fixtures.
 ---
 
@@ -31,16 +31,27 @@ digraph writing_tests {
     "Step 5: Guard independence" [shape=box];
     "Step 6: Final quality gate" [shape=box];
     "All checks pass?" [shape=diamond];
+    "Subject has a production caller or is an entry point?" [shape=diamond];
+    "Test new, or its subject changed in this edit?" [shape=diamond];
+    "Arrange needs a state no production caller produces?" [shape=diamond];
+    "Stop: report the dead-code candidate to the caller" [shape=octagon, style=filled, fillcolor=red];
     "Done" [shape=doublecircle];
 
-    "Start" -> "Step 1: Detect stack and framework" -> "Step 2: Identify the single behavior" -> "Observable on the public API?";
+    "Start" -> "Step 1: Detect stack and framework" -> "Step 2: Identify the single behavior" -> "Test new, or its subject changed in this edit?";
+    "Test new, or its subject changed in this edit?" -> "Subject has a production caller or is an entry point?" [label="yes"];
+    "Test new, or its subject changed in this edit?" -> "Observable on the public API?" [label="no"];
+    "Subject has a production caller or is an entry point?" -> "Observable on the public API?" [label="yes"];
+    "Subject has a production caller or is an entry point?" -> "Stop: report the dead-code candidate to the caller" [label="no"];
     "Observable on the public API?" -> "Step 3: Source the arrange data" [label="yes"];
     "Observable on the public API?" -> "Production code wants the seam regardless?" [label="no"];
     "Production code wants the seam regardless?" -> "Introduce the seam in production code first" [label="yes"];
     "Production code wants the seam regardless?" -> "Reframe at a public surface or delete" [label="no"];
     "Introduce the seam in production code first" -> "Step 3: Source the arrange data";
     "Reframe at a public surface or delete" -> "Step 2: Identify the single behavior";
-    "Step 3: Source the arrange data" -> "Step 4: Structure the body" -> "Step 5: Guard independence" -> "Step 6: Final quality gate" -> "All checks pass?";
+    "Step 3: Source the arrange data" -> "Arrange needs a state no production caller produces?";
+    "Arrange needs a state no production caller produces?" -> "Step 4: Structure the body" [label="no"];
+    "Arrange needs a state no production caller produces?" -> "Stop: report the dead-code candidate to the caller" [label="yes"];
+    "Step 4: Structure the body" -> "Step 5: Guard independence" -> "Step 6: Final quality gate" -> "All checks pass?";
     "All checks pass?" -> "Done" [label="yes"];
     "All checks pass?" -> "Step 2: Identify the single behavior" [label="no: redundant case"];
     "All checks pass?" -> "Step 3: Source the arrange data" [label="no: guard-clause gap"];
@@ -72,6 +83,8 @@ Each reference states either the version it was written against or that no versi
 
 Articulate the behavior in one sentence using business language. The test name is a paraphrase of that sentence, not of the implementation. If the sentence contains "and", write two tests. If it names an implementation choice (which dependency was called, internal call order, algorithmic decomposition), there is no test to write.
 
+When the test is new, or its subject changed in the current edit, confirm the subject has a production caller before writing anything: a non-test reference, found by searching the plain name and the forms listed in `references/stacks/<stack>/indirect-references.md` (for a stack without that file, the plain name plus configuration and manifest files, and the report names the forms left unchecked), or a declared entry point — a published package's public API, a route, a command, a handler the framework calls by convention. References from test files do not count; `references/stacks/<stack>/<framework>-referenced-by-name.md` lists the test-side forms that name production code without calling it. When neither exists, write no test: stop and report the subject as a dead-code candidate to the user, or to the workflow that invoked this skill, with the searches that came back empty. This skill never edits or deletes production code.
+
 This skill takes the classicist position: verify state through the public API, use real collaborators unless they are awkward to stand up, and reserve test doubles for genuine boundaries (network, clock, external processes). Over-mocking produces change-detector tests — the Fragile Test smell — that break on refactors without any behavior change and pass while the real integration is broken.
 
 When the behavior is real but not observable through the current public API, the workflow branches three ways: introduce a production-code seam so the behavior becomes observable through it — but only when production code wants the injection point regardless of testability, because a seam introduced solely to test through is the same internal-test smell dressed in an option; reframe the test at an existing public surface that already exhibits the behavior; or delete the candidate as implementation detail.
@@ -90,6 +103,8 @@ A reader of only this test must be able to tell what the inputs are and where th
 Prefer DAMP over DRY in test code: extract a helper only on the third occurrence of the same 5+ consecutive arrange lines — two occurrences are not yet a pattern. Use descriptive identifiers, never hex blobs or placeholder UUIDs. When construction variation grows, prefer a Test Data Builder over an Object Mother.
 
 `tests.scale_gating` names the project's pattern for production-scale gated tests; default if not otherwise stated: none — do not invent a gated tier.
+
+When the arrange must construct a state no production caller can produce — an argument every caller rules out, a flag no caller sets, an error the dependency never raises — the branch under test is dead, or the test reaches past the public behavior. Do not build the fixture: stop and report the branch to the user, or to the invoking workflow, naming the callers checked.
 
 Load `references/data.md` for the acceptable-vs-flagged source table, the identifier conventions, the helper-extraction rules, and the scale-gating pattern.
 
@@ -117,7 +132,7 @@ Load `references/independence.md` for the leak vectors, the restoration patterns
 
 Run two checks after the body is drafted:
 
-**Redundancy.** Every case (table row, parametrized case) and every top-level test covers a unique code path, boundary value, or regression. Key on why the case exists, not on what the input looks like — three cases exercising the same branch with different magnitudes are one case. Before consolidating a case, run the preservation check for regression markers in its name, id, or nearby comments; a marked case stays.
+**Redundancy.** Every case (table row, parametrized case) and every top-level test covers a unique code path, boundary value, or regression. Key on why the case exists, not on what the input looks like — three cases exercising the same branch with different magnitudes are one case. Before consolidating a case, run the preservation check for regression markers in its name, id, or nearby comments; a marked case stays. When a case or test is deleted, delete the data provider, fixture, or helper only it referenced; `references/stacks/<stack>/<framework>-referenced-by-name.md` lists the forms that reference test code by name.
 
 **Guard-clause isolation.** When the test targets one early-return in a function with multiple sequential guards, the arrange must satisfy every guard above the targeted one so the tested guard is the only possible exit. Open the function under test, enumerate its guards, and verify the arrange — otherwise the test passes through the wrong guard and proves nothing.
 

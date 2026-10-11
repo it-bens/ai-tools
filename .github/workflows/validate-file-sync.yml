@@ -1,0 +1,30 @@
+name: Validate File Sync
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'templates/**'
+      - 'plugins/**'
+      - '.github/file-sync.manifest'
+      - '.github/scripts/validate-file-sync.sh'
+      - '.github/workflows/validate-file-sync.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'templates/**'
+      - 'plugins/**'
+      - '.github/file-sync.manifest'
+      - '.github/scripts/validate-file-sync.sh'
+      - '.github/workflows/validate-file-sync.yml'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Validate file sync
+        run: .github/scripts/validate-file-sync.sh

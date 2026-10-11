@@ -1,7 +1,7 @@
 {
   "name": "software-writer",
   "version": "2.3.0",
-  "description": "Universal, opinionated skills for writing implementation code, automated tests, and repository documentation.",
+  "description": "Universal, opinionated skills for writing implementation code, automated tests, and repository documentation, and for sweeping a scope for dead code.",
   "author": {
     "name": "Martin Bens",
     "email": "martin.bens@it-bens.de"
@@ -12,7 +12,7 @@
   "interface": {
     "displayName": "Software Writer",
     "shortDescription": "Write code, tests, and docs with opinionated universal workflows.",
-    "longDescription": "Adds three skills that guide implementation code (API consultation, dependency shape, footgun checks, comment policy), automated tests (classicist behavior-first workflow), and repository documentation (single-owner surfaces, pointer-file discipline) with per-stack references for Bash, Go, Python, TypeScript, and PHP.",
+    "longDescription": "Adds four skills that guide implementation code (API consultation, dependency shape, orphaned-symbol sweep, footgun checks, comment policy), automated tests (classicist behavior-first workflow), repository documentation (single-owner surfaces, pointer-file discipline), and report-only dead-code sweeps (definition ledger, read-only tool runs, independent refutation) with per-stack references for Bash, Go, Python, TypeScript, and PHP.",
     "developerName": "Martin Bens",
     "category": "Development",
     "capabilities": ["Skill", "Code Quality", "Testing", "Documentation"],

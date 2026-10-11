@@ -1,5 +1,5 @@
 {
-  "description": "Delivers a project's extension content to the writing-code, writing-tests, and writing-docs skills. Both hooks call a self-gating script that stays silent unless a software-writer skill is invoked and the project has a matching extension file under .claude/extensions/software-writer/.",
+  "description": "Delivers a project's extension content to the writing-code, writing-tests, writing-docs, and sweeping-dead-code skills. Both hooks call a self-gating script that stays silent unless a software-writer skill is invoked and the project has a matching extension file under .claude/extensions/software-writer/.",
   "hooks": {
     "PostToolUse": [
       {

@@ -99,7 +99,7 @@ A case earns its slot if at least one holds:
 - **Boundary value**: it sits at the exact threshold where behavior changes.
 - **Regression**: it prevents a specific bug from returning; the citation lives in its name, id, or a comment.
 
-If none hold, merge the case into an existing test or delete it.
+If none hold, merge the case into an existing test or delete it, together with any data provider, fixture, or helper only it referenced.
 
 ### Preservation check
 

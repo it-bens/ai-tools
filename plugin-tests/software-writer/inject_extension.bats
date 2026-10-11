@@ -94,6 +94,23 @@ Check the fixture registry."
 }
 
 # bats test_tags=delivery
+@test "post-tool-use: delivers extension for sweeping-dead-code" {
+    make_extension "sweeping-dead-code" "## Named-value assignments
+
+- \`sweep.entry_points\` = \`cmd/server/main.go\`"
+    run_post_tool_use "software-writer:sweeping-dead-code"
+    assert_success
+
+    local event context
+    event=$(printf '%s' "$output" | jq -r '.hookSpecificOutput.hookEventName')
+    context=$(printf '%s' "$output" | jq -r '.hookSpecificOutput.additionalContext')
+    [ "$event" = "PostToolUse" ]
+
+    [[ "$context" == '<project_extension skill="software-writer:sweeping-dead-code" position="after-skill-body">'* ]]
+    [[ "$context" == *'`sweep.entry_points` = `cmd/server/main.go`'* ]]
+}
+
+# bats test_tags=delivery
 @test "post-tool-use: preserves quotes and backslashes from extension content" {
     make_extension "writing-code" 'Use `jq -r "\(.a)\t\(.b)"` for TSV output.'
     run_post_tool_use "software-writer:writing-code"
@@ -136,6 +153,23 @@ Consult the DI container docs."
     context=$(printf '%s' "$output" | jq -r '.hookSpecificOutput.additionalContext')
     [[ "$context" == *'skill="software-writer:writing-docs"'* ]]
     [[ "$context" == *'position="before-skill-body"'* ]]
+}
+
+# bats test_tags=delivery
+@test "user-prompt: delivers extension for sweeping-dead-code with arguments" {
+    make_extension "sweeping-dead-code" "## Pre-Step-4
+
+Run the project's dead-code target only."
+    run_user_prompt "/software-writer:sweeping-dead-code src/"
+    assert_success
+
+    local event context
+    event=$(printf '%s' "$output" | jq -r '.hookSpecificOutput.hookEventName')
+    context=$(printf '%s' "$output" | jq -r '.hookSpecificOutput.additionalContext')
+    [ "$event" = "UserPromptSubmit" ]
+
+    [[ "$context" == '<project_extension skill="software-writer:sweeping-dead-code" position="before-skill-body">'* ]]
+    [[ "$context" == *"Run the project's dead-code target only."* ]]
 }
 
 # =============================================================================

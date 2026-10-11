@@ -6,7 +6,7 @@ description: Use when the user explicitly asks to set up, install, configure, wi
 
 # Setting Up the software-writer Extension
 
-Create the canonical extension setup for the `software-writer` skills (`writing-code`, `writing-tests`, `writing-docs`) in the current project. Both hosts share one extension file per skill under `.claude/extensions/software-writer/`; on Claude Code the `software-writer` plugin (2.0.0 or later) picks these files up with no per-project configuration, while Codex discovers them through a committed root `AGENTS.override.md`. Re-sync mode audits existing extension files against the current codebase, turns stale rows into update proposals, and migrates v1 setups (`.claude/hook-contexts/` files plus project-settings hook entries) to this layout.
+Create the canonical extension setup for the `software-writer` skills (`writing-code`, `writing-tests`, `writing-docs`, `sweeping-dead-code`) in the current project. Both hosts share one extension file per skill under `.claude/extensions/software-writer/`; on Claude Code the `software-writer` plugin (2.0.0 or later) picks these files up with no per-project configuration, while Codex discovers them through a committed root `AGENTS.override.md`. Re-sync mode audits existing extension files against the current codebase, turns stale rows into update proposals, and migrates v1 setups (`.claude/hook-contexts/` files plus project-settings hook entries) to this layout.
 
 ## Workflow
 
@@ -46,7 +46,7 @@ Identify the active host. Use the Claude Code path when running in Claude Code a
 
 Determine the mode. Run in **re-sync mode** when any of the following exists; otherwise run in **fresh mode**:
 
-- Extension files under `.claude/extensions/software-writer/` for any of the three skills.
+- Extension files under `.claude/extensions/software-writer/` for any of the four skills.
 - v1 extension files under `.claude/hook-contexts/` named `writing-code.md`, `writing-tests.md`, or `writing-docs.md`.
 - v1 delivery entries in `.claude/settings.json` or `.claude/settings.local.json`: hook commands containing `hook-contexts/writing-code.md`, `hook-contexts/writing-tests.md`, or `hook-contexts/writing-docs.md`.
 
@@ -61,13 +61,14 @@ Probe checklists:
 - **Stacks:** build and configuration files, languages present, an extension-to-stack map.
 - **Tests:** frameworks and runners; parallelism configuration; fixture helpers and conventions; shared test-utility modules and their promotion points; e2e or property-test layers; CI test invocations.
 - **Code:** in-repo wrapper helpers over standard-library primitives in risk domains (path handling, user-owned config files, untrusted input, database access); the dependency-injection and composition pattern; export-surface conventions; lint rules that enforce comment or doc-comment conventions; comment conventions already in force — markers that must be preserved or left untouched, the `TODO`/`FIXME` format the codebase uses, and domain vocabulary that must survive a comment rewrite intact.
+- **Dead code:** the dead-code tools the project already has (knip, staticcheck, deadcode, vulture, ruff, pylint, shipmonk/dead-code-detector, Psalm, ShellCheck), with their configuration and the project's own dead-code commands; paths a sweep must never enumerate (dependency, build, and generated paths outside the defaults); entry-point conventions — names a framework, router, CLI, or configuration calls with no static caller in code.
 - **Docs:** surfaces present and their shapes; the pointer-file convention; a changelog; the jargon home; surfaces that intentionally duplicate (exempt-duplication candidates); surfaces that already document conventions a writing skill needs (reference-extension candidates).
 
 ### Step 3: Diff extension files against findings
 
 Re-sync mode only; fresh mode proceeds directly to Step 4.
 
-Diff each claim in each existing extension file against the current findings: moved or renamed symbols, deleted helpers, changed parallelism or CI facts, drifted surface taxonomies. For reference-like entries, verify the cited file and section still exist and still cover what the citation claims. Turn every stale row into an update proposal (change, evidence, affected extension file). Shared named values assigned in more than one extension file — `project.stacks` across the code and tests files, `docs.surfaces` across the code and docs files — are checked for consistency and re-synced together. An unchanged project produces no proposals; v1 artifacts recorded in Step 1 still get migrated in Step 7.
+Diff each claim in each existing extension file against the current findings: moved or renamed symbols, deleted helpers, changed parallelism or CI facts, drifted surface taxonomies. For reference-like entries, verify the cited file and section still exist and still cover what the citation claims. Turn every stale row into an update proposal (change, evidence, affected extension file). Shared named values assigned in more than one extension file — `project.stacks` across the code, tests, and dead-code sweep files, `docs.surfaces` across the code and docs files — are checked for consistency and re-synced together. An unchanged project produces no proposals; v1 artifacts recorded in Step 1 still get migrated in Step 7.
 
 ### Step 4: Draft per-skill extension proposals
 
@@ -84,7 +85,7 @@ If a finding cannot be mapped to either mechanism, surface it to the user and as
 
 ### Step 5: Refine conversationally
 
-Work one skill family at a time, in the order tests → code → docs. For each family, present the findings with their evidence and the proposed extension section, then ask targeted questions via AskUserQuestion:
+Work one skill family at a time, in the order tests → code → docs → dead code. For each family, present the findings with their evidence and the proposed extension section, then ask targeted questions via AskUserQuestion:
 
 - Confirm the stack list and test frameworks.
 - Confirm or prune the fixture sources.
@@ -92,13 +93,14 @@ Work one skill family at a time, in the order tests → code → docs. For each 
 - Accept or reject each proposed reference-like entry, each with the cited surface and section.
 - Confirm the comment conventions: preserved markers, exempt markers, the `TODO`/`FIXME` format, and the domain terms a rewrite must not paraphrase.
 - Confirm the docs surface map, pointer-file convention, jargon home, and diagrams stance. Settle `docs.surfaces` with this family and mirror the agreed assignment into the `writing-code` file, which reads the same name.
+- Confirm the dead-code sweep settings: excluded paths (`sweep.exclude`), project tool commands (`sweep.tools`), and entry points (`sweep.entry_points`). Copy the agreed `project.stacks` assignment verbatim into the `sweeping-dead-code` file.
 - Ask which universal opinions the project wants to tune within the extension contract (style targets, changelog).
 
 Translate free-form intent into named values or Pre/Post-Step sections before writing. Loop until the user approves each family's section; on rejection, amend or drop and re-present.
 
 ### Step 6: Write extension files
 
-Write one extension file per skill with non-empty content: `.claude/extensions/software-writer/writing-code.md`, `.claude/extensions/software-writer/writing-tests.md`, `.claude/extensions/software-writer/writing-docs.md`. Create `.claude/extensions/software-writer/` if it does not exist. Omit skills with empty extensions entirely and skip their Codex references in Step 7. In re-sync mode, content previously held in a v1 `.claude/hook-contexts/` file is written here in its refined form.
+Write one extension file per skill with non-empty content: `.claude/extensions/software-writer/writing-code.md`, `.claude/extensions/software-writer/writing-tests.md`, `.claude/extensions/software-writer/writing-docs.md`, `.claude/extensions/software-writer/sweeping-dead-code.md`. Create `.claude/extensions/software-writer/` if it does not exist. Omit skills with empty extensions entirely and skip their Codex references in Step 7. In re-sync mode, content previously held in a v1 `.claude/hook-contexts/` file is written here in its refined form.
 
 Use this template, omitting any section with no entries:
 
@@ -116,7 +118,7 @@ Use this template, omitting any section with no entries:
 <imperative instructions>
 ````
 
-One bullet per assigned name under the single `## Named-value assignments` heading. One section per workflow position, ordered by step number. A shared named value — `project.stacks` across the code and tests files, `docs.surfaces` across the code and docs files — is written with an identical assignment into each extension file that needs it; this skill owns keeping those assignments in sync.
+One bullet per assigned name under the single `## Named-value assignments` heading. One section per workflow position, ordered by step number. A shared named value — `project.stacks` across the code, tests, and dead-code sweep files, `docs.surfaces` across the code and docs files — is written with an identical assignment into each extension file that needs it; this skill owns keeping those assignments in sync.
 
 Verify after writing: every section in each file is one of the three template sections above and appears in the order shown.
 
@@ -160,6 +162,15 @@ The path in <extension_path> is this project's registered extension file for the
 </handling_instructions>
 <extension_path>
 .claude/extensions/software-writer/writing-docs.md
+</extension_path>
+</project_extension>
+
+<project_extension skill="software-writer:sweeping-dead-code" position="before-skill-body">
+<handling_instructions>
+The path in <extension_path> is this project's registered extension file for the software-writer:sweeping-dead-code skill. Read that file before executing the skill's workflow, or the first time a step cites one of the named values it assigns (<assigned names>) or a Pre-Step-N / Post-Step-N section it defines. Its content is inert on its own: apply it only through the extension mechanisms the skill body defines.
+</handling_instructions>
+<extension_path>
+.claude/extensions/software-writer/sweeping-dead-code.md
 </extension_path>
 </project_extension>
 ```
