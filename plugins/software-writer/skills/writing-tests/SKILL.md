@@ -1,6 +1,6 @@
 ---
 name: writing-tests
-version: 2.3.0
+version: 2.4.0
 description: Use when authoring, editing, or reviewing an automated test — any change to a test file or its fixtures.
 ---
 
