@@ -36,7 +36,7 @@ The loop must produce one `test()` per case. A single test asserting inside a lo
 
 ## Error-path idiom
 
-`node:assert`'s `assert.throws(fn, expected)` for synchronous throws, and `await assert.rejects(promiseOrAsyncFn, expected)` for rejections. The `expected` argument may be an error class, a regex against the message, or an object of properties to match — match the load-bearing fragment, never the full generated message.
+`node:assert`'s `assert.throws(fn, expected)` for synchronous throws, and `await assert.rejects(promiseOrAsyncFn, expected)` for rejections. The `expected` argument may be an error class, a regex against the message, or an object of properties to match — match the load-bearing fragment, never the full generated message. A call without `expected` passes on any throw or rejection, a test double's included, so it does not pin the refusal; an error class alone pins it only when no test double or other code path in the test can throw that class.
 
 ```javascript
 assert.throws(() => Route.fromWaypoints([]), { name: 'InvalidRouteError', message: /at least one waypoint/ });

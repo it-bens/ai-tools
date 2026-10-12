@@ -33,13 +33,15 @@ Shared datasets belong in the project's dataset directory and are bound by name;
 
 ## Error-path idiom
 
-`->throws(ExceptionClass::class)` chained onto the test, optionally with a message fragment as the second argument, or `expect(fn () => ...)->toThrow(...)` when the throwing call is one expectation among several.
+`->throws(ExceptionClass::class, 'fragment')` chained onto the test, or `expect(fn () => ...)->toThrow(ExceptionClass::class, 'fragment')` when the throwing call is one expectation among several.
 
 ```php
 it('rejects a route with no waypoints', function () {
     Route::fromWaypoints([]);
 })->throws(InvalidRouteException::class, 'at least one waypoint');
 ```
+
+The class alone passes on any exception of that class, a test double's included; it pins the refusal only when no test double or other code path in the test can throw it, otherwise pass the message fragment as well.
 
 ## Independence: hard constraints
 

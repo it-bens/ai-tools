@@ -17,7 +17,7 @@ Classify every comment proposed, kept, or edited into exactly one bucket and app
 | **Contradicts the code** (describes behavior the code does not have) | Correct it; never delete it to resolve the mismatch |
 | **Legal** (license header, copyright notice, SPDX identifier, attribution) | Never touch |
 | **Commented-out code** | Delete — version control already holds it |
-| **Redundant with docs** (restates what a documentation surface owns) | Cut to the local why plus a stable identifier |
+| **Redundant with docs** (restates what a documentation surface owns, or another symbol's doc comment) | Cut to the local why plus a stable identifier; for a restated doc comment, the identifier is a reference to that symbol |
 | **Explains-what** (paraphrases the identifier or the code below) | Remove — except the regex case below |
 | **Tutorial / novice-facing** (narrates the language, the standard library, or control flow) | Remove or compress sharply |
 | **Over-specified why** (five lines where one would do) | Tighten |

@@ -37,7 +37,7 @@ The tagged-template form is worth its extra syntax when the columns need names; 
 
 ## Error-path idiom
 
-Synchronous: `expect(() => Route.fromWaypoints([])).toThrow(InvalidRouteError)`. Asynchronous: `await expect(loadManifest(path)).rejects.toThrow(ManifestError)` — always awaited. Match the error class or the load-bearing message fragment, never the full generated string.
+Synchronous: `expect(() => Route.fromWaypoints([])).toThrow(InvalidRouteError)`. Asynchronous: `await expect(loadManifest(path)).rejects.toThrow(ManifestError)` — always awaited. A bare `toThrow()` passes on any throw, a test double's included, so it does not pin the refusal: pass the load-bearing message fragment (`toThrow('fragment')`, a substring match, or `toThrow(/pattern/)`), or the guard's own error class when no test double or other code path in the test can throw it, never the full generated string.
 
 For an async test that must reach the thrown error itself, assert the expected assertion count (`expect.assertions(n)`) so a call that unexpectedly resolves fails instead of passing silently.
 

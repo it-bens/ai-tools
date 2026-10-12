@@ -21,7 +21,7 @@ Pass the varying values as keyword arguments to `subTest` — they become the ca
 
 ## Error-path idiom
 
-`assertRaises` as a context manager is the act; bind it only when the test asserts on the exception object. `assertRaisesRegex` matches the message with a regex — pin the load-bearing fragment, never the full generated string.
+`assertRaises` as a context manager is the act; bind it only when the test asserts on the exception object. `assertRaises(ExcType)` alone passes on any raise of that type, a test double's included; a type alone pins the refusal only when no test double or other code path in the test can raise it, otherwise use `assertRaisesRegex`. `assertRaisesRegex` matches the message with a regex — pin the load-bearing fragment, never the full generated string.
 
 ```python
 class LedgerTest(unittest.TestCase):

@@ -27,7 +27,7 @@ for _, tc := range cases {
 
 ## Error-path idiom
 
-`require.ErrorIs` and `require.ErrorAs` wrap `errors.Is` and `errors.As`, so they match anywhere in the error's wrap chain. Match sentinel errors and typed errors through them; never assert on the error's rendered string.
+`require.ErrorIs` and `require.ErrorAs` wrap `errors.Is` and `errors.As`, so they match anywhere in the error's wrap chain. Match sentinel errors and typed errors through them; a sentinel or type pins the refusal only when no test double or other code path in the test can return it; otherwise add `require.ErrorContains(t, err, "fragment")`, which also pins the load-bearing fragment when only the message text is the contract and no sentinel or type exists; never assert on the full rendered string.
 
 ```go
 _, err := ParseManifest(input)
@@ -37,7 +37,7 @@ var pathErr *fs.PathError
 require.ErrorAs(t, err, &pathErr)
 ```
 
-`require.Error` alone is acceptable only when the test's behavior is "it rejects", with the specific error irrelevant to that behavior.
+`require.Error` alone passes on any failure, a test double's included, so it is acceptable only when the test's behavior is "it rejects", with the specific error irrelevant to that behavior.
 
 ## Assertions that prove nothing
 

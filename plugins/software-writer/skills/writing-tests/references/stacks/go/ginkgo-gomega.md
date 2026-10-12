@@ -35,7 +35,7 @@ DescribeTable("shipment pricing",
 
 ## Error-path idiom
 
-`Expect(err).To(MatchError(target))` — `MatchError` accepts a sentinel error value (compared through the wrap chain), a string, or a nested matcher. `Expect(err).To(HaveOccurred())` is the unspecific form, acceptable only when "it rejects" is the whole behavior. `Expect(err).NotTo(HaveOccurred())` is the precondition form.
+`Expect(err).To(MatchError(target))` pins the refusal only when no test double or other code path in the test can return that sentinel; otherwise add a message matcher. `MatchError` accepts a sentinel error value (compared through the wrap chain), a string, or a nested matcher. `Expect(err).To(MatchError(ContainSubstring("fragment")))` pins a message fragment (a plain string argument is an exact match). `Expect(err).To(HaveOccurred())` passes on any error, a test double's included, so it is acceptable only when "it rejects" is the whole behavior. `Expect(err).NotTo(HaveOccurred())` is the precondition form.
 
 ## Setup, cleanup, and ordering
 

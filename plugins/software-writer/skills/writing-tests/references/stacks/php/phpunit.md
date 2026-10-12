@@ -28,7 +28,7 @@ By convention the provider sits below the test method that uses it, with a mirro
 
 ## Error-path idiom
 
-`expectException()` is declared **before** the act, so the shape is arrange → expect → act rather than arrange → act → assert. Pin the load-bearing message fragment with `expectExceptionMessage()` (substring match) or `expectExceptionMessageMatches()` (regex) — never the full generated string.
+`expectException()` is declared **before** the act, so the shape is arrange → expect → act rather than arrange → act → assert. `expectException()` alone passes on any exception of that class, a test double's included; a class alone pins the refusal only when no test double or other code path in the test can throw it. Otherwise pin the load-bearing message fragment with `expectExceptionMessage()` (substring match) or `expectExceptionMessageMatches()` (regex) — never the full generated string.
 
 ```php
 public function testRejectsEmptyWaypoints(): void

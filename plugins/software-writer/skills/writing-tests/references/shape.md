@@ -38,7 +38,7 @@ Not violations:
 | Pattern | Why |
 |---|---|
 | An expect-raises / expect-error construct for error paths | Idiomatic dispatch for error-vs-success. Bounded, single shape. |
-| The loop that drives table-driven cases | The loop drives cases, not assertion branching. Each case must report as its own test: a loop that registers one test per case satisfies this, a loop that asserts inside a single test body does not. Where the framework offers a parametrized construct, use it; where it offers none, the registering loop is the idiom. |
+| The loop that drives table-driven cases | The loop drives cases, not assertion branching. Each case must report as its own test: a loop that registers one test per case satisfies this, a loop that asserts inside a single test body does not. Where the framework offers a parametrized construct, use it; where it offers none, use the framework reference's idiom — a loop that registers one test per case, or one thin test per case calling a shared helper. |
 | A platform or environment skip at the top of the test | Environment gate, not assertion logic. |
 | A precondition check that aborts the test before the act | Not an author-written conditional on expectations. |
 
@@ -97,6 +97,7 @@ Flagged:
 - Membership in a set of "acceptable" values when exactly one is correct for the scenario.
 - A range assertion where the specification fixes a value.
 - A regex loose enough to match wrong output where a specific string is expected.
+- Checking only the first entry of a call log (a stub's recorded invocations): a wrong later call passes. Assert every logged call.
 
 Genuine ranges are the exception: an invariant assertion like `0 <= score <= 100` is the behavior itself, not looseness.
 
@@ -107,6 +108,8 @@ A command's behavior is its exit code and its effects, not the bytes it renders.
 1. **Exit code** — a real contract, not rendering.
 2. **The effect** — a file written, a record persisted. Assert the effect itself, not the log line announcing it.
 3. **A fragment of the text** — the load-bearing token, never the whole rendered block. Rendered text is the most volatile subject: whitespace, wrapping, color, and wording shift with no behavioral change.
+
+A refusal is the exception to stopping at the exit code: when a test double can fail with the same status, the exit code alone does not show that the guard refused, so assert the guard's own message or error identity (a sentinel or type only that guard produces) as well — the message the code actually emits (see One outcome per assertion). The framework reference names the idiom for it.
 
 When the command emits machine-readable output (JSON, NDJSON), parse it and assert on the parsed value — field presence, type, or value at a path — never substring-match the serialized string. For an event stream, split on newlines and assert per parsed record.
 
