@@ -39,7 +39,9 @@ plugins/software-writer/
     │           ├── typescript/{vitest,jest,node-test,mocha,indirect-references}.md
     │           ├── typescript/{vitest,jest,node-test,mocha}-referenced-by-name.md
     │           ├── php/{phpunit,pest,indirect-references}.md
-    │           └── php/{phpunit,pest}-referenced-by-name.md
+    │           ├── php/{phpunit,pest}-referenced-by-name.md
+    │           ├── bash/{bats,indirect-references}.md
+    │           └── bash/bats-referenced-by-name.md
     ├── writing-docs/
     │   ├── SKILL.md
     │   └── references/
@@ -56,15 +58,16 @@ plugins/software-writer/
                 ├── go/{stdlib-testing,testify,ginkgo-gomega}-referenced-by-name.md
                 ├── python/{pytest,unittest}-referenced-by-name.md
                 ├── typescript/{vitest,jest,node-test,mocha}-referenced-by-name.md
-                └── php/{phpunit,pest}-referenced-by-name.md
+                ├── php/{phpunit,pest}-referenced-by-name.md
+                └── bash/bats-referenced-by-name.md
 ```
 
 ## Component Overview
 
 This plugin provides:
 
-- **Skill** (`skills/writing-code/`): the implementation-code workflow — API-consultation gate, new-dependency gate, in-repo primitives lookup, dependency entry shape, caller scope and orphaned-symbol sweep, stack footgun check, code-comment consistency gate, two-tier comment classification.
-- **Skill** (`skills/writing-tests/`): the test-authoring workflow — single behavior, production-caller stop, seam decision, arrange-data sourcing, body shape, independence, redundancy and guard-clause gate.
+- **Skill** (`skills/writing-code/`): the implementation-code workflow — API-consultation gate, new-dependency gate, in-repo primitives lookup, no silent fallback, validate before the first side effect, single definition, dependency entry shape, caller scope and orphaned-symbol sweep, stack footgun check, code-comment consistency gate, two-tier comment classification.
+- **Skill** (`skills/writing-tests/`): the test-authoring workflow — single behavior, production-caller and redundant-code stops, seam decision, arrange-data sourcing, body shape, independence, redundancy, guard-clause, falsifiability, and coverage gate.
 - **Skill** (`skills/writing-docs/`): the documentation workflow — surface confirmation, fixed surface shapes, style-while-writing, anti-slop subagent dispatch, cross-surface quality gate.
 - **Skill** (`skills/sweeping-dead-code/`): the report-only dead-code sweep — scope resolution (path, repository, branch), definition ledger, read-only tool runs behind a write guard, evidence collection, reachability classification, independent refutation subagents, coverage check.
 

@@ -29,7 +29,7 @@ Manual `for` loops over cases hide which case failed — use `it.each`.
 
 ## Error-path idiom
 
-Synchronous: `expect(() => Route.fromWaypoints([])).toThrow('at least one waypoint')`. Asynchronous: `await expect(loadManifest(path)).rejects.toThrow(ManifestError)` — always awaited. Match the load-bearing message fragment or the error class, never the full generated string.
+Synchronous: `expect(() => Route.fromWaypoints([])).toThrow('at least one waypoint')`. Asynchronous: `await expect(loadManifest(path)).rejects.toThrow(ManifestError)` — always awaited. A bare `toThrow()` passes on any throw, a test double's included, so it does not pin the refusal: pass the load-bearing message fragment (a substring, or `toThrow(/pattern/)`), or the guard's own error class when no test double or other code path in the test can throw it, never the full generated string.
 
 ## Independence: hard constraints
 

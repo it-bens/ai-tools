@@ -24,7 +24,7 @@ For cases whose values are not known at collection time, the built-in `subtests`
 
 ## Error-path idiom
 
-`with pytest.raises(ExcType, match="fragment")` — the block is the act. `match` is applied with `re.search`, so it matches anywhere in the exception's string representation; it pins the load-bearing fragment, never the full generated message. Regex metacharacters in the fragment must be escaped (or passed through `re.escape`).
+`with pytest.raises(ExcType, match="fragment")` — the block is the act. `pytest.raises(Exception)` or a bare type without `match` passes on any failure of that type, a test double's included; a type alone pins the refusal only when no test double or other code path in the test can raise it, otherwise add `match`. `match` is applied with `re.search`, so it matches anywhere in the exception's string representation; it pins the load-bearing fragment, never the full generated message. Regex metacharacters in the fragment must be escaped (or passed through `re.escape`).
 
 ```python
 def test_route_rejects_empty_waypoints():

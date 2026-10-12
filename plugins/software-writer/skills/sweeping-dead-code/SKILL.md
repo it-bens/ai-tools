@@ -68,6 +68,7 @@ For each stack (`bash`, `go`, `php`, `python`, `typescript`), load `references/t
 
 | Stack | Referenced-by-name files |
 |---|---|
+| `bash` | `bats` |
 | `go` | `stdlib-testing`, `testify`, `ginkgo-gomega` |
 | `php` | `phpunit`, `pest` |
 | `python` | `pytest`, `unittest` |

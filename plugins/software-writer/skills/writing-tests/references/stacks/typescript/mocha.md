@@ -35,7 +35,7 @@ Generate the cases at module scope, not inside a test body: Mocha collects tests
 
 ## Error-path idiom
 
-Chai's `.throw()` takes an error constructor, a message substring, or a regex: `expect(() => Route.fromWaypoints([])).to.throw(InvalidRouteError, 'at least one waypoint')`. Note that the subject must be a *function*, not a call — `expect(Route.fromWaypoints([]))` throws during argument evaluation and the assertion never runs.
+Chai's `.throw()` takes an error constructor, a message substring, or a regex: `expect(() => Route.fromWaypoints([])).to.throw(InvalidRouteError, 'at least one waypoint')`. A bare `.to.throw()` passes on any throw, a test double's included, so it does not pin the refusal; an error constructor alone pins it only when no test double or other code path in the test can throw that class. Note that the subject must be a *function*, not a call — `expect(Route.fromWaypoints([]))` throws during argument evaluation and the assertion never runs.
 
 Chai has no native rejection matcher. For an async rejection, either await the call inside a try/catch and assert on the caught error, or use a promise-assertion plugin if the project already depends on one:
 
@@ -46,6 +46,7 @@ it('rejects a manifest with no parcels', async () => {
     expect.fail('expected loadManifest to reject');
   } catch (error) {
     expect(error).to.be.instanceOf(EmptyManifestError);
+    expect(error).to.have.property('message').that.matches(/no parcels/);
   }
 });
 ```

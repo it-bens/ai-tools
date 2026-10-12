@@ -1,6 +1,7 @@
 # Source-of-truth files and their copies. Edit the source, then run .github/scripts/validate-file-sync.sh --fix. Never edit a copy.
 templates/software-writer/indirect-references/bash.md plugins/software-writer/skills/sweeping-dead-code/references/stacks/bash/indirect-references.md
 templates/software-writer/indirect-references/bash.md plugins/software-writer/skills/writing-code/references/stacks/bash-indirect-references.md
+templates/software-writer/indirect-references/bash.md plugins/software-writer/skills/writing-tests/references/stacks/bash/indirect-references.md
 templates/software-writer/indirect-references/go.md plugins/software-writer/skills/sweeping-dead-code/references/stacks/go/indirect-references.md
 templates/software-writer/indirect-references/go.md plugins/software-writer/skills/writing-code/references/stacks/go-indirect-references.md
 templates/software-writer/indirect-references/go.md plugins/software-writer/skills/writing-tests/references/stacks/go/indirect-references.md
@@ -13,6 +14,8 @@ templates/software-writer/indirect-references/python.md plugins/software-writer/
 templates/software-writer/indirect-references/typescript.md plugins/software-writer/skills/sweeping-dead-code/references/stacks/typescript/indirect-references.md
 templates/software-writer/indirect-references/typescript.md plugins/software-writer/skills/writing-code/references/stacks/typescript-indirect-references.md
 templates/software-writer/indirect-references/typescript.md plugins/software-writer/skills/writing-tests/references/stacks/typescript/indirect-references.md
+templates/software-writer/test-references/bash/bats.md plugins/software-writer/skills/sweeping-dead-code/references/stacks/bash/bats-referenced-by-name.md
+templates/software-writer/test-references/bash/bats.md plugins/software-writer/skills/writing-tests/references/stacks/bash/bats-referenced-by-name.md
 templates/software-writer/test-references/go/ginkgo-gomega.md plugins/software-writer/skills/sweeping-dead-code/references/stacks/go/ginkgo-gomega-referenced-by-name.md
 templates/software-writer/test-references/go/ginkgo-gomega.md plugins/software-writer/skills/writing-tests/references/stacks/go/ginkgo-gomega-referenced-by-name.md
 templates/software-writer/test-references/go/stdlib-testing.md plugins/software-writer/skills/sweeping-dead-code/references/stacks/go/stdlib-testing-referenced-by-name.md

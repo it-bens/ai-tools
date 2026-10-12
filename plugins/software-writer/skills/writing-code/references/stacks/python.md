@@ -27,6 +27,7 @@ Scan every written line against these; apply them even when nearby code does not
 - **None-vs-falsy truthiness.** `if not config:` fires on both `None` and `{}`. Use `if config is None:` whenever None-vs-empty matters.
 - **String-built SQL.** Bind parameters; never format or f-string values into a statement. String-built SQL is an injection risk and breaks on quoting edge cases even with trusted input.
 - **Path string concatenation.** Use `pathlib.Path` operators (`/`, `.with_suffix`, `.relative_to`), never `+` or f-strings on path fragments, and not `os.path.join` on `Path` instances.
+- **`str.startswith` is not a path-boundary match.** `p.startswith(root)` matches `/a/box-extras` against the root `/a/box`. Match a path to a root by equality or by a prefix that ends in the separator, never a bare substring or unanchored prefix. Normalize both the path and the root first, because `PurePath` compares lexically and `/a/box/../etc` would pass as inside `/a/box`: `os.path.normpath` on both (lexical), or `Path.resolve()` on both (also follows symlinks). Then `PurePath(p).is_relative_to(root)` (3.9+) compares path components, so it accepts the root itself and its descendants and rejects `/a/box-extras`.
 - **Late-binding closures in loops.** A closure created in a loop captures the variable, not its value at creation — every closure sees the final value. Bind at creation (`def make(x): return lambda: x`, or a default argument `lambda x=x: x`).
 
 ## Doc-comment convention: docstrings

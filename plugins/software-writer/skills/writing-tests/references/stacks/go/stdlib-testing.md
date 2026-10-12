@@ -35,7 +35,7 @@ Loop variables are per-iteration in modules declaring `go 1.22` or later, so a s
 
 ## Error-path idiom
 
-Match sentinel errors with `errors.Is`, and extract typed errors with `errors.As` — never compare error strings. `errors.Is` and `errors.As` both walk the wrap chain, including multi-error `Unwrap() []error` trees. On Go 1.26 and later, `errors.AsType[E](err)` is the generic form and is preferred over `errors.As` for new code.
+Match sentinel errors with `errors.Is`, and extract typed errors with `errors.As`; a sentinel or type pins the refusal only when no test double or other code path in the test can return it; otherwise also check the message with `strings.Contains(err.Error(), "...")`. `err != nil` alone passes on any failure, a test double's included, so it is acceptable only when "it rejects" is the whole behavior (the carve-out below); when only the message text is the contract and no sentinel or type exists, check the load-bearing fragment with `strings.Contains(err.Error(), "...")`, never the full string. `errors.Is` and `errors.As` both walk the wrap chain, including multi-error `Unwrap() []error` trees. On Go 1.26 and later, `errors.AsType[E](err)` is the generic form and is preferred over `errors.As` for new code.
 
 ```go
 _, err := ParseManifest(input)

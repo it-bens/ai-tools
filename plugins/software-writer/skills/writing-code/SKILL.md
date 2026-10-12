@@ -82,7 +82,13 @@ Skip consultation when the call mechanically repeats an idiom already establishe
 
 ### Step 3: Write the line
 
-Write the call or edit the line.
+Before writing logic, search for an existing helper that does it and call it. Write the call or edit the line.
+
+**No silent fallback.** Refuse an unrecognized or invalid input with a message before any fallback runs: a parse failure on a user-supplied file, an argument type no branch handles, an empty value where one is required. Logging and then falling back is allowed only where the fallback is the documented behavior. A documented default for an absent optional value is not such a fallback.
+
+**Validate before the first side effect.** In entry points and functions with side effects, validate every argument before the first bootstrap, write, spawn, or network call. For streaming or incremental input, validate each unit before acting on it.
+
+**Single definition.** Do not add a second copy of a function or a third copy of a block of 3+ lines; copies a project keeps in sync deliberately (generated, or synced by a manifest) are exempt. Parametrize bodies that differ only by a literal. In the lines the edit touches, delete dead guards, dead assignments, and wrappers that only forward to another function, except a wrapper registered as a primitive (Step 2) and a symbol on a published surface (Step 4); the orphaned-symbol rule in Step 4 covers the symbols those deletions leave unreferenced.
 
 ### Step 4: Confirm dependencies and surface scope
 
