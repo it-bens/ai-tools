@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "clipboard-copy": {
-      "command": "${CLAUDE_PLUGIN_ROOT}/mcp-server-clipboard/server.sh",
-      "args": [],
-      "env": {}
-    }
-  }
-}
