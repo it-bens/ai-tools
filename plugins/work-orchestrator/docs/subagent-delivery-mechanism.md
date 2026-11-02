@@ -2,7 +2,7 @@
 
 Why the skill dispatches workers without a name, and where the recovery path for a missing report comes from. Statements here describe what was measured on 2026-08-06; the directives built on top live in `skills/orchestrating-subagent-work/SKILL.md`.
 
-The runs used the 4.x definition name `gate-run-haiku`, which is the 5.0.0 definition `gate-run` spawned on haiku.
+The runs used `gate-run` on haiku with no effort set.
 
 The failure this documents is quiet by construction. A worker that never delivers still finishes, still goes idle, and still leaves a complete report behind — just not anywhere the dispatcher reads. Nothing errors, so an orchestrator that does not check for arrival will close the checkpoint on a report it never saw.
 
@@ -18,7 +18,7 @@ A name is what changes the contract. An unnamed spawn is a delegated subtask who
 
 ## The runs
 
-Five dispatches of the then-shipped `gate-run-haiku` definition against the same small task, varying only whether the spawn carried a name and, for the named runs, whether the REPORT block contracted a send.
+Five dispatches of `gate-run` on haiku with no effort set against the same small task, varying only whether the spawn carried a name and, for the named runs, whether the REPORT block contracted a send.
 
 | Run | Shape | Execution | Outcome |
 |---|---|---|---|

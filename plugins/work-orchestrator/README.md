@@ -2,8 +2,6 @@
 
 Orchestrate work through two delegation surfaces: dispatched workers — the OpenAI Codex CLI (GPT-5.6 models) and Claude subagents — with a task-strategy workflow, model and reasoning-effort routing, fenced write scopes, and independent two-worker verification; and sibling Claude Code sessions, with session enumeration, mandatory dispatch-message blocks, and explicit stand-down closure.
 
-Renamed from `subagent-orchestrator`, which remains in the marketplace frozen and deprecated.
-
 **This plugin is opinionated.** It encodes one way of dispatching work, not the way. Its directives come from three sources of unequal strength: vendor documentation, small local experiments recorded in `docs/`, and one maintainer's experience of what produced better results at lower cost on real work. Where those disagree, experience broke the tie. The goal is better, not optimal — if your work has a different shape, expect to disagree with some of it, and prefer copying the plugin over bending the extension contract into a rewrite.
 
 ## Overview
@@ -14,7 +12,7 @@ When significant implementation or review work runs through dispatched workers, 
 
 - **Pre-flight and consent gate** — codex availability is checked before any planning or dispatch; a codex-less run requires explicit user consent in the current conversation.
 - **Strategy before dispatch** — every task states its checkpoints, actors, efforts, dispatch order, verification shape, and named assumptions as a compact chat message before the first worker runs.
-- **Model and effort routing** — checkpoints route to codex tiers (`gpt-5.6-sol` / `terra` / `luna`) or to one of the plugin's duty definitions, spawned with the model and reasoning effort the routing table names, with codex-less substitutions.
+- **Model and effort routing**: checkpoints route to codex tiers (`gpt-5.6-sol` / `terra` / `luna`) or to one of the plugin's duty definitions, spawned with the model and reasoning effort the routing table names, with codex-less substitutions.
 - **Fenced writes, two-tier reports** — workers never write repo files by default; a worker writes only inside an explicitly fenced write scope plus the report file its dispatch names, and every worker-written change is diff-reviewed by an independent worker. An implementer's full evidence goes to the report file; its final message carries only a bounded verdict, and the orchestrator reads the file only on deviation or dispute.
 - **Two-worker verification** — every load-bearing result reaches producer-plus-independent-confirmer confirmation; a dual-confirmed result is final and the orchestrator does not re-verify it. Time pressure adapts scope, never verification.
 - **Deviation handling** — dispatch failures, contradicted assumptions, scope surprises, and disputed results route through an explicit adapt-and-announce loop instead of silent plan changes.
@@ -36,7 +34,7 @@ Both skills are host-specific to Claude Code; the Codex CLI appears as a dispatc
 
 **Restart Claude Code** after installing or updating so the extension-delivery hooks and the agent definitions load.
 
-work-orchestrator 5.0.0 requires Claude Code 2.1.293 or later. The skill sets each worker's reasoning effort as a spawn argument, which the Agent tool takes from 2.1.292; earlier versions accept the argument and ignore it, so every worker would run at the session's effort. The haiku rows need 2.1.293, where the `haiku` alias first resolves to Haiku 5.5; on 2.1.292 it resolves to Haiku 4.5, which rejects an effort.
+work-orchestrator requires Claude Code 2.1.293 or later. The skill passes model and reasoning effort as spawn arguments, and haiku spawns require the `haiku` alias to resolve to Haiku 5.5.
 
 The `llm-author` plugin is declared as a dependency and auto-installs with this one; its `prompt-engineering` skill supplies the per-family worker-prompt rules.
 
@@ -70,7 +68,7 @@ The skill governs the distributing session only. Receiving sessions need no skil
 
 ## Agents
 
-The plugin ships 11 agent definitions, one per duty. A definition carries the duty contract (input, task, output, boundaries) and the tool restrictions; it pins no model and no reasoning effort. The orchestrating skill picks both per spawn through the Agent tool's `model` and `effort` arguments, following the routing table in `references/model-routing.md`, so one `implement` definition serves a one-fix follow-up on sonnet at `medium` and a cross-package rework on opus at `xhigh`. The Agent tool's `effort` argument takes effect since Claude Code 2.1.292; in a 2026-08 test on an earlier version it was accepted and ignored, which is why 4.x shipped one definition per model and effort.
+The plugin ships 11 agent definitions, one per duty. A definition carries the duty contract (input, task, output, boundaries) and the tool restrictions; it pins no model and no reasoning effort. The orchestrating skill picks both per spawn through the Agent tool's `model` and `effort` arguments, following the routing table in `references/model-routing.md`, so one `implement` definition serves a one-fix follow-up on sonnet at `medium` and a cross-package rework on opus at `xhigh`.
 
 | Definition | Duty | Agent tool | Routing table assignment |
 |---|---|---|---|
@@ -92,7 +90,7 @@ Six definitions carry the Agent tool (`implement`, `adversarial-check`, `escalat
 
 A spawn name is a dispatch-time argument that fails silently: it changes where the report goes without an error. A named worker is an addressable teammate whose report does not come back on its own. It finishes, writes a complete report as its final text, and delivers nothing unless it calls a message-sending tool. So the skill spawns workers unnamed, and contracts the send explicitly on the rare checkpoint that needs a name. The runs behind that are in `docs/subagent-delivery-mechanism.md`.
 
-The routing table deliberately leaves cells empty. No row routes to `max`, which measures within noise of `xhigh` and is documented as prone to overthinking on bounded work. No row routes opus at `low`: a maintainer default holds that sonnet at `medium` covers that cell, extrapolated from a GPT-5 versus GPT-5-mini measurement and untested on Claude. Opus rows use three efforts rather than one because Opus 5 is the most effort-sensitive model measured: its own system card puts a 19-point spread across the ladder on an agentic benchmark, with the coding peak at `medium` rather than at the top. That measurement is Opus 5's; the `opus` alias resolves to Opus 5.5, which is unvalidated against it. Effort names are not calibrated the same way across the two, and Anthropic's own testing has Opus 5.5 at `medium` matching or beating Opus 5 at `high` on coding evaluations. The haiku rows run at `low`: by default the `haiku` alias resolves to Haiku 5.5, which ran without an API error at `effort: low`, where Haiku 4.5 rejects an effort. Where an environment maps the alias to an older model, the skill treats that actor as the family it resolves to.
+The routing table deliberately leaves cells empty. No row routes to `max`, which measures within noise of `xhigh` and is documented as prone to overthinking on bounded work. No row routes opus at `low`: a maintainer default holds that sonnet at `medium` covers that cell, extrapolated from a GPT-5 versus GPT-5-mini measurement and untested on Claude. Opus rows use three efforts rather than one because Opus 5 is the most effort-sensitive model measured: its own system card puts a 19-point spread across the ladder on an agentic benchmark, with the coding peak at `medium` rather than at the top. That measurement is Opus 5's; the `opus` alias resolves to Opus 5.5, which is unvalidated against it. Effort names are not calibrated the same way across the two, and Anthropic's own testing has Opus 5.5 at `medium` matching or beating Opus 5 at `high` on coding evaluations. The haiku rows run at `low`: by default the `haiku` alias resolves to Haiku 5.5, which ran without an API error at `effort: low`. Where an environment maps the alias to an older model, the skill treats that actor as the family it resolves to.
 
 The reasoning and the measurements are in `docs/claude-effort-mechanism.md`. The duties were derived from Claude Code's built-in agent types rather than copied from them; `docs/builtin-agent-duty-capture.md` records how, and how to re-check after a Claude Code update.
 
@@ -114,7 +112,7 @@ The `docs/` directory holds the findings the plugin's directives derive from, in
 
 - `docs/codex-dispatch-experiments.md` — a private, instrumented 17-run experiment series (review and implementer runs across all three GPT-5.6 models against a known defect state, prompt-block ablations, resume-loop validation) and the accompanying real-usage record, plus a 2026-09-24 replication on a fresh fixture in which five per-model observations did not replicate. Single-run cells, so directional rather than proven
 - `docs/gpt-5-6-model-family.md` — adversarially verified external research on the GPT-5.6 tier design intent, pricing, effort guidance, and Codex CLI configuration
-- `docs/claude-effort-mechanism.md` — where reasoning effort is set, the 2026-11-02 checks showing the Agent tool's `effort` argument takes effect and overrides a definition, the 2026-08 six-run experiment in which it had no effect (kept as history), and the per-effort measurements behind each routing row
+- `docs/claude-effort-mechanism.md`: where reasoning effort is set, the 2026-11-02 checks showing the Agent tool's `effort` argument takes effect and overrides a definition, and the per-effort measurements behind each routing row
 - `docs/builtin-agent-duty-capture.md` — how the agent duties were derived from Claude Code's built-in types, what to exclude as harness-injected, which parts vary by model, and the procedure for re-checking after a Claude Code update
 - `docs/subagent-delivery-mechanism.md` — the five-run experiment separating the dispatch shapes whose reports come back on their own from the one whose report does not, the sending tool's absence from a worker's default tools, the transcript recovery path, and the limits of a single-definition sample
 - `docs/nested-subagent-delegation.md` — which definitions carry the Agent tool and why, the opt-in-per-dispatch rationale, and the invariants nested spawns preserve; mostly judgement, except the definition-named-spawn invariant, confirmed against Claude Code's internal type declarations
