@@ -83,7 +83,7 @@ The duty text is model-invariant between sonnet and opus. A byte-level diff of t
 
 No depth directive appears on any model. A haiku `general-purpose` capture and a sonnet `general-purpose` capture returned matching prose blocks, and neither carried a thinking tag, a budget number, or any other depth directive; the `Explore` and `Plan` captures carried none either. Haiku's duty prose is therefore identical to sonnet's — confirmed by transcription, not inferred from sonnet matching opus.
 
-Neither `Explore` nor `Plan` set any reasoning effort, and `general-purpose` has no effort directive either. All three inherit the session level unless the spawn passes an `effort` argument, which is how the routing table sets effort for the plugin's own definitions as well.
+Neither `Explore` nor `Plan` set any reasoning effort, and `general-purpose` has no effort directive either. All three inherit the session level unless the spawn passes an `effort` argument or `CLAUDE_CODE_SUBAGENT_EFFORT` is set, which is how the routing table sets effort for the plugin's own definitions as well.
 
 ## Duties as captured
 
