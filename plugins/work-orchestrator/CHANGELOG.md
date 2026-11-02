@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - The skill notes that `CLAUDE_CODE_EFFORT_LEVEL` overrides every spawn's effort when set.
 - The re-validation loop uses a digraph and permits one resume per fix round, with a finding still open after two rounds sent to the deviation path.
 - Each resume carries the diff, decided designs, test duties, and fence; merged reviewers each resume their own findings.
+- An independent confirmer no longer has to be a fresh worker: a resumed review thread confirms fixes another worker applied, because it did not produce them and shares no session with their producer.
 - Codex review and other non-implementer dispatches disable memories; implementer dispatches omit that flag, and `codex.extra_config` rejects a memories setting in either direction.
 - Extension configuration selects values within the spawn guards.
 
