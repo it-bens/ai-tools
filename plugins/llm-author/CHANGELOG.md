@@ -14,17 +14,18 @@ Sources: [Prompting Claude Sonnet 5.5](https://platform.claude.com/docs/en/build
 
 - `references/claude-5-guide.md`: a "Sonnet 5.5" per-model section (recalibrated effort levels and starting levels, behavior that shifts with effort, carry-through, review-restraint, ideas-first, verification, and search prompts, `between_tools` in place of disabled thinking, mid-turn user messages) with a Sonnet 5 → Sonnet 5.5 checklist, and a "Haiku 5.5" per-model section (effort levels in place of `budget_tokens`, today's date and a search nudge, early-stopping and verification prompts, refusal handling) with a Haiku 4.5 → Haiku 5.5 checklist
 - `references/openai-gpt-guide.md`: GPT-6.1 Sol and GPT-6.1 Terra rows in the GPT-6 table with their reasoning efforts and defaults, the October 29 GPT-6 Luna update, and a "GPT-6 Sol → GPT-6.1 Sol, GPT-5.6 Terra → GPT-6.1 Terra" migration section
-- `docs/`: eleven vendor pages saved verbatim: the Sonnet 5.5 prompting and what's-new pages, the Haiku 5.5 prompting, what's-new, and overview pages, the effort page, the current Using GPT-6 page, the GPT-6.1 Sol and GPT-6.1 Terra model pages, the GPT-6 Luna October 29 addendum, and the Codex GPT-6 upgrade reference
+- `docs/`: ten vendor pages saved: the Sonnet 5.5 prompting and what's-new pages, the Haiku 5.5 prompting, what's-new, and overview pages, the effort page, the GPT-6.1 Sol and GPT-6.1 Terra model pages, the GPT-6 Luna October 29 addendum, and the Codex GPT-6 upgrade reference. The pages are verbatim; the addendum has chart descriptions added for its figures.
 
 ### Changed
 
+- Removed the Codex subagent starting-effort figures because no current source supports them.
 - `references/claude-5-guide.md`: the lineup names Opus 5.5, Sonnet 5.5, Haiku 5.5, and Fable 5.1 as current and Opus 5, Sonnet 5, and Fable 5 as legacy; the effort defaults, the breaking-changes table, the token-count note, the `max_tokens` ceiling, the verification note, and Model Selection cover Sonnet 5.5 and Haiku 5.5
 - `references/openai-gpt-guide.md`: the "no Terra" statement is replaced by the GPT-6 family (GPT-6 Astra, GPT-6.1 Sol, GPT-6.1 Terra, GPT-6 Luna); the `none` effort and Chat Completions tool-calling limits, the GPT-5.6 → GPT-6 steps, and the adaptation table name GPT-6.1 Sol and Terra
 - `SKILL.md` (prompt-engineering): description triggers cover GPT-6.1, Sonnet 5 → Sonnet 5.5, Haiku 4.5 → Haiku 5.5, and GPT-6 Sol → GPT-6.1 Sol migration; the target-model list, Claude 5 lineup, effort guidance for Sonnet 5.5 and Haiku 5.5, breaking-changes line, Claude 4 → Claude 5 migration section, and OpenAI adaptation section name the current models
 - `references/output-formats.md`, `examples/system-prompt-template.md`, `examples/prompt-chain-template.md`, `examples/claude-4-to-5-migration.md`, and `examples/openai-gpt-adaptation.md`: model lists, effort defaults, and checklist lines name Sonnet 5.5, Haiku 5.5, GPT-6.1 Sol, and GPT-6.1 Terra
-- `docs/claude-models-overview.md` refetched for the current lineup
+- `docs/claude-models-overview.md` refetched for the current lineup; `docs/using-gpt-6.md` refetched for current GPT-6 guidance
 - All five skills' frontmatter `version` is 3.14.0
-- Both manifests carry 3.14.0; the Claude Code manifest description, `AGENTS.md`, `README.md`, and `project/` name Sonnet 5.5, Haiku 5.5, GPT-6.1 Sol, and GPT-6.1 Terra; the `README.md` docs count is 48
+- Both manifests carry 3.14.0; the Claude Code manifest description, `AGENTS.md`, `README.md`, and `project/` name Sonnet 5.5, Haiku 5.5, GPT-6.1 Sol, and GPT-6.1 Terra; the `README.md` docs count is 47
 
 ## [3.13.0] - 2026-09-23
 

@@ -49,8 +49,8 @@ digraph prompt_engineering {
     "Prompt request" [shape=doublecircle];
     "Refining a prompt already generated this conversation?" [shape=diamond];
     "Refinement mode: ask what changes, deliver the full refined prompt" [shape=box];
-    "Migrating existing Claude 4 content to Claude 5?" [shape=diamond];
-    "Migration mode: re-tune per claude-5-guide, deliver before/after" [shape=box];
+    "Migrating existing content between model versions?" [shape=diamond];
+    "Migration mode: use per-model guide checklists, deliver before/after" [shape=box];
     "Distilled ruleset for the invoking session to author prompts from?" [shape=diamond];
     "Ruleset mode: derive rules from the target-model guide and the session's artifact types" [shape=box];
     "Traditional prompt or LLM-targeted content?" [shape=diamond];
@@ -68,10 +68,10 @@ digraph prompt_engineering {
     "Prompt request" -> "Refining a prompt already generated this conversation?";
     "Refining a prompt already generated this conversation?" -> "Refinement mode: ask what changes, deliver the full refined prompt" [label="yes"];
     "Refinement mode: ask what changes, deliver the full refined prompt" -> "Phase 3: deliver the artifact (format by type, recipient, and platform)";
-    "Refining a prompt already generated this conversation?" -> "Migrating existing Claude 4 content to Claude 5?" [label="no"];
-    "Migrating existing Claude 4 content to Claude 5?" -> "Migration mode: re-tune per claude-5-guide, deliver before/after" [label="yes"];
-    "Migration mode: re-tune per claude-5-guide, deliver before/after" -> "Phase 3: deliver the artifact (format by type, recipient, and platform)";
-    "Migrating existing Claude 4 content to Claude 5?" -> "Distilled ruleset for the invoking session to author prompts from?" [label="no"];
+    "Refining a prompt already generated this conversation?" -> "Migrating existing content between model versions?" [label="no"];
+    "Migrating existing content between model versions?" -> "Migration mode: use per-model guide checklists, deliver before/after" [label="yes"];
+    "Migration mode: use per-model guide checklists, deliver before/after" -> "Phase 3: deliver the artifact (format by type, recipient, and platform)";
+    "Migrating existing content between model versions?" -> "Distilled ruleset for the invoking session to author prompts from?" [label="no"];
     "Distilled ruleset for the invoking session to author prompts from?" -> "Ruleset mode: derive rules from the target-model guide and the session's artifact types" [label="yes"];
     "Ruleset mode: derive rules from the target-model guide and the session's artifact types" -> "Target model?";
     "Distilled ruleset for the invoking session to author prompts from?" -> "Traditional prompt or LLM-targeted content?" [label="no"];
@@ -228,7 +228,7 @@ Deliver the artifact as a markdown block optimized for its recipient and target 
 
 ## Model-Generation Optimizations
 
-Claude 5 (Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1; legacy Opus 5, Sonnet 5, Fable 5) is the default target; Opus 5.5 is the recommended default model. Claude 4 (Opus 4.x, Sonnet 4.x) and Haiku 4.5 prompts often over-steer Claude 5, so re-tune them when migrating.
+Claude 5 (Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1; legacy Opus 5, Sonnet 5, Fable 5) is the default target; Opus 5.5 is the recommended default model. Claude 4 (Opus 4.x, Sonnet 4.x) prompts often over-steer Claude 5, so re-tune them when migrating. Existing Haiku 4.5 prompts should perform well on Haiku 5.5 without changes.
 
 ### Claude 5 (default)
 
@@ -255,7 +255,7 @@ Keep spawn counts low.
 
 **Breaking changes**: assistant prefill, `budget_tokens`, and non-default `temperature`/`top_p`/`top_k` return a 400 error; on Opus 5.5, Sonnet 5.5, and Fable 5.1 so does forced `tool_choice` (`any` / `tool`). Use adaptive thinking with `effort`, Structured Outputs instead of prefill, and `tool_choice: auto` plus strict tool use instead of forced tool choice.
 
-→ Full guide, per-model specifics (Opus 5.5 / Sonnet 5.5 / Haiku 5.5 / Opus 5 / Sonnet 5 / Fable 5), the Opus 5 → Opus 5.5, Sonnet 5 → Sonnet 5.5, and Haiku 4.5 → Haiku 5.5 checklists, and Claude 4 → 5 migration: `references/claude-5-guide.md`
+→ Full guide, per-model specifics (Opus 5.5 / Sonnet 5.5 / Haiku 5.5 / Fable 5.1 / Opus 5 / Sonnet 5 / Fable 5), the Opus 5 → Opus 5.5, Sonnet 5 → Sonnet 5.5, and Haiku 4.5 → Haiku 5.5 checklists, and Claude 4 → 5 migration: `references/claude-5-guide.md`
 
 ### Claude 4 and earlier
 
@@ -267,11 +267,11 @@ Claude 4 needs "above and beyond" behavior requested explicitly:
 
 → Full guide: `references/claude-4-guide.md`
 
-## Claude 4 → Claude 5 Migration (When Requested)
+## Model Migration (When Requested)
 
-When the user asks to migrate, re-tune, or update existing Claude 4 content (a prompt, skill, agent, or rules file) for Claude 5: diagnose and remove the carried-over Claude 4 scaffolding that now over-steers, rather than rewriting from scratch. Apply the re-tuning moves from the Claude 5 sections above: remove verification scaffolding when the target is Opus 5 (Fable 5 long-horizon runs keep it; Sonnet 5 keeps what it has; Sonnet 5.5 at `low` and Haiku 5.5 at `low`/`medium` take the guide's verification paragraph when they report code changes done without a check), soften aggressive triggers, give and cap subagent-delegation criteria, replace the 400-error API parameters (assistant prefill, `budget_tokens`, non-default `temperature`/`top_p`/`top_k`, and forced `tool_choice` on Opus 5.5, Sonnet 5.5, and Fable 5.1), plus, for LLM-targeted content, the "less is more" optimization principle. Haiku 4.5 content moving to Haiku 5.5 is a Claude 4 → 5 migration; use the guide's Haiku 4.5 → Haiku 5.5 checklist.
+When the user asks to migrate, re-tune, or update existing Claude 4 content (a prompt, skill, agent, or rules file) for Claude 5: diagnose and remove the carried-over Claude 4 scaffolding that now over-steers, rather than rewriting from scratch. Apply the re-tuning moves from the Claude 5 sections above: remove verification scaffolding when the target is Opus 5 (Fable 5 long-horizon runs keep it; Sonnet 5 keeps what it has; Sonnet 5.5 at `low` and Haiku 5.5 at `low`/`medium` take the guide's verification paragraph when they report code changes done without a check), soften aggressive triggers, give and cap subagent-delegation criteria, replace the 400-error API parameters (assistant prefill, `budget_tokens`, non-default `temperature`/`top_p`/`top_k`, and forced `tool_choice` on Opus 5.5, Sonnet 5.5, and Fable 5.1), plus, for LLM-targeted content, the "less is more" optimization principle. For Haiku 4.5 → Haiku 5.5, keep the prompt as it is, apply every item of the guide's Haiku 4.5 → Haiku 5.5 checklist, and tune prompt wording only for behavior you observe.
 
-Deliver a before/after so each change and its rationale stay visible: `references/output-formats.md#10-claude-4-to-claude-5-migrations`. Worked transformations: `examples/claude-4-to-5-migration.md`. Full per-model detail and the Claude 4 → 5 migration reference: `references/claude-5-guide.md`.
+For migrations between model versions, use the per-model checklists in `references/claude-5-guide.md` or `references/openai-gpt-guide.md`. Deliver a before/after so each change and its rationale stay visible: `references/output-formats.md#10-claude-4-to-claude-5-migrations`. Worked transformations: `examples/claude-4-to-5-migration.md`. Full per-model detail and the Claude 4 → 5 migration reference: `references/claude-5-guide.md`.
 
 ## GPT-6 / GPT-5.6 (OpenAI) Adaptation (When Requested)
 
@@ -282,7 +282,7 @@ When the user explicitly targets the GPT-6 family (GPT-6 Astra, GPT-6.1 Sol, GPT
 - Reserve ALWAYS/NEVER/MUST for true invariants; give decision rules for judgment calls.
 - Re-check blanket brevity instructions (GPT-5.6 is concise by default); set `text.verbosity` for the default level of detail.
 - Define autonomy and approval boundaries (report vs. act vs. confirm) instead of repeating "ask first".
-- API: Responses API, `reasoning.effort` (`none`–`max`, default `medium`; GPT-6 Astra and GPT-6.1 Sol have no `none`), `reasoning.mode: "pro"` for quality-first single answers.
+- API: Responses API, `reasoning.effort` (`none`, `low`, `medium`, `high`, `xhigh`, `max`; default `medium`; GPT-6 Astra and GPT-6.1 Sol have no `none`; for existing `minimal` requests, start with `low` and compare), `reasoning.mode: "pro"` for quality-first single answers.
 - GPT-6 family: choose Astra, GPT-6.1 Sol, GPT-6.1 Terra, or Luna by workload (Astra is the top tier; tier names do not keep their GPT-5.6 position); state that action requests authorize the work and that the user's instructions take precedence over skill guidelines; make instruction-file guidance conditional rather than blanket; bound re-verification; keep the confirmation tier for external writes and destructive actions. Evaluate each pattern per model; the guidance was observed on Astra.
 
 → Full guide, API parameters, per-tier selection, the October 2026 GPT-6 Luna update, GPT-6, GPT-6.1, and GPT-5.x migration, and pre-5.6 baseline: `references/openai-gpt-guide.md`; transformation examples: `examples/openai-gpt-adaptation.md`

@@ -134,7 +134,7 @@ The `docs/` directory contains the raw documentation files that were used to cre
 
 - Core prompting techniques (clarity, XML structure, system prompts, examples, prefilling, chain-of-thought)
 - Advanced strategies (prompt chaining, long context handling, output consistency, hallucination reduction)
-- Claude 5 model-specific optimization and best practices (Opus 5.5, Sonnet 5.5, Haiku 5.5, Opus 5, Sonnet 5, Fable 5), the current Claude lineup, the effort parameter, and Claude 4 → 5, Opus 5 → 5.5, Sonnet 5 → 5.5, and Haiku 4.5 → 5.5 migration
+- Claude 5 model-specific optimization and best practices (Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1, Opus 5, Sonnet 5, Fable 5), the current Claude lineup, the effort parameter, and Claude 4 → 5, Opus 5 → 5.5, Sonnet 5 → 5.5, and Haiku 4.5 → 5.5 migration
 - Claude 4 model-specific optimization and best practices
 - GPT-6 family (GPT-6 Astra, GPT-6 Sol, GPT-6.1 Sol, GPT-6.1 Terra, GPT-6 Luna, and the October 2026 GPT-6 Luna update) and GPT-5.6 (Sol, Terra, Luna) model-specific optimization, best practices, and GPT-6 / GPT-6.1 / GPT-5.x migration (OpenAI)
 - GLM 4.7 adaptation techniques for achieving Claude parity
@@ -154,7 +154,7 @@ llm-author/
 │   └── plugin.json              # Claude Code plugin manifest
 ├── .codex-plugin/
 │   └── plugin.json              # Codex plugin manifest
-├── docs/                        # Source documentation (48 files)
+├── docs/                        # Source documentation (47 files)
 ├── hooks/
 │   ├── hooks.json               # PostToolUse (Skill) + UserPromptSubmit rule delivery
 │   └── scripts/
@@ -185,3 +185,5 @@ Codex marketplace metadata lives at `.agents/plugins/marketplace.json` in the re
 ## License
 
 MIT
+
+The GPT-6 Luna October 2026 addendum is saved verbatim with chart descriptions added for its figures.
