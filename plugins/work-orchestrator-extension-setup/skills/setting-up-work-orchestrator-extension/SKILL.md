@@ -1,6 +1,6 @@
 ---
 name: setting-up-work-orchestrator-extension
-version: 2.1.0
+version: 2.2.0
 description: Use when the user explicitly asks to set up, install, configure, wire up, or re-sync the work-orchestrator plugin's extensions for the current project. Do not activate as a side effect of an orchestration task.
 ---
 
@@ -66,9 +66,29 @@ Probe checklists:
 
 Re-sync mode only; fresh mode proceeds directly to Step 4.
 
-Diff each claim in every existing extension file against the current findings: gate commands that no longer exist or changed invocation, protected paths that moved or were deleted, cited files that no longer exist or no longer cover what the citation claims, routing additions for checkpoint types the project no longer runs, conduct rules whose source file was rewritten, and topology rows naming working trees or branches the project no longer uses. Turn every stale claim into an update proposal with its evidence. An unchanged project produces no proposals.
+Diff each claim in every existing extension file against the current findings: gate commands that no longer exist or changed invocation, protected paths that moved or were deleted, cited files that no longer exist or no longer cover what the citation claims, routing additions for checkpoint types the project no longer runs, routing additions or other content naming a retired 4.x agent definition (see the migration table below), conduct rules whose source file was rewritten, and topology rows naming working trees or branches the project no longer uses. Turn every stale claim into an update proposal with its evidence. An unchanged project produces no proposals.
 
 Report the gate table as the highest-value diff: a stale gate command is the one drift that silently breaks every implementer dispatch.
+
+Rewrite every retired 4.x agent definition name found in an extension file to the 5.x duty definition plus model and effort from this table, and propose the rewrite like any other stale claim. In a routing-additions row, the actor cell becomes `` `<definition>` on <model> `` and the effort cell takes the table's effort unless the row already names a different one. A haiku row gets `low`, since the 4.x haiku definitions ran without an effort.
+
+| 4.x definition | 5.x definition | Model | Effort |
+|---|---|---|---|
+| `search-haiku` | `search` | haiku | low |
+| `investigate-haiku` | `extract` | haiku | low |
+| `gate-run-haiku` | `gate-run` | haiku | low |
+| `investigate-sonnet-low` | `lookup` | sonnet | low |
+| `investigate-sonnet-medium` | `source-read` | sonnet | medium |
+| `investigate-sonnet-high` | `adversarial-check` | sonnet | high |
+| `investigate-opus-medium` | `escalated-check` | opus | medium |
+| `investigate-opus-high` | `root-cause` | opus | high |
+| `investigate-opus-xhigh` | `source-conflict` | opus | xhigh |
+| `design-opus-xhigh` | `design` | opus | xhigh |
+| `implement-sonnet-medium` | `implement` | sonnet | medium |
+| `implement-sonnet-high` | `implement` | sonnet | high |
+| `implement-opus-medium` | `implement` | opus | medium |
+| `implement-opus-high` | `implement` | opus | high |
+| `implement-opus-xhigh` | `implement` | opus | xhigh |
 
 ### Step 4: Draft extension proposals
 
@@ -98,7 +118,7 @@ Work one family at a time, in the order gates → fence → rules and lenses →
 - Confirm each gate's exact command, and whether it runs inside a `workspace-write` sandbox. For a gate that does not, get its one permitted fallback and whether an independent worker re-runs it outside.
 - Accept or reject each protected path and each banned command class, with evidence.
 - Confirm which conduct rules and project skill files a worker must receive, and the scope condition for each.
-- Accept or reject each proposed routing addition and effort override — an effort override needs the project's own evidence, not a preference. An override on a codex checkpoint sets the invocation flag, so any level is expressible. An override on a claude checkpoint selects one of the agent definitions the parent plugin ships, so only the rungs those definitions carry are expressible — propose a rung none of them carries as an improvement candidate for the parent plugin, not as an assignment. Ask whether the project wants a persistent codex/claude bias; offer `codex-heavy`, `claude-lean`, or none, and record `routing.codex_bias` when selected. Treat this bias as a preference, not a Step 2 probe target, and exempt it from the effort-override evidence requirement.
+- Accept or reject each proposed routing addition, effort override, and model override — an override needs the project's own evidence, not a preference. An effort override on a codex checkpoint sets the invocation flag, so any level is expressible. An effort override on a claude checkpoint sets the spawn's effort, so any level is expressible too. A model override (`routing.model_defaults`) applies to claude checkpoints only and names haiku, sonnet, or opus; refuse one that names fable or targets a codex checkpoint, since it would move a checkpoint across families. A routing addition's claude actor names one of the duty definitions the parent plugin ships plus a model (haiku, sonnet, or opus); propose a duty none of them covers as an improvement candidate for the parent plugin, not as an assignment. Ask whether the project wants a persistent codex/claude bias; offer `codex-heavy`, `claude-lean`, or none, and record `routing.codex_bias` when selected. Treat this bias as a preference, not a Step 2 probe target, and exempt it from the override evidence requirement.
 - Confirm each proposed deviation trigger.
 - For the topology: confirm the roles, per-role duties, and message flow with the user (they are the source, not exploration), and confirm write ownership against the explored working-tree facts — every tree has exactly one writing role, and read-only roles get the clone-or-pinned-worktree instruction.
 - For the handoff referent guard: confirm the authoritative artifacts by name, and whether the project wants the `Post-Compose` guard, the `project.conduct_rules` entry, or both.

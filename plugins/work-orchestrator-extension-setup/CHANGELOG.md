@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.2.0] - 2026-11-02
+
+`work-orchestrator` 5.0.0 replaced its 15 model-and-effort agent definitions with 11 duty definitions that pin neither; the orchestrating skill passes model and effort per spawn. The setup skill follows: an effort override on a claude checkpoint can now name any level, and a routing addition's claude actor is a duty definition plus a model.
+
+### Changed
+
+- `skills/setting-up-work-orchestrator-extension/SKILL.md`: Step 5 no longer limits claude effort overrides to the rungs of shipped definitions; a routing addition names a duty definition plus a model, and a checkpoint whose duty no shipped definition covers becomes an improvement candidate for the parent plugin
+- `skills/setting-up-work-orchestrator-extension/SKILL.md`: Step 3 (re-sync) carries the 4.x-to-5.x migration table and rewrites every retired definition name in an extension file to the duty definition, model, and effort the table gives, proposed like any other stale claim; haiku rows get `low`
+- `skills/setting-up-work-orchestrator-extension/SKILL.md`: Step 5 offers `routing.model_defaults`, the parent's new per-checkpoint model override for claude checkpoints, under the same evidence requirement as effort overrides, and refuses one naming fable or a codex checkpoint
+- `README.md`, `.claude-plugin/plugin.json`: state that routing additions target the `work-orchestrator` 5.0.0 duty definitions; the README states that re-sync rewrites 4.x definition names
+
+The extension-file format is unchanged. Files that name a 4.x definition need the re-sync this version runs, because `work-orchestrator` 5.0.0 no longer ships those definitions.
+
 ## [2.1.0] - 2026-08-21
 
 The setup skill knows the parent plugin's handoff referent guard. When receiving sessions read authoritative persistent artifacts end to end, a handoff composed from session recall can cite referents those artifacts do not hold; the parent's `EXTENSION.md` now carries a `Post-Compose` guard example for that setup, and this skill proposes it.
