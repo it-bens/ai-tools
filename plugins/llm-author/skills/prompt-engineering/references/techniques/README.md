@@ -14,10 +14,10 @@
 
 | Task Type | Primary Techniques |
 |-----------|-------------------|
-| Format-specific output | Examples, XML tags, Prefilling (Claude 4 / earlier) |
+| Format-specific output | Examples, XML tags, Prefilling (Claude 4.5 / earlier) |
 | Complex reasoning | Chain of thought, XML structure |
 | Domain expertise | Context, Domain material, Grounding |
 | Multi-step workflows | Prompt chaining |
 | Long documents | XML tags, Retrieval strategy |
-| Consistency | Examples, Prefilling (Claude 4 / earlier) |
+| Consistency | Examples, Prefilling (Claude 4.5 / earlier) |
 | Accuracy | Grounding, Verification |
