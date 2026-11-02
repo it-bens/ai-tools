@@ -23,7 +23,7 @@ Fix the reported bug: identify the root cause, apply the fix, and state what cha
 Respond directly, without preamble.
 ```
 
-API: omit `thinking` (adaptive thinking runs by default); set `effort` explicitly — the default is per model (`high` on Opus 5, Sonnet 5, and Fable 5.1; `medium` on Opus 5.5), so sweep rather than copy a level; no prefill; default sampling.
+API: omit `thinking` (adaptive thinking runs by default); set `effort` explicitly; the default is per model (`high` on Opus 5, Sonnet 5, Sonnet 5.5, and Fable 5.1; `medium` on Opus 5.5 and Haiku 5.5), so sweep rather than copy a level; no prefill; default sampling.
 
 ### Migration Rationale
 
@@ -108,13 +108,13 @@ When re-tuning Claude 4 content for Claude 5, remove or replace:
 
 - [ ] Persona / "You are …" identity openers → state the task directly
 - [ ] `<thinking>` / `<answer>` scaffolding and `budget_tokens` → adaptive thinking + `effort`
-- [ ] "Double-check" / "add a verification step" / verifier subagents → nothing, when the target is Opus 5 (it self-verifies). Keep them for a Fable 5 long-horizon run; leave them as-is for Sonnet 5
+- [ ] "Double-check" / "add a verification step" / verifier subagents → nothing, when the target is Opus 5 (it self-verifies). Keep them for a Fable 5 long-horizon run; leave them as-is for Sonnet 5; for Sonnet 5.5 at `low` or Haiku 5.5 at `low`/`medium`, use the guide's verification paragraph
 - [ ] `CRITICAL: You MUST` and stacked absolutes → "Use … when …" and judgment heuristics
 - [ ] Assistant prefill → "respond directly, without preamble" or Structured Outputs
 - [ ] Non-default `temperature` / `top_p` / `top_k` → default sampling; steer tone via the prompt
 - [ ] Forced progress-update scaffolding → nothing (good updates by default)
 - [ ] Worked examples that only narrow behavior → an interface/spec or a judgment heuristic
-- [ ] Opus 5.5 target: forced `tool_choice` (`any` / `tool`) → `auto` plus strict tool use; `max_tokens` up to 128K at `xhigh`/`max`
+- [ ] Opus 5.5 or Sonnet 5.5 target: forced `tool_choice` (`any` / `tool`) → `auto` plus strict tool use; `max_tokens` up to 128K at `xhigh`/`max`
 
 Then, if the target is Opus 5 (or Fable 5 at high effort), add a concision instruction — those run long; Sonnet 5 calibrates length on its own. Recount tokens against the target model rather than reusing Claude 4 limits.
 

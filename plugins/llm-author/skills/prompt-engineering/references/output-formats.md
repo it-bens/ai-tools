@@ -37,7 +37,7 @@ Full wrapper format for user-facing prompts:
 [Complete, ready-to-copy prompt in code block]
 
 ## Usage Notes
-- Target model: [Claude 5 (Opus 5.5 / Opus 5 / Sonnet 5 / Fable 5.1) / Claude 4 / GPT-6 or GPT-5.6 / GLM 4.7 / Gemini 3]
+- Target model: [Claude 5 (Opus 5.5 / Sonnet 5.5 / Haiku 5.5 / Fable 5.1, or legacy Opus 5 / Sonnet 5 / Fable 5) / Claude 4 / GPT-6 family or GPT-5.6 / GLM 4.7 / Gemini 3]
 - [Platform-specific notes if applicable]
 
 ## Testing Guide
@@ -222,13 +222,13 @@ For LLM-targeted content (skills, agents, rules files), preserve the original do
 
 ## 11. GPT-6 and GPT-5.6 Prompts
 
-For prompts targeting GPT-6 (Astra, Sol, Luna) or GPT-5.6 (Sol, Terra, Luna), add:
+For prompts targeting the GPT-6 family (GPT-6 Astra, GPT-6.1 Sol, GPT-6.1 Terra, GPT-6 Luna) or GPT-5.6 (Sol, Terra, Luna), add:
 
 ```markdown
 ## API Configuration
-- Model: GPT-6 — `gpt-6-astra` (most capable), `gpt-6-sol` (everyday and complex agentic work), or `gpt-6-luna` (focused, high-volume); GPT-5.6 — `gpt-5.6-sol` (frontier), `gpt-5.6-terra` (balanced), or `gpt-5.6-luna` (high-volume), with the `gpt-5.6` alias routing to Sol
+- Model: GPT-6 family: `gpt-6-astra` (highest intelligence), `gpt-6.1-sol` (near-Astra performance at a lower cost), `gpt-6.1-terra` (fast and efficient; visual reasoning, computer use, writing), or `gpt-6-luna` (fastest; focused, high-volume); GPT-5.6: `gpt-5.6-sol` (frontier), `gpt-5.6-terra` (balanced), or `gpt-5.6-luna` (high-volume), with the `gpt-5.6` alias routing to Sol
 - API: Responses API for reasoning, tool-calling, and multi-turn workflows
-- Reasoning: `reasoning.effort` (`none`–`max`, default `medium`; `low`–`max` on `gpt-6-astra`); `reasoning.mode: "pro"` for quality-first single answers
+- Reasoning: `reasoning.effort` (`none`–`max`, default `medium`; `low`–`max` on `gpt-6-astra` and `gpt-6.1-sol`); `reasoning.mode: "pro"` for quality-first single answers
 - Verbosity (GPT-5.6): `text.verbosity` (`low`/`medium`/`high`) for the default level of detail
 
 ## Adaptation Notes
