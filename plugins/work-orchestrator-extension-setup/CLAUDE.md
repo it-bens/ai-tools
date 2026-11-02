@@ -39,4 +39,4 @@ The `work-orchestrator` plugin owns the extension contract in its `EXTENSION.md`
 
 ## Testing
 
-No automated tests. The skill's effects are validated by re-running it on an already-configured project (idempotent no-op), running re-sync on an unchanged project (no proposals), and inspecting the resulting extension file against the parent plugin's template.
+No automated tests. The skill's effects are validated by re-running it on an already-configured project (idempotent no-op), running re-sync on an unchanged project (proposals only where the audits of existing entries flag one), and inspecting the resulting extension file against the parent plugin's template.
