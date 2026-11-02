@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- `orchestrating-subagent-work` no longer points to the re-sync mode of `work-orchestrator-extension-setup` when a spawn fails on a 4.x definition name. Such a spawn failure is a dispatch failure like any other.
+- The README, `EXTENSION.md`, `CLAUDE.md`, `docs/` and the plugin description no longer carry historical information: earlier plugin versions, retired definition names, the rename from `subagent-orchestrator`, and Claude Code behavior that no longer holds. This changelog is the only file that records it. Run records in `docs/` that used 4.x definition names now name the current definition, model and effort.
+- Lines rewritten in the README and `docs/` no longer contain em dashes.
+
 ## [5.0.0] - 2026-11-02
 
 Claude Code 2.1.292 added an `effort` parameter to the Agent tool, and on Claude Code 2.1.316 it takes effect: spawns at `effort: low` and `effort: max` from a `medium` session reported `CLAUDE_EFFORT=low` and `max`, and a spawn-time `effort` overrode the one a definition pinned. The Agent tool documents its `model` parameter as taking precedence over a definition's `model`. The reason the plugin shipped one definition per model and effort is gone. The 15 definitions become 11, one per duty contract, pinning neither model nor effort; the routing table names a definition, a model, and an effort per checkpoint, and the skill passes model and effort on every spawn. By default the `haiku` alias resolves to Haiku 5.5 since Claude Code 2.1.293, and a haiku spawn at `effort: low` ran without an API error, so haiku rows carry an effort. The plugin now requires Claude Code 2.1.293 or later.

@@ -2,7 +2,7 @@
 
 Why the definitions name the final message as the report, why a verdict comes last on sonnet, and why haiku shape rules are phrased as what to emit rather than what to avoid. A 25-run experiment across three Claude Code sessions, run against this plugin's own agent definitions.
 
-The runs used 4.x definition names. In 5.0.0 terms: `search-haiku` is `search` on haiku, `investigate-haiku` is `extract` on haiku, `gate-run-haiku` is `gate-run` on haiku, `investigate-sonnet-low` is `lookup` on sonnet at `low`, `investigate-sonnet-high` is `adversarial-check` on sonnet at `high`, `implement-sonnet-medium` is `implement` on sonnet at `medium`, `investigate-opus-medium` is `escalated-check` on opus at `medium`, and `design-opus-xhigh` is `design` on opus at `xhigh`. The haiku definitions ran with no effort set.
+The haiku workers ran with no effort set.
 
 ## What prompted it
 
@@ -14,19 +14,19 @@ Five definitions were probed by attempting the calls, not by asking the worker w
 
 | Definition | Agent tool | Write tool |
 |---|---|---|
-| `investigate-sonnet-high` | present; spawned a haiku subagent that replied | absent — no schema resolves for the name |
-| `design-opus-xhigh` | present; spawned a haiku subagent that replied | absent |
-| `implement-sonnet-medium` | present; spawned a haiku subagent that replied | present; the write succeeded |
-| `gate-run-haiku` | absent — `InputValidationError: Unknown tool "Agent"` | absent — same error |
-| `investigate-sonnet-low` | absent from the session's tool listing | absent |
+| `adversarial-check`, sonnet at `high` | present; spawned a haiku subagent that replied | absent: no schema resolves for the name |
+| `design`, opus at `xhigh` | present; spawned a haiku subagent that replied | absent |
+| `implement`, sonnet at `medium` | present; spawned a haiku subagent that replied | present; the write succeeded |
+| `gate-run`, haiku with no effort set | absent: `InputValidationError: Unknown tool "Agent"` | absent: same error |
+| `lookup`, sonnet at `low` | absent from the session's tool listing | absent |
 
 Every definition holds what its frontmatter grants and nothing more. All 25 spawns delivered a final message; none failed to report.
 
-One recording error surfaced: the session's agent listing showed `investigate-sonnet-high` as excluding the Agent tool while its frontmatter had already dropped that exclusion. The frontmatter governs, and a listing read after an edit but before a restart is stale.
+One recording error surfaced: the session's agent listing showed `adversarial-check`, sonnet at `high` as excluding the Agent tool while its frontmatter had already dropped that exclusion. The frontmatter governs, and a listing read after an edit but before a restart is stale.
 
 ## Sonnet: a verdict placed first gets revised mid-message
 
-`investigate-sonnet-high`, one trivial claim, verdict vocabulary confirmed/refuted:
+`adversarial-check`, sonnet at `high`, one trivial claim, verdict vocabulary confirmed/refuted:
 
 | Prompt shape | Runs | Result |
 |---|---|---|
@@ -39,18 +39,18 @@ These runs finish in five to eight seconds. The worker starts writing before the
 
 The definition's own "default to refuted where the evidence is absent" supplies the opening stance that gets revised. That directive earns its place — it is the reason to dispatch an adversarial checker — so the fix moved the verdict rather than removing the default.
 
-Opus did not share the failure in one unedited run. The unedited `investigate-opus-medium` stated its verdict first, correctly, and added a falsifier and a working-tree-versus-HEAD caveat. Verdict-last is therefore applied where it was measured to be needed, not across every rung.
+Opus did not share the failure in one unedited run. The unedited `escalated-check`, opus at `medium` stated its verdict first, correctly, and added a falsifier and a working-tree-versus-HEAD caveat. Verdict-last is therefore applied where it was measured to be needed, not across every rung.
 
 ## Haiku ignores a negatively phrased shape rule
 
-`search-haiku` returned correct matches with a preamble ("Now I have all the information needed…"). Two phrasings were tested against that:
+`search`, haiku with no effort set returned correct matches with a preamble ("Now I have all the information needed…"). Two phrasings were tested against that:
 
 | Phrasing | Runs | Result |
 |---|---|---|
 | "contains nothing but it — no preamble, no narration" | 1 | preamble persisted |
 | "its first character is the first character of the first match line" | 4 (2 prompt-side, 2 from the definition) | bare match lines, no preamble |
 
-Naming the first token to emit bound in four positive-phrasing runs; naming the thing to avoid did not bind in the one negative-phrasing run. `gate-run-haiku` and `investigate-haiku` carry the same positive form for consistency of duty wording — `gate-run-haiku` had no shape defect in evidence before or after, and `investigate-haiku` still opened one run with a `## Report` heading, so that definition's edit is unconfirmed.
+Naming the first token to emit bound in four positive-phrasing runs; naming the thing to avoid did not bind in the one negative-phrasing run. The `gate-run` and `extract` definitions carry the same positive form for consistency of duty wording: the `gate-run` worker on haiku with no effort set had no shape defect in evidence before or after, and the `extract` worker on haiku with no effort set still opened one run with a `## Report` heading, so that definition's edit is unconfirmed.
 
 ## Limits
 

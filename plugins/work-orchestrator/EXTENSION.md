@@ -125,7 +125,7 @@ That guarantee is narrower than "the contract exposes no place to write it", and
 | `routing.codex_bias` | (unset — session decides per the routing table) | Biases the discretionary codex/claude split at the strategy node across `codex-heavy` / `claude-lean` / `codex-less`; `codex-less` routes through the existing consent path; bounded by cross-family independence. |
 | `deviation.additional_triggers` | (the listed triggers only) | Project deviation triggers appended to the trigger list. Appends. |
 
-Both overrides pass through the spawn guards in `skills/orchestrating-subagent-work/references/model-routing.md`, which the orchestrator checks on every claude spawn; an assignment a guard refuses is not applied and is reported. In 4.x a claude `routing.effort_defaults` entry selected the definition carrying that effort, which could change the model; in 5.0.0 it sets the effort only, so an entry that relied on the model change needs a matching `routing.model_defaults` entry.
+Both overrides pass through the spawn guards in `skills/orchestrating-subagent-work/references/model-routing.md`, which the orchestrator checks on every claude spawn; an assignment a guard refuses is not applied and is reported.
 
 Set `routing.codex_bias` in the extension file for a persistent per-project default or directly in conversation for a per-task assignment; a direct conversational assignment overrides an extension-file assignment.
 
@@ -168,7 +168,6 @@ Add a workflow position only for a step the named values cannot express — for 
 
 A claude actor names one of the shipped duty definitions plus a model, for example `` `implement` on opus ``, spawned as `work-orchestrator:implement`, and the row's effort column sets the spawn's effort. The definition fixes the duty contract; the model and effort are the project's choice. A checkpoint whose duty no shipped definition covers is a plugin change, not an addition, and belongs in the improvement-candidates report.
 
-Extension files written for 4.x that name a retired definition (`implement-sonnet-medium`, `investigate-opus-high`, and the other model-and-effort names) no longer resolve. The `work-orchestrator-extension-setup` plugin's re-sync mode rewrites each such actor as the duty definition plus the model and effort its old name stated.
 
 A routing addition names an actor but does not get to name a verification shape. The added checkpoint's results reach two-worker confirmation like every other load-bearing result; there is no named value that says otherwise, and that is deliberate.
 
