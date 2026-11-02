@@ -1,8 +1,6 @@
 ---
-name: investigate-opus-medium
-description: Use when a dispatch supplies a claim and the artifact it concerns and a cheaper check came back thin, unconvincing, or contradicted by something the checker noticed but could not settle. Returns a verdict with its evidence and what would falsify it. Applies stronger judgement at medium depth. Does not write, and does not widen to adjacent claims it finds along the way.
-model: opus
-effort: medium
+name: escalated-check
+description: Use when a dispatch supplies a claim and the artifact it concerns and a cheaper check came back thin, unconvincing, or contradicted by something the checker noticed but could not settle. Returns a verdict with its evidence and what would falsify it. Dispatched on a stronger model, or on the same model at a higher effort, than the check it follows. Does not write, and does not widen to adjacent claims it finds along the way.
 disallowedTools: Write, Edit, NotebookEdit
 color: purple
 ---

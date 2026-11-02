@@ -14,7 +14,7 @@ When significant implementation or review work runs through dispatched workers, 
 
 - **Pre-flight and consent gate** — codex availability is checked before any planning or dispatch; a codex-less run requires explicit user consent in the current conversation.
 - **Strategy before dispatch** — every task states its checkpoints, actors, efforts, dispatch order, verification shape, and named assumptions as a compact chat message before the first worker runs.
-- **Model and effort routing** — checkpoints route to codex tiers (`gpt-5.6-sol` / `terra` / `luna`) or to one of the plugin's agent definitions, each pinning a model and a reasoning effort, with codex-less substitutions.
+- **Model and effort routing** — checkpoints route to codex tiers (`gpt-5.6-sol` / `terra` / `luna`) or to one of the plugin's duty definitions, spawned with the model and reasoning effort the routing table names, with codex-less substitutions.
 - **Fenced writes, two-tier reports** — workers never write repo files by default; a worker writes only inside an explicitly fenced write scope plus the report file its dispatch names, and every worker-written change is diff-reviewed by an independent worker. An implementer's full evidence goes to the report file; its final message carries only a bounded verdict, and the orchestrator reads the file only on deviation or dispute.
 - **Two-worker verification** — every load-bearing result reaches producer-plus-independent-confirmer confirmation; a dual-confirmed result is final and the orchestrator does not re-verify it. Time pressure adapts scope, never verification.
 - **Deviation handling** — dispatch failures, contradicted assumptions, scope surprises, and disputed results route through an explicit adapt-and-announce loop instead of silent plan changes.
@@ -35,6 +35,8 @@ Both skills are host-specific to Claude Code; the Codex CLI appears as a dispatc
 ```
 
 **Restart Claude Code** after installing or updating so the extension-delivery hooks and the agent definitions load.
+
+work-orchestrator 5.0.0 requires Claude Code 2.1.293 or later. The skill sets each worker's reasoning effort as a spawn argument, which the Agent tool takes from 2.1.292; earlier versions accept the argument and ignore it, so every worker would run at the session's effort. The haiku rows need 2.1.293, where the `haiku` alias first resolves to Haiku 5.5; on 2.1.292 it resolves to Haiku 4.5, which rejects an effort.
 
 The `llm-author` plugin is declared as a dependency and auto-installs with this one; its `prompt-engineering` skill supplies the per-family worker-prompt rules.
 
@@ -68,23 +70,29 @@ The skill governs the distributing session only. Receiving sessions need no skil
 
 ## Agents
 
-Claude Code does not let a reasoning effort be set when a subagent is spawned. The Agent tool accepts an `effort` argument and silently discards it — no error, no effect — so the worker runs at whatever the session happens to be set to. Effort binds in one place only: an agent definition. These 15 definitions exist for that reason, and most of them become unnecessary if the open upstream issues are fixed.
+The plugin ships 11 agent definitions, one per duty. A definition carries the duty contract (input, task, output, boundaries) and the tool restrictions; it pins no model and no reasoning effort. The orchestrating skill picks both per spawn through the Agent tool's `model` and `effort` arguments, following the routing table in `references/model-routing.md`, so one `implement` definition serves a one-fix follow-up on sonnet at `medium` and a cross-package rework on opus at `xhigh`. The Agent tool's `effort` argument takes effect since Claude Code 2.1.292; in a 2026-08 test on an earlier version it was accepted and ignored, which is why 4.x shipped one definition per model and effort.
 
-Ten definitions carry the Agent tool — the five `implement-*` definitions, `investigate-sonnet-high`, the three `investigate-opus-*` rungs, and `design-opus-xhigh` — so a dispatched worker can spawn its own read-only subagents for legwork: locating call sites, sweeping conventions, answering closed side-questions. Nested delegation is opt-in per dispatch and always explicit: the strategy declares it per checkpoint, every dispatch to a subagent actor carries one of two directives, and the default form is "Spawn no subagents." A spawned subagent is part of the worker that spawned it — it never serves as the independent confirmer. The haiku definitions and the sonnet `low`/`medium` investigate rungs keep the Agent tool disallowed; the roster's reasoning is in `docs/nested-subagent-delegation.md`.
-
-A spawn name is the second dispatch-time argument that fails silently: `effort` is accepted and discarded without an error, and a spawn name changes where the report goes without an error. A named worker is an addressable teammate whose report does not come back on its own — it finishes, writes a complete report as its final text, and delivers nothing unless it calls a message-sending tool. So the skill spawns workers unnamed, and contracts the send explicitly on the rare checkpoint that needs a name. The runs behind that are in `docs/subagent-delivery-mechanism.md`.
-
-| Duty | haiku | sonnet | opus |
+| Definition | Duty | Agent tool | Routing table assignment |
 |---|---|---|---|
-| `search` — locate code, symbols, convention instances | `search-haiku` | — | — |
-| `investigate` — answer a question from sources, or check a claim | `investigate-haiku` | `low`, `medium`, `high` | `medium`, `high`, `xhigh` |
-| `implement` — apply decided designs inside a fenced file list | — | `medium`, `high` | `medium`, `high`, `xhigh` |
-| `design` — produce an approach from fresh context | — | — | `xhigh` |
-| `gate-run` — run gate commands and transcribe the result | `gate-run-haiku` | — | — |
+| `search` | Locate code, symbols, convention instances | no | haiku, `low` |
+| `extract` | Mechanical enumeration or extraction into a stated schema | no | haiku, `low` |
+| `gate-run` | Run gate commands and transcribe the result | no | haiku, `low` |
+| `lookup` | Answer one closed question from a stated scope | no | sonnet, `low` |
+| `source-read` | Read one source end to end and answer from its text | no | sonnet, `medium` |
+| `adversarial-check` | Try to refute a claim against its artifact, blind to the producer's reasoning | yes | sonnet, `high` |
+| `escalated-check` | Re-check a claim a cheaper check left thin | yes | opus, `medium` |
+| `root-cause` | Establish the mechanism behind an observed behavior | yes | opus, `high` |
+| `source-conflict` | Decide which of two disagreeing sources holds | yes | opus, `xhigh` |
+| `design` | Produce an approach from fresh context | yes | opus, `xhigh` |
+| `implement` | Apply decided designs inside a fenced file list | yes | sonnet `medium` or `high`, opus `medium`, `high` or `xhigh`, per checkpoint |
 
-Names state the model and the rung because neither can be chosen at dispatch time. Each `description` is a selection contract — what the dispatch must supply, what comes back, what the agent can do, and what it reports instead of doing — so an orchestrating model picks on the contract rather than on matched examples.
+Each `description` is a selection contract (what the dispatch must supply, what comes back, what the agent can do, and what it reports instead of doing), so an orchestrating model picks on the contract rather than on matched examples. Every spawn passes `model` and `effort` explicitly. A spawn's `effort` overrides a definition's and is not replaced by `CLAUDE_CODE_SUBAGENT_EFFORT`, which applies only when nothing else names a level; whether `CLAUDE_CODE_EFFORT_LEVEL` overrides a spawn's `effort` is untested.
 
-The set is deliberately incomplete. Haiku takes no effort at all (it rejects the parameter, and its only depth lever is a process-wide thinking budget). No definition uses `max`, which measures within noise of `xhigh` and is documented as prone to overthinking on bounded work. There is no opus `low`: a maintainer default holds that sonnet at `medium` covers that cell, extrapolated from a GPT-5 versus GPT-5-mini measurement and untested on Claude. Opus carries three rungs rather than one because it is the most effort-sensitive model measured — its own system card puts a 19-point spread across the ladder on an agentic benchmark, with the coding peak at `medium` rather than at the top. That measurement is Opus 5's; the opus definitions here resolve to Opus 5.5, which is unvalidated against it — effort names are not calibrated the same way across the two, and Anthropic's own testing has Opus 5.5 at `medium` matching or beating Opus 5 at `high` on coding evaluations.
+Six definitions carry the Agent tool (`implement`, `adversarial-check`, `escalated-check`, `root-cause`, `source-conflict`, `design`), so a dispatched worker can spawn its own read-only subagents for legwork: locating call sites, sweeping conventions, answering closed side-questions. Nested delegation is opt-in per dispatch and always explicit: the strategy declares it per checkpoint, every dispatch to a subagent actor carries one of two directives, and the default form is "Spawn no subagents." A nested spawn names a leaf definition plus an explicit model and effort. A spawned subagent is part of the worker that spawned it and never serves as the independent confirmer. The five leaf definitions keep the Agent tool disallowed; the roster's reasoning is in `docs/nested-subagent-delegation.md`.
+
+A spawn name is a dispatch-time argument that fails silently: it changes where the report goes without an error. A named worker is an addressable teammate whose report does not come back on its own. It finishes, writes a complete report as its final text, and delivers nothing unless it calls a message-sending tool. So the skill spawns workers unnamed, and contracts the send explicitly on the rare checkpoint that needs a name. The runs behind that are in `docs/subagent-delivery-mechanism.md`.
+
+The routing table deliberately leaves cells empty. No row routes to `max`, which measures within noise of `xhigh` and is documented as prone to overthinking on bounded work. No row routes opus at `low`: a maintainer default holds that sonnet at `medium` covers that cell, extrapolated from a GPT-5 versus GPT-5-mini measurement and untested on Claude. Opus rows use three efforts rather than one because Opus 5 is the most effort-sensitive model measured: its own system card puts a 19-point spread across the ladder on an agentic benchmark, with the coding peak at `medium` rather than at the top. That measurement is Opus 5's; the `opus` alias resolves to Opus 5.5, which is unvalidated against it. Effort names are not calibrated the same way across the two, and Anthropic's own testing has Opus 5.5 at `medium` matching or beating Opus 5 at `high` on coding evaluations. The haiku rows run at `low`: by default the `haiku` alias resolves to Haiku 5.5, which ran without an API error at `effort: low`, where Haiku 4.5 rejects an effort. Where an environment maps the alias to an older model, the skill treats that actor as the family it resolves to.
 
 The reasoning and the measurements are in `docs/claude-effort-mechanism.md`. The duties were derived from Claude Code's built-in agent types rather than copied from them; `docs/builtin-agent-duty-capture.md` records how, and how to re-check after a Claude Code update.
 
@@ -96,7 +104,7 @@ Positions are keyed by node name rather than step number because the workflow is
 
 Each skill fences part of its surface. In `orchestrating-subagent-work`: the consent check, the consent question, the halt state, and the deviation check take no position, and there is no named value for the verification shape or dual-confirmation closure. In `orchestrating-session-work`: session enumeration, the three mandatory message blocks, and the deviation check take no position, and the only named value reaching the deviation check is the append-only `sessions.additional_triggers`. A position section is free-form prose and cannot be prevented from arguing against a fenced node, but the node still runs after it, positions add rather than replace, and the setup skill refuses to author such content.
 
-`EXTENSION.md` owns the contract: file layout, delivery, both mechanisms, the non-extendable surface per skill, reference-like extensions, the thirteen recognized named values, and worked examples for registering a project's gates, adding a checkpoint type, registering a session topology, and guarding handoff referents at the compose loop.
+`EXTENSION.md` owns the contract: file layout, delivery, both mechanisms, the non-extendable surface per skill, reference-like extensions, the fourteen recognized named values, and worked examples for registering a project's gates, adding a checkpoint type, registering a session topology, and guarding handoff referents at the compose loop.
 
 The companion plugin `work-orchestrator-extension-setup` writes the extension files for you. Its `setting-up-work-orchestrator-extension` skill asks which skills the project extends, explores the project's gates, protected paths, conduct rules, CI configuration, and session topology accordingly, drafts the content conversationally, and re-syncs existing extension files against a changed project.
 
@@ -106,7 +114,7 @@ The `docs/` directory holds the findings the plugin's directives derive from, in
 
 - `docs/codex-dispatch-experiments.md` — a private, instrumented 17-run experiment series (review and implementer runs across all three GPT-5.6 models against a known defect state, prompt-block ablations, resume-loop validation) and the accompanying real-usage record, plus a 2026-09-24 replication on a fresh fixture in which five per-model observations did not replicate. Single-run cells, so directional rather than proven
 - `docs/gpt-5-6-model-family.md` — adversarially verified external research on the GPT-5.6 tier design intent, pricing, effort guidance, and Codex CLI configuration
-- `docs/claude-effort-mechanism.md` — where reasoning effort binds and where it silently does not, the six-run experiment establishing that a spawn-time `effort` argument has no effect, haiku's exclusion from the parameter, and the per-rung measurements behind each definition's rung
+- `docs/claude-effort-mechanism.md` — where reasoning effort is set, the 2026-11-02 checks showing the Agent tool's `effort` argument takes effect and overrides a definition, the 2026-08 six-run experiment in which it had no effect (kept as history), and the per-effort measurements behind each routing row
 - `docs/builtin-agent-duty-capture.md` — how the agent duties were derived from Claude Code's built-in types, what to exclude as harness-injected, which parts vary by model, and the procedure for re-checking after a Claude Code update
 - `docs/subagent-delivery-mechanism.md` — the five-run experiment separating the dispatch shapes whose reports come back on their own from the one whose report does not, the sending tool's absence from a worker's default tools, the transcript recovery path, and the limits of a single-definition sample
 - `docs/nested-subagent-delegation.md` — which definitions carry the Agent tool and why, the opt-in-per-dispatch rationale, and the invariants nested spawns preserve; mostly judgement, except the definition-named-spawn invariant, confirmed against Claude Code's internal type declarations
@@ -124,22 +132,18 @@ work-orchestrator/
 ├── CLAUDE.md                            # Development guidance
 ├── EXTENSION.md                         # Project extension contract
 ├── README.md
-├── agents/                              # 15 definitions pinning model + reasoning effort
-│   ├── search-haiku.md
-│   ├── investigate-haiku.md
-│   ├── investigate-sonnet-low.md
-│   ├── investigate-sonnet-medium.md
-│   ├── investigate-sonnet-high.md
-│   ├── investigate-opus-medium.md
-│   ├── investigate-opus-high.md
-│   ├── investigate-opus-xhigh.md
-│   ├── implement-sonnet-medium.md
-│   ├── implement-sonnet-high.md
-│   ├── implement-opus-medium.md
-│   ├── implement-opus-high.md
-│   ├── implement-opus-xhigh.md
-│   ├── design-opus-xhigh.md
-│   └── gate-run-haiku.md
+├── agents/                              # 11 duty definitions; model and effort set per spawn
+│   ├── search.md
+│   ├── extract.md
+│   ├── gate-run.md
+│   ├── lookup.md
+│   ├── source-read.md
+│   ├── adversarial-check.md
+│   ├── escalated-check.md
+│   ├── root-cause.md
+│   ├── source-conflict.md
+│   ├── design.md
+│   └── implement.md
 ├── docs/                                # Findings and experiments (not loaded at runtime)
 │   ├── builtin-agent-duty-capture.md
 │   ├── claude-effort-mechanism.md

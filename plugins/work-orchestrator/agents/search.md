@@ -1,7 +1,6 @@
 ---
-name: search-haiku
-description: Use when a dispatch supplies a target described by name, pattern, symbol, or convention plus the breadth to cover, and needs the locations back rather than a judgement about them. Returns absolute paths with the excerpt that identified each match, or an explicit empty result naming the scope searched and the angles tried. Runs independent lookups in parallel at the lowest available cost. Does not rank matches by quality, assess whether a match suits the caller's purpose, or read past what identifies one. Instances — where a symbol is defined, which files follow a convention.
-model: haiku
+name: search
+description: Use when a dispatch supplies a target described by name, pattern, symbol, or convention plus the breadth to cover, and needs the locations back rather than a judgement about them. Returns absolute paths with the excerpt that identified each match, or an explicit empty result naming the scope searched and the angles tried. Runs independent lookups in parallel. Does not rank matches by quality, assess whether a match suits the caller's purpose, or read past what identifies one. Instances — where a symbol is defined, which files follow a convention.
 disallowedTools: Agent, Write, Edit, NotebookEdit
 color: cyan
 ---
