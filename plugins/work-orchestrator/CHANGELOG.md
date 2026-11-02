@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [5.0.0] - 2026-11-02
+
+Claude Code 2.1.292 added an `effort` parameter to the Agent tool, and on Claude Code 2.1.316 it takes effect: spawns at `effort: low` and `effort: max` from a `medium` session reported `CLAUDE_EFFORT=low` and `max`, and a spawn-time `effort` or `model` overrides the one a definition pins. The reason the plugin shipped one definition per model and effort is gone. The 15 definitions become 11, one per duty contract, pinning neither model nor effort; the routing table names a definition, a model, and an effort per checkpoint, and the skill passes model and effort on every spawn. The `haiku` alias now resolves to Haiku 5.5, which accepts an effort, so haiku rows carry one.
+
+### Added
+
+- `routing.model_defaults`, a recognized named value that overrides the model of named claude checkpoint types (haiku, sonnet, or opus, never fable), declared in `skills/orchestrating-subagent-work/references/model-routing.md` and documented in `EXTENSION.md`. It applies only to claude actors and never moves a checkpoint between codex and claude. `routing.effort_defaults` keeps its name and shape, so existing assignments stay valid
+
+### Changed
+
+- `agents/`: 11 duty definitions replace the 15 model-and-effort definitions. Each keeps its source definition's duty contract and tool restrictions and drops `model` and `effort` from its frontmatter; description wording that named a depth or a cost ("at high depth", "at the lowest available cost") is removed
+- `agents/implement.md`: one definition replaces the five `implement-*` definitions. It carries the duties the higher-effort bodies held, stated so they apply whenever relevant: reading the surrounding code before changing it, tracing every call site of a mechanism change into the report file, reporting interactions between items the designs did not anticipate, implementing file-scoped against a contradicting scope quantifier, and reporting out-of-fence reach
+- `skills/orchestrating-subagent-work/references/model-routing.md`: every claude row names a duty definition and a model (for example `implement` on opus) with its effort; each row keeps its 4.6.0 model and effort. The haiku rows (gate re-run, search, extraction) move from no effort to `low`, the effort ladder's level for mechanical work. The rule that effort binds only in a definition becomes the rule that every claude dispatch passes the row's model and effort as spawn arguments. `routing.effort_defaults` on a claude checkpoint now sets the spawn's effort, so any level is expressible. Nested spawns name a leaf definition plus the model and effort of its row. `routing.additions` rows name a claude actor as a duty definition plus a model
+- `skills/orchestrating-subagent-work/SKILL.md`: subagent spawns set `subagent_type` to the routed definition and pass `model` and `effort` on every spawn, replacing "never set an effort on the spawn itself"; haiku spawns are named as Haiku 5.5, a Claude 5 release, instead of being treated as Claude 4; the description routes to "a duty definition dispatched with an explicit model and reasoning effort"
+- `skills/orchestrating-subagent-work/references/worker-prompts.md`: the delegating nested-subagent directive names, per purpose, the leaf definition plus the model and effort to pass
+- `EXTENSION.md`: `routing.effort_defaults` sets the spawn effort on claude checkpoints; `routing.model_defaults` joins the recognized named values (fourteen in total); a routing addition's claude actor is a shipped duty definition plus a model; a note covers extension files that name retired definitions
+- `docs/claude-effort-mechanism.md`: a 2026-11-02 section records the spawn-argument checks; the 2026-08 discard experiment and the Haiku 4.5 section stay as dated history; the routing-table basis names definition, model, and effort per row and records the haiku rows' move to `low`
+- `docs/nested-subagent-delegation.md`: the roster lists the six definitions that carry the Agent tool and the five leaf definitions; the definition-named-spawn invariant adds the explicit model and effort and dates the static-definition-only `effort` finding before Claude Code 2.1.292
+- `docs/builtin-agent-duty-capture.md`: the reason for custom duty definitions is the tool split and `Explore`'s prompt, not effort
+- `docs/codex-dispatch-experiments.md`: the two fallback rows of the routing-table basis name `implement` on sonnet and `search` / `extract` on haiku
+- `docs/subagent-report-shape.md`, `docs/subagent-delivery-mechanism.md`: a note maps the 4.x definition names the runs used to their 5.0.0 definition and model
+- `README.md`, `CLAUDE.md`, `.claude-plugin/plugin.json`: describe the duty definitions and per-spawn model and effort; the maintenance rules require one definition per duty contract with no model or effort pinned
+
+### Removed
+
+- The 15 model-and-effort agent definitions: `search-haiku`, `investigate-haiku`, `gate-run-haiku`, `investigate-sonnet-low`, `investigate-sonnet-medium`, `investigate-sonnet-high`, `investigate-opus-medium`, `investigate-opus-high`, `investigate-opus-xhigh`, `design-opus-xhigh`, `implement-sonnet-medium`, `implement-sonnet-high`, `implement-opus-medium`, `implement-opus-high`, `implement-opus-xhigh`
+
+### Migration
+
+Extension files and dispatches that name a removed definition no longer resolve. Each old name maps to the duty definition plus the model and effort the name stated; `work-orchestrator-extension-setup`'s re-sync mode rewrites extension files that still name one. The haiku definitions ran with no effort in 4.x, so the subagent inherited the session level; `low` on the haiku rows is the routing table's new choice, not a carried-over setting. Restart Claude Code after updating so the new definitions resolve.
+
 ## [4.6.0] - 2026-09-24
 
 A replication run on a fresh fixture — seven planted defects plus a comment-drift canary, hidden answer key and acceptance tests, Codex CLI 0.156.1, one run per codex cell (six each for the gpt-5.6-sol, gpt-6-sol, and gpt-5.6-terra broad reviews) and two per Claude rung — did not reproduce five per-model GPT-5.6 observations the routing table relied on: Sol labeling every finding blocking, Luna as the only source of new findings, Luna's labels as the most conservative and correct, Terra reporting no test-quality findings, and Terra as the only implementer to re-derive the true scope. Four security reviews, Sol included, met no safeguard friction on a scope without offensive-security content. Capability statements across the plugin are recalibrated to state their sample, and routing rules that rested on single runs become model-neutral working defaults.

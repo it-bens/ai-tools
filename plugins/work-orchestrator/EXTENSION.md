@@ -74,7 +74,7 @@ One bullet per name. A value with internal structure is written as an indented b
   | <one row per gate the project runs> |
 ```
 
-**Every list-shaped value appends.** `project.protected_paths`, `project.banned_commands`, `project.conduct_rules`, `project.review_lenses`, `deviation.additional_triggers`, `sessions.additional_triggers`, `routing.additions`, and `codex.extra_config` add to their lists and never shorten them. This is what keeps the contract from being used to strip a fence rather than tighten it. Five names are not list-shaped: `project.gates` and `project.skill_files` supply content the universal body has none of, `routing.effort_defaults` replaces per-checkpoint efforts, `routing.codex_bias` sets a single bias value, and `sessions.topology` supplies a structure the universal body deliberately carries none of.
+**Every list-shaped value appends.** `project.protected_paths`, `project.banned_commands`, `project.conduct_rules`, `project.review_lenses`, `deviation.additional_triggers`, `sessions.additional_triggers`, `routing.additions`, and `codex.extra_config` add to their lists and never shorten them. This is what keeps the contract from being used to strip a fence rather than tighten it. Six names are not list-shaped: `project.gates` and `project.skill_files` supply content the universal body has none of, `routing.effort_defaults` replaces per-checkpoint efforts, `routing.model_defaults` replaces per-checkpoint claude models, `routing.codex_bias` sets a single bias value, and `sessions.topology` supplies a structure the universal body deliberately carries none of.
 
 `codex.extra_config` additionally rejects any assignment that would set `approval_policy`, `sandbox_mode`, `model_reasoning_effort`, the model, or `--disable memories` — those flags carry the dispatch's safety and routing contract, not a project preference.
 
@@ -120,7 +120,8 @@ That guarantee is narrower than "the contract exposes no place to write it", and
 | `project.review_lenses` | (none registered — name three to four lenses per scope at dispatch) | Project lenses added to the per-scope LENS block. Appends. |
 | `codex.extra_config` | (the pinned flags only) | Additional `-c key=value` flags appended to every codex invocation. Appends; rejects the contract-carrying flags named above. |
 | `routing.additions` | (none) | Checkpoint-type rows appended to the routing table. Appends; never rewrites an existing row. |
-| `routing.effort_defaults` | (the table's efforts, then the effort ladder) | Per-checkpoint-type effort overrides. On a codex checkpoint the assignment sets the invocation flag; on a claude checkpoint it selects the shipped agent definition carrying that rung, and a rung no definition carries cannot be honored. Going below an assigned effort at dispatch time is still an announced adaptation. |
+| `routing.effort_defaults` | (the table's efforts, then the effort ladder) | Per-checkpoint-type effort overrides. On a codex checkpoint the assignment sets the invocation flag; on a claude checkpoint it sets the spawn's `effort` argument, so any level is expressible. Going below an assigned effort at dispatch time is still an announced adaptation. |
+| `routing.model_defaults` | (the table's models) | Per-checkpoint-type model overrides for claude checkpoints: haiku, sonnet, or opus, never fable. Ignored on codex checkpoints; it never moves a checkpoint between codex and claude, so cross-family independence holds. |
 | `routing.codex_bias` | (unset — session decides per the routing table) | Biases the discretionary codex/claude split at the strategy node across `codex-heavy` / `claude-lean` / `codex-less`; `codex-less` routes through the existing consent path; bounded by cross-family independence. |
 | `deviation.additional_triggers` | (the listed triggers only) | Project deviation triggers appended to the trigger list. Appends. |
 
@@ -155,14 +156,17 @@ A project whose work includes a checkpoint the universal table has no profile fo
 - `routing.additions` =
   | Checkpoint type | Actor | Effort |
   |---|---|---|
-  | <the project checkpoint> | <codex tier, or one of the agent definitions the plugin ships in `agents/`> | <effort> |
+  | <the project checkpoint> | <codex tier, or one of the duty definitions the plugin ships in `agents/` on a named model (haiku, sonnet, opus)> | <effort> |
 - `routing.effort_defaults` = <checkpoint type> = <effort>, for existing rows whose default the project has evidence to change
+- `routing.model_defaults` = <claude checkpoint type> = <haiku, sonnet, or opus>, for existing claude rows whose model the project has evidence to change
 - `deviation.additional_triggers` = <what makes this checkpoint go wrong in a way the universal trigger list does not name>
 ```
 
 Add a workflow position only for a step the named values cannot express — for example a `## Post-Dispatch` that files each worker's run record into a project log, which is behavior around the node rather than a value inside it. Keep it repeat-safe: `Dispatch` fires once per checkpoint, and a task has many.
 
-A claude actor must be one of the shipped definitions. A project cannot name a model and a rung directly, because the rung binds inside the definition and nowhere else — a checkpoint that needs a combination `agents/` does not carry is a plugin change, not an addition, and belongs in the improvement-candidates report.
+A claude actor names one of the shipped duty definitions plus a model, for example `` `implement` on opus ``, and the row's effort column sets the spawn's effort. The definition fixes the duty contract; the model and effort are the project's choice. A checkpoint whose duty no shipped definition covers is a plugin change, not an addition, and belongs in the improvement-candidates report.
+
+Extension files written for 4.x that name a retired definition (`implement-sonnet-medium`, `investigate-opus-high`, and the other model-and-effort names) no longer resolve. The `work-orchestrator-extension-setup` plugin's re-sync mode rewrites each such actor as the duty definition plus the model and effort its old name stated.
 
 A routing addition names an actor but does not get to name a verification shape. The added checkpoint's results reach two-worker confirmation like every other load-bearing result; there is no named value that says otherwise, and that is deliberate.
 

@@ -1,8 +1,6 @@
 ---
-name: investigate-sonnet-medium
-description: Use when a dispatch names one source — an installed package, a specification, a vendor document — and the question to put to it. Returns an answer grounded in quoted passages plus what the source does not say. Reads a source end to end at moderate depth. Does not generalize past the source or substitute recollection for reading it.
-model: sonnet
-effort: medium
+name: source-read
+description: Use when a dispatch names one source — an installed package, a specification, a vendor document — and the question to put to it. Returns an answer grounded in quoted passages plus what the source does not say. Reads a source end to end. Does not generalize past the source or substitute recollection for reading it.
 disallowedTools: Agent, Write, Edit, NotebookEdit
 color: blue
 ---

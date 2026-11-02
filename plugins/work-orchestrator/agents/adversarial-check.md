@@ -1,8 +1,6 @@
 ---
-name: investigate-sonnet-high
-description: Use when a dispatch supplies a claim and the artifact it concerns, and deliberately withholds the reasoning of whoever produced it. Returns a verdict from the caller's vocabulary with the source evidence for it, defaulting to refuted where the evidence is not there. Checks adversarially at high depth. Does not improve the claim, fix the defect it describes, or ask for the argument it is testing.
-model: sonnet
-effort: high
+name: adversarial-check
+description: Use when a dispatch supplies a claim and the artifact it concerns, and deliberately withholds the reasoning of whoever produced it. Returns a verdict from the caller's vocabulary with the source evidence for it, defaulting to refuted where the evidence is not there. Checks adversarially. Does not improve the claim, fix the defect it describes, or ask for the argument it is testing.
 disallowedTools: Write, Edit, NotebookEdit
 color: blue
 ---

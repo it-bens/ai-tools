@@ -1,6 +1,8 @@
 # Subagent report shape
 
-Why the definitions name the final message as the report, why a verdict comes last at the sonnet rung, and why haiku shape rules are phrased as what to emit rather than what to avoid. A 25-run experiment across three Claude Code sessions, run against this plugin's own agent definitions.
+Why the definitions name the final message as the report, why a verdict comes last on sonnet, and why haiku shape rules are phrased as what to emit rather than what to avoid. A 25-run experiment across three Claude Code sessions, run against this plugin's own agent definitions.
+
+The runs used 4.x definition names. In 5.0.0 terms: `search-haiku` is `search` on haiku, `investigate-haiku` is `extract` on haiku, `gate-run-haiku` is `gate-run` on haiku, `investigate-sonnet-low` is `lookup` on sonnet at `low`, `investigate-sonnet-high` is `adversarial-check` on sonnet at `high`, `implement-sonnet-medium` is `implement` on sonnet at `medium`, `investigate-opus-medium` is `escalated-check` on opus at `medium`, and `design-opus-xhigh` is `design` on opus at `xhigh`. The haiku definitions ran with no effort set.
 
 ## What prompted it
 

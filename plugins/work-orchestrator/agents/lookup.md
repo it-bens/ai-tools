@@ -1,8 +1,6 @@
 ---
-name: investigate-sonnet-low
-description: Use when a dispatch supplies one closed question together with the place to look for its answer. Returns the answer with the file and line supporting it, or a not-found that names the scope searched. Answers literally within a fixed scope at low cost. Does not widen the scope or answer an adjacent question it noticed on the way.
-model: sonnet
-effort: low
+name: lookup
+description: Use when a dispatch supplies one closed question together with the place to look for its answer. Returns the answer with the file and line supporting it, or a not-found that names the scope searched. Answers literally within a fixed scope. Does not widen the scope or answer an adjacent question it noticed on the way.
 disallowedTools: Agent, Write, Edit, NotebookEdit
 color: blue
 ---

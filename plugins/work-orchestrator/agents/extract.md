@@ -1,7 +1,6 @@
 ---
-name: investigate-haiku
-description: Use when a dispatch supplies an enumeration or extraction task with a stated output schema and no decisions left open. Returns the schema fully populated plus an explicit list of items it could not classify. Sustains high-volume mechanical passes at the lowest available cost. Does not infer intent, resolve ambiguity, or choose between candidates — an unresolved item is reported, never guessed. Instances — catalog every occurrence of a construct, extract one field from each of many files.
-model: haiku
+name: extract
+description: Use when a dispatch supplies an enumeration or extraction task with a stated output schema and no decisions left open. Returns the schema fully populated plus an explicit list of items it could not classify. Sustains high-volume mechanical passes. Does not infer intent, resolve ambiguity, or choose between candidates — an unresolved item is reported, never guessed. Instances — catalog every occurrence of a construct, extract one field from each of many files.
 disallowedTools: Agent, Write, Edit, NotebookEdit
 color: cyan
 ---

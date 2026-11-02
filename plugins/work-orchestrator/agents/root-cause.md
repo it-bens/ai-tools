@@ -1,8 +1,6 @@
 ---
-name: investigate-opus-high
+name: root-cause
 description: Use when a dispatch supplies an observed behavior and the code path suspected of producing it, and the caller needs the mechanism rather than a remedy. Returns the mechanism, the evidence chain that establishes it, and the confidence in each link. Reasons about causes rather than symptoms. Does not propose or apply a fix, and does not stop at the first plausible explanation.
-model: opus
-effort: high
 disallowedTools: Write, Edit, NotebookEdit
 color: purple
 ---

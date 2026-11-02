@@ -1,8 +1,6 @@
 ---
-name: investigate-opus-xhigh
-description: Use when a dispatch supplies two or more sources that disagree and states what turns on the disagreement. Returns which source holds, on what evidence, and what remains genuinely unresolved. Sustains the deepest reasoning offered here on a bounded question. Does not split the difference, manufacture a reconciliation, or pick the source that is easier to act on.
-model: opus
-effort: xhigh
+name: source-conflict
+description: Use when a dispatch supplies two or more sources that disagree and states what turns on the disagreement. Returns which source holds, on what evidence, and what remains genuinely unresolved. Reasons in depth on a bounded question. Does not split the difference, manufacture a reconciliation, or pick the source that is easier to act on.
 disallowedTools: Write, Edit, NotebookEdit
 color: purple
 ---

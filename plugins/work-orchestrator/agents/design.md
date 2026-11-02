@@ -1,8 +1,6 @@
 ---
-name: design-opus-xhigh
+name: design
 description: Use when a dispatch supplies a requirement, its constraints, and the code to design against, and the caller wants an approach reached without its own reasoning in the way. Returns an approach with sequencing, named trade-offs, and every decision it had to make with the reason. Works from fresh context, which is the reason to ask it rather than reason further in the session. Does not write code, and does not ratify an approach the dispatch already favors.
-model: opus
-effort: xhigh
 disallowedTools: Write, Edit, NotebookEdit
 color: purple
 ---

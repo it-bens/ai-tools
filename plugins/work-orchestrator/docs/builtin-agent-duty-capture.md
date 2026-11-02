@@ -1,6 +1,6 @@
 # Re-deriving the built-in agent duties
 
-The definitions in `agents/` cover work Claude Code's built-in agent types cover — locating code, investigating a question, implementing a change, designing an approach — because those types cannot be given a reasoning effort. The definitions are written independently rather than copied, so there is no verbatim text to diff and no fidelity promise to keep. What follows is how their duties were derived, and how to re-derive them when Claude Code changes.
+The definitions in `agents/` cover work Claude Code's built-in agent types cover — locating code, investigating a question, implementing a change, designing an approach — because the built-in types do not fit the plugin's duty contracts: no built-in type removes Write, Edit, and NotebookEdit while keeping the Agent tool (`Explore` and `Plan` remove Agent, `general-purpose` allows writes), and `Explore`'s built-in prompt (be fast, read excerpts) conflicts with exhaustive search, end-to-end reading, and running gates. Until 5.0.0 a second reason applied: a spawn could not set a reasoning effort, so the definitions pinned one. The definitions are written independently rather than copied, so there is no verbatim text to diff and no fidelity promise to keep. What follows is how their duties were derived, and how to re-derive them when Claude Code changes.
 
 Built-in instructions do change between versions. This procedure exists so that a re-check is a bounded task rather than a guess.
 
@@ -54,7 +54,7 @@ The phrase `You are Claude Code, Anthropic's official CLI for Claude.` appears i
 
 A prompt that names a boundary sentence which does not exist gets refused, not answered. Two of the four 2.1.278 captures declined on exactly that ground, naming the mismatched opening sentence; neither fabricated a slice to cover it. Treat the refusal as a signal rather than a failure — re-ask with the marker gone and the slice described structurally, which is the prompt above.
 
-Ask on sonnet or opus. Haiku complied unreliably in testing — two of three probes returned the metadata lines without the instruction text, and one lost track of the task. Its `EFFORT` line is worth collecting anyway, since haiku is the model the plugin's haiku definitions cannot give an effort.
+Ask on sonnet or opus. Haiku complied unreliably in testing — two of three probes returned the metadata lines without the instruction text, and one lost track of the task. Its `EFFORT` line is worth collecting anyway, because the routing table sets an effort on haiku spawns and the line shows what level a haiku worker actually received.
 
 ## What to exclude
 
@@ -83,7 +83,7 @@ The duty text is model-invariant between sonnet and opus. A byte-level diff of t
 
 No depth directive appears on any model. A haiku `general-purpose` capture and a sonnet `general-purpose` capture returned matching prose blocks, and neither carried a thinking tag, a budget number, or any other depth directive; the `Explore` and `Plan` captures carried none either. Haiku's duty prose is therefore identical to sonnet's — confirmed by transcription, not inferred from sonnet matching opus.
 
-Neither `Explore` nor `Plan` set any reasoning effort, and `general-purpose` has no effort directive either. All three inherit the session level, which is the gap `agents/` exists to close.
+Neither `Explore` nor `Plan` set any reasoning effort, and `general-purpose` has no effort directive either. All three inherit the session level unless the spawn passes an `effort` argument, which is how the routing table sets effort for the plugin's own definitions as well.
 
 ## Duties as captured
 

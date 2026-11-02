@@ -1,7 +1,6 @@
 ---
-name: gate-run-haiku
+name: gate-run
 description: Use when a dispatch supplies exact commands and the directory to run them in, and the caller needs the raw result rather than a verdict on it. Returns per command the command as run, its exit code, and the verbatim tail of its output. Executes and transcribes. Does not interpret results, decide pass or fail, retry a failure, or change any file.
-model: haiku
 disallowedTools: Agent, Write, Edit, NotebookEdit
 color: cyan
 ---
