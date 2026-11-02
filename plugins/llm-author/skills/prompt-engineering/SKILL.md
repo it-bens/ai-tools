@@ -1,7 +1,7 @@
 ---
 name: prompt-engineering
-version: 3.13.0
-description: Use when the user asks to create, write, improve, or debug a prompt, build a prompt chain, design a system prompt, adapt a prompt for GPT-6 or GPT-5.6 (OpenAI), GLM 4.7 (Z.ai), or Gemini 3, create a Gemini deep research prompt, migrate a prompt or skill from Claude 4 to Claude 5, from Opus 5 to Opus 5.5, or between GPT versions (e.g. GPT-5.6 to GPT-6), optimize LLM-targeted content (skills, agents, instructions, documentation), author a prompt an invoking workflow dispatches to a worker process, distill prompt-authoring rules into a session-scoped ruleset, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
+version: 3.14.0
+description: Use when the user asks to create, write, improve, or debug a prompt, build a prompt chain, design a system prompt, adapt a prompt for GPT-6, GPT-6.1, or GPT-5.6 (OpenAI), GLM 4.7 (Z.ai), or Gemini 3, create a Gemini deep research prompt, migrate a prompt or skill from Claude 4 to Claude 5, from Opus 5 to Opus 5.5, from Sonnet 5 to Sonnet 5.5, from Haiku 4.5 to Haiku 5.5, or between GPT versions (e.g. GPT-5.6 to GPT-6, GPT-6 Sol to GPT-6.1 Sol), optimize LLM-targeted content (skills, agents, instructions, documentation), author a prompt an invoking workflow dispatches to a worker process, distill prompt-authoring rules into a session-scoped ruleset, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 ---
 
 # Prompt Engineering Lab
@@ -105,7 +105,7 @@ Before generating the prompt, understand its intended purpose. Gather informatio
 - What makes the prompt successful (output quality, format, completeness)?
 - Target platform: Claude Web, Claude Desktop, or API?
 - Recipient: a person who copies the artifact, or a process an invoking workflow dispatches it to? Take it from context — a request naming a worker, subagent, CLI, or dispatch path is a process; ask only when neither reading fits.
-- Target model: Claude 5 (default; Opus 5.5 recommended), Claude 4, GPT-6 or GPT-5.6 (OpenAI), GLM 4.7, or Gemini 3? (only ask if user mentions Claude 4, GPT, OpenAI, GLM, Z.ai, Gemini, or model adaptation)
+- Target model: Claude 5 (default; Opus 5.5 recommended; also Sonnet 5.5, Haiku 5.5, Fable 5.1), Claude 4, GPT-6 or GPT-5.6 (OpenAI), GLM 4.7, or Gemini 3? (only ask if user mentions Claude 4, GPT, OpenAI, GLM, Z.ai, Gemini, or model adaptation)
 
 **Clarify prompt ambiguities (stay at the prompt level, don't dive into subject matter):**
 - If variations might be beneficial, ask if user wants alternative prompt approaches
@@ -228,7 +228,7 @@ Deliver the artifact as a markdown block optimized for its recipient and target 
 
 ## Model-Generation Optimizations
 
-Claude 5 (Opus 5.5, Opus 5, Sonnet 5, Fable 5.1) is the default target; Opus 5.5 is the recommended default model. Claude 4 (Opus 4.x, Sonnet 4.x) and Haiku 4.5 prompts often over-steer Claude 5 — re-tune when migrating.
+Claude 5 (Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1; legacy Opus 5, Sonnet 5, Fable 5) is the default target; Opus 5.5 is the recommended default model. Claude 4 (Opus 4.x, Sonnet 4.x) and Haiku 4.5 prompts often over-steer Claude 5, so re-tune them when migrating.
 
 ### Claude 5 (default)
 
@@ -249,9 +249,13 @@ Keep spawn counts low.
 
 **Soften aggressive language** — `CRITICAL: You MUST...` over-triggers; use "Use ... when ...".
 
-**Breaking changes** — assistant prefill, `budget_tokens`, and non-default `temperature`/`top_p`/`top_k` return a 400 error; on Opus 5.5 and Fable 5.1 so does forced `tool_choice` (`any` / `tool`). Use adaptive thinking with `effort`, Structured Outputs instead of prefill, and `tool_choice: auto` plus strict tool use instead of forced tool choice.
+**Re-sweep effort on Sonnet 5.5, and write for the level**: its levels are recalibrated against Sonnet 5, so never carry the Sonnet 5 level over (Claude API default `high`; start well-specified agentic coding at `medium`, harder or longer work at `high`). At `low`/`medium` it can check in before long agentic work is done, and at `xhigh`/`max` it can start its own review rounds, sometimes with subagents; add the guide's carry-through or review-restraint paragraph to match the level.
 
-→ Full guide, per-model specifics (Opus 5.5 / Opus 5 / Sonnet 5 / Fable 5), the Opus 5 → Opus 5.5 checklist, and Claude 4 → 5 migration: `references/claude-5-guide.md`
+**Haiku 5.5 is a Claude 5 target, not a Claude 4 one**: effort replaces `budget_tokens` (default `medium`). At `low` in long agent prompts it can skip a search, stop early, or skip a check; add the guide's early-stopping and verification paragraphs, and give it today's date when it has a search tool.
+
+**Breaking changes**: assistant prefill, `budget_tokens`, and non-default `temperature`/`top_p`/`top_k` return a 400 error; on Opus 5.5, Sonnet 5.5, and Fable 5.1 so does forced `tool_choice` (`any` / `tool`). Use adaptive thinking with `effort`, Structured Outputs instead of prefill, and `tool_choice: auto` plus strict tool use instead of forced tool choice.
+
+→ Full guide, per-model specifics (Opus 5.5 / Sonnet 5.5 / Haiku 5.5 / Opus 5 / Sonnet 5 / Fable 5), the Opus 5 → Opus 5.5, Sonnet 5 → Sonnet 5.5, and Haiku 4.5 → Haiku 5.5 checklists, and Claude 4 → 5 migration: `references/claude-5-guide.md`
 
 ### Claude 4 and earlier
 
@@ -265,23 +269,23 @@ Claude 4 needs "above and beyond" behavior requested explicitly:
 
 ## Claude 4 → Claude 5 Migration (When Requested)
 
-When the user asks to migrate, re-tune, or update existing Claude 4 content — a prompt, skill, agent, or rules file — for Claude 5: diagnose and remove the carried-over Claude 4 scaffolding that now over-steers, rather than rewriting from scratch. Apply the re-tuning moves from the Claude 5 sections above — remove verification scaffolding when the target is Opus 5 (Fable 5 long-horizon runs keep it; Sonnet 5 keeps what it has), soften aggressive triggers, give and cap subagent-delegation criteria, replace the 400-error API parameters (assistant prefill, `budget_tokens`, non-default `temperature`/`top_p`/`top_k`) — plus, for LLM-targeted content, the "less is more" optimization principle.
+When the user asks to migrate, re-tune, or update existing Claude 4 content (a prompt, skill, agent, or rules file) for Claude 5: diagnose and remove the carried-over Claude 4 scaffolding that now over-steers, rather than rewriting from scratch. Apply the re-tuning moves from the Claude 5 sections above: remove verification scaffolding when the target is Opus 5 (Fable 5 long-horizon runs keep it; Sonnet 5 keeps what it has; Sonnet 5.5 at `low` and Haiku 5.5 at `low`/`medium` take the guide's verification paragraph when they report code changes done without a check), soften aggressive triggers, give and cap subagent-delegation criteria, replace the 400-error API parameters (assistant prefill, `budget_tokens`, non-default `temperature`/`top_p`/`top_k`, and forced `tool_choice` on Opus 5.5, Sonnet 5.5, and Fable 5.1), plus, for LLM-targeted content, the "less is more" optimization principle. Haiku 4.5 content moving to Haiku 5.5 is a Claude 4 → 5 migration; use the guide's Haiku 4.5 → Haiku 5.5 checklist.
 
 Deliver a before/after so each change and its rationale stay visible: `references/output-formats.md#10-claude-4-to-claude-5-migrations`. Worked transformations: `examples/claude-4-to-5-migration.md`. Full per-model detail and the Claude 4 → 5 migration reference: `references/claude-5-guide.md`.
 
 ## GPT-6 / GPT-5.6 (OpenAI) Adaptation (When Requested)
 
-When the user explicitly targets GPT-6 (Astra, Sol, Luna), GPT-5.6 (Sol, Terra, Luna), or another OpenAI GPT-5-family model: define the outcome, constraints, evidence, and completion bar, then leave the path to the model.
+When the user explicitly targets the GPT-6 family (GPT-6 Astra, GPT-6.1 Sol, GPT-6.1 Terra, GPT-6 Luna), GPT-5.6 (Sol, Terra, Luna), or another OpenAI GPT-5-family model: define the outcome, constraints, evidence, and completion bar, then leave the path to the model.
 
 - Write outcome-first prompts with explicit success criteria and stop rules; remove step scripts.
 - State each instruction once and remove contradictions — conflicting rules destabilize GPT-5.6 more than missing detail.
 - Reserve ALWAYS/NEVER/MUST for true invariants; give decision rules for judgment calls.
 - Re-check blanket brevity instructions (GPT-5.6 is concise by default); set `text.verbosity` for the default level of detail.
 - Define autonomy and approval boundaries (report vs. act vs. confirm) instead of repeating "ask first".
-- API: Responses API, `reasoning.effort` (`none`–`max`, default `medium`; GPT-6 Astra has no `none`), `reasoning.mode: "pro"` for quality-first single answers.
-- GPT-6: choose Astra, Sol, or Luna by workload (no Terra; Astra is the top tier); state that action requests authorize the work and that the user's instructions take precedence over skill guidelines; make instruction-file guidance conditional rather than blanket; bound re-verification; keep the confirmation tier for external writes and destructive actions. Evaluate each pattern per model — the guidance was observed on Astra.
+- API: Responses API, `reasoning.effort` (`none`–`max`, default `medium`; GPT-6 Astra and GPT-6.1 Sol have no `none`), `reasoning.mode: "pro"` for quality-first single answers.
+- GPT-6 family: choose Astra, GPT-6.1 Sol, GPT-6.1 Terra, or Luna by workload (Astra is the top tier; tier names do not keep their GPT-5.6 position); state that action requests authorize the work and that the user's instructions take precedence over skill guidelines; make instruction-file guidance conditional rather than blanket; bound re-verification; keep the confirmation tier for external writes and destructive actions. Evaluate each pattern per model; the guidance was observed on Astra.
 
-→ Full guide, API parameters, per-tier selection, GPT-6 and GPT-5.x migration, and pre-5.6 baseline: `references/openai-gpt-guide.md`; transformation examples: `examples/openai-gpt-adaptation.md`
+→ Full guide, API parameters, per-tier selection, the October 2026 GPT-6 Luna update, GPT-6, GPT-6.1, and GPT-5.x migration, and pre-5.6 baseline: `references/openai-gpt-guide.md`; transformation examples: `examples/openai-gpt-adaptation.md`
 
 ## GLM 4.7 Adaptation (When Requested)
 

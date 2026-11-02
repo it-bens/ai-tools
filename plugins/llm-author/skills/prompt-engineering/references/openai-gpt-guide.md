@@ -1,6 +1,6 @@
 # OpenAI GPT Prompt Engineering Guide (GPT-6, GPT-5.6)
 
-GPT-6 (Astra, Sol, Luna) is the current OpenAI target generation. GPT-5.6 (Sol, Terra, Luna) guidance is kept and labeled, and the guide also marks what carries over from the earlier GPT-5 family (GPT-5 through GPT-5.5) for prompts that still target those models.
+The GPT-6 family (GPT-6 Astra, GPT-6.1 Sol, GPT-6.1 Terra, GPT-6 Luna) is the current OpenAI target generation. GPT-5.6 (Sol, Terra, Luna) guidance is kept and labeled, and the guide also marks what carries over from the earlier GPT-5 family (GPT-5 through GPT-5.5) for prompts that still target those models.
 
 ## Table of Contents
 
@@ -21,11 +21,16 @@ GPT-6 (Astra, Sol, Luna) is the current OpenAI target generation. GPT-5.6 (Sol, 
 
 | Model | Best For |
 |---|---|
-| `gpt-6-astra` | Most capable: the hardest end-to-end work across code, apps, computer use, and research. `reasoning.effort` `low`–`max`; no `none` |
-| `gpt-6-sol` | Everyday and complex coding and agentic work; the starting point for demanding agents. `reasoning.effort` `none`–`max`, default `medium` |
-| `gpt-6-luna` | Most efficient: focused, clear, repeatable, high-volume tasks (extraction, classification, transformation, structured summaries). `reasoning.effort` `none`–`max`, default `medium` |
+| `gpt-6-astra` | Highest intelligence: the hardest end-to-end work across code, apps, computer use, and research. `reasoning.effort` `low`–`max`; no `none` |
+| `gpt-6.1-sol` | Balanced speed, cost, and intelligence: near-Astra performance at a lower cost for complex coding, computer use, and professional work. `reasoning.effort` `low`–`max`, default `medium`; no `none` or `minimal` |
+| `gpt-6.1-terra` | Fast and efficient: visual reasoning, precise computer use, and clear, natural writing (matching product photos to catalog entries, interpreting technical drawings, acting on application screens, drafting and revising text). `reasoning.effort` `none`–`max`, default `medium`; start at `medium` and raise it only when the quality gain is worth the added time and tokens |
+| `gpt-6-luna` | Fastest and most cost-effective: focused, clear, repeatable, high-volume tasks (extraction, classification, transformation, structured summaries). `reasoning.effort` `none`–`max`, default `medium` |
 
-GPT-6 has no Terra tier, and tier names do not carry capability position across generations: GPT-6 Astra is the top tier, so GPT-6 Sol does not take over GPT-5.6 Sol's frontier position. Choose the GPT-6 model by workload, not by name. For Codex subagents, OpenAI's starting efforts are `medium` for Sol, `high` for Luna, and `low` for Astra; effort levels do not map exactly between generations, so compare a familiar task at a lower setting.
+GPT-6.1 Sol and GPT-6.1 Terra have a 1,050,000-token context window and 128,000 max output tokens. The family listing names GPT-6.1 Sol where it named GPT-6 Sol (`gpt-6-sol`, which supports `none`); prompts still on GPT-6 Sol follow [the migration notes](#migrating-to-gpt-6).
+
+Tier names do not carry capability position across generations. GPT-6 Astra is the top tier, so GPT-6.1 Sol does not take over GPT-5.6 Sol's frontier position, and the "balanced" label that GPT-5.6 gave Terra now sits on GPT-6.1 Sol. Choose the GPT-6 model by workload, not by name. Effort levels do not map exactly between generations, so compare a familiar task at a lower setting.
+
+GPT-6 Luna was updated on October 29, 2026. The update gives more concise responses and reduces overly agreeable language; it names no new model ID, and the family listing still names `gpt-6-luna`. OpenAI also reports higher factual-error rates for the update than for the October 7 version on its factuality evaluations, while still below GPT-5.6 Luna, so re-run factuality-sensitive Luna evals.
 
 ### GPT-5.6
 
@@ -62,9 +67,9 @@ Stop rules: [when to retry, fallback, abstain, ask, or stop]
 
 ## API Parameters
 
-Use the Responses API for reasoning, tool-calling, and multi-turn workflows. Chat Completions with function tools works only at effective reasoning `none` on GPT-5.6, GPT-6 Sol, and GPT-6 Luna; GPT-6 Astra's tool calling requires Responses.
+Use the Responses API for reasoning, tool-calling, and multi-turn workflows. Chat Completions with function tools works only at effective reasoning `none` on GPT-5.6, GPT-6 Sol, and GPT-6 Luna; GPT-6 Astra, GPT-6.1 Sol, and GPT-6.1 Terra support Chat Completions, but their tool calling requires Responses.
 
-The table is verified for GPT-5.6. GPT-6 lists pro mode, persisted reasoning, prompt caching, Programmatic Tool Calling, and multi-agent orchestration among the GPT-5.6 capabilities it supports; its model pages do not list `text.verbosity`. GPT-6 differences: Astra has no `none` effort, and a `configuration_update` input item changes reasoning effort mid-conversation without rewriting the cached prompt prefix.
+The table is verified for GPT-5.6. GPT-6 lists pro mode, persisted reasoning, prompt caching, Programmatic Tool Calling, and multi-agent orchestration among the GPT-5.6 capabilities it supports; its model pages do not list `text.verbosity`. GPT-6 differences: Astra and GPT-6.1 Sol have no `none` effort, and a `configuration_update` input item changes reasoning effort mid-conversation without rewriting the cached prompt prefix.
 
 | Parameter | Values / Behavior |
 |---|---|
@@ -78,7 +83,7 @@ Before raising `reasoning.effort` to fix quality, check whether the prompt is mi
 
 ## GPT-6 Behavior and How to Prompt It
 
-OpenAI offers these prompts "as a starting point across the GPT-6 model family. They address behavior observed with GPT-6 Astra; evaluate them with your chosen model and workload." Do not assume Sol or Luna behave like Astra — test each pattern on the target model.
+OpenAI offers these prompts "as a starting point across the GPT-6 model family. They address behavior observed with GPT-6 Astra; evaluate them with your chosen model and workload." Do not assume GPT-6.1 Sol, GPT-6.1 Terra, or Luna behave like Astra; test each pattern on the target model.
 
 ### Bias toward action and completion
 
@@ -218,7 +223,7 @@ for approval, semantic judgment, citations, and final validation.
 
 | Aspect | Claude habit | GPT adaptation |
 |---|---|---|
-| Thinking control | `effort` parameter, adaptive thinking always on | `reasoning.effort` (`none`–`max`); `none` available for latency-critical paths (not on GPT-6 Astra) |
+| Thinking control | `effort` parameter; thinking cannot be disabled on Opus 5.5 or Fable 5.1, Sonnet 5.5 can drop up-front thinking (`between_tools`) and Haiku 5.5 can disable thinking, both at `high` effort or below | `reasoning.effort` (`none`–`max`); `none` available for latency-critical paths (not on GPT-6 Astra or GPT-6.1 Sol) |
 | Response length | Prompt for concision (Opus 5) | GPT-5.6: `text.verbosity` parameter for the default; prompt only for task-specific shape. GPT-6 Astra: state the writing style and structure (it defaults to lists and Markdown) |
 | Format control | Structured Outputs; "respond without preamble" | Same instruction style works; API output defaults to plain text — ask for Markdown explicitly if wanted |
 | XML structure | `<instructions>`, `<context>` tags | Works on both; keep tag names consistent |
@@ -230,12 +235,17 @@ for approval, semantic judgment, citations, and final validation.
 
 ### GPT-5.6 → GPT-6
 
-1. Set `model` to `gpt-6-astra`, `gpt-6-sol`, or `gpt-6-luna` by workload (see [Model Family and Selection](#model-family-and-selection)) — not by carrying the tier name over.
-2. Preserve the current effective reasoning effort where supported. Astra has no `none`: use `low`. From `minimal`, start with `low` and compare on representative tasks.
+1. Set `model` to `gpt-6-astra`, `gpt-6.1-sol`, `gpt-6.1-terra`, or `gpt-6-luna` by workload (see [Model Family and Selection](#model-family-and-selection)), not by carrying the tier name over.
+2. Preserve the current effective reasoning effort where supported. Astra and GPT-6.1 Sol have no `none`: use `low`. From `minimal`, start with `low` and compare on representative tasks.
 3. When reasoning effort is not `none`, remove `temperature`, `top_p`, and `top_logprobs` (Chat Completions: also `logprobs`; Responses: drop `message.output_text.logprobs` from `include`).
-4. Keep reasoning with tools on the Responses API. Astra's tool calling requires Responses; Sol and Luna keep GPT-5.6's Chat Completions limit (function calling only at `reasoning_effort: "none"`).
+4. Keep reasoning with tools on the Responses API. Tool calling on Astra, GPT-6.1 Sol, and GPT-6.1 Terra requires Responses; GPT-6 Sol and Luna keep GPT-5.6's Chat Completions limit (function calling only at `reasoning_effort: "none"`).
 5. To change effort between responses, send `configuration_update` input items and keep request-level `reasoning.effort` unchanged, so the cached prompt prefix survives.
 6. Audit skills and `AGENTS.md` for blanket or conflicting instructions, then apply the [GPT-6 guidance](#gpt-6-behavior-and-how-to-prompt-it) one change at a time, re-running evals per model.
+
+### GPT-6 Sol → GPT-6.1 Sol, GPT-5.6 Terra → GPT-6.1 Terra
+
+- **GPT-6 Sol → GPT-6.1 Sol:** GPT-6.1 Sol supports neither `none` nor `minimal`. Move a `none` request to `low`. Function calls sent through Chat Completions at `none` move to Responses. Compare GPT-6.1 Sol with Astra on your tasks to weigh quality against cost.
+- **GPT-5.6 Terra → GPT-6.1 Terra:** compare both models on representative images and workflows at the same reasoning effort. Tool calls sent through Chat Completions move to Responses.
 
 ### Earlier GPT-5.x → GPT-5.6
 

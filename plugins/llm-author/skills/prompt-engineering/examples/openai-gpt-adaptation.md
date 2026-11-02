@@ -154,5 +154,5 @@ of scope.
 - [ ] Blanket brevity instructions re-checked; `text.verbosity` used for the default (GPT-5.6)
 - [ ] Autonomy/approval boundaries defined (report vs. act vs. confirm)
 - [ ] Retrieval and tool-call budgets replace "be thorough" framing
-- [ ] `reasoning.effort` chosen deliberately (default `medium` on GPT-5.6 and GPT-6 Sol/Luna; no `none` on GPT-6 Astra; `max` only for hardest quality-first work)
+- [ ] `reasoning.effort` chosen deliberately (default `medium` on GPT-5.6, GPT-6 Sol, GPT-6.1 Sol, GPT-6.1 Terra, and GPT-6 Luna; no `none` on GPT-6 Astra or GPT-6.1 Sol; `max` only for hardest quality-first work)
 - [ ] GPT-6 target: blanket instruction-file orders made conditional; re-verification bounded; user-over-skill precedence stated
