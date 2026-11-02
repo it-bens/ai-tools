@@ -14,7 +14,7 @@ Through 4.6.0 the plugin shipped 15 agent definitions, one per model and effort,
 | Subagent spawn | `model` and `effort` arguments of the Agent tool (`effort` since Claude Code 2.1.292) | Per spawn |
 | Subagent fallback | `CLAUDE_CODE_SUBAGENT_EFFORT` (since Claude Code 2.1.316) | Every subagent for which nothing else names a level |
 
-Levels are `low`, `medium`, `high`, `xhigh`, `max`. The default is `high` on Opus 5, Sonnet 5, and Fable 5.1 — setting `high` explicitly on those models is identical to omitting the parameter. Opus 5.5 defaults to `medium` instead: omitting the parameter on Opus 5.5 is identical to setting `medium`, not `high`. Precedence runs environment variable, then configured or frontmatter level, then model default.
+Levels are `low`, `medium`, `high`, `xhigh`, `max`. The default is `high` on Opus 5, Sonnet 5, and Fable 5.1 — setting `high` explicitly on those models is identical to omitting the parameter. Opus 5.5 defaults to `medium` instead: omitting the parameter on Opus 5.5 is identical to setting `medium`, not `high`. For the session, precedence runs environment variable (`CLAUDE_CODE_EFFORT_LEVEL`), then configured or frontmatter level, then model default. For a subagent, a spawn's `effort` argument overrides the definition's `effort` (checked 2026-11-02, below), `CLAUDE_CODE_SUBAGENT_EFFORT` applies only when neither names a level, and otherwise the subagent inherits the session level. How `CLAUDE_CODE_EFFORT_LEVEL` interacts with a spawn's `effort` argument is untested.
 
 Observed 2026-09-23 in this repository's session, on Claude Code 2.1.280: the `opus` alias resolves to `claude-opus-5-5` (seen as `message.model` in subagent transcripts spawned with `model: opus`) — so the 4.x opus definitions ran on Opus 5.5's defaults, not Opus 5's, and a `model: opus` spawn runs on Opus 5.5.
 
@@ -26,7 +26,7 @@ Checked 2026-11-02 on Claude Code 2.1.316 from a `medium` session, reading `CLAU
 
 - Spawns with `effort: low` and `effort: max` reported `CLAUDE_EFFORT=low` and `CLAUDE_EFFORT=max`.
 - A spawn-time `effort` overrides a definition's pinned `effort`: the 4.x definition `investigate-sonnet-low` spawned with `effort: max` reported `CLAUDE_EFFORT=max`. A spawn-time `model` likewise overrides a definition's `model`.
-- A spawn with `model: haiku` and `effort: low` ran without an API error and reported `CLAUDE_EFFORT=low`. The `haiku` alias resolves to Haiku 5.5, the default Haiku model since Claude Code 2.1.293.
+- A spawn with `model: haiku` and `effort: low` ran without an API error and reported `CLAUDE_EFFORT=low`. Its transcript shows `message.model` = `claude-haiku-5-5` on both of its assistant turns. The `haiku` alias resolves to Haiku 5.5 by default, the default Haiku model since Claude Code 2.1.293. The run does not show whether the API received the `effort` value or the client dropped it before the request; it shows only that no error occurred and the runtime reported `low`.
 - `effort` is ignored for `subagent_type: fork`.
 
 The Claude Code 2.1.292 changelog records the change: "Added an `effort` parameter to the Agent tool, so Claude runs a sub-agent at the effort level you ask for." These checks read the runtime's own report of the level; they did not measure an accuracy or token difference between levels.

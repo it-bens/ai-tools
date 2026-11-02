@@ -120,10 +120,12 @@ That guarantee is narrower than "the contract exposes no place to write it", and
 | `project.review_lenses` | (none registered — name three to four lenses per scope at dispatch) | Project lenses added to the per-scope LENS block. Appends. |
 | `codex.extra_config` | (the pinned flags only) | Additional `-c key=value` flags appended to every codex invocation. Appends; rejects the contract-carrying flags named above. |
 | `routing.additions` | (none) | Checkpoint-type rows appended to the routing table. Appends; never rewrites an existing row. |
-| `routing.effort_defaults` | (the table's efforts, then the effort ladder) | Per-checkpoint-type effort overrides. On a codex checkpoint the assignment sets the invocation flag; on a claude checkpoint it sets the spawn's `effort` argument, so any level is expressible. Going below an assigned effort at dispatch time is still an announced adaptation. |
-| `routing.model_defaults` | (the table's models) | Per-checkpoint-type model overrides for claude checkpoints: haiku, sonnet, or opus, never fable. Ignored on codex checkpoints; it never moves a checkpoint between codex and claude, so cross-family independence holds. |
+| `routing.effort_defaults` | (the table's efforts, then the effort ladder) | Per-checkpoint-type effort overrides. On a codex checkpoint the assignment sets the invocation flag; on a claude checkpoint it sets the spawn's `effort` argument, subject to the override guards below. Going below an assigned effort at dispatch time is still an announced adaptation. |
+| `routing.model_defaults` | (the table's models) | Per-checkpoint-type model overrides for claude checkpoints: haiku, sonnet, or opus, never fable. Ignored on codex checkpoints; it never moves a checkpoint between codex and claude, so cross-family independence holds. Subject to the override guards below. |
 | `routing.codex_bias` | (unset — session decides per the routing table) | Biases the discretionary codex/claude split at the strategy node across `codex-heavy` / `claude-lean` / `codex-less`; `codex-less` routes through the existing consent path; bounded by cross-family independence. |
 | `deviation.additional_triggers` | (the listed triggers only) | Project deviation triggers appended to the trigger list. Appends. |
+
+Override guards: the orchestrator checks the effective model and effort of every claude checkpoint after `routing.model_defaults` and `routing.effort_defaults`. It does not apply, and reports, an assignment that routes to `max`, puts opus at `low`, puts haiku on any row other than locating, mechanical enumeration, or the gate re-run, or runs `escalated-check` weaker than the check it follows, meaning a weaker model, or the same model at a lower effort. In 4.x a claude `routing.effort_defaults` entry selected the definition carrying that effort, which could change the model; in 5.0.0 it sets the effort only, so an entry that relied on the model change needs a matching `routing.model_defaults` entry.
 
 Set `routing.codex_bias` in the extension file for a persistent per-project default or directly in conversation for a per-task assignment; a direct conversational assignment overrides an extension-file assignment.
 
@@ -164,7 +166,7 @@ A project whose work includes a checkpoint the universal table has no profile fo
 
 Add a workflow position only for a step the named values cannot express — for example a `## Post-Dispatch` that files each worker's run record into a project log, which is behavior around the node rather than a value inside it. Keep it repeat-safe: `Dispatch` fires once per checkpoint, and a task has many.
 
-A claude actor names one of the shipped duty definitions plus a model, for example `` `implement` on opus ``, and the row's effort column sets the spawn's effort. The definition fixes the duty contract; the model and effort are the project's choice. A checkpoint whose duty no shipped definition covers is a plugin change, not an addition, and belongs in the improvement-candidates report.
+A claude actor names one of the shipped duty definitions plus a model, for example `` `implement` on opus ``, spawned as `work-orchestrator:implement`, and the row's effort column sets the spawn's effort. The definition fixes the duty contract; the model and effort are the project's choice. A checkpoint whose duty no shipped definition covers is a plugin change, not an addition, and belongs in the improvement-candidates report.
 
 Extension files written for 4.x that name a retired definition (`implement-sonnet-medium`, `investigate-opus-high`, and the other model-and-effort names) no longer resolve. The `work-orchestrator-extension-setup` plugin's re-sync mode rewrites each such actor as the duty definition plus the model and effort its old name stated.
 

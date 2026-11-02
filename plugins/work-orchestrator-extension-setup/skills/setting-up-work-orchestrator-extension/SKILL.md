@@ -17,6 +17,9 @@ digraph setting_up {
     "Per selected skill: extension file present?" [shape=diamond];
     "Step 2: Explore the project" [shape=box];
     "Step 3: Diff existing extension files against findings" [shape=box];
+    "Installed work-orchestrator 5.0.0 or later (readable)?" [shape=diamond];
+    "Rewrite 4.x definition names and audit routing.effort_defaults" [shape=box];
+    "Report the installed version; skip the 4.x rewrite and audit" [shape=box];
     "Step 4: Draft extension proposals" [shape=box];
     "Step 5: Refine conversationally" [shape=box];
     "User approves the plan?" [shape=diamond];
@@ -29,7 +32,11 @@ digraph setting_up {
     "Per selected skill: extension file present?" -> "Step 2: Explore the project" [label="present — re-sync mode for that skill"];
     "Step 2: Explore the project" -> "Step 4: Draft extension proposals" [label="every selected skill fresh"];
     "Step 2: Explore the project" -> "Step 3: Diff existing extension files against findings" [label="any file in re-sync"];
-    "Step 3: Diff existing extension files against findings" -> "Step 4: Draft extension proposals";
+    "Step 3: Diff existing extension files against findings" -> "Installed work-orchestrator 5.0.0 or later (readable)?";
+    "Installed work-orchestrator 5.0.0 or later (readable)?" -> "Rewrite 4.x definition names and audit routing.effort_defaults" [label="yes"];
+    "Installed work-orchestrator 5.0.0 or later (readable)?" -> "Report the installed version; skip the 4.x rewrite and audit" [label="no"];
+    "Rewrite 4.x definition names and audit routing.effort_defaults" -> "Step 4: Draft extension proposals";
+    "Report the installed version; skip the 4.x rewrite and audit" -> "Step 4: Draft extension proposals";
     "Step 4: Draft extension proposals" -> "Step 5: Refine conversationally" -> "User approves the plan?";
     "User approves the plan?" -> "Step 5: Refine conversationally" [label="no — amend or drop"];
     "User approves the plan?" -> "Step 6: Write one extension file per selected skill" [label="yes"];
@@ -70,7 +77,9 @@ Diff each claim in every existing extension file against the current findings: g
 
 Report the gate table as the highest-value diff: a stale gate command is the one drift that silently breaks every implementer dispatch.
 
-Rewrite every retired 4.x agent definition name found in an extension file to the 5.x duty definition plus model and effort from this table, and propose the rewrite like any other stale claim. In a routing-additions row, the actor cell becomes `` `<definition>` on <model> `` and the effort cell takes the table's effort unless the row already names a different one. A haiku row gets `low`, since the 4.x haiku definitions ran without an effort.
+Before rewriting any 4.x name, read `version` from the `.claude-plugin/plugin.json` of the installed `work-orchestrator` plugin, the same installation whose `EXTENSION.md` Step 4 reads. If it is below 5.0.0 or cannot be read, report that and propose no 4.x rewrite or `routing.effort_defaults` audit; the installed plugin still ships the 4.x definitions.
+
+Rewrite every retired 4.x agent definition name found in an extension file to the 5.x duty definition plus model and effort from this table, and propose the rewrite like any other stale claim. In a routing-additions row, the actor cell becomes `` `<definition>` on <model> `` (spawned as `work-orchestrator:<definition>`) and the effort cell takes the table's effort unless the row already names a different one. A haiku row gets `low`, since the 4.x haiku definitions ran without an effort.
 
 | 4.x definition | 5.x definition | Model | Effort |
 |---|---|---|---|
@@ -89,6 +98,8 @@ Rewrite every retired 4.x agent definition name found in an extension file to th
 | `implement-opus-medium` | `implement` | opus | medium |
 | `implement-opus-high` | `implement` | opus | high |
 | `implement-opus-xhigh` | `implement` | opus | xhigh |
+
+Audit every `routing.effort_defaults` entry on a claude checkpoint against its 4.x meaning. In 4.x such an entry selected the agent definition carrying that effort, which could change the model; in 5.x it sets the effort only. For each entry, list the 4.x definitions of the row's 4.x duty (the name prefix of the row's 4.x definition: `search`, `investigate`, `implement`, `design`, or `gate-run`) that carried that effort, from the full 4.x name set in the table above; `search-haiku`, `investigate-haiku`, and `gate-run-haiku` carried no effort. For example `Verification of review findings = xhigh` has one candidate, `investigate-opus-xhigh`, on opus. Exactly one candidate: where its model differs from the row's 5.x model, propose a `routing.model_defaults` entry with that model, subject to the override guards in Step 5. No candidate: flag that 4.x could not honor the entry and that it now takes effect, and ask whether to keep it. More than one candidate: do not pick; ask the user which model the project meant.
 
 ### Step 4: Draft extension proposals
 
@@ -118,7 +129,7 @@ Work one family at a time, in the order gates → fence → rules and lenses →
 - Confirm each gate's exact command, and whether it runs inside a `workspace-write` sandbox. For a gate that does not, get its one permitted fallback and whether an independent worker re-runs it outside.
 - Accept or reject each protected path and each banned command class, with evidence.
 - Confirm which conduct rules and project skill files a worker must receive, and the scope condition for each.
-- Accept or reject each proposed routing addition, effort override, and model override — an override needs the project's own evidence, not a preference. An effort override on a codex checkpoint sets the invocation flag, so any level is expressible. An effort override on a claude checkpoint sets the spawn's effort, so any level is expressible too. A model override (`routing.model_defaults`) applies to claude checkpoints only and names haiku, sonnet, or opus; refuse one that names fable or targets a codex checkpoint, since it would move a checkpoint across families. A routing addition's claude actor names one of the duty definitions the parent plugin ships plus a model (haiku, sonnet, or opus); propose a duty none of them covers as an improvement candidate for the parent plugin, not as an assignment. Ask whether the project wants a persistent codex/claude bias; offer `codex-heavy`, `claude-lean`, or none, and record `routing.codex_bias` when selected. Treat this bias as a preference, not a Step 2 probe target, and exempt it from the override evidence requirement.
+- Accept or reject each proposed routing addition, effort override, and model override — an override needs the project's own evidence, not a preference. An effort override on a codex checkpoint sets the invocation flag, so any level except `max` is expressible. An effort override on a claude checkpoint sets the spawn's effort. A model override (`routing.model_defaults`) applies to claude checkpoints only and names haiku, sonnet, or opus; refuse one that names fable or targets a codex checkpoint, since it would move a checkpoint across families. Check the effective model and effort of each claude checkpoint after both overrides, and refuse to author an entry that routes to `max`, puts opus at `low`, puts haiku on any row other than locating, mechanical enumeration, or the gate re-run (never a confirmer, verifier, or implementer row), or runs `escalated-check` weaker than the check it follows, meaning a weaker model, or the same model at a lower effort; the parent does not apply such an entry. Collect refused entries with the refused findings. A routing addition's claude actor names one of the duty definitions the parent plugin ships plus a model (haiku, sonnet, or opus); propose a duty none of them covers as an improvement candidate for the parent plugin, not as an assignment. Ask whether the project wants a persistent codex/claude bias; offer `codex-heavy`, `claude-lean`, or none, and record `routing.codex_bias` when selected. Treat this bias as a preference, not a Step 2 probe target, and exempt it from the override evidence requirement.
 - Confirm each proposed deviation trigger.
 - For the topology: confirm the roles, per-role duties, and message flow with the user (they are the source, not exploration), and confirm write ownership against the explored working-tree facts — every tree has exactly one writing role, and read-only roles get the clone-or-pinned-worktree instruction.
 - For the handoff referent guard: confirm the authoritative artifacts by name, and whether the project wants the `Post-Compose` guard, the `project.conduct_rules` entry, or both.
