@@ -18,7 +18,6 @@ digraph revalidation_loop {
     "fix round applied" [shape=doublecircle];
     "gate re-run" [shape=box];
     "cross-family review of the round's diff" [shape=box];
-    "resume re-validates previous findings" [shape=box];
     "any finding?" [shape=diamond];
     "fix rounds < 2?" [shape=diamond];
     "next fix round" [shape=box];
@@ -28,8 +27,7 @@ digraph revalidation_loop {
     "fix round applied" -> "gate re-run";
     "gate re-run" -> "cross-family review of the round's diff" [label="passes"];
     "gate re-run" -> "deviation path" [label="fails"];
-    "cross-family review of the round's diff" -> "resume re-validates previous findings";
-    "resume re-validates previous findings" -> "any finding?";
+    "cross-family review of the round's diff" -> "any finding?";
     "any finding?" -> "checkpoint closes" [label="no"];
     "any finding?" -> "fix rounds < 2?" [label="yes"];
     "fix rounds < 2?" -> "next fix round" [label="yes"];
@@ -40,7 +38,7 @@ digraph revalidation_loop {
 
 ### Fix round applied
 
-Fixes from a review are applied by a worker checkpoint by default (a codex fix batch or a sonnet follow-up), never by the session unless no worker route fits.
+Before each fix round, record the content of the fenced files, the state of tracked files across the tree, and the list of untracked files. Apply fixes from a review by a worker checkpoint by default (a codex fix batch or a sonnet follow-up), never by the session unless no worker route fits. Take the resume diff and check containment against this record.
 
 ### Gate re-run
 
@@ -48,9 +46,7 @@ Re-run the round's gate commands at the "Gate re-run outside worker sandboxes af
 
 ### Cross-family review of the round's diff
 
-When the fixes were not codex-applied, the resumed codex review thread is this review. When codex applied them, dispatch the "Diff review of a codex-written fix batch" row in addition to the resume. A session-applied fix also needs a sonnet diff review of the session's changes.
-
-### Resume re-validates previous findings
+When the fixes were not codex-applied, the resumed codex review thread is this review. When codex applied them, dispatch the "Diff review of a codex-written fix batch" row in addition to the resume. A session-applied fix also needs a sonnet diff review of the session's changes. Feed findings from this review and the resume to the next decision.
 
 Resume the same codex review session once per fix round instead of dispatching a fresh review. When the review checkpoint merged several codex reviewers' outputs, resume each reviewer's session for its own findings.
 
@@ -60,14 +56,16 @@ codex exec resume <session-id> -c approval_policy=never \
 A fix round was applied to the tree. Its diff, each fix's decided design
 and test duties, and the fenced file list follow. Re-validate each of your
 previous findings against the current tree: fixed / not fixed. Then report
-any new finding in the diff.
+any new finding in the diff. Do not re-report an accepted decision unless
+its documented rationale no longer holds.
 <when the fixes were not codex-applied:> Also check each fix against its
 decided design and test duties, confirm the diff touches only the fenced
 files, and confirm no new untracked files appeared.
 Same output contract.
-<the fix round's diff, taken against the fixed files' state before the round, plus the content of any new file>
+<the fix round's diff across the tree, taken against the recorded state before the round, plus the content of any new file>
 <each fix's decided design and test duties>
 <the fenced file list>
+<documented accepted decisions relevant to the scope, with their rationale>
 EOF
 ```
 

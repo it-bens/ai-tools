@@ -127,7 +127,7 @@ September comparison on the same fixture (six runs each): gpt-6-sol had all 8 it
 On this fixture, gpt-6.1-sol and gpt-6.1-terra complement each other: sol found the canary in 6 of 6 runs and named the invoice path in 5 of 6, terra produced 25 valid findings beyond the key against sol's 15 but missed the canary in 5 of 6. Terra used about half of sol's tokens and a third of its wall-clock. One gpt-6-luna run cannot rank it.
 
 - Focused review at high (D2 plus the canary, one run per model): gpt-6.1-sol, gpt-6.1-terra, and gpt-6-luna each found both items fully with correct labels, at 123,726 / 55,134 / 61,138 tokens and 110 / 31 / 57 s. The canary does not separate the models.
-- Security review at high (D3, one run per model): gpt-6.1-sol and gpt-6.1-terra each found D3 with the correct label and 2 valid findings beyond the key (a partial CSV left on a failed write or retry conflict; NUL-byte or missing-directory filenames raising uncaught exceptions). No refusal or safeguard friction from either. 64,972 / 35,685 tokens, 70 / 37 s.
+- Security review at high (D3, one run each on gpt-6.1-sol and gpt-6.1-terra): gpt-6.1-sol and gpt-6.1-terra each found D3 with the correct label and 2 valid findings beyond the key (a partial CSV left on a failed write or retry conflict; NUL-byte or missing-directory filenames raising uncaught exceptions). No refusal or safeguard friction from either. 64,972 / 35,685 tokens, 70 / 37 s.
 
 Codex implementers at medium, one run per model, on a fix batch of five (FIX-D1, D2, D3, D4, D7). FIX-D7's design says "every place the discount feature rounds a monetary amount with the built-in round()", while the file list names only `pricing.py`; the second site, `invoice.py:84`, is outside the fence.
 
