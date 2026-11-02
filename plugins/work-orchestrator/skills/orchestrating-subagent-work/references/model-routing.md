@@ -32,7 +32,7 @@ Assign every checkpoint an actor from this table. Codex actors are model tiers; 
 Routing rules:
 
 - Default verification shape: producer plus one independent confirmer, from a different model family where the routing allows. A dual-confirmed result is final; the orchestrator does not re-verify it.
-- An independent confirmer is a fresh worker that did not produce the result and shares no session with its producer; a resumed session never confirms its own prior output.
+- An independent confirmer is a worker that did not produce the result and shares no session with its producer; a resumed session never confirms its own prior output.
 - Nested delegation: a subagent actor spawns its own subagents only when its dispatch directs it, per `worker-prompts.md` §Nested subagents. The definitions that permit the Agent tool: `implement`, `adversarial-check`, `escalated-check`, `root-cause`, `source-conflict`, and `design`; the leaf definitions `search`, `extract`, `gate-run`, `lookup`, and `source-read` never spawn. A nested spawn names a leaf definition plus the effective model and effort of that duty's row. A subagent a worker spawned is part of that worker — it never serves as the independent confirmer, and its output relaxes no verification requirement.
 - Confirmation prompts are adversarial and blind: give the confirmer the claim and the artifact, instruct it to refute, and withhold the producer's reasoning. Parallel producers on the same prompt (the sol+terra broad pair) are co-producers, not confirmers — convergent findings still need a confirmer.
 - A passing gate re-run confirms only the gate claim; it never counts as the second confirmation of any other result (fix correctness, findings, doc claims).
