@@ -1,6 +1,6 @@
 ---
 name: orchestrating-subagent-work
-version: 5.0.0
+version: 5.1.0
 allowed-tools: Skill(llm-author:prompt-engineering)
 description: Use for substantial implementation or review work — multi-file changes, review rounds, verification passes — including when the work arrives as an assignment message from another session; invoke before the first codex dispatch, subagent spawn, or inline write. Takes the task plus the project's gates and fences; returns a stated strategy, the dispatched work, and per-item results each carrying its confirmation status. Routes every checkpoint to a codex tier or to a duty definition dispatched with an explicit model and reasoning effort, fences every worker write, and confirms every load-bearing result with a second independent worker. Does not dispatch before the strategy is stated, run without codex unless consent is on record in the conversation, or let a single-source result stand as final.
 ---
@@ -113,13 +113,13 @@ Dispatch immediately after stating the strategy; do not wait for approval or ack
 
 Invoke `llm-author:prompt-engineering` in Ruleset mode once, after the strategy has named its actors. One invocation covers every family the strategy assigned. State all three inputs it resolves so it asks for none:
 
-- The model families in play. `gpt-5.6-sol` / `gpt-5.6-terra` / `gpt-5.6-luna` are GPT-5.6; sonnet spawns are Claude 5; opus spawns resolve to Opus 5.5, a later Claude 5 release whose effort names are not calibrated the same way Opus 5's are; the `haiku` alias resolves to Haiku 5.5, a Claude 5 release, by default; where the environment maps an alias to an older model, treat that actor as the family it resolves to.
+- The model families in play. `gpt-6.1-sol` / `gpt-6.1-terra` are GPT-6.1 and `gpt-6-luna` is GPT-6; the `sonnet` alias resolves to Sonnet 5.5, a later Claude 5 release whose effort names are recalibrated against Sonnet 5's; opus spawns resolve to Opus 5.5, a later Claude 5 release whose effort names are not calibrated the same way Opus 5's are; the `haiku` alias resolves to Haiku 5.5, a Claude 5 release, by default; where the environment maps an alias to an older model, treat that actor as the family it resolves to.
 - The dispatch path per family: a CLI process receiving a piped string for codex, a subagent spawn for a claude worker. Neither takes API parameters.
 - The two artifact types to be authored: review prompts and implementer prompts, per `references/worker-prompts.md`.
 
 Require of the ruleset:
 
-- The lever order per family. Claude actors: set the effort first, then adapt wording only where behavior still misses at that effort. GPT-5.6 actors: check the prompt for a missing success criterion, dependency rule, tool-routing rule, or verification loop before raising the rung.
+- The lever order per family. Claude actors: set the effort first, then adapt wording only where behavior still misses at that effort. GPT-6 actors: check the prompt for a missing success criterion, dependency rule, tool-routing rule, or verification loop before raising the rung.
 - Leanness as each instruction stated once with contradictions removed — never as a dropped block.
 - A worker's verification duties are never removed; they come from `references/worker-prompts.md` and the agent definition.
 

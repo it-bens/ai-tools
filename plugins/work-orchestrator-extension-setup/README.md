@@ -6,6 +6,8 @@ Renamed from `subagent-orchestrator-extension-setup`, which remains in the marke
 
 The plugin name and the skill name are intentionally long so neither activates by accident; invoke the skill explicitly when you want to set the extension up in a project.
 
+Requires `work-orchestrator` 5.1.0 or later.
+
 ## Quick Start
 
 ```bash
@@ -38,7 +40,7 @@ The setup skill translates free-form intent into these formal options and refuse
 
 **What it refuses.** The extension contract is append-only and fences its invariants, and the setup skill enforces both. A finding that would shorten a universal banned-command or conduct-rule list, or soften the consent gate, a deviation check, the verification shape, dual-confirmation closure, session enumeration, or the mandatory dispatch-message blocks, is surfaced as a disagreement with the plugin rather than written into a file. It also does not run gate commands to verify them — it confirms each exists in its declaring file and takes sandbox behavior from you.
 
-**Re-sync mode:** when extension files already exist, the skill diffs every claim against fresh exploration findings — gate commands that changed or vanished, protected paths that moved, stale file citations, routing additions for work the project no longer does, topology rows naming trees or branches nobody works on — and proposes updates. A stale gate command is reported as the highest-value diff, since it is the one drift that silently breaks every implementer dispatch. An unchanged project produces no proposals. Re-sync reads nothing under `.claude/extensions/subagent-orchestrator/` — a project moving from the deprecated plugin moves its file by hand or re-runs this skill fresh.
+**Re-sync mode:** when extension files already exist, the skill diffs every claim against fresh exploration findings, gate commands that changed or vanished, protected paths that moved, stale file citations, routing additions for work the project no longer does, topology rows naming trees or branches nobody works on, and proposes updates. A stale gate command is reported as the highest-value diff, since it is the one drift that silently breaks every implementer dispatch. On an unchanged project, re-sync proposes only what its audits of the existing entries flag. Re-sync reads nothing under `.claude/extensions/subagent-orchestrator/`, a project moving from the deprecated plugin moves its file by hand or re-runs this skill fresh.
 
 ## License
 

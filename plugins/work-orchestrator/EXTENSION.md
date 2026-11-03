@@ -76,7 +76,7 @@ One bullet per name. A value with internal structure is written as an indented b
 
 **Every list-shaped value appends.** `project.protected_paths`, `project.banned_commands`, `project.conduct_rules`, `project.review_lenses`, `deviation.additional_triggers`, `sessions.additional_triggers`, `routing.additions`, and `codex.extra_config` add to their lists and never shorten them. This is what keeps the contract from being used to strip a fence rather than tighten it. Six names are not list-shaped: `project.gates` and `project.skill_files` supply content the universal body has none of, `routing.effort_defaults` replaces per-checkpoint efforts, `routing.model_defaults` replaces per-checkpoint claude models, `routing.codex_bias` sets a single bias value, and `sessions.topology` supplies a structure the universal body deliberately carries none of.
 
-`codex.extra_config` additionally rejects any assignment that would set `approval_policy`, `sandbox_mode`, `model_reasoning_effort`, the model, or `--disable memories` — those flags carry the dispatch's safety and routing contract, not a project preference.
+`codex.extra_config` additionally rejects any assignment that would set `approval_policy`, `sandbox_mode`, `model_reasoning_effort`, the model, or the memories setting (passing or omitting `--disable memories`) — those flags carry the dispatch's safety and routing contract, not a project preference.
 
 ## Mechanism 2: Workflow Positions
 
@@ -166,7 +166,7 @@ A project whose work includes a checkpoint the universal table has no profile fo
 
 Add a workflow position only for a step the named values cannot express — for example a `## Post-Dispatch` that files each worker's run record into a project log, which is behavior around the node rather than a value inside it. Keep it repeat-safe: `Dispatch` fires once per checkpoint, and a task has many.
 
-A claude actor names one of the shipped duty definitions plus a model, for example `` `implement` on opus ``, spawned as `work-orchestrator:implement`, and the row's effort column sets the spawn's effort. The definition fixes the duty contract; the model and effort are the project's choice. A checkpoint whose duty no shipped definition covers is a plugin change, not an addition, and belongs in the improvement-candidates report.
+A claude actor names one of the shipped duty definitions plus a model, for example `` `implement` on opus ``, spawned as `work-orchestrator:implement`, and the row's effort column sets the spawn's effort. The definition fixes the duty contract; the model and effort are the project's choice within the parent skill's spawn guards. A checkpoint whose duty no shipped definition covers is a plugin change, not an addition, and belongs in the improvement-candidates report.
 
 
 A routing addition names an actor but does not get to name a verification shape. The added checkpoint's results reach two-worker confirmation like every other load-bearing result; there is no named value that says otherwise, and that is deliberate.

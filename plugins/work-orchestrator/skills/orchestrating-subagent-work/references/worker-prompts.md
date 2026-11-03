@@ -68,5 +68,5 @@ Every implementer dispatch names one report file in its REPORT block: an absolut
 - A worker's own gate claim is never final, whatever produced it: an independent worker re-runs every gate before a green is accepted. For a codex implementer that re-run happens outside its sandbox.
 - Review findings are hypotheses until an independent worker confirms them against source.
 - An independent worker diff-reviews every worker-written change against each fix's decided design and test duties, and confirms the diff touches only fenced files and that no new untracked files appeared. The diff review and the independent gate re-run both happen after the batch returns; the checkpoint closes only when both pass.
-- A subagent a worker spawned is part of that worker: its output confirms nothing, and the independent confirmer is always a fresh worker the orchestrator dispatches.
+- A subagent a worker spawned is part of that worker: its output confirms nothing, and the independent confirmer is always a worker the orchestrator dispatches.
 - A worker result plus one independent worker confirmation is final; the orchestrator re-verifies only items routed to it by a deviation.

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [3.14.1] - 2026-11-03
+
+### Fixed
+
+- Correct the supported Claude prefill boundary to 4.5 and earlier.
+
 ## [3.14.0] - 2026-11-02
 
 Anthropic released Claude Sonnet 5.5 and Claude Haiku 5.5, which join Opus 5.5 and Fable 5.1 as current models while Opus 5, Sonnet 5, and Fable 5 become legacy. OpenAI added GPT-6.1 Sol and GPT-6.1 Terra to the GPT-6 family and updated GPT-6 Luna on October 29 without a new model ID in the family listing. The `prompt-engineering` guides listed Opus 5, Sonnet 5, and Fable 5.1 as the Claude lineup with no Sonnet 5.5 or Haiku 5.5 guidance, and stated that GPT-6 has no Terra tier. Sonnet 5.5 recalibrates its effort levels against Sonnet 5 and rejects forced `tool_choice`; Haiku 5.5 is the first Haiku model with effort levels and defaults to `medium`; GPT-6.1 Sol drops the `none` effort that GPT-6 Sol supports, and GPT-6.1 Terra is positioned for visual reasoning, computer use, and writing rather than as the balanced tier.
