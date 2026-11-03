@@ -1,6 +1,6 @@
 ---
 name: introspecting
-version: 1.0.0
+version: 1.0.1
 description: |
   This skill should be used when the user pastes diagnostic questions, says "introspect",
   "answer these questions about your behavior", "explain why you did this", "reflect on

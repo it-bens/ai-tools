@@ -1,6 +1,6 @@
 {
   "name": "behavior-diagnostics",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Debug AI tooling behavior by analyzing output against source instructions and enabling honest self-diagnosis.",
   "author": {
     "name": "Martin Bens",
