@@ -7,5 +7,6 @@
     "email": "martin.bens@it-bens.de"
   },
   "license": "MIT",
-  "keywords": ["debugging", "diagnostics", "skills", "agents", "introspection", "behavior-analysis"]
+  "keywords": ["debugging", "diagnostics", "skills", "agents", "introspection", "behavior-analysis"],
+  "dependencies": ["llm-author"]
 }

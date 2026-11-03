@@ -8,6 +8,7 @@
 
 ### Fixed
 
+- The plugin now declares `software-writer` as a Claude Code plugin dependency, so installing it also installs `software-writer`. The setup skill invokes an extended `software-writer` skill to confirm Claude Code delivery.
 - The README's re-sync description separates the fresh exploration findings from the kinds of stale entries the audit reports.
 - On a Claude Code delivery failure, report the skill that showed no `<project_extension>` block and the extension file path it was expected from, without naming a cause. The old report named an installed version older than 2.0.0 or a session restart.
 - The README, the skill overview, and Step 7 state `software-writer` 2.4.0 or later for Claude Code delivery instead of 2.0.0, because delivery of the `sweeping-dead-code` extension file arrived in 2.4.0.

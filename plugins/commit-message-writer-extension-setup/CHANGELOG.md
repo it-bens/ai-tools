@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- The plugin now declares `commit-message-writer` as a Claude Code plugin dependency, so installing it also installs `commit-message-writer`. The setup skill invokes `writing-commit-messages` to confirm Claude Code delivery.
+
 ## [1.1.2] - 2026-07-20
 
 ### Fixed

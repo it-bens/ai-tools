@@ -6,7 +6,7 @@ Renamed from `subagent-orchestrator-extension-setup`, which remains in the marke
 
 The plugin name and the skill name are intentionally long so neither activates by accident; invoke the skill explicitly when you want to set the extension up in a project.
 
-Requires `work-orchestrator` 5.1.0 or later.
+Claude Code installs the `work-orchestrator` dependency automatically; version 5.1.0 or later is required.
 
 ## Quick Start
 

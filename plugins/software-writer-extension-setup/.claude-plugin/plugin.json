@@ -7,5 +7,6 @@
     "email": "martin.bens@it-bens.de"
   },
   "license": "MIT",
-  "keywords": ["code-quality", "setup", "hooks", "extension", "skill"]
+  "keywords": ["code-quality", "setup", "hooks", "extension", "skill"],
+  "dependencies": ["software-writer"]
 }

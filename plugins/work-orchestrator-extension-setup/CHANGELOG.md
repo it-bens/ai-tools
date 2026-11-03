@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Fixed
 
+- The plugin now declares `work-orchestrator` as a Claude Code plugin dependency, so installing it also installs `work-orchestrator`. The setup skill reads the installed `work-orchestrator` extension contract and invokes each skill it wrote an extension for to confirm delivery.
 - On a delivery failure, report the skill that showed no `<project_extension>` block and the extension file path it was expected from, without naming a cause. The old report named an installed version older than 4.0.0, which the 5.1.0 requirement already rules out, or a session restart.
 - The README and plugin description no longer state that delivery ships with work-orchestrator 4.0.0 or later.
 - The README's re-sync description separates the fresh exploration findings from the kinds of stale entries the audit reports.
