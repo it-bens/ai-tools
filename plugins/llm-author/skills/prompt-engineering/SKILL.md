@@ -305,7 +305,7 @@ When the user explicitly targets Gemini 3: it defaults to minimal output and han
 
 **Deep Research mode** — if the user mentions "deep research", citation-backed literature reviews, or extended autonomous web research, use `references/gemini-3-deep-research-guide.md` and `examples/gemini-3-deep-research.md` (autonomous 5–60 min runs, plan review, ~10% citation-error, explicit scope/temporal/source constraints). Otherwise apply standard adaptations:
 
-- Keep temperature at 1.0 — changing it causes looping or degraded output.
+- Leave `temperature`, `top_p`, and `top_k` unset: Gemini 3.6 and later ignore them, and on earlier Gemini 3 models non-default values risk degraded reasoning.
 - Place instructions after long context; put constraints at the prompt end.
 - Request verbosity explicitly and always include 2–3 few-shot examples.
 - Control format with response-prefix strings; add a self-verification block.

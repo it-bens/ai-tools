@@ -16,7 +16,7 @@
 
 | Aspect | Claude 4 | Gemini 3 | Adaptation Required |
 |--------|----------|----------|---------------------|
-| **Temperature** | 0.7-1.0 typical | Keep at 1.0 (changing causes issues) | Never lower temperature |
+| **Sampling parameters** | Temperature 0.7-1.0 typical | Leave `temperature`, `top_p`, `top_k` unset | Remove sampling parameters |
 | **Default verbosity** | Moderate detail | Minimal output | Explicitly request detail |
 | **Instruction position** | Flexible | For long context: after data | Move instructions post-context |
 | **Few-shot examples** | Often optional | Strongly recommended | Always include examples |
@@ -27,19 +27,19 @@
 
 ## Adaptation Techniques
 
-### 1. Keep Temperature at 1.0
+### 1. Leave Sampling Parameters Unset
 
-Gemini 3 behaves unpredictably with adjusted temperature. Lower values can cause looping or degraded output quality.
+Gemini 3.6 and later models ignore custom `temperature`, `top_p`, and `top_k` values and return deprecation warnings when a request sets them. On earlier Gemini 3 models, non-default values risk degraded reasoning performance.
 
-**Claude-style (fails on Gemini 3):**
+**Claude-style (ignored by Gemini 3.6 and later, risks degraded reasoning on earlier Gemini 3 models):**
 ```python
 temperature=0.3  # For consistent, focused output
 ```
 
 **Gemini 3-optimized:**
 ```python
-temperature=1.0  # Always keep at default
-# Use prompt structure, not temperature, for consistency
+# No temperature, top_p, or top_k
+# Use prompt structure, not sampling parameters, for consistency
 ```
 
 ### 2. Place Instructions After Long Context
@@ -272,18 +272,15 @@ Never abandon a task silently. Always report status.
 ### Basic Configuration
 
 ```python
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
-genai.configure(api_key="YOUR_API_KEY")
+client = genai.Client(api_key="YOUR_API_KEY")
 
-model = genai.GenerativeModel("gemini-2.0-flash")
-
-response = model.generate_content(
-    prompt,
-    generation_config=genai.GenerationConfig(
-        temperature=1.0,      # Always keep at 1.0
-        top_p=0.95,
-        top_k=40,
+response = client.models.generate_content(
+    model="gemini-3.8-flash",
+    contents=prompt,
+    config=types.GenerateContentConfig(
         max_output_tokens=8192
     )
 )
@@ -292,22 +289,24 @@ response = model.generate_content(
 ### With System Instructions
 
 ```python
-model = genai.GenerativeModel(
-    "gemini-2.0-flash",
-    system_instruction="Review the user's code. Provide specific, actionable feedback."
+response = client.models.generate_content(
+    model="gemini-3.8-flash",
+    contents=user_prompt,
+    config=types.GenerateContentConfig(
+        system_instruction="Review the user's code. Provide specific, actionable feedback."
+    )
 )
-
-response = model.generate_content(user_prompt)
 ```
 
 ### Structured Output (JSON Mode)
 
 ```python
-response = model.generate_content(
-    prompt,
-    generation_config=genai.GenerationConfig(
+response = client.models.generate_content(
+    model="gemini-3.8-flash",
+    contents=prompt,
+    config=types.GenerateContentConfig(
         response_mime_type="application/json",
-        response_schema={
+        response_json_schema={
             "type": "object",
             "properties": {
                 "analysis": {"type": "string"},
@@ -318,15 +317,6 @@ response = model.generate_content(
     )
 )
 ```
-
-### Recommended Parameters by Task
-
-| Use Case | Temperature | top_p | Notes |
-|----------|-------------|-------|-------|
-| Code generation | 1.0 | 0.95 | Use structured output for JSON |
-| Creative writing | 1.0 | 0.95 | Request verbosity explicitly |
-| Analysis/reasoning | 1.0 | 0.95 | Include self-verification |
-| Classification | 1.0 | 0.95 | Few-shot examples critical |
 
 ## Reusable Patterns
 
@@ -443,20 +433,18 @@ CONSTRAINTS (strictly enforce):
 **Symptom:** Same prompt produces varying quality results.
 
 **Solution:**
-1. Keep temperature at 1.0 (don't try to lower it)
-2. Add more few-shot examples
-3. Add self-verification block
-4. Use structured output mode for JSON
+1. Add more few-shot examples
+2. Add self-verification block
+3. Use structured output mode for JSON
 
 ### Looping or Repetitive Output
 
 **Symptom:** Model repeats content or gets stuck.
 
 **Solution:**
-1. Verify temperature is 1.0
-2. Add explicit "Do not repeat" instruction
-3. Set appropriate max_output_tokens
-4. Break complex tasks into smaller prompts
+1. Add explicit "Do not repeat" instruction
+2. Set appropriate max_output_tokens
+3. Break complex tasks into smaller prompts
 
 ### Multimodal Confusion
 
@@ -471,7 +459,7 @@ CONSTRAINTS (strictly enforce):
 
 When converting any Claude prompt for Gemini 3:
 
-- [ ] Keep temperature at 1.0 (do not adjust)
+- [ ] Remove `temperature`, `top_p`, and `top_k` from the request config
 - [ ] For long context: move instructions AFTER the data
 - [ ] Add context bridging phrases when referencing prior content
 - [ ] Explicitly request detail if comprehensive output needed

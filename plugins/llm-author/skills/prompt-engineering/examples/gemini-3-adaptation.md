@@ -345,31 +345,28 @@ CONSTRAINTS:
 Include with Gemini 3 prompts when providing API usage guidance:
 
 ```python
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
-genai.configure(api_key="YOUR_API_KEY")
+client = genai.Client(api_key="YOUR_API_KEY")
+model = "gemini-3.8-flash"  # Or "gemini-3.1-pro-preview" for complex reasoning
 
 # For most tasks
-model = genai.GenerativeModel(
-    "gemini-2.0-flash",  # Or "gemini-2.0-pro" for complex reasoning
-    system_instruction=system_prompt
-)
-
-response = model.generate_content(
-    user_prompt,
-    generation_config=genai.GenerationConfig(
-        temperature=1.0,      # Always keep at 1.0
-        top_p=0.95,
-        top_k=40,
+response = client.models.generate_content(
+    model=model,
+    contents=user_prompt,
+    config=types.GenerateContentConfig(
+        system_instruction=system_prompt,
         max_output_tokens=8192
     )
 )
 
 # For structured JSON output
-response = model.generate_content(
-    prompt,
-    generation_config=genai.GenerationConfig(
-        temperature=1.0,
+response = client.models.generate_content(
+    model=model,
+    contents=prompt,
+    config=types.GenerateContentConfig(
+        system_instruction=system_prompt,
         response_mime_type="application/json",
         response_schema=your_schema
     )
