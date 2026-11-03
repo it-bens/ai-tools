@@ -7,7 +7,7 @@ description: Use for substantial implementation or review work — multi-file ch
 
 # Orchestrating Subagent Work
 
-The session is the orchestrator: it owns specs, triage, adjudication, git, and write authority — and it conserves its own context by not re-doing worker verification. Workers never write by default; a worker writes only inside a write scope its checkpoint explicitly fences and every worker-written change is diff-reviewed by an independent worker before it stands. Dispatched workers (codex, sonnet/haiku subagents) are stateless specialists that receive self-contained prompts; their results are confirmed by a second, independent worker, not by the orchestrator. A result confirmed by two workers (codex counts as a worker) is final — the orchestrator verifies something itself only when a deviation routes it there. No worker is dispatched before the workflow below reaches "Execute next strategy step". Sibling sessions are not dispatched workers: distributing work across sessions is `work-orchestrator:orchestrating-session-work`'s domain, and this skill governs the work executed inside a session.
+The session is the orchestrator: it owns specs, triage, adjudication, git, and write authority — and it conserves its own context by not re-doing worker verification. Workers never write by default; a worker writes only inside a write scope its checkpoint explicitly fences, and every worker-written change is diff-reviewed by an independent worker before it stands. Dispatched workers (codex, sonnet/haiku subagents) are stateless specialists that receive self-contained prompts; their results are confirmed by a second, independent worker, not by the orchestrator. A result confirmed by two workers (codex counts as a worker) is final — the orchestrator verifies something itself only when a deviation routes it there. No worker is dispatched before the workflow below reaches "Execute next strategy step". Sibling sessions are not dispatched workers: distributing work across sessions is `work-orchestrator:orchestrating-session-work`'s domain, and this skill governs the work executed inside a session.
 
 ## Workflow
 
@@ -131,7 +131,7 @@ Dispatch the current checkpoint's worker per the strategy.
 
 Read `references/worker-prompts.md` before the first dispatch of any checkpoint and build the prompt from it. It governs every worker — codex and subagent alike — and a codex-less run keeps every block; skipping it dispatches implementers with no fence and no gates.
 
-Adjudicate on the worker's final verdict — per-item status, deviations, the not-verified list.
+Adjudicate on the worker's final verdict — per-item status, deviations, the not-verified list, anything the designs did not account for, and any reach outside the fence.
 
 Read the derived ruleset file before building each worker prompt, and phrase the prompt per its rules for the family this checkpoint's actor belongs to. The blocks and their content do not change with the family.
 

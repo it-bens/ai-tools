@@ -58,4 +58,4 @@ On Claude Code 2.1.317, the subagent system prompt, plugin agents included, carr
 
 ## Limits
 
-One claim, one search target, and one gate pair across the runs; the sonnet flip rate rests on three baseline runs. Model versions and the harness both move. Re-run the four shapes above after a Claude Code update or a model rev before trusting the directives they produced.
+One claim, one search target, and one gate pair across the runs; the sonnet flip rate rests on three baseline runs. Model versions and the harness both move. Re-run the shapes above after a Claude Code update or a model rev before trusting the directives they produced.
