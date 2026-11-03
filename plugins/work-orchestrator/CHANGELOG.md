@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 - The codex pre-flight pings the cheapest tier at `low` effort instead of using `codex login status`, which can report `Not logged in` while codex requests work. The pre-flight runs one dispatch on that tier.
 - Implementers no longer write a report file. Claude Code tells subagents not to pass findings to their parent through Markdown files, so implementers made the change but refused the dispatch-named report file that the confirmer was required to read. The final message is now the whole report: per-item status, files touched, deviations, the not-verified list, anything the designs did not account for and any reach outside the fence, at most 2,000 characters.
+- A regression reported during re-validation counts as a finding only after an independent worker confirms it. Previously an unconfirmed regression counted as a finding, so it could start another fix round, send the checkpoint to the deviation path after the second fix round, or block closure.
 
 ## [5.1.0] - 2026-11-03
 
