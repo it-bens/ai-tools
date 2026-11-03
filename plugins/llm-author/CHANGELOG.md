@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - The Gemini 3 output template, guide, and adaptation example name Gemini 3 model IDs (`gemini-3.8-flash`, `gemini-3.1-pro-preview`) instead of Gemini 2.0 IDs.
 - The Python samples in the Gemini 3 guide and adaptation example use the `google-genai` SDK (`genai.Client` and `client.models.generate_content` with `types.GenerateContentConfig`) in place of the deprecated `google-generativeai` package.
 - The Gemini 3 guidance and samples leave `temperature`, `top_p`, and `top_k` unset instead of fixing temperature at 1.0, and the guide drops its per-task parameter table. Google's docs state that Gemini 3.6 and later models ignore these values and that earlier Gemini 3 models should keep the defaults.
+- `docs/gemini-prompting-strategies.md` is a fresh verbatim copy of Google's prompting-strategies page (fetched 2026-11-03), with a source line. The old copy told readers to keep temperature at 1.0 for Gemini 3; the current page says Gemini 3.6 and later models ignore `temperature`, `top_p`, and `top_k`.
 
 ## [3.14.1] - 2026-11-03
 
