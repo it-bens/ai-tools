@@ -130,7 +130,7 @@ For prompts targeting Gemini 3, add:
 ```markdown
 ## API Configuration
 - Model: `gemini-3.8-flash` (Flash) or `gemini-3.1-pro-preview` (Pro)
-- Temperature: 1.0 (always keep at default)
+- Sampling: leave `temperature`, `top_p`, and `top_k` unset
 - For JSON: `response_mime_type="application/json"` with schema
 
 ## Adaptation Notes

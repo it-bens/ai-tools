@@ -357,9 +357,6 @@ response = client.models.generate_content(
     contents=user_prompt,
     config=types.GenerateContentConfig(
         system_instruction=system_prompt,
-        temperature=1.0,      # Always keep at 1.0
-        top_p=0.95,
-        top_k=40,
         max_output_tokens=8192
     )
 )
@@ -370,7 +367,6 @@ response = client.models.generate_content(
     contents=prompt,
     config=types.GenerateContentConfig(
         system_instruction=system_prompt,
-        temperature=1.0,
         response_mime_type="application/json",
         response_schema=your_schema
     )
