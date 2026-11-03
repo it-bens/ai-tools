@@ -30,7 +30,7 @@ The skill detects the active host, explores the project (stacks, test infrastruc
 - No Claude Code delivery configuration — the `software-writer` plugin delivers the files itself.
 - For Codex, a committed root `AGENTS.override.md` section with one `<project_extension>` envelope per extended skill, holding the extension file's path plus handling instructions that say when to read it (Codex resolves no `@path` references, so delivery is an explicit read instruction). Existing root `AGENTS.md` guidance is retained through an explicit instruction to read it — Codex replaces, not stacks, AGENTS files.
 
-**Re-sync mode:** when extension files (or a v1 setup) already exist, the skill diffs every claim against fresh exploration findings — moved symbols, deleted helpers, changed parallelism or CI facts, drifted surface taxonomies, stale reference citations — and proposes updates. It also migrates v1 setups: content under `.claude/hook-contexts/` moves to the new path, and the v1 hook entries are removed from the project settings with your approval. An unchanged project with no v1 artifacts produces no proposals.
+**Re-sync mode:** when extension files (or a v1 setup) already exist, the skill diffs every claim against fresh exploration findings and proposes an update for each stale entry it finds: moved symbols, deleted helpers, changed parallelism or CI facts, drifted surface taxonomies, and stale reference citations. It also migrates v1 setups: content under `.claude/hook-contexts/` moves to the new path, and the v1 hook entries are removed from the project settings with your approval. An unchanged project with no v1 artifacts produces no proposals.
 
 ## License
 
