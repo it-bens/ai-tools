@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ### Fixed
 
 - The Gemini 3 output template, guide, and adaptation example name Gemini 3 model IDs (`gemini-3.8-flash`, `gemini-3.1-pro-preview`) instead of Gemini 2.0 IDs.
+- The Python samples in the Gemini 3 guide and adaptation example use the `google-genai` SDK (`genai.Client` and `client.models.generate_content` with `types.GenerateContentConfig`) in place of the deprecated `google-generativeai` package.
 
 ## [3.14.1] - 2026-11-03
 

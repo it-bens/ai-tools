@@ -272,15 +272,15 @@ Never abandon a task silently. Always report status.
 ### Basic Configuration
 
 ```python
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
-genai.configure(api_key="YOUR_API_KEY")
+client = genai.Client(api_key="YOUR_API_KEY")
 
-model = genai.GenerativeModel("gemini-3.8-flash")
-
-response = model.generate_content(
-    prompt,
-    generation_config=genai.GenerationConfig(
+response = client.models.generate_content(
+    model="gemini-3.8-flash",
+    contents=prompt,
+    config=types.GenerateContentConfig(
         temperature=1.0,      # Always keep at 1.0
         top_p=0.95,
         top_k=40,
@@ -292,22 +292,24 @@ response = model.generate_content(
 ### With System Instructions
 
 ```python
-model = genai.GenerativeModel(
-    "gemini-3.8-flash",
-    system_instruction="Review the user's code. Provide specific, actionable feedback."
+response = client.models.generate_content(
+    model="gemini-3.8-flash",
+    contents=user_prompt,
+    config=types.GenerateContentConfig(
+        system_instruction="Review the user's code. Provide specific, actionable feedback."
+    )
 )
-
-response = model.generate_content(user_prompt)
 ```
 
 ### Structured Output (JSON Mode)
 
 ```python
-response = model.generate_content(
-    prompt,
-    generation_config=genai.GenerationConfig(
+response = client.models.generate_content(
+    model="gemini-3.8-flash",
+    contents=prompt,
+    config=types.GenerateContentConfig(
         response_mime_type="application/json",
-        response_schema={
+        response_json_schema={
             "type": "object",
             "properties": {
                 "analysis": {"type": "string"},
