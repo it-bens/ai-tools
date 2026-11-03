@@ -18,6 +18,7 @@ digraph revalidation_loop {
     "fix round applied" [shape=doublecircle];
     "gate re-run" [shape=box];
     "cross-family review of the round's diff" [shape=box];
+    "verify each reported regression" [shape=box];
     "any finding?" [shape=diamond];
     "fix rounds < 2?" [shape=diamond];
     "next fix round" [shape=box];
@@ -27,7 +28,8 @@ digraph revalidation_loop {
     "fix round applied" -> "gate re-run";
     "gate re-run" -> "cross-family review of the round's diff" [label="passes"];
     "gate re-run" -> "deviation path" [label="fails"];
-    "cross-family review of the round's diff" -> "any finding?";
+    "cross-family review of the round's diff" -> "verify each reported regression";
+    "verify each reported regression" -> "any finding?";
     "any finding?" -> "checkpoint closes" [label="no"];
     "any finding?" -> "fix rounds < 2?" [label="yes"];
     "fix rounds < 2?" -> "next fix round" [label="yes"];
@@ -74,9 +76,13 @@ EOF
 
 A resume passes only `--model`, `--config` (`-c`), and `--disable`. `exec resume` rejects `--sandbox` and `-C`, so the sandbox rides `-c sandbox_mode=…`; workdir and model restore from the session, and output arrives on stdout. Capture the printed session id at the original dispatch.
 
+### Verify each reported regression
+
+Dispatch the "Verification of review findings" row once for each regression this round's reviews reported.
+
 ### Any finding?
 
-A finding is a defect caused by the round's diff that an independent worker confirmed (a regression), or a listed previous finding reported not fixed. Answer this decision once every reported regression is confirmed or refuted. Send a reported defect that existed before the round and was not caused by its diff to triage; it is not a finding here and does not block closure.
+A finding is a defect caused by the round's diff that an independent worker confirmed (a regression), or a listed previous finding reported not fixed. Answer this decision once the verification of every reported regression has returned. Send a reported defect that existed before the round and was not caused by its diff to triage; it is not a finding here and does not block closure.
 
 ### Fix rounds < 2?
 
@@ -92,6 +98,6 @@ A finding still open after two fix rounds goes to the deviation path.
 
 ### Checkpoint closes
 
-The checkpoint closes when the round's gate re-run and cross-family review pass, the resume reports every listed previous finding fixed, and every regression it reports was refuted.
+The checkpoint closes when "Any finding?" is answered no.
 
 A codex-less review checkpoint has no resume equivalent: re-validation there is a fresh independent worker against the same scope, and the trust boundaries in `worker-prompts.md` apply unchanged.
