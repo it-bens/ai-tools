@@ -20,11 +20,12 @@ digraph setting_up {
     "Installed version?" [shape=diamond];
     "Installed version 5.1.0 or later?" [shape=diamond];
     "Ask user to update before continuing" [shape=box];
+    "User updates?" [shape=diamond];
+    "STOP: work-orchestrator 5.1.0 required" [shape=octagon style=filled fillcolor=red];
     "Report version unknown; ask the user" [shape=box];
     "Per selected skill: extension file present?" [shape=diamond];
     "Step 2: Explore the project" [shape=box];
     "Step 3: Diff existing extension files against findings" [shape=box];
-    "Installed version 5.0.0 or later?" [shape=diamond];
     "Audit routing.effort_defaults: list 4.x name-family candidates per entry" [shape=box];
     "Candidates for the entry?" [shape=diamond];
     "Propose routing.model_defaults where the model differs" [shape=box];
@@ -40,7 +41,7 @@ digraph setting_up {
     "Step 4: Draft extension proposals" [shape=box];
     "Step 5: Refine conversationally" [shape=box];
     "Entry breaks a spawn guard or sets a model on a codex checkpoint?" [shape=diamond];
-    "Refuse it; collect it with the refused findings" [shape=box];
+    "Refuse it; propose the passing parent default or ask for a passing value; collect it with the refused findings" [shape=box];
     "User approves the plan?" [shape=diamond];
     "Step 6: Write one extension file per selected skill" [shape=box];
     "Step 7: Verify and report" [shape=box];
@@ -54,16 +55,17 @@ digraph setting_up {
     "Report version unknown; ask the user" -> "Installed version?";
     "Installed version?" -> "Installed version 5.1.0 or later?" [label="known"];
     "Installed version 5.1.0 or later?" -> "Ask user to update before continuing" [label="no"];
-    "Ask user to update before continuing" -> "Installed version?";
+    "Ask user to update before continuing" -> "User updates?";
+    "User updates?" -> "Installed version?" [label="yes"];
+    "User updates?" -> "STOP: work-orchestrator 5.1.0 required" [label="no"];
     "Installed version 5.1.0 or later?" -> "Per selected skill: extension file present?" [label="yes"];
     "Per selected skill: extension file present?" -> "Step 2: Explore the project" [label="absent — fresh mode for that skill"];
     "Per selected skill: extension file present?" -> "Step 2: Explore the project" [label="present — re-sync mode for that skill"];
     "Step 2: Explore the project" -> "Step 4: Draft extension proposals" [label="every selected skill fresh"];
     "Step 2: Explore the project" -> "Step 3: Diff existing extension files against findings" [label="any file in re-sync"];
-    "Step 3: Diff existing extension files against findings" -> "Installed version 5.0.0 or later?";
-    "Installed version 5.0.0 or later?" -> "Audit routing.effort_defaults: list 4.x name-family candidates per entry" [label="yes"];
-    "Installed version 5.0.0 or later?" -> "Step 4: Draft extension proposals" [label="no, skip audit and rewrite"];
+    "Step 3: Diff existing extension files against findings" -> "Audit routing.effort_defaults: list 4.x name-family candidates per entry";
     "Audit routing.effort_defaults: list 4.x name-family candidates per entry" -> "Candidates for the entry?";
+    "Audit routing.effort_defaults: list 4.x name-family candidates per entry" -> "Rewrite 4.x definition names per the migration table" [label="no entries"];
     "Candidates for the entry?" -> "Propose routing.model_defaults where the model differs" [label="exactly one"];
     "Candidates for the entry?" -> "Flag the entry; apply the guard check" [label="none"];
     "Candidates for the entry?" -> "Ask the user which model the project meant" [label="more than one"];
@@ -81,9 +83,9 @@ digraph setting_up {
     "Rewritten claude addition row names a different effort?" -> "Step 4: Draft extension proposals" [label="no"];
     "Flag the effort cell inactive in 4.x; keep only on user confirmation" -> "Step 4: Draft extension proposals";
     "Step 4: Draft extension proposals" -> "Step 5: Refine conversationally" -> "Entry breaks a spawn guard or sets a model on a codex checkpoint?";
-    "Entry breaks a spawn guard or sets a model on a codex checkpoint?" -> "Refuse it; collect it with the refused findings" [label="yes"];
+    "Entry breaks a spawn guard or sets a model on a codex checkpoint?" -> "Refuse it; propose the passing parent default or ask for a passing value; collect it with the refused findings" [label="yes"];
     "Entry breaks a spawn guard or sets a model on a codex checkpoint?" -> "User approves the plan?" [label="no"];
-    "Refuse it; collect it with the refused findings" -> "User approves the plan?";
+    "Refuse it; propose the passing parent default or ask for a passing value; collect it with the refused findings" -> "User approves the plan?";
     "User approves the plan?" -> "Step 5: Refine conversationally" [label="no — amend or drop"];
     "User approves the plan?" -> "Step 6: Write one extension file per selected skill" [label="yes"];
     "Step 6: Write one extension file per selected skill" -> "Step 7: Verify and report" -> "Done";
@@ -103,7 +105,7 @@ This skill targets Claude Code. `work-orchestrator` ships no Codex manifest, so 
 Locate the installed `work-orchestrator` before exploring, in both modes: read `~/.claude/plugins/installed_plugins.json`, take the `work-orchestrator@<marketplace>` entry that applies to this project (a project-scoped entry before a user-scoped one; ask when more than one could apply), and read its `installPath` and `version`. `<installPath>/EXTENSION.md` is the contract Step 4 reads.
 
 - **Version unknown** (no entry, no readable version): report the version as unknown and ask the user which `work-orchestrator` version is installed. Write no 5.x content until the user resolves it, and do not assume 4.x.
-- **Below 5.1.0:** ask the user to update `work-orchestrator` to 5.1.0 or later before continuing; re-check the installed version after the update.
+- **Below 5.1.0:** ask the user to update `work-orchestrator` to 5.1.0 or later before continuing; re-check the installed version after the update. If the user declines, write nothing and report that work-orchestrator 5.1.0 or later is required.
 - **5.1.0 or later:** continue with every step.
 
 ### Step 2: Explore the project
@@ -129,7 +131,7 @@ Diff each claim in every existing extension file against the current findings: g
 
 Report the gate table as the highest-value diff: a stale gate command is the one drift that silently breaks every implementer dispatch.
 
-When the installed `work-orchestrator` is 5.0.0 or later, run the `routing.effort_defaults` audit below first, then the 4.x name rewrite. Below 5.0.0, skip both.
+Run the `routing.effort_defaults` audit below first, then the 4.x name rewrite. With no `routing.effort_defaults` entry, go straight to the rewrite.
 
 Rewrite every retired 4.x agent definition name found in an extension file to the 5.x duty definition plus model and effort from this table, and propose the rewrite like any other stale claim. In a routing-additions row, the actor cell becomes `` `<definition>` on <model> `` (spawned as `work-orchestrator:<definition>`) and the effort cell takes the table's effort, the level the 4.x definition ran at; for the haiku definitions, which inherited the session level, `low` replaces it. Where a claude addition row already names a different effort, flag that cell as inactive in 4.x, where the definition's own effort applied, and ask the user whether to keep it before carrying it over.
 
@@ -248,4 +250,4 @@ Confirm in this order, per written file:
 3. Every cited file path exists.
 4. The file is not ignored by version control. It is project configuration and must be committed. Do not create a commit without the user's explicit approval, but report untracked state as incomplete setup.
 
-Report the files written, the evidence behind each gate row, and the improvement candidates and refused findings collected in Step 4 and Step 5. Confirm delivery by invoking each written skill and checking that a `<project_extension>` block for it appears; if none appears, report that the installed `work-orchestrator` plugin is older than 4.0.0 or the session needs a restart, and stop. In re-sync mode, when the audits flagged nothing, report that no changes were proposed.
+Report the files written, the evidence behind each gate row, and the improvement candidates and refused findings collected in Step 4 and Step 5. Confirm delivery by invoking each written skill and checking that a `<project_extension>` block for it appears; if none appears, report that the installed `work-orchestrator` plugin is older than 4.0.0 or the session needs a restart, and stop. In re-sync mode, when Steps 3 to 5 made no proposal of any kind, report that no changes were proposed.

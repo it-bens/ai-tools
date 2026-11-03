@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Fixed
 
+- Stop without writing if the user declines the required work-orchestrator update.
+- Run the effort-default audit and 4.x name rewrite in every re-sync.
 - Refuse guard-breaking migration entries, qualify re-sync no-ops, and require work-orchestrator 5.1.0 or later.
 
 ### Changed
