@@ -7,5 +7,6 @@
     "email": "martin.bens@it-bens.de"
   },
   "license": "MIT",
-  "keywords": ["commit-messages", "setup", "hooks", "extension", "skill"]
+  "keywords": ["commit-messages", "setup", "hooks", "extension", "skill"],
+  "dependencies": ["commit-message-writer"]
 }

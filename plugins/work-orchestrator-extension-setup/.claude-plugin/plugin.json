@@ -7,5 +7,6 @@
     "email": "martin.bens@it-bens.de"
   },
   "license": "MIT",
-  "keywords": ["orchestration", "subagents", "codex", "setup", "extension", "skill"]
+  "keywords": ["orchestration", "subagents", "codex", "setup", "extension", "skill"],
+  "dependencies": ["work-orchestrator"]
 }
