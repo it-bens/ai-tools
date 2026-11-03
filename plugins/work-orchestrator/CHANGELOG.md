@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- The codex pre-flight pings the cheapest tier at `low` effort instead of using `codex login status`, which reported `Not logged in` for working API-key and custom-provider setups. A successful pre-flight uses one model request on that tier.
+
 ## [5.1.0] - 2026-11-03
 
 ### Fixed

@@ -38,7 +38,7 @@ work-orchestrator requires Claude Code 2.1.293 or later. The skill passes model 
 
 The `llm-author` plugin is declared as a dependency and auto-installs with this one; its `prompt-engineering` skill supplies the per-family worker-prompt rules.
 
-Codex CLI worker dispatch additionally requires an installed, authenticated `codex` binary. The skill detects its absence and asks for consent before running codex-less.
+Codex CLI worker dispatch requires a `codex` binary that answers a one-request ping. The skill checks availability and asks for consent before running codex-less.
 
 Without a project extension, the skill runs on universal defaults: gates enumerated from the build configuration at dispatch time, the universal banned-command and conduct-rule lists, and the routing table as shipped.
 

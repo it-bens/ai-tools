@@ -78,7 +78,7 @@ digraph orchestrating_subagent_work {
 
 ### Run codex pre-flight
 
-Run this node at task entry before any planning or dispatch, and again whenever an adaptation proposes restoring codex to a checkpoint. Run `codex --version` and `codex login status` via Bash. Codex is available only when both exit zero and the login status reports an authenticated account. A missing binary, non-zero exit, auth error, or known-exhausted quota means unavailable. Quota exhaustion is known only through a failed dispatch or an explicit user statement — suspicion alone does not make codex unavailable. Do not probe with a model request; the pre-flight must not consume quota. Report the pre-flight result in one line before continuing.
+Run this node at task entry before any planning or dispatch, and again whenever an adaptation proposes restoring codex to a checkpoint. Ping codex via Bash with one `codex exec` call on the cheapest codex tier the routing table names, at `low` effort, the lowest the effort ladder routes to. Pass the flags a fresh non-implementer dispatch passes in `references/codex-dispatch.md`, `codex.extra_config` included, with the prompt `Reply with the single word pong.` and stdin redirected from `/dev/null`. Codex is available only when the call exits zero and its final message is `pong`. A missing binary, a non-zero exit, an auth error such as `401 Unauthorized`, or a quota error means unavailable. Do not use `codex login status` as the check: it reports `Not logged in` for working API-key and custom-provider setups. Report the pre-flight result in one line before continuing.
 
 ### Codex-less consent on record in this conversation?
 
