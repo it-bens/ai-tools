@@ -78,7 +78,7 @@ digraph orchestrating_subagent_work {
 
 ### Run codex pre-flight
 
-Run this node at task entry before any planning or dispatch, and again whenever an adaptation proposes restoring codex to a checkpoint. Run `codex --version` and `codex login status` via Bash. Codex is available only when both exit zero and the login status reports an authenticated account. A missing binary, non-zero exit, auth error, or known-exhausted quota means unavailable. Quota exhaustion is known only through a failed dispatch or an explicit user statement — suspicion alone does not make codex unavailable. Do not probe with a model request; the pre-flight must not consume quota. Report the pre-flight result in one line before continuing.
+Run this node at task entry before any planning or dispatch, and again whenever an adaptation proposes restoring codex to a checkpoint. Ping codex as a fresh non-implementer dispatch per `references/codex-dispatch.md`, on the cheapest codex tier the routing table names at `low` effort, with the prompt `Reply with pong.` Codex is available when the dispatch exits zero; otherwise it is unavailable, and the report names the error line. Do not use `codex login status` as the check: it can report `Not logged in` while codex requests work. Report the pre-flight result in one line before continuing.
 
 ### Codex-less consent on record in this conversation?
 
@@ -141,7 +141,7 @@ Read the derived ruleset file before building each worker prompt, and phrase the
 
 ### Deviation or unforeseen problem?
 
-Check after every dispatch returns and whenever new information arrives between dispatches. Deviation triggers: dispatch failure or timeout; codex auth/quota loss; results contradicting a named strategy assumption; scope larger than decomposed; gate failure; a worker returning empty, off-profile, or out-of-scope output; a worker finishing without its final message arriving; a dispatch's named report file missing or empty when its verdict arrives; a worker having written files it was not fenced to write; the user's time or budget constraint no longer fitting the remaining strategy; codex availability regained (a user statement or a restored login) during a codex-less run; producer and confirmer disagreeing about a result; a result unable to obtain its second confirmation; orchestrator-observed evidence of a defect in a result already marked final.
+Check after every dispatch returns and whenever new information arrives between dispatches. Deviation triggers: dispatch failure or timeout; codex auth/quota loss; results contradicting a named strategy assumption; scope larger than decomposed; gate failure; a worker returning empty, off-profile, or out-of-scope output; a worker finishing without its final message arriving; a dispatch's named report file missing or empty when its verdict arrives; a worker having written files it was not fenced to write; the user's time or budget constraint no longer fitting the remaining strategy; codex availability regained (a user statement or restored access) during a codex-less run; producer and confirmer disagreeing about a result; a result unable to obtain its second confirmation; orchestrator-observed evidence of a defect in a result already marked final.
 
 `deviation.additional_triggers` adds project triggers to this list; default if not otherwise stated: the triggers above only. Assignments append — no assignment removes a listed trigger.
 
