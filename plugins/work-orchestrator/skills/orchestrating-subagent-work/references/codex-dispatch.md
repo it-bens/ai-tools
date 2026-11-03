@@ -76,7 +76,7 @@ A resume passes only `--model`, `--config` (`-c`), and `--disable`. `exec resume
 
 ### Any finding?
 
-A finding is a listed previous finding reported not fixed or a defect caused by the round's diff (a regression). Send a reported defect that existed before the round and was not caused by its diff to triage; it is not a finding here and does not block closure.
+A finding is a defect caused by the round's diff that an independent worker confirmed (a regression), or a listed previous finding reported not fixed. Answer this decision once every reported regression is confirmed or refuted. Send a reported defect that existed before the round and was not caused by its diff to triage; it is not a finding here and does not block closure.
 
 ### Fix rounds < 2?
 
@@ -92,6 +92,6 @@ A finding still open after two fix rounds goes to the deviation path.
 
 ### Checkpoint closes
 
-The checkpoint closes when the round's gate re-run and cross-family review pass and the resume reports every listed previous finding fixed and no regression.
+The checkpoint closes when the round's gate re-run and cross-family review pass, the resume reports every listed previous finding fixed, and every regression it reports was refuted.
 
 A codex-less review checkpoint has no resume equivalent: re-validation there is a fresh independent worker against the same scope, and the trust boundaries in `worker-prompts.md` apply unchanged.
