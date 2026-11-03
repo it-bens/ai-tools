@@ -351,7 +351,7 @@ genai.configure(api_key="YOUR_API_KEY")
 
 # For most tasks
 model = genai.GenerativeModel(
-    "gemini-2.0-flash",  # Or "gemini-2.0-pro" for complex reasoning
+    "gemini-3.8-flash",  # Or "gemini-3.1-pro-preview" for complex reasoning
     system_instruction=system_prompt
 )
 

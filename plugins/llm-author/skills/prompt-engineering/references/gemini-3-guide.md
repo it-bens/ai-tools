@@ -276,7 +276,7 @@ import google.generativeai as genai
 
 genai.configure(api_key="YOUR_API_KEY")
 
-model = genai.GenerativeModel("gemini-2.0-flash")
+model = genai.GenerativeModel("gemini-3.8-flash")
 
 response = model.generate_content(
     prompt,
@@ -293,7 +293,7 @@ response = model.generate_content(
 
 ```python
 model = genai.GenerativeModel(
-    "gemini-2.0-flash",
+    "gemini-3.8-flash",
     system_instruction="Review the user's code. Provide specific, actionable feedback."
 )
 

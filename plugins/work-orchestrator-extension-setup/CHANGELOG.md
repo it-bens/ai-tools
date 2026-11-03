@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- On a delivery failure, report only a needed session restart; the setup already requires work-orchestrator 5.1.0 or later, so an installed version older than 4.0.0 is no longer named as a cause.
+- The README's re-sync description separates the fresh exploration findings from the kinds of stale entries the audit reports.
+
 ## [2.3.0] - 2026-11-03
 
 ### Fixed

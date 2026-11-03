@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- The Gemini 3 output template, guide, and adaptation example name Gemini 3 model IDs (`gemini-3.8-flash`, `gemini-3.1-pro-preview`) instead of Gemini 2.0 IDs.
+
 ## [3.14.1] - 2026-11-03
 
 ### Fixed

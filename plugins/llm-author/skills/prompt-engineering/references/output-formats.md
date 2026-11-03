@@ -129,7 +129,7 @@ For prompts targeting Gemini 3, add:
 
 ```markdown
 ## API Configuration
-- Model: `gemini-2.0-flash` or `gemini-2.0-pro`
+- Model: `gemini-3.8-flash` (Flash) or `gemini-3.1-pro-preview` (Pro)
 - Temperature: 1.0 (always keep at default)
 - For JSON: `response_mime_type="application/json"` with schema
 
