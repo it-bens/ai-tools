@@ -175,9 +175,10 @@ One row per codex actor in `model-routing.md`'s routing table, plus the closest-
 
 On Codex CLI 0.166.0, each check below ran once.
 
-- `codex login status` returned `Not logged in` and exit 1 on a machine where requests worked through the `cpa-itb` custom provider. The user reported the same output with API-key authentication. The command reflects the built-in OpenAI login, not availability through these setups.
+- `codex login status` returned `Not logged in` and exit 1 on a machine where requests worked through a custom provider. The user reported the same output with API-key authentication.
 - A `gpt-6-luna` ping at `low` effort on the working provider returned `pong` and exit 0, using 17,402 tokens, mostly for the codex system prompt and SessionStart hook context. The command was `codex exec -m gpt-6-luna -c model_reasoning_effort=low -c approval_policy=never --sandbox read-only --ephemeral --skip-git-repo-check "Reply with the single word pong."`.
 - The same ping with `-c model_provider=openai` on the logged-out built-in provider attempted about 10 reconnects over roughly 10 seconds, then returned `ERROR: unexpected status 401 Unauthorized: Missing bearer or basic authentication in header` and exit 1.
 - Without stdin redirected, `codex exec` printed `Reading additional input from stdin...`.
+- The pre-flight as the skill prescribes it, a fresh non-implementer dispatch (`codex exec -m gpt-6-luna -c model_reasoning_effort=low -c approval_policy=never --sandbox read-only --disable memories -C <repo root> -` with the prompt `Reply with pong.` piped on stdin from a file), returned `pong` and exit 0 on the working provider, using 14,778 tokens.
 
-`codex login status` is not a valid availability check for these configurations. The pre-flight now pings instead of forbidding a request that consumes quota; the request checks the configured provider at the cost of one model call.
+`codex login status` is not a valid availability check for these configurations. The pre-flight now pings instead of forbidding a request that consumes quota; the ping is one dispatch against the configured provider.

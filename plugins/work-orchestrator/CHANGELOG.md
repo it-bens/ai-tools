@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Fixed
 
-- The codex pre-flight pings the cheapest tier at `low` effort instead of using `codex login status`, which reported `Not logged in` for working API-key and custom-provider setups. A successful pre-flight uses one model request on that tier.
+- The codex pre-flight pings the cheapest tier at `low` effort instead of using `codex login status`, which can report `Not logged in` while codex requests work. The pre-flight runs one dispatch on that tier.
 
 ## [5.1.0] - 2026-11-03
 
