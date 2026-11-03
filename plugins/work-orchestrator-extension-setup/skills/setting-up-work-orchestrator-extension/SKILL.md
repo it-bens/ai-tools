@@ -1,6 +1,6 @@
 ---
 name: setting-up-work-orchestrator-extension
-version: 2.3.0
+version: 2.3.1
 description: Use when the user explicitly asks to set up, install, configure, wire up, or re-sync the work-orchestrator plugin's extensions for the current project. Do not activate as a side effect of an orchestration task.
 ---
 
