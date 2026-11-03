@@ -1,6 +1,6 @@
 ---
 name: prompt-engineering
-version: 3.14.1
+version: 3.14.2
 description: Use when the user asks to create, write, improve, or debug a prompt, build a prompt chain, design a system prompt, adapt a prompt for GPT-6, GPT-6.1, or GPT-5.6 (OpenAI), GLM 4.7 (Z.ai), or Gemini 3, create a Gemini deep research prompt, migrate a prompt or skill from Claude 4 to Claude 5, from Opus 5 to Opus 5.5, from Sonnet 5 to Sonnet 5.5, from Haiku 4.5 to Haiku 5.5, or between GPT versions (e.g. GPT-5.6 to GPT-6, GPT-6 Sol to GPT-6.1 Sol), optimize LLM-targeted content (skills, agents, instructions, documentation), author a prompt an invoking workflow dispatches to a worker process, distill prompt-authoring rules into a session-scoped ruleset, or needs prompt engineering guidance. Also handles prompt refinement and follow-up modifications.
 ---
 
