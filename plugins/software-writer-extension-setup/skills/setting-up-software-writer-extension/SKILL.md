@@ -6,7 +6,7 @@ description: Use when the user explicitly asks to set up, install, configure, wi
 
 # Setting Up the software-writer Extension
 
-Create the canonical extension setup for the `software-writer` skills (`writing-code`, `writing-tests`, `writing-docs`, `sweeping-dead-code`) in the current project. Both hosts share one extension file per skill under `.claude/extensions/software-writer/`; on Claude Code the `software-writer` plugin (2.0.0 or later) picks these files up with no per-project configuration, while Codex discovers them through a committed root `AGENTS.override.md`. Re-sync mode audits existing extension files against the current codebase, turns stale rows into update proposals, and migrates v1 setups (`.claude/hook-contexts/` files plus project-settings hook entries) to this layout.
+Create the canonical extension setup for the `software-writer` skills (`writing-code`, `writing-tests`, `writing-docs`, `sweeping-dead-code`) in the current project. Both hosts share one extension file per skill under `.claude/extensions/software-writer/`; on Claude Code the `software-writer` plugin (2.4.0 or later) picks these files up with no per-project configuration, while Codex discovers them through a committed root `AGENTS.override.md`. Re-sync mode audits existing extension files against the current codebase, turns stale rows into update proposals, and migrates v1 setups (`.claude/hook-contexts/` files plus project-settings hook entries) to this layout.
 
 ## Workflow
 
@@ -124,7 +124,7 @@ Verify after writing: every section in each file is one of the three template se
 
 ### Step 7: Provision Codex delivery and migrate v1 setups
 
-**Claude Code.** No delivery configuration is written: the `software-writer` plugin (2.0.0 or later) delivers extension files itself.
+**Claude Code.** No delivery configuration is written: the `software-writer` plugin (2.4.0 or later) delivers extension files itself.
 
 **v1 migration** (only when Step 1 recorded v1 artifacts; requires the user's explicit approval before editing settings):
 
@@ -187,4 +187,4 @@ Confirm in this order:
 2. After a v1 migration: no `.claude/hook-contexts/writing-*.md` files remain, the edited settings files are valid JSON, and no hook command referencing them remains.
 3. Codex: root `AGENTS.override.md` contains the canonical extension section with one `<project_extension>` block per extended skill, contains no `@path` references (Codex reads them as literal strings), begins with the explicit read-`AGENTS.md` instruction when a root `AGENTS.md` exists (the override replaces the root file, it does not stack), and the project files are tracked.
 
-Report the files written, the migration actions taken, and the improvement candidates collected in Step 4. For Claude Code, confirm delivery by invoking one extended `software-writer` skill and checking that a `<project_extension>` block for it appears; if none appears, report that the installed `software-writer` plugin is older than 2.0.0 or the session needs a restart, and stop. For Codex, instruct the user to start a new session from the project root and invoke a writing skill to confirm the override is active. In re-sync mode on an unchanged project with no v1 artifacts, report that no changes were proposed.
+Report the files written, the migration actions taken, and the improvement candidates collected in Step 4. For Claude Code, confirm delivery by invoking one extended `software-writer` skill and checking that a `<project_extension>` block for it appears; if none appears, report the skill that showed no block and the extension file path it was expected from, and stop. For Codex, instruct the user to start a new session from the project root and invoke a writing skill to confirm the override is active. In re-sync mode on an unchanged project with no v1 artifacts, report that no changes were proposed.
