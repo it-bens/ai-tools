@@ -52,6 +52,10 @@ Opus did not share the failure in one unedited run. The unedited `escalated-chec
 
 Naming the first token to emit bound in four positive-phrasing runs; naming the thing to avoid did not bind in the one negative-phrasing run. The `gate-run` and `extract` definitions carry the same positive form for consistency of duty wording: the `gate-run` worker on haiku with no effort set had no shape defect in evidence before or after, and the `extract` worker on haiku with no effort set still opened one run with a `## Report` heading, so that definition's edit is unconfirmed.
 
+## Report files are refused
+
+On Claude Code 2.1.317, the subagent system prompt, plugin agents included, carries one of two notes: "Do NOT … report/summary/findings/analysis .md files. Return findings directly as your final assistant message", or "please *don't* try to pass information to your parent agent via writing files like markdown files". Which one a session gets was not determined; the refusals below cite the first. Given a dispatch that named a `.md` report file, `implement` on sonnet at `medium` made the change, passed the gate and declined to write the file in 3 of 3 runs, each time citing that note. The same contract with a `.txt` path was written in 6 of 6 runs (sonnet 4, opus 2), but the note says it is about report files, and a general-purpose probe read it as covering every extension. The plugin dropped the report file instead. With the final message as the only report, `implement` on sonnet at `medium` made the change, ran the gate and wrote no other file in 3 of 3 runs. An `adversarial-check` confirmer on sonnet at `high`, given no report file, confirmed a correct change and refuted a change with a planted defect, one run each. All runs used one small fixture.
+
 ## Limits
 
-One claim, one search target, and one gate pair across the runs; the sonnet flip rate rests on three baseline runs. Model versions and the harness both move. Re-run the four shapes above after a Claude Code update or a model rev before trusting the directives they produced.
+One claim, one search target, and one gate pair across the runs; the sonnet flip rate rests on three baseline runs. Model versions and the harness both move. Re-run the shapes above after a Claude Code update or a model rev before trusting the directives they produced.

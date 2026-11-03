@@ -30,12 +30,12 @@ OUT and ADJ are mandatory in every review prompt.
 | Block | Content |
 |---|---|
 | CTX | Repo root, branch, commit, tree state (clean, or the dirty-tree fence). |
-| FENCE | Named allowed files, plus the dispatch's report file (see §Report files) as a standing allowed write; no commit/stage/push; banned git verbs on a dirty tree; protected paths (`project.protected_paths`; default if not otherwise stated: none registered — name them per dispatch); banned command classes (`project.banned_commands`; default if not otherwise stated: e2e suites, containers, device tooling, deployments — assignments append to that list); for a subagent actor, the nested-subagent directive per §Nested subagents. |
+| FENCE | Named allowed files; no commit/stage/push; banned git verbs on a dirty tree; protected paths (`project.protected_paths`; default if not otherwise stated: none registered — name them per dispatch); banned command classes (`project.banned_commands`; default if not otherwise stated: e2e suites, containers, device tooling, deployments — assignments append to that list); for a subagent actor, the nested-subagent directive per §Nested subagents. |
 | SKILLS | Project skill files as required reading, per `project.skill_files` as above. |
 | RULES | Verbatim extracts of the project's conduct rules: fail-hard (no silent fallbacks), calibrated honesty (never claim an unrun gate passed), doc drift (every touched doc claim verified in the same change). `project.conduct_rules` adds further rules; default if not otherwise stated: those three — assignments append. |
 | DESIGN | Per fix: defect with evidence, the decided design, explicit test duties, and the stop-and-report clause: "if the decided design contradicts what you find, STOP that item and report the contradiction; do not invent an alternative." |
 | GATES | The project's verification gates with exact commands (format, typecheck, lint, test). Name any gate known to fail inside a worker sandbox and its one permitted fallback. Name the gates an independent worker re-runs after the run returns. `project.gates` supplies all of this; default if not otherwise stated: enumerate the gates from the project's build configuration at dispatch time. |
-| REPORT | Two tiers. The worker writes the full report — per-fix evidence, verbatim gate tails, quotes, diffs — to the report file named in this block. The worker's final message carries only the verdict: per-fix status, files touched, deviations, the honest not-verified list, and the report file path — at most 2,000 characters, nothing more. |
+| REPORT | The worker's final message is the report and carries only the verdict: per-fix status, files touched, deviations, the honest not-verified list, anything the designs did not account for, and any reach outside the fence — at most 2,000 characters, nothing more. |
 
 When a fix's true scope crosses packages, enumerate every affected file AND state the scope quantifier. State the out-of-fence rule in DESIGN: where each file's change stands alone and the quantifier is contradicted by a shorter file list, the worker implements within the fence and reports the contradiction; where a fenced change would break code outside the fence (callers, implementers, or consumers of the changed behavior), the worker stops that item and reports the reach with its call sites. The test is whether code outside the fence still works, checked against the code and the gates.
 
@@ -58,10 +58,6 @@ Every prompt dispatched to a subagent actor carries one of these two directives,
 - **Delegating:** name the purposes the worker may spawn for (locating code or call sites, sweeping a convention, answering a closed question, reading one bounded source) and direct the worker to use them for that legwork. State: every spawned subagent is read-only; each spawn sets `subagent_type` to the plugin's own leaf-duty definition matching the purpose, written prefixed as `work-orchestrator:<definition>`, and passes the effective `model` and `effort` of that duty's row per `model-routing.md` — name all three per purpose in the directive, never a bare model and never a built-in type; the worker checks a spawned result against source before building on it; the worker's own verdict, fence, and report duties do not delegate.
 
 The strategy declares nested delegation per checkpoint, and only for a checkpoint whose actor's definition permits the Agent tool; the eligible-definition roster lives in `model-routing.md`'s nested-delegation routing rule, which the strategy node already reads.
-
-## Report files
-
-Every implementer dispatch names one report file in its REPORT block: an absolute path in a non-permanent directory outside the repository — the same class of location as the derived ruleset file — one file per dispatch, named for the checkpoint and worker. Report files are session-scoped: never committed, never placed under a project path, never reused across dispatches. A confirmer dispatch receives the producer's report file path as required reading; the confirmer reads it itself. Review dispatches keep their findings inline in OUT; findings feed triage directly.
 
 ## Trust boundaries
 
