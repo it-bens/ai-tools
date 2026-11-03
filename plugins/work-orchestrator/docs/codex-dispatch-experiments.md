@@ -8,7 +8,7 @@ Experimental-evidence leg behind the `orchestrating-subagent-work` skill. Source
 - `codex exec resume <session-id>` is the standard re-validation loop after a fix round. In the validation run it met all four parity criteria: mechanical success, context retention without restatement, fixed-marked-fixed AND unfixed-marked-not-fixed, and no spurious "no findings". The resumed model re-checked the tree itself (`git status`, `git diff`) — no rubber-stamping.
 - Cost of a resume round: ≈42k tokens / ≈75 s, versus 137–312k tokens / 6–11 min for a fresh focused review — roughly 3–7× cheaper than any stateless alternative.
 - On CLI 0.144.4, `exec resume` accepted only `--model`, `--config` (`-c`), and `--disable` (verified via verbatim flag-rejection capture). On CLI 0.156.1 (2026-09-24) it also accepts, among others, `--enable`, `--image`, `--json`, `-o/--output-last-message`, `--output-schema`, `--ephemeral`, `--ignore-user-config`, `--ignore-rules`, `--skip-git-repo-check`, `--worktree`, `--strict-config`, `--last`, and `--all`, and still rejects `--sandbox` and `-C`. The skill's policy keeps a resume to `--model`, `-c`, and `--disable`; the sandbox rides `-c sandbox_mode=…`, and workdir/model restore from the session.
-- Uncertainty: one resume, one round was tested on the CLI. The skill routes one resume per fix round and sends a finding still open after two fix rounds to the deviation path; deeper re-validation remains untested on the CLI.
+- Uncertainty: one resume, one round was tested on the CLI. The skill resumes each reviewer's session once per fix round and sends a finding still open after two fix rounds to the deviation path; deeper re-validation remains untested on the CLI.
 
 ## Model roles
 
@@ -45,7 +45,7 @@ Observed token volumes: focused review 137–312k (median ≈200k); broad review
 
 - Never instruct codex to avoid running shell commands — its file reads are shell commands; that instruction once produced a 30-minute timeout.
 - Run codex invocations sequentially against one working tree, never in parallel.
-- Pass every flag explicitly on every run — a machine-local `config.toml` model pin silently reappeared once, and the memories feature was found enabled against the documented default. `--disable memories` per run prevents structural cross-session leakage into reviews.
+- Pass every flag explicitly on every fresh run — a machine-local `config.toml` model pin silently reappeared once, and the memories feature was found enabled against the documented default. `--disable memories` per run prevents structural cross-session leakage into reviews.
 
 ## Replication, 2026-09-24
 
@@ -143,7 +143,7 @@ Claude implementers on the same batch (12 runs, 2 per actor: Sonnet 5.5 at low, 
 
 ## Re-validation and memory decisions
 
-The re-validation loop and memories split are maintainer decisions of 2026-11-02, not measurements. Each fix round has a gate re-run, a cross-family review, and one resume that re-validates previous findings. When fixes were not codex-applied, the resumed review serves as the cross-family review. Any finding, including a regression, goes into the next fix round; a finding still open after two rounds goes to the deviation path. The checkpoint closes when the gate and cross-family review pass and the resume reports previous findings fixed with no new finding.
+The re-validation loop and memories split are maintainer decisions of 2026-11-02, not measurements. Each fix round has a gate re-run, a cross-family review, and a resume of each codex review session, re-validating the previous findings triage accepted for fixing. Each resume reports every defect caused by the round's diff, including defects in code reached by changed lines. When fixes were not codex-applied, the resumed review serves as the cross-family review. A listed previous finding reported not fixed or a regression goes into the next fix round; a reported pre-existing defect not caused by the diff goes to triage and does not block closure. A finding still open after two rounds goes to the deviation path. The checkpoint closes when the gate and cross-family review pass and every resume reports its listed previous findings fixed and no regression.
 
 Review and other non-implementer dispatches pass `--disable memories`; implementer dispatches omit it. `codex.extra_config` rejects a memories setting in either direction.
 

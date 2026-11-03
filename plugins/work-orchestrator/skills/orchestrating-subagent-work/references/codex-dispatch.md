@@ -38,7 +38,7 @@ digraph revalidation_loop {
 
 ### Fix round applied
 
-Before each fix round, record the content of the fenced files, the state of tracked files across the tree, and the list of untracked files. Apply fixes from a review by a worker checkpoint by default (a codex fix batch or a sonnet follow-up), never by the session unless no worker route fits. Take the resume diff and check containment against this record.
+Before each fix round, record the full content of every tracked file that differs from HEAD (the fenced files included), and the list of untracked files with a content hash of each. Apply fixes from a review by a worker checkpoint by default (a codex fix batch or a sonnet follow-up), never by the session unless no worker route fits. Take the resume diff and check containment against this record.
 
 ### Gate re-run
 
@@ -54,16 +54,19 @@ Resume the same codex review session once per fix round instead of dispatching a
 codex exec resume <session-id> -c approval_policy=never \
   -c sandbox_mode=read-only --disable memories - <<'EOF'
 A fix round was applied to the tree. Its diff, each fix's decided design
-and test duties, and the fenced file list follow. Re-validate each of your
-previous findings against the current tree: fixed / not fixed. Then report
-any new finding in the diff. Do not re-report an accepted decision unless
-its documented rationale no longer holds.
+and test duties, and the fenced file list follow. Re-validate each previous finding
+listed below against the current tree: fixed / not fixed. Then report
+every defect caused by the round's diff, whether on a changed line or in
+code those lines reach, such as a caller in a file the round did not change.
+Do not re-report an accepted decision unless its documented rationale no
+longer holds.
 <when the fixes were not codex-applied:> Also check each fix against its
 decided design and test duties, confirm the diff touches only the fenced
 files, and confirm no new untracked files appeared.
 Same output contract.
 <the fix round's diff across the tree, taken against the recorded state before the round, plus the content of any new file>
 <each fix's decided design and test duties>
+<the previous findings triage accepted for fixing>
 <the fenced file list>
 <documented accepted decisions relevant to the scope, with their rationale>
 EOF
@@ -73,7 +76,7 @@ A resume passes only `--model`, `--config` (`-c`), and `--disable`. `exec resume
 
 ### Any finding?
 
-A previous finding reported not fixed and a new finding, a regression included, are both findings.
+A finding is a listed previous finding reported not fixed or a defect caused by the round's diff (a regression). Send a reported defect that existed before the round and was not caused by its diff to triage; it is not a finding here and does not block closure.
 
 ### Fix rounds < 2?
 
@@ -89,6 +92,6 @@ A finding still open after two fix rounds goes to the deviation path.
 
 ### Checkpoint closes
 
-The checkpoint closes when the round's gate re-run and cross-family review pass and the resume reports every previous finding fixed with no new finding.
+The checkpoint closes when the round's gate re-run and cross-family review pass and the resume reports every listed previous finding fixed and no regression.
 
 A codex-less review checkpoint has no resume equivalent: re-validation there is a fresh independent worker against the same scope, and the trust boundaries in `worker-prompts.md` apply unchanged.

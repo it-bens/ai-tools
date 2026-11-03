@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Fixed
 
+- Review resumes report defects caused by the round's diff, including in code reached by changed lines.
+- Review resumes re-validate only previous findings triage accepted for fixing.
+- Before each fix round, record full contents of all tracked files differing from HEAD and the list of untracked files with a content hash of each.
+- Route pre-existing defects not caused by the round to triage without blocking closure; closure requires listed findings fixed and no regression.
+- Do not spawn when the environment makes effective effort violate the spawn guards; report the deviation.
 - Re-validation carries accepted decisions, records the pre-round tree, and routes review findings.
 
 ### Added
@@ -20,9 +25,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - The README, `EXTENSION.md`, `CLAUDE.md`, `docs/` and the plugin description no longer carry historical information: earlier plugin versions, retired definition names, the rename from `subagent-orchestrator`, and Claude Code behavior that no longer holds. This changelog is the only file that records it. Run records in `docs/` that used 4.x definition names now name the current definition, model and effort.
 - Lines rewritten in the README and `docs/` no longer contain em dashes.
 - Codex routing uses `gpt-6.1-sol`, `gpt-6.1-terra`, and `gpt-6-luna`; ruleset inputs name the `sonnet` alias as Sonnet 5.5.
-- Spawn guards refuse `implement` on opus above `medium` and on sonnet below `medium`. The opus cap rests on maintainer experience, vendor guidance, and identical outcomes across three efforts on one task; the sonnet floor rests on a scope-gap result on one task, with prompt effects not separated.
+- Spawn guards refuse `implement` on opus above `medium` and on sonnet below `medium`. The opus cap rests on maintainer experience, vendor guidance, and identical outcomes across three efforts on one task (2 runs per effort); the sonnet floor rests on a scope-gap result on one task (2 runs per effort), with prompt effects not separated.
 - The skill notes that `CLAUDE_CODE_EFFORT_LEVEL` overrides every spawn's effort when set.
-- The re-validation loop uses a digraph and permits one resume per fix round, with a finding still open after two rounds sent to the deviation path.
+- The re-validation loop uses a digraph and resumes each reviewer's session once per fix round, with a finding still open after two rounds sent to the deviation path.
 - Each resume carries the diff, decided designs, test duties, and fence; merged reviewers each resume their own findings.
 - An independent confirmer no longer has to be a fresh worker: a resumed review thread confirms fixes another worker applied, because it did not produce them and shares no session with their producer.
 - Codex review and other non-implementer dispatches disable memories; implementer dispatches omit that flag, and `codex.extra_config` rejects a memories setting in either direction.
