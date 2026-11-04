@@ -4,7 +4,7 @@
 
 Check every comment against the code beside it before classifying it. A comment that contradicts the code is worse than no comment: readers trust it and derive a wrong model from it. Correct the comment, or the code when the comment documents the intent and the code drifted away from it. Never leave a standing contradiction on a line you are already editing, and never resolve one by deleting the comment — the comment may be the only record of what the code was supposed to do.
 
-What counts: a described return that the signature contradicts, an inverted condition, a name the comment no longer matches, an exception the code no longer raises, a documented validation the code only logs, a "temporary" workaround whose trigger is long gone.
+What counts: a described return that the signature contradicts, an inverted condition, a name the comment no longer matches, an exception the code no longer raises, a documented validation the code only logs.
 
 What does not: a synonym (`fetch` for `get`), a comment pitched one abstraction above the code, or a comment carrying context the code cannot. All three are accurate.
 
