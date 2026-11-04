@@ -128,7 +128,7 @@ Every claim in an extension file is a fact about the current codebase, and drift
 | `code.dead_code_check` | (none) | A project command that reports unused code. Step 4 runs it after the orphaned-symbol search and handles its findings in the edited scope. |
 | `code.footgun_additions` | (none) | Project-specific entries appended to the stack's footgun catalog in Step 5. |
 | `code.comment_enforcement` | (none) | Lint rules that require doc comments; comments they cover are never deleted. |
-| `comments.preserve_patterns` | (none) | Markers or patterns whose matching comments Step 6 always keeps, whatever the classification table would otherwise say. |
+| `comments.preserve_patterns` | (none) | Markers or patterns whose matching comments Step 6 checks against the code and probes but never classifies or rewrites, also not for `todo.ticket_format` or `docs.surfaces`; it changes them only to correct a contradiction or a refuted claim, and deletes them only together with the code they describe, naming the deletion in the report; `comments.exemption_markers` is the value that leaves a comment untouched. |
 | `comments.exemption_markers` | (none) | Markers whose comments Step 6 skips entirely, neither classified nor edited. |
 | `todo.ticket_format` | an owner plus a tracking reference | The shape a `TODO`/`FIXME` must take; every marker written or touched is held to it. |
 | `domain.terms` | (none registered) | Project vocabulary that must survive a comment rewrite verbatim rather than being replaced by a near-synonym. |
