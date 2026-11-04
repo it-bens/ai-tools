@@ -53,18 +53,6 @@
       "category": "Productivity"
     },
     {
-      "name": "web-fetching-with-pullmd",
-      "source": {
-        "source": "local",
-        "path": "./plugins/web-fetching-with-pullmd"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Productivity"
-    },
-    {
       "name": "software-writer",
       "source": {
         "source": "local",
