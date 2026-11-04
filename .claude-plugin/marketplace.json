@@ -21,11 +21,6 @@
       "category": "productivity"
     },
     {
-      "name": "python-plan-optimizer",
-      "source": "./plugins/python-plan-optimizer",
-      "category": "development"
-    },
-    {
       "name": "native-tools-enforcer",
       "source": "./plugins/native-tools-enforcer",
       "category": "guardrails"
