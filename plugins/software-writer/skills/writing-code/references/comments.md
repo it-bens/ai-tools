@@ -6,7 +6,7 @@ Check every comment against the code beside it before classifying it. A comment 
 
 What counts: a described return that the signature contradicts, an inverted condition, a name the comment no longer matches, an exception the code no longer raises, a documented validation the code only logs.
 
-What does not: a synonym (`fetch` for `get`), a comment pitched one abstraction above the code, or a comment carrying context the code cannot. All three are accurate. A workaround whose trigger is gone or whose removal criterion is met is no contradiction either: name it in the report to the user and change neither the comment nor the workaround.
+What does not: a synonym (`fetch` for `get`), a comment pitched one abstraction above the code, or a comment carrying context the code cannot. All three are accurate.
 
 ## Classification table
 
