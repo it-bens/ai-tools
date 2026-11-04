@@ -1,13 +1,5 @@
 <!-- Source: https://platform.claude.com/docs/en/about-claude/models/migration-guide (fetched 2026-08-03) -->
 
----
-source: cloudflare
-share_id: cc84d67d
-share_url: https://pullmd.it-bens.de/s/cc84d67d
-quality: 1
-cached: true
----
-
 # Migration guide
 
 # Migration guide

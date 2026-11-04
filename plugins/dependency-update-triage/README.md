@@ -50,7 +50,7 @@ All companions are soft. The skill checks for each and degrades with an explicit
 | Companion | Used for | Claude Code | Codex |
 |---|---|---|---|
 | Git-forge tooling | reading the update PR, diff, and release notes | a GitHub/GitLab CLI or MCP | the host's git tooling |
-| Web reader | fetching changelogs and migration notes | `web-fetching-with-pullmd` or similar | PullMD MCP or similar |
+| Web reader | fetching changelogs and migration notes | a web-fetch tool or MCP | a web-fetch tool or MCP |
 
 ## License
 
