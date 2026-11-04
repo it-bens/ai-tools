@@ -2,7 +2,7 @@
 
 The baseline a Go suite sits on when it uses `go test` directly. testify's reference file adds to this one rather than replacing it; Ginkgo brings its own runner and spec shape and stands alone.
 
-**Language-version constraints.** The rules below assume Go 1.22 or later for loop-variable semantics, Go 1.24 or later for `t.Context`, Go 1.25 or later for a generally available `testing/synctest`, and Go 1.26 or later for `errors.AsType`. Check the `go` directive in `go.mod` before applying a version-gated rule; where the project's directive is lower, the older behavior applies and is called out inline.
+**Written against Go 1.27.** The rules below assume Go 1.22 or later for loop-variable semantics, Go 1.24 or later for `t.Context`, Go 1.25 or later for a generally available `testing/synctest`, and Go 1.26 or later for `errors.AsType`. Check the `go` directive in `go.mod` before applying a version-gated rule; where the project's directive is lower, the older behavior applies and is called out inline.
 
 ## Table idiom
 
@@ -79,6 +79,10 @@ for _, tc := range cases {
 `t.Context()` (Go 1.24+) returns a context canceled just before cleanup functions run — use it instead of hand-rolled cancellation in tests.
 
 For code that sleeps, times out, or coordinates goroutines, `testing/synctest` (generally available in Go 1.25+ as `synctest.Test` plus `synctest.Wait`; experimental in 1.24 behind `GOEXPERIMENT=synctest` with a different API) runs the bubble on a fake clock, so a test can exercise timeouts without wall-clock waiting. Prefer it over sleeping in tests on projects whose `go` directive allows it.
+
+## Helpers
+
+Helpers live in a `_test.go` file of the package under test, so they stay out of regular builds, and each calls `t.Helper()` first so a failure reports the caller's line rather than the helper's. A helper several packages need goes in its own non-test package.
 
 ## Non-deterministic calls to flag
 

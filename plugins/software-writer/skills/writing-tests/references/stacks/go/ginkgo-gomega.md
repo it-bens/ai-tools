@@ -43,6 +43,10 @@ DescribeTable("shipment pricing",
 
 `Ordered` containers make specs run in declaration order and let earlier specs leak state into later ones by design. That trades away independence: use it only where the ordering is genuinely part of the system under test, never as a workaround for a shared-state leak.
 
+## Helpers and temp directories
+
+A helper called from specs calls `GinkgoHelper()` first, so a failure reports the spec's line rather than the helper's. Per-spec filesystem state comes from `GinkgoT().TempDir()`, which removes itself after the spec.
+
 ## Independence: hard constraints
 
 - **Ginkgo's parallelism is not `t.Parallel()`.** The `ginkgo` CLI distributes specs across separate OS processes (`ginkgo -p`); stdlib parallel-execution advice does not transfer. Each process runs its own suite bootstrap, so anything built in a suite-level setup exists once per process, not once per run.

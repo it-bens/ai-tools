@@ -1,6 +1,6 @@
 # Python: pytest
 
-**Written against pytest 9.1.x.** pytest ships behavior changes in minor releases, not only majors, so check the version pinned in the project's dependency manifest before applying a version-gated rule below. Two changes make pytest 8-era material actively wrong: since 9.0, removal-warnings are errors by default rather than warnings, and since 9.1, fixture-override resolution follows visibility in the collection tree rather than registration order.
+**Written against pytest 9.2.x.** pytest ships behavior changes in minor releases, not only majors, so check the version pinned in the project's dependency manifest before applying a version-gated rule below. Two changes make pytest 8-era material actively wrong: since 9.0, removal-warnings are errors by default rather than warnings, and since 9.1, fixture-override resolution follows visibility in the collection tree rather than registration order.
 
 ## Table idiom
 
@@ -42,8 +42,12 @@ Bind the context manager (`as excinfo`) only when the test asserts on the except
 - **A fixture above `function` scope documents the invariant that justifies it** (read-only, idempotent, teardown-only) in its docstring, so a later editor does not add a mutation.
 - **Module-level mutable state in test files leaks** within a worker and diverges across workers.
 - **`unittest.mock.patch` started without a matching stop leaks** — use the context-manager or decorator form, or `monkeypatch.setattr`.
-- Class-scoped fixtures defined as plain instance methods are deprecated: they set attributes on a different instance than the test methods use.
+- Fixtures of any scope above function defined as plain instance methods are deprecated: they set attributes on a different instance than the test methods use.
 - Docstrings on tests: cut those that paraphrase the test name; keep only a docstring that documents a why (regression context, a load-bearing assumption).
+
+## Helpers and temp directories
+
+Shared arrange helpers live as fixtures in the nearest `conftest.py` above the tests that use them: fixtures there need no import, and a nested `conftest.py` overrides a parent's fixture of the same name. Per-test filesystem state comes from the `tmp_path` fixture, a `pathlib.Path` directory unique to each test function.
 
 ## CLI rendering
 

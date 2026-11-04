@@ -39,7 +39,7 @@ func applyTemplateKeys(data []byte, keys []TemplateKey) []byte {
 
 The comment names the failure (shorter key consuming a longer one), gives the substitution that triggers it, and identifies the fix. None of those facts is recoverable from the code alone — sorting longest-first looks like a stylistic choice without the comment.
 
-Content that is load-bearing by construction, however plainly it is worded: a citation of an external spec, RFC, standard, or ticket; an algorithm choice with its complexity or its trade-off against the obvious alternative; a security or compliance constraint; a thread-safety or lock-ordering requirement; a workaround naming the upstream bug and the condition for removing it; a design decision that forecloses an approach a later reader would otherwise try. Removing any of these discards information the code cannot carry, so a comment that looks obvious but carries one of them stays.
+Content that is load-bearing by construction, however plainly it is worded: a citation of an external spec, RFC, standard, or ticket; an algorithm choice with its complexity or its trade-off against the obvious alternative; a security or compliance constraint; a thread-safety or lock-ordering requirement; a workaround naming the upstream bug and the condition for removing it; a design decision that forecloses an approach a later reader would otherwise try. Removing any of these discards information the code cannot carry, so a comment that looks obvious but carries one of them stays; Step 6 corrects only the part of a claim a run refutes.
 
 ## The negative-invariant shape
 
@@ -54,7 +54,7 @@ def escape_literal(text: str) -> str:
 
 Without the comment, the missing double-quote escape reads as an oversight; with it, the omission is a documented decision.
 
-Every construct that reads as a mistake and is not belongs to this shape, and the comment is what separates the two: an intentional switch fall-through, a deliberately empty catch block, a discarded return value kept for its side effect, a statement not folded into the one below it. Write the comment when producing such a construct, and keep it when editing around one — several linters and style guides only suppress their diagnostic because the comment is there.
+Every construct that reads as a mistake and is not belongs to this shape, and the comment is what separates the two: an intentional switch fall-through, a deliberately empty catch block (the comment names which failures it swallows and why discarding each is safe), a discarded return value kept for its side effect, a statement not folded into the one below it. Write the comment when producing such a construct, and keep it when editing around one — several linters and style guides only suppress their diagnostic because the comment is there.
 
 ## The explains-what exception: regular expressions
 

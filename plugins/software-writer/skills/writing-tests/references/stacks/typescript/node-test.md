@@ -2,7 +2,7 @@
 
 Node's built-in test runner, stable since Node 20. No dependency to install; TypeScript files need whatever transpilation or type-stripping the project's Node version supports.
 
-**Pin to a Node major.** The runner core is stable, but several sub-features remain lower-stability and change between releases — watch mode, module mocking, randomized execution order, coverage, and test tags among them. Check the project's Node engine constraint before relying on one of those.
+**Written against Node 26.** The runner core is stable, but several sub-features remain lower-stability and change between releases — watch mode, module mocking, randomized execution order, coverage, and test tags among them. Check the project's Node engine constraint before relying on one of those.
 
 ## Test shape
 
@@ -53,6 +53,10 @@ Import from `node:assert/strict` so equality assertions are strict by default; t
 - **Context-scoped mocks restore themselves; the global mock object does not.** Mocks created through the test context (`t.mock`) are undone when that test finishes. Anything created through the module-level `mock` object persists until an explicit reset, so it leaks into later tests in the same file.
 - Fake timers are scoped to the test context that installed them; install them per test rather than at file level.
 - File-level mutable state is shared by every test in that file, in declaration order.
+
+## Helpers and temp directories
+
+Arrange helpers are plain exported functions in a module the tests import. Without explicit file globs, `node --test` runs every file matching `**/*.test.*`, `**/*-test.*`, `**/*_test.*`, `**/test-*.*` or `**/test.*`, and everything under a `test` directory, as a test file, so keep helper modules outside `test` and give them names that match none of those patterns, or pass explicit globs. Per-test filesystem state: create a directory with `fs.mkdtemp` under `os.tmpdir()` and register its removal with `t.after(() => fs.rm(dir, { recursive: true, force: true }))`.
 
 ## Non-deterministic calls to flag
 

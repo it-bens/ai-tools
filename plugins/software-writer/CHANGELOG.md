@@ -1,5 +1,30 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `writing-code` Write-the-line step: when an edit makes a function fail where it used to return a value, search its callers for a fallback (`|| x='{}'`, `?? default`) that was unreachable before and now runs.
+- `writing-code` bash footgun entries: restoring shell options by replaying the saved state (with errexit re-asserted from `$-`, since the `$(set +o)` capture can drop it), `local` with dependent assignments on one line, `read -a` reading the first line only, redirection order with `2>`, passing data into `jq` and `awk` with `--arg` and `ENVIRON` instead of interpolating it, octal reading of numbers with leading zeros, and `jq` `// empty` bindings with exact-string comparison.
+- `writing-tests` `stacks/bash/bats.md` covers the error-path idiom (`run -<N>`, `run !`, `bats_require_minimum_version`, the BW01 and BW02 warnings, and the blind spot of `refute`, `run !`, and a bare `assert_failure` when the command is missing), `--separate-stderr` with stderr assertions, the `refute_*` helpers, a loop versus one test per case, the abort on a duplicate test name, helpers and temporary directories (`load`, the `BATS_*_TMPDIR` scopes, `setup_file` exports), the prerequisites and opt-outs for `--jobs`, the EXIT-trap hazard, root ignoring permission bits, test doubles (function override, `export -f`, `PATH` shim), and a table of non-deterministic calls.
+- `writing-tests` framework references for Go (`stdlib-testing`, `testify`, `ginkgo-gomega`), PHP (`phpunit`, `pest`), Python (`pytest`, `unittest`), and TypeScript (`jest`, `mocha`, `node-test`, `vitest`) each name the framework's helper idiom and its per-test temporary-directory mechanism. `mocha` (12.x with Chai 6.x), `node-test` (Node 26), `unittest` (Python 3.15), and `stdlib-testing` (Go 1.27) state the version they were written against.
+- `writing-code` stack references name what a named exception or a `|| true`-style construct still hides: Python exception subclasses and try bodies wider than the call that can raise; Go `_ =` and an unchecked `Close` on a written file; PHP `json_decode` returning null for both invalid input and a JSON `null` (use `JSON_THROW_ON_ERROR`), `@` suppressing the warning but not the failure, and `foreach (null)` warning and continuing; TypeScript empty and default-returning catch-alls. The comments reference says an empty catch block's comment names what it swallows.
+
+### Changed
+
+- `writing-code` bash footgun entry for Bash 4 features gains a leading rule to check bash's NEWS for the minor version, plus `declare -g` and `local -` as further examples.
+- `writing-tests` `stacks/bash/bats.md` is written against bats-core 1.14.x and bats-assert 2.2.x, and states that from 1.14.0 `run` honors a `set -e` the function turns on itself.
+- `writing-code` Step 6 applies the exemption markers first, then checks each comment written, edited, or kept on the lines being written or edited against the code and runs any claim the comment makes about the language, the interpreter, or a tool in an isolated probe, never by running the code under edit. A run counts only on the version or platform the claim names. A claim a run refutes is corrected, limited to the refuted part; a claim that cannot be run here stays unchanged and is reported to the user as unverified. A comment is never deleted for a claim, and still goes on to classification; when classification deletes a comment this step corrected, the report to the user names the deletion and its bucket. The step heading is now "Check and classify each comment".
+- `writing-tests` framework references move to Vitest 5.x, Pest 5.x on PHPUnit 13, and pytest 9.2.x. The pytest reference now lists fixtures of every scope above function, not only class scope, among the deprecated instance-method fixtures.
+- The `bats-referenced-by-name` template, copied into `writing-tests` and `sweeping-dead-code`, lists `bats_test_function --description '<name>' -- <function>` as a by-name reference to a function.
+
+### Fixed
+
+- `writing-code` bash footgun entry for command substitution under `set -e` is corrected for `set -o posix`.
+- `writing-code` bash footgun entry for `|| true`: use it only when every non-zero status is an answer; otherwise branch on the exact status; when a failure shares its status with an answer, avoid the input that fails or check the condition another way.
+- `writing-tests` `stacks/bash/bats.md` corrects what `run` does inside a function that does not enable `set -e` itself (errexit is suppressed unless `--errexit` is set, so `run -0 f` can pass where a direct `f` fails), the claim about `< <(...)` (a failing one registers no tests and the run can still exit 0), and the `|| code=$?` capture, which it limits to functions that propagate their own failures. It states the exact `--jobs` prerequisites and that `bats_require_minimum_version` may come before the first flagged `run` at file level, in `setup`, or in the test body.
+- `writing-tests` Jest reference corrects the mock-reset advice: `jest.restoreAllMocks()` restores `jest.spyOn` spies and `jest.replaceProperty` replacements and leaves `jest.fn()` implementations in place, `jest.resetAllMocks()` replaces every `jest.fn()` implementation with one that returns `undefined` (so each test or `beforeEach` sets the implementations it needs), and the `resetMocks` and `restoreMocks` flags run the same calls before every test.
+
 ## [2.4.0] - 2026-10-12
 
 ### Added

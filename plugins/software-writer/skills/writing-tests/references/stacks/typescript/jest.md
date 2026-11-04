@@ -43,13 +43,17 @@ For an async test that must reach the thrown error itself, assert the expected a
 
 ## Independence: hard constraints
 
-- **Mock state never resets itself.** `clearMocks`, `resetMocks`, and `restoreMocks` all default off, and the three differ: clearing removes call history, resetting additionally removes the mock implementation, restoring returns a spied method to its original implementation. Restore explicitly with `jest.restoreAllMocks()` in `afterEach`, or enable the flags project-wide — and check `jest.config.*` or the `jest` key in `package.json` before assuming which, since a project that enabled them changes what a test can rely on.
+- **Mock state never resets itself.** `clearMocks`, `resetMocks`, and `restoreMocks` all default off, and the three differ: clearing removes call history, resetting additionally removes the mock implementation, restoring returns a spied method to its original implementation. Pick the reset by where implementations are set. `jest.restoreAllMocks()` restores `jest.spyOn` spies and `jest.replaceProperty` replacements and leaves `jest.fn()` implementations in place. `jest.resetAllMocks()` replaces every `jest.fn()` implementation, including `jest.fn(impl)` and one from a `jest.mock` factory, with one that returns `undefined`, so use it only when each test or `beforeEach` sets the implementations it needs. Call the chosen one in `afterEach`, or enable the matching flag: `resetMocks` and `restoreMocks` run `jest.resetAllMocks()` and `jest.restoreAllMocks()` before every test. Check `jest.config.*` or the `jest` key in `package.json` before assuming which, since a project that enabled them changes what a test can rely on.
 - **Files are isolated; tests within a file are not.** Jest parallelizes across test *files*, distributing them over a pool of child processes (`maxWorkers` defaults to one less than the machine's core count), and each file gets its own module registry. Within a file, tests share that registry and all mock state unless the project enables `resetModules` or the reset flags above.
 - **Fake timers persist until switched back.** Pair `jest.useFakeTimers()` with `jest.useRealTimers()`, or the frozen clock leaks into later tests in the file. Prefer an injected clock for domain code.
 - **`jest.mock` is hoisted above imports** — its factory cannot reference file-scope variables declared after it. Variables the factory needs must be defined in a way that survives hoisting (a `jest.mock` factory referencing a `const` declared below it fails at runtime).
 - **Prefer injection seams over module mocking.** Reach for `jest.mock` / `jest.spyOn` only when injection cannot reach the dependency — and spy-and-assert-called is not a test.
 - **Module-level mutable state is shared by every test in the file**, in declaration order. Create per-test state inside `beforeEach` or a factory call, not at module scope.
 - A shared store or fake database created in a `describe` body accumulates state across that block's tests.
+
+## Helpers and temp directories
+
+Setup that every test file repeats goes in a module listed in `setupFilesAfterEnv`, which runs once per test file after the test framework is installed. Arrange helpers are plain exported functions in a module the tests import. Per-test filesystem state: create a directory with `fs.mkdtemp` under `os.tmpdir()` in `beforeEach` and remove it in `afterEach` with `fs.rm(dir, { recursive: true, force: true })`.
 
 ## Non-deterministic calls to flag
 

@@ -58,6 +58,10 @@ Because the expectation precedes the act, put nothing after the act in the body 
 
 Version-gated API removals worth knowing when reading older tests: `setMethods()` was removed in 10 (split into `onlyMethods()` and `addMethods()`), `getMockBuilder()` and `addMethods()` are deprecated from 11 onward, mocking abstract classes and traits directly was removed in 12, and `assertRegExp()` gave way to `assertMatchesRegularExpression()`.
 
+## Helpers and temp directories
+
+Shared arrange helpers are protected methods on an abstract base class that extends `PHPUnit\Framework\TestCase`; an overriding `setUp()` calls `parent::setUp()`, or the base class uses `#[Before]` methods instead. Per-test filesystem state: create a unique directory under `sys_get_temp_dir()` in `setUp()` and remove it in `tearDown()`.
+
 ## Non-deterministic calls to flag
 
 | Call | Flag when |

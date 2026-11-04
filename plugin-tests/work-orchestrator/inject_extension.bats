@@ -279,10 +279,21 @@ List the project gates before stating the strategy."
 }
 
 # bats test_tags=failure
-@test "fails when the extension file exists but is not readable" {
-    make_extension "## Post-Dispatch"
-    chmod 000 "${CLAUDE_PROJECT_DIR}/${EXTENSION_REL}"
+@test "fails when the extension path exists but is not a regular file" {
+    local extension="${CLAUDE_PROJECT_DIR}/${EXTENSION_REL}"
+    mkdir -p "$extension"
     run_post_tool_use "$SKILL"
-    chmod 644 "${CLAUDE_PROJECT_DIR}/${EXTENSION_REL}"
-    assert_failure
+    assert_failure 1
+    assert_output --partial "extension file exists but is not readable"
+}
+
+# bats test_tags=failure
+@test "fails when the extension file exists but has no read permission" {
+    (( EUID != 0 )) || skip "root reads files regardless of mode"
+    make_extension "## Post-Dispatch"
+    local extension="${CLAUDE_PROJECT_DIR}/${EXTENSION_REL}"
+    chmod 000 "$extension"
+    run_post_tool_use "$SKILL"
+    assert_failure 1
+    assert_output --partial "extension file exists but is not readable"
 }
