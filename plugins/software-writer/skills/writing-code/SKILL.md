@@ -36,7 +36,7 @@ digraph writing_code {
     "Report each claim that could not be run here as unverified" [shape=box];
     "Comment contradicts the code, or a run refutes a claim?" [shape=diamond];
     "Correct the comment or the code, or the refuted part of the claim" [shape=box];
-    "Classify the comment and apply the bucket's action" [shape=box];
+    "Load references/comments.md, classify the comment, and apply the bucket's action; report a corrected comment the action deletes" [shape=box];
     "More to write or edit?" [shape=diamond];
     "Done" [shape=doublecircle];
 
@@ -61,9 +61,9 @@ digraph writing_code {
     "Run each claim the comment makes about the language, interpreter, or tool in an isolated probe" -> "Report each claim that could not be run here as unverified";
     "Report each claim that could not be run here as unverified" -> "Comment contradicts the code, or a run refutes a claim?";
     "Comment contradicts the code, or a run refutes a claim?" -> "Correct the comment or the code, or the refuted part of the claim" [label="yes"];
-    "Comment contradicts the code, or a run refutes a claim?" -> "Classify the comment and apply the bucket's action" [label="no"];
-    "Correct the comment or the code, or the refuted part of the claim" -> "Classify the comment and apply the bucket's action";
-    "Classify the comment and apply the bucket's action" -> "More to write or edit?";
+    "Comment contradicts the code, or a run refutes a claim?" -> "Load references/comments.md, classify the comment, and apply the bucket's action; report a corrected comment the action deletes" [label="no"];
+    "Correct the comment or the code, or the refuted part of the claim" -> "Load references/comments.md, classify the comment, and apply the bucket's action; report a corrected comment the action deletes";
+    "Load references/comments.md, classify the comment, and apply the bucket's action; report a corrected comment the action deletes" -> "More to write or edit?";
     "More to write or edit?" -> "Adding a new package dependency?" [label="yes"];
     "More to write or edit?" -> "Done" [label="no"];
 }
@@ -111,7 +111,7 @@ Skip this step when the edit is a single statement inside an existing function t
 
 Scan the line just written against the stack's footgun catalog in the stack reference. This check is prescriptive: apply it even when nearby code does not. `code.footgun_additions` appends project-specific entries to the catalog; default if not otherwise stated: none.
 
-### Step 6: Classify each comment
+### Step 6: Check and classify each comment
 
 Comments split into two tiers, and visibility decides which one applies rather than the syntax used: structured docs on an exported or protected declaration are a contract, the same tags on a private declaration are an implementation comment.
 
@@ -119,6 +119,6 @@ Comments split into two tiers, and visibility decides which one applies rather t
 
 **Implementation comments** default to none. Write or keep one only when it carries point-of-use *why* — a hidden constraint, subtle invariant, bug workaround, or deliberate tradeoff the reader cannot infer from the code and types. When deleting code, delete its why-comment too; an orphaned why is dead weight.
 
-Skip any comment carrying a marker in `comments.exemption_markers`; default if not otherwise stated: none. Check each remaining comment written, edited, or kept on the lines being written or edited against the code first: a comment that contradicts what the code does is corrected, never left standing and never deleted to resolve the mismatch. Run any claim such a comment makes about the language, the interpreter, or a tool in an isolated probe (a one-line command or a scratch file), never by running the code under edit. A run counts only on the version or platform the claim names; a claim about a version or platform not available here cannot be run here. A claim a run refutes is corrected, limited to the part the run refutes. A claim that cannot be run here stays unchanged and is listed in the report to the user as unverified. Then load `references/comments.md`, classify the comment against its table, and apply the bucket's action. The reference also carries the load-bearing-why worked shape, the negative-invariant shape, the regex exception, marker discipline, and the banned patterns.
+Skip any comment carrying a marker in `comments.exemption_markers`; default if not otherwise stated: none. Check each remaining comment written, edited, or kept on the lines being written or edited against the code first: a comment that contradicts what the code does is corrected, never left standing and never deleted to resolve the mismatch. Run any claim such a comment makes about the language, the interpreter, or a tool in an isolated probe (a one-line command or a scratch file), never by running the code under edit. A run counts only on the version or platform the claim names; a claim about a version or platform not available here cannot be run here. A claim a run refutes is corrected, limited to the part the run refutes. A claim that cannot be run here stays unchanged and is listed in the report to the user as unverified. Then load `references/comments.md`, classify the comment against its table, and apply the bucket's action. When that action deletes a comment this step corrected, name the deletion and its bucket in the report to the user. The reference also carries the load-bearing-why worked shape, the negative-invariant shape, the regex exception, marker discipline, and the banned patterns.
 
 Always keep a comment matching `comments.preserve_patterns`; default if not otherwise stated: none. Hold every `TODO`/`FIXME` written or touched to `todo.ticket_format`; default if not otherwise stated: an owner plus a tracking reference. Never swap a term listed in `domain.terms` for a near-synonym while rewriting a comment; default if not otherwise stated: none registered. When `docs.surfaces` is assigned, a comment restating what a listed surface owns is cut to its local why plus a stable identifier instead of duplicating the surface; default if not otherwise stated: comments are judged on their own merits.
