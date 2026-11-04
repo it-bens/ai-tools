@@ -66,11 +66,6 @@
       "category": "guardrails"
     },
     {
-      "name": "reddit-research",
-      "source": "./plugins/reddit-research",
-      "category": "development"
-    },
-    {
       "name": "project-communication",
       "source": "./plugins/project-communication",
       "category": "productivity"
