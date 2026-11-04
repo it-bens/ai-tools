@@ -86,11 +86,6 @@
       "category": "development"
     },
     {
-      "name": "subagent-orchestrator",
-      "source": "./plugins/subagent-orchestrator",
-      "category": "development"
-    },
-    {
       "name": "software-writer",
       "source": "./plugins/software-writer",
       "category": "development"
@@ -98,11 +93,6 @@
     {
       "name": "software-writer-extension-setup",
       "source": "./plugins/software-writer-extension-setup",
-      "category": "development"
-    },
-    {
-      "name": "subagent-orchestrator-extension-setup",
-      "source": "./plugins/subagent-orchestrator-extension-setup",
       "category": "development"
     },
     {

@@ -2,7 +2,7 @@
 
 Setup skill that wires up a project to extend the `work-orchestrator` plugin's skills — `orchestrating-subagent-work` and `orchestrating-session-work`. It asks which skills the project extends, explores the project's gates, protected paths, conduct rules, recurring checkpoint types, and session topology accordingly, drafts the extension content conversationally with you, and writes one file per skill under `.claude/extensions/work-orchestrator/`. Delivery ships with the `work-orchestrator` plugin, so no project delivery configuration is written. Routing additions name `work-orchestrator` 5.0.0's duty definitions plus a model and effort. A re-sync mode audits existing extension files for drift against the current project, and rewrites any extension content that still names a 4.x model-and-effort definition to the matching 5.0.0 definition, model, and effort.
 
-Renamed from `subagent-orchestrator-extension-setup`, which remains in the marketplace frozen and deprecated.
+Renamed from `subagent-orchestrator-extension-setup`.
 
 The plugin name and the skill name are intentionally long so neither activates by accident; invoke the skill explicitly when you want to set the extension up in a project.
 
