@@ -62,7 +62,7 @@ Never enumerate a path in `sweep.exclude`; default if not otherwise stated: depe
 
 ### Step 2: Detect stacks and load references
 
-Detect the stacks in scope from file extensions and manifests. `project.stacks` overrides detection; default if not otherwise stated: detect from files and project signals.
+Detect the stacks in scope from file extensions, manifests, and shebangs. A `.sh`, `.bash`, or `.bats` file, or an extensionless file whose first line is a `#!` naming `sh` or `bash`, detects the `bash` stack; list the extensionless ones with the Shell files command in `references/tools/bash.md`. A `.bats` file also detects the `bats` framework. `project.stacks` overrides detection; default if not otherwise stated: detect from files and project signals.
 
 For each stack (`bash`, `go`, `php`, `python`, `typescript`), load `references/tools/<stack>.md` and `references/stacks/<stack>/indirect-references.md`. For each detected test framework, load `references/stacks/<stack>/<framework>-referenced-by-name.md`:
 
@@ -118,7 +118,7 @@ For every row without a final class, search the scope and the whole repository f
 - every form in the stack's indirect-references file;
 - non-code files: configuration, manifests, templates, CI workflows, documentation that a tool consumes.
 
-Record each reference in the row's `references` list as `{file, line, side, from}`. `side` is `production` or `test`; the framework's referenced-by-name file lists the test-side forms. `from` is the `id` of the innermost ledger row whose definition encloses the reference — for top-level code in a module-based stack, that file's `file` row — or `root` when no ledger row encloses it (configuration, templates, CI, top-level code of an executable script, files outside the scope).
+Record each reference in the row's `references` list as `{file, line, side, from}`. `side` is `test` for a reference inside a test file or in a test-side form the framework's referenced-by-name file lists, and `production` otherwise. `from` is the `id` of the innermost ledger row whose definition encloses the reference — for top-level code in a module-based stack, that file's `file` row — or `root` when no ledger row encloses it (configuration, templates, CI, top-level code of an executable script, files outside the scope).
 
 Mark first, then classify.
 
