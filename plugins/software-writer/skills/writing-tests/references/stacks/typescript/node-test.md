@@ -56,7 +56,7 @@ Import from `node:assert/strict` so equality assertions are strict by default; t
 
 ## Helpers and temp directories
 
-Arrange helpers are plain exported functions in a module the tests import. Without explicit file globs, `node --test` runs every file matching `**/*.test.*`, `**/*-test.*`, `**/*_test.*`, `**/test-*.*` or `**/test.*`, and everything under a `test` directory, as a test file, so keep helper modules outside `test` and give them names that match none of the default patterns (`*.test.*`, `*-test.*`, `*_test.*`, `test-*.*`, `test.*`), or pass explicit globs. Per-test filesystem state: create a directory with `fs.mkdtemp` under `os.tmpdir()` and register its removal with `t.after(() => fs.rm(dir, { recursive: true, force: true }))`.
+Arrange helpers are plain exported functions in a module the tests import. Without explicit file globs, `node --test` runs every file matching `**/*.test.*`, `**/*-test.*`, `**/*_test.*`, `**/test-*.*` or `**/test.*`, and everything under a `test` directory, as a test file, so keep helper modules outside `test` and give them names that match none of those patterns, or pass explicit globs. Per-test filesystem state: create a directory with `fs.mkdtemp` under `os.tmpdir()` and register its removal with `t.after(() => fs.rm(dir, { recursive: true, force: true }))`.
 
 ## Non-deterministic calls to flag
 

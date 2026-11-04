@@ -55,7 +55,7 @@ Two `@test` names, or two `bats_test_function` calls with the same function and 
 - Match the fragment the behavior depends on with `--partial` only when that fragment cannot match a wrong value; otherwise assert the full line with `assert_line` (any one line equal to the text) or `assert_output` (the whole output). `assert_output --partial "-vv"` also passes on `-vvv`, so a verbosity flag needs its full line.
 - Assert absence with `refute_output`, `refute_line` (`--partial`, `--regexp`, `--index`), or `refute_regex`.
 - No `--index` unless the line's position is the contract; `assert_line --index 1` breaks when an unrelated line is added above it.
-- `assert_success` and `assert_failure` read `$status`, which only `run` sets. `run` executes in a subshell, so a test that needs a function's variable assignments calls it directly and captures its status with `|| code=$?`; assert on `code`, because `assert_success` there reads the status of an earlier `run`, or errors when no `run` has executed.
+- `assert_success` and `assert_failure` read `$status`, which only `run` sets. `run` executes in a subshell, so a test that needs a function's variable assignments calls it directly. Capture its status with `|| code=$?` only when the function propagates its own failures (`cmd || return`), and assert on `code`, because `assert_success` there reads the status of an earlier `run`, or errors when no `run` has executed. `||` turns errexit off for the whole body, so a failing command in the middle is skipped over and `code` holds only the last command's status; without propagation, call the function bare and let the body's errexit fail the test.
 
 ```bash
 # WRONG: assert_success reads the status of the earlier run, not of load_rates
@@ -64,7 +64,7 @@ code=0
 load_rates "$fixture" || code=$?
 assert_success
 
-# CORRECT
+# CORRECT: load_rates propagates its failures (cmd || return)
 code=0
 load_rates "$fixture" || code=$?
 assert_equal "$code" 0
@@ -84,7 +84,7 @@ assert_equal "$code" 0
 
 ## Test doubles
 
-- `run` executes in a subshell: it sees functions defined in the test, and variable changes made inside it are lost. A function override reaches sourced code but not `bash script.sh`, unless it is exported with `export -f name`. A shim on `PATH` (`PATH="$BATS_TEST_TMPDIR/bin:$PATH"`) reaches every subprocess. Overrides and `PATH` changes made in a test do not leak into the next test.
+- `run` executes in a subshell, so a double that records its calls into a variable loses them. A function override reaches sourced code but not `bash script.sh`, unless it is exported with `export -f name`. A shim on `PATH` (`PATH="$BATS_TEST_TMPDIR/bin:$PATH"`) reaches every subprocess. Overrides and `PATH` changes made in a test do not leak into the next test.
 - Prefer a `PATH` shim for an external command a script runs, and a function override for a function in code the test sourced.
 
 ## Helpers and temp directories
