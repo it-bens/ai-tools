@@ -30,10 +30,13 @@ digraph writing_code {
     "Step 4: Confirm dependencies and surface scope" [shape=box];
     "Step 5: Stack footgun check" [shape=box];
     "Comment or doc comment written, edited, or kept on the lines being written or edited?" [shape=diamond];
-    "Step 6: Classify each comment" [shape=box];
-    "Comment contradicts the code, or a claim it makes about the language, interpreter, or tool fails when run or cannot be run here?" [shape=diamond];
-    "Correct the comment or the code" [shape=box];
-    "Apply the classified action" [shape=box];
+    "Step 6: Comment carries a marker from `comments.exemption_markers`?" [shape=diamond];
+    "Check the comment against the code" [shape=box];
+    "Run each claim the comment makes about the language, interpreter, or tool in an isolated probe" [shape=box];
+    "Report each claim that could not be run here as unverified" [shape=box];
+    "Comment contradicts the code, or a run refutes a claim?" [shape=diamond];
+    "Correct the comment or the code, or the refuted part of the claim" [shape=box];
+    "Classify the comment and apply the bucket's action" [shape=box];
     "More to write or edit?" [shape=diamond];
     "Done" [shape=doublecircle];
 
@@ -50,13 +53,17 @@ digraph writing_code {
     "New dependency, new export, or a caller removed?" -> "Step 5: Stack footgun check" [label="no"];
     "Step 4: Confirm dependencies and surface scope" -> "Step 5: Stack footgun check";
     "Step 5: Stack footgun check" -> "Comment or doc comment written, edited, or kept on the lines being written or edited?";
-    "Comment or doc comment written, edited, or kept on the lines being written or edited?" -> "Comment contradicts the code, or a claim it makes about the language, interpreter, or tool fails when run or cannot be run here?" [label="yes"];
+    "Comment or doc comment written, edited, or kept on the lines being written or edited?" -> "Step 6: Comment carries a marker from `comments.exemption_markers`?" [label="yes"];
     "Comment or doc comment written, edited, or kept on the lines being written or edited?" -> "More to write or edit?" [label="no"];
-    "Comment contradicts the code, or a claim it makes about the language, interpreter, or tool fails when run or cannot be run here?" -> "Correct the comment or the code" [label="yes"];
-    "Comment contradicts the code, or a claim it makes about the language, interpreter, or tool fails when run or cannot be run here?" -> "Step 6: Classify each comment" [label="no"];
-    "Correct the comment or the code" -> "Step 6: Classify each comment";
-    "Step 6: Classify each comment" -> "Apply the classified action";
-    "Apply the classified action" -> "More to write or edit?";
+    "Step 6: Comment carries a marker from `comments.exemption_markers`?" -> "More to write or edit?" [label="yes"];
+    "Step 6: Comment carries a marker from `comments.exemption_markers`?" -> "Check the comment against the code" [label="no"];
+    "Check the comment against the code" -> "Run each claim the comment makes about the language, interpreter, or tool in an isolated probe";
+    "Run each claim the comment makes about the language, interpreter, or tool in an isolated probe" -> "Report each claim that could not be run here as unverified";
+    "Report each claim that could not be run here as unverified" -> "Comment contradicts the code, or a run refutes a claim?";
+    "Comment contradicts the code, or a run refutes a claim?" -> "Correct the comment or the code, or the refuted part of the claim" [label="yes"];
+    "Comment contradicts the code, or a run refutes a claim?" -> "Classify the comment and apply the bucket's action" [label="no"];
+    "Correct the comment or the code, or the refuted part of the claim" -> "Classify the comment and apply the bucket's action";
+    "Classify the comment and apply the bucket's action" -> "More to write or edit?";
     "More to write or edit?" -> "Adding a new package dependency?" [label="yes"];
     "More to write or edit?" -> "Done" [label="no"];
 }
@@ -112,6 +119,6 @@ Comments split into two tiers, and visibility decides which one applies rather t
 
 **Implementation comments** default to none. Write or keep one only when it carries point-of-use *why* — a hidden constraint, subtle invariant, bug workaround, or deliberate tradeoff the reader cannot infer from the code and types. When deleting code, delete its why-comment too; an orphaned why is dead weight.
 
-Check each comment written, edited, or kept on the lines being written or edited against the code first: a comment that contradicts what the code does is corrected, never left standing and never deleted to resolve the mismatch. Run any claim such a comment makes about the language, the interpreter, or a tool before keeping it; a claim that cannot be run here is cut or narrowed to what a run shows. Then load `references/comments.md`, classify the comment against its table, and apply the bucket's action. The reference also carries the load-bearing-why worked shape, the negative-invariant shape, the regex exception, marker discipline, and the banned patterns.
+Skip any comment carrying a marker in `comments.exemption_markers`; default if not otherwise stated: none. Check each remaining comment written, edited, or kept on the lines being written or edited against the code first: a comment that contradicts what the code does is corrected, never left standing and never deleted to resolve the mismatch. Run any claim such a comment makes about the language, the interpreter, or a tool in an isolated probe (a one-line command or a scratch file), never by running the code under edit. A run counts only on the version or platform the claim names; a claim about a version or platform not available here cannot be run here. A claim a run refutes is corrected, limited to the part the run refutes. A claim that cannot be run here stays unchanged and is listed in the report to the user as unverified. Then load `references/comments.md`, classify the comment against its table, and apply the bucket's action. The reference also carries the load-bearing-why worked shape, the negative-invariant shape, the regex exception, marker discipline, and the banned patterns.
 
-Skip any comment carrying a marker in `comments.exemption_markers`; default if not otherwise stated: none. Always keep a comment matching `comments.preserve_patterns`; default if not otherwise stated: none. Hold every `TODO`/`FIXME` written or touched to `todo.ticket_format`; default if not otherwise stated: an owner plus a tracking reference. Never swap a term listed in `domain.terms` for a near-synonym while rewriting a comment; default if not otherwise stated: none registered. When `docs.surfaces` is assigned, a comment restating what a listed surface owns is cut to its local why plus a stable identifier instead of duplicating the surface; default if not otherwise stated: comments are judged on their own merits.
+Always keep a comment matching `comments.preserve_patterns`; default if not otherwise stated: none. Hold every `TODO`/`FIXME` written or touched to `todo.ticket_format`; default if not otherwise stated: an owner plus a tracking reference. Never swap a term listed in `domain.terms` for a near-synonym while rewriting a comment; default if not otherwise stated: none registered. When `docs.surfaces` is assigned, a comment restating what a listed surface owns is cut to its local why plus a stable identifier instead of duplicating the surface; default if not otherwise stated: comments are judged on their own merits.

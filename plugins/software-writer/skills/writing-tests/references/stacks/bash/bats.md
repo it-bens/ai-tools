@@ -1,6 +1,6 @@
 # Bash: BATS
 
-**Written against bats-core 1.14.x, bats-support 0.3.x, and bats-assert 2.2.x.** Check the versions the project installs (a setup script, a submodule, or a package manifest) before applying a rule below; where they differ, the project's version wins. bats-core runs each `@test` body as a Bash function under `set -e`; a function the body calls through `run` does not run under `set -e` unless `bats --errexit` (1.14.0) is passed (`f(){ false; echo after; }; run f` gives status 0 and output `after`). From 1.14.0, `run` honors a `set -e` the function turns on itself (`g(){ set -e; false; echo after; }; run g` gives status 1). The `assert_*` helpers come from bats-assert, loaded with `load` or `bats_load_library`; flags on `run` need `bats_require_minimum_version 1.5.0` at file level, or bats prints warning BW02.
+**Written against bats-core 1.14.x, bats-support 0.3.x, and bats-assert 2.2.x.** Check the versions the project installs (a setup script, a submodule, or a package manifest) before applying a rule below; where they differ, the project's version wins. bats-core runs each `@test` body as a Bash function under `set -e`; a function the body calls through `run` does not run under `set -e` unless `bats --errexit` (1.14.0) is passed (`f(){ false; echo after; }; run f` gives status 0 and output `after`). From 1.14.0, `run` honors a `set -e` the function turns on itself (`g(){ set -e; false; echo after; }; run g` gives status 1). The `assert_*` helpers come from bats-assert, loaded with `load` or `bats_load_library`; flags on `run` need `bats_require_minimum_version 1.5.0` before the first flagged `run` (at file level, in `setup`, or in the test body), or bats prints warning BW02.
 
 ## Table idiom
 
@@ -40,6 +40,8 @@ Two `@test` names, or two `bats_test_function` calls with the same function and 
 `run -<N> cmd` fails unless the status is exactly N (`expected exit code 2, got 3`), and `run ! cmd` accepts any status from 1 to 255; both need bats-core 1.5.0. Follow a refusal with an assertion that pins the message, because another failure can return the same status.
 
 ```bash
+bats_require_minimum_version 1.5.0
+
 @test "quote refuses a 31 kg parcel" {
     run -2 "$SHIP" quote --weight 31
     assert_output --partial "weight above 30 kg"
@@ -55,7 +57,7 @@ Two `@test` names, or two `bats_test_function` calls with the same function and 
 - Match the fragment the behavior depends on with `--partial` only when that fragment cannot match a wrong value; otherwise assert the full line with `assert_line` (any one line equal to the text) or `assert_output` (the whole output). `assert_output --partial "-vv"` also passes on `-vvv`, so a verbosity flag needs its full line.
 - Assert absence with `refute_output`, `refute_line` (`--partial`, `--regexp`, `--index`), or `refute_regex`.
 - No `--index` unless the line's position is the contract; `assert_line --index 1` breaks when an unrelated line is added above it.
-- `assert_success` and `assert_failure` read `$status`, which only `run` sets. `run` executes in a subshell, so a test that needs a function's variable assignments calls it directly. Capture its status with `|| code=$?` only when the function propagates its own failures (`cmd || return`), and assert on `code`, because `assert_success` there reads the status of an earlier `run`, or errors when no `run` has executed. `||` turns errexit off for the whole body, so a failing command in the middle is skipped over and `code` holds only the last command's status; without propagation, call the function bare and let the body's errexit fail the test.
+- `assert_success` and `assert_failure` read `$status`, which only `run` sets. `run` executes in a subshell, so a test that needs a function's variable assignments calls it directly. Capture its status with `|| code=$?` only when the function propagates its own failures (`cmd || return`), and assert on `code`, because `assert_success` there reads the status of an earlier `run`, or errors when no `run` has executed. `||` turns errexit off for the whole body, so a failing command in the middle runs, its failure is ignored, and `code` holds only the last command's status; without propagation, call the function bare and let the body's errexit fail the test.
 
 ```bash
 # WRONG: assert_success reads the status of the earlier run, not of load_rates
@@ -74,7 +76,6 @@ assert_equal "$code" 0
 
 - **Fixture `git` runs isolated from the developer's configuration.** Export `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`, and an explicit identity (`GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL`, `GIT_COMMITTER_NAME`, `GIT_COMMITTER_EMAIL`) in `setup`, so a developer's `commit.gpgsign` or hooks do not reach the test. Without the global configuration, git derives an identity from the machine's user and host names, which differs per machine.
 - **Restore through `teardown` and `teardown_file`.** They run after the test even when it fails, so put every restore of state outside the temporary directories there, never as the last line of the body, where a failed assertion skips it.
-- **Use the temporary directories bats provides** (1.4.0 and later): `BATS_TEST_TMPDIR` is per test, `BATS_FILE_TMPDIR` is shared by the tests of one file, so writes there couple them by order, and `BATS_SUITE_TMPDIR` is shared across files. bats removes them after the run unless `--no-tempdir-cleanup` is passed.
 - **From `setup_file` and `setup_suite`, only exported variables reach the tests**; a non-exported assignment is unset in them. `setup_suite` (1.7.0 and later) lives in `setup_suite.bash` beside the test files, and bats warns BW03 when a `.bats` file defines it.
 - **Parallel runs.** `--jobs N` needs `flock` or `shlock` (macOS ships `shlock`) for any N above 1, and GNU parallel or rush as well unless `--no-parallelize-across-files` is passed (without one, `parallel: command not found`, no test runs, and the run fails). With `--no-parallelize-across-files` the files run one after another and a file's tests run in parallel under bats' own lock. Order is not guaranteed under `--jobs`. A file whose tests share state opts out with `export BATS_NO_PARALLELIZE_WITHIN_FILE=true` in `setup_file` or at file level; `--no-parallelize-within-files` does the same for every file from the command line.
 - **Never set an `EXIT` trap in the test shell.** A test body or `setup` that sets `trap … EXIT` and then fails prints neither `ok` nor `not ok`, and the run ends with `Executed N-1 instead of expected N tests`. Run trap-setting code in `( … )`, under `run`, or in a separate script; a trap in `teardown` or `setup_file` is harmless.
@@ -90,6 +91,8 @@ assert_equal "$code" 0
 ## Helpers and temp directories
 
 Put helpers shared by several test files in one file, `test_helper/common.bash`, and call `load 'test_helper/common'` in `setup`. `load` resolves a relative name against the test file's own directory and tries `name.bash` before `name`, so a test file in a subdirectory loads `../test_helper/common`; a missing file fails the test. A helper used by one file stays in that file.
+
+**Use the temporary directories bats provides** (1.4.0 and later): `BATS_TEST_TMPDIR` is per test, `BATS_FILE_TMPDIR` is shared by the tests of one file, so writes there couple them by order, and `BATS_SUITE_TMPDIR` is shared across files. bats removes them after the run unless `--no-tempdir-cleanup` is passed.
 
 ## Non-deterministic calls to flag
 

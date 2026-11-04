@@ -39,7 +39,7 @@ func applyTemplateKeys(data []byte, keys []TemplateKey) []byte {
 
 The comment names the failure (shorter key consuming a longer one), gives the substitution that triggers it, and identifies the fix. None of those facts is recoverable from the code alone — sorting longest-first looks like a stylistic choice without the comment.
 
-Content that is load-bearing by construction, however plainly it is worded: a citation of an external spec, RFC, standard, or ticket; an algorithm choice with its complexity or its trade-off against the obvious alternative; a security or compliance constraint; a thread-safety or lock-ordering requirement; a workaround naming the upstream bug and the condition for removing it; a design decision that forecloses an approach a later reader would otherwise try. Removing any of these discards information the code cannot carry, so a comment that looks obvious but carries one of them stays, once its claim has been run or narrowed per Step 6.
+Content that is load-bearing by construction, however plainly it is worded: a citation of an external spec, RFC, standard, or ticket; an algorithm choice with its complexity or its trade-off against the obvious alternative; a security or compliance constraint; a thread-safety or lock-ordering requirement; a workaround naming the upstream bug and the condition for removing it; a design decision that forecloses an approach a later reader would otherwise try. Removing any of these discards information the code cannot carry, so a comment that looks obvious but carries one of them stays; Step 6 corrects only the part of a claim a run refutes.
 
 ## The negative-invariant shape
 
