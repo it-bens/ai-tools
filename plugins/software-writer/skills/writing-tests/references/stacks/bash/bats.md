@@ -1,6 +1,6 @@
 # Bash: BATS
 
-**Written against bats-core 1.14.x, bats-support 0.3.x, and bats-assert 2.2.x.** Check the versions the project installs (a setup script, a submodule, or a package manifest) before applying a rule below; where they differ, the project's version wins. bats-core runs each `@test` body as a Bash function under `set -e`; a function the body calls through `run` does not run under `set -e` (`f(){ false; echo after; }; run f` gives status 0 and output `after`) unless `bats --errexit` (1.14.0) is passed. The `assert_*` helpers come from bats-assert, loaded with `load` or `bats_load_library`; flags on `run` need `bats_require_minimum_version 1.5.0` at file level, or bats prints warning BW02.
+**Written against bats-core 1.14.x, bats-support 0.3.x, and bats-assert 2.2.x.** Check the versions the project installs (a setup script, a submodule, or a package manifest) before applying a rule below; where they differ, the project's version wins. bats-core runs each `@test` body as a Bash function under `set -e`; a function the body calls through `run` does not run under `set -e` unless `bats --errexit` (1.14.0) is passed (`f(){ false; echo after; }; run f` gives status 0 and output `after`). From 1.14.0, `run` honors a `set -e` the function turns on itself (`g(){ set -e; false; echo after; }; run g` gives status 1). The `assert_*` helpers come from bats-assert, loaded with `load` or `bats_load_library`; flags on `run` need `bats_require_minimum_version 1.5.0` at file level, or bats prints warning BW02.
 
 ## Table idiom
 
@@ -18,7 +18,7 @@ assert_quote() {
 @test "quote for a 30 kg parcel, the heaviest accepted" { assert_quote 30 "total: 41.00 EUR"; }
 ```
 
-For cases that mirror a production registry, register one test per entry in a loop at file level with `bats_test_function --description "<name>" -- <function> <args>` (bats-core 1.11.0 and later), so a new registry entry gets its test without a test edit. The `--` before the function is required, and bats passes the description through `eval`, so give it as a single-quoted literal that names the variable (`'quote with carrier $carrier'`): the variable's value is then substituted as text, while a registry value interpolated into a double-quoted description runs as code. Read the registry with a checked command substitution: a failing `$(…)` at file level fails the run, while a failing `< <(…)` registers no tests: the run exits 0 when the file has other tests, and fails with `Found no tests` when it has none. Check the captured list before the loop, so an empty registry fails the run instead of registering nothing or a blank case.
+For cases that mirror a production registry, register one test per entry in a loop at file level with `bats_test_function --description "<name>" -- <function> <args>` (bats-core 1.11.0 and later), so a new registry entry gets its test without a test edit. The `--` before the function is required, and bats passes the description through `eval`, so give it as a single-quoted literal that names the variable (`'quote with carrier $carrier'`): the variable's value is then substituted as text, while a registry value interpolated into a double-quoted description runs as code. Read the registry with a checked command substitution: a failing `$(…)` at file level fails the run, while a failing `< <(…)` registers no tests, and the run can still exit 0. Check the captured list before the loop, so an empty registry fails the run instead of registering nothing or a blank case.
 
 ```bash
 assert_carrier_quotes() {
@@ -46,7 +46,7 @@ Two `@test` names, or two `bats_test_function` calls with the same function and 
 }
 ```
 
-- For an external command, `run -0 cmd` adds nothing over calling `cmd` directly, since the body runs under `set -e`; write it only to assert on `$output` afterwards. For a function, `run` suppresses errexit inside it, so `run -0 f` can pass where a direct `f` fails; use it on a function only for an assertion on `$output`, and do not read the pass as proof that every command in `f` succeeded.
+- For an external command, `run -0 cmd` adds nothing over calling `cmd` directly, since the body runs under `set -e`; write it only to assert on `$output` afterwards. For a function that does not enable `set -e` itself, `run` suppresses errexit inside it, so `run -0 f` can pass where a direct `f` fails; use it on a function only for an assertion on `$output`, and do not read the pass as proof that every command in `f` succeeded.
 - A missing command passes `refute nosuchcmd`, `run ! nosuchcmd`, and `run nosuchcmd; assert_failure`, because 127 is non-zero. Assert the exact status with `run -<N>`; bats warns BW01 on a bare `run` that exits 127.
 - Without `--separate-stderr`, `$output` and `${lines[@]}` merge both streams. `run --separate-stderr` (1.5.0) fills `$output` with stdout only and `$stderr` and `${stderr_lines[@]}` with stderr; `assert_stderr`, `refute_stderr`, `assert_stderr_line`, and `refute_stderr_line` need bats-assert 2.2.0 and that flag.
 

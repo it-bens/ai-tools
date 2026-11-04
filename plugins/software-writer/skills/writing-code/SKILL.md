@@ -29,7 +29,7 @@ digraph writing_code {
     "New dependency, new export, or a caller removed?" [shape=diamond];
     "Step 4: Confirm dependencies and surface scope" [shape=box];
     "Step 5: Stack footgun check" [shape=box];
-    "Comment or doc comment proposed, kept, or edited?" [shape=diamond];
+    "Comment or doc comment written, edited, or kept on the lines being written or edited?" [shape=diamond];
     "Step 6: Classify each comment" [shape=box];
     "Comment contradicts the code, or a claim it makes about the language, interpreter, or tool fails when run or cannot be run here?" [shape=diamond];
     "Correct the comment or the code" [shape=box];
@@ -49,9 +49,9 @@ digraph writing_code {
     "New dependency, new export, or a caller removed?" -> "Step 4: Confirm dependencies and surface scope" [label="yes"];
     "New dependency, new export, or a caller removed?" -> "Step 5: Stack footgun check" [label="no"];
     "Step 4: Confirm dependencies and surface scope" -> "Step 5: Stack footgun check";
-    "Step 5: Stack footgun check" -> "Comment or doc comment proposed, kept, or edited?";
-    "Comment or doc comment proposed, kept, or edited?" -> "Comment contradicts the code, or a claim it makes about the language, interpreter, or tool fails when run or cannot be run here?" [label="yes"];
-    "Comment or doc comment proposed, kept, or edited?" -> "More to write or edit?" [label="no"];
+    "Step 5: Stack footgun check" -> "Comment or doc comment written, edited, or kept on the lines being written or edited?";
+    "Comment or doc comment written, edited, or kept on the lines being written or edited?" -> "Comment contradicts the code, or a claim it makes about the language, interpreter, or tool fails when run or cannot be run here?" [label="yes"];
+    "Comment or doc comment written, edited, or kept on the lines being written or edited?" -> "More to write or edit?" [label="no"];
     "Comment contradicts the code, or a claim it makes about the language, interpreter, or tool fails when run or cannot be run here?" -> "Correct the comment or the code" [label="yes"];
     "Comment contradicts the code, or a claim it makes about the language, interpreter, or tool fails when run or cannot be run here?" -> "Step 6: Classify each comment" [label="no"];
     "Correct the comment or the code" -> "Step 6: Classify each comment";
@@ -112,6 +112,6 @@ Comments split into two tiers, and visibility decides which one applies rather t
 
 **Implementation comments** default to none. Write or keep one only when it carries point-of-use *why* — a hidden constraint, subtle invariant, bug workaround, or deliberate tradeoff the reader cannot infer from the code and types. When deleting code, delete its why-comment too; an orphaned why is dead weight.
 
-Check each comment against the code first: a comment that contradicts what the code does is corrected, never left standing and never deleted to resolve the mismatch. Run any claim the comment makes about the language, the interpreter, or a tool before keeping it; a claim that cannot be run here is cut or narrowed to what a run shows. Then load `references/comments.md`, classify the comment against its table, and apply the bucket's action. The reference also carries the load-bearing-why worked shape, the negative-invariant shape, the regex exception, marker discipline, and the banned patterns.
+Check each comment written, edited, or kept on the lines being written or edited against the code first: a comment that contradicts what the code does is corrected, never left standing and never deleted to resolve the mismatch. Run any claim such a comment makes about the language, the interpreter, or a tool before keeping it; a claim that cannot be run here is cut or narrowed to what a run shows. Then load `references/comments.md`, classify the comment against its table, and apply the bucket's action. The reference also carries the load-bearing-why worked shape, the negative-invariant shape, the regex exception, marker discipline, and the banned patterns.
 
 Skip any comment carrying a marker in `comments.exemption_markers`; default if not otherwise stated: none. Always keep a comment matching `comments.preserve_patterns`; default if not otherwise stated: none. Hold every `TODO`/`FIXME` written or touched to `todo.ticket_format`; default if not otherwise stated: an owner plus a tracking reference. Never swap a term listed in `domain.terms` for a near-synonym while rewriting a comment; default if not otherwise stated: none registered. When `docs.surfaces` is assigned, a comment restating what a listed surface owns is cut to its local why plus a stable identifier instead of duplicating the surface; default if not otherwise stated: comments are judged on their own merits.
