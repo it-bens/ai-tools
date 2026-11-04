@@ -51,6 +51,10 @@ For an async test that must reach the thrown error itself, assert the expected a
 - **Module-level mutable state is shared by every test in the file**, in declaration order. Create per-test state inside `beforeEach` or a factory call, not at module scope.
 - A shared store or fake database created in a `describe` body accumulates state across that block's tests.
 
+## Helpers and temp directories
+
+Setup that every test file repeats goes in a module listed in `setupFilesAfterEnv`, which runs once per test file after the test framework is installed. Arrange helpers are plain exported functions in a module the tests import. Per-test filesystem state: create a directory with `fs.mkdtemp` under `os.tmpdir()` in `beforeEach` and remove it in `afterEach` with `fs.rm(dir, { recursive: true, force: true })`.
+
 ## Non-deterministic calls to flag
 
 | Call | Flag when |

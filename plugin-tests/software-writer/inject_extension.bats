@@ -230,10 +230,22 @@ Run the project's dead-code target only."
 }
 
 # bats test_tags=failure
-@test "fails when extension file exists but is not readable" {
-    make_extension "writing-tests" "## Post-Step-2"
-    chmod 000 "${CLAUDE_PROJECT_DIR}/.claude/extensions/software-writer/writing-tests.md"
+@test "fails when the extension path exists but is not a regular file" {
+    local extension="${CLAUDE_PROJECT_DIR}/.claude/extensions/software-writer/writing-tests.md"
+    mkdir -p "$extension"
     run_post_tool_use "software-writer:writing-tests"
-    chmod 644 "${CLAUDE_PROJECT_DIR}/.claude/extensions/software-writer/writing-tests.md"
-    assert_failure
+    assert_failure 1
+    assert_output --partial "extension file exists but is not readable"
+}
+
+# bats test_tags=failure
+@test "fails when the extension file exists but has no read permission" {
+    (( EUID != 0 )) || skip "root reads files regardless of mode"
+    make_extension "writing-tests" "## Post-Step-2"
+    local extension="${CLAUDE_PROJECT_DIR}/.claude/extensions/software-writer/writing-tests.md"
+    chmod 000 "$extension"
+    run_post_tool_use "software-writer:writing-tests"
+    chmod 644 "$extension"
+    assert_failure 1
+    assert_output --partial "extension file exists but is not readable"
 }

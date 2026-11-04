@@ -2,7 +2,7 @@
 
 The standard library's xUnit framework. Apply this file when the project's suite is built on `unittest.TestCase` — typically stdlib-only packages, or an existing suite that predates pytest. For a new suite with a free choice of runner, pytest is the mainstream default; do not port an existing `unittest` suite as a side effect of an unrelated change.
 
-**Version constraint: Python 3.12 removed the long-deprecated `TestCase` method aliases** — `assertEquals`, `assertNotEquals`, `assertAlmostEquals`, `assertNotAlmostEquals`, `assertRegexpMatches`, `assertRaisesRegexp`, `assertNotRegexpMatches`, `failUnless`, `failIf`, and the rest of the `failUnless*` / `failIf*` family, plus `assert_`. Use the canonical names (`assertEqual`, `assertRegex`, `assertRaisesRegex`, `assertTrue`). Check the project's minimum Python version before applying a version-gated rule; `unittest` tracks the CPython release cycle rather than shipping its own.
+**Written against Python 3.15.** Python 3.12 removed the long-deprecated `TestCase` method aliases: `assertEquals`, `assertNotEquals`, `assertAlmostEquals`, `assertNotAlmostEquals`, `assertRegexpMatches`, `assertRaisesRegexp`, `assertNotRegexpMatches`, `failUnless`, `failIf`, and the rest of the `failUnless*` / `failIf*` family, plus `assert_`. Use the canonical names (`assertEqual`, `assertRegex`, `assertRaisesRegex`, `assertTrue`). `unittest` tracks the CPython release cycle rather than shipping its own, so check the project's minimum Python version before applying a version-gated rule.
 
 ## Table idiom
 
@@ -46,6 +46,10 @@ class LedgerTest(unittest.TestCase):
 - **Class attributes and module-level state leak** across test methods: one method's mutation is visible to every method that runs after it, and the default execution order is alphabetical by method name, not declaration order.
 - **`unittest.mock.patch` must be scoped** — the decorator or context-manager form, or `addCleanup(patcher.stop)` immediately after `patcher.start()`. A `start()` without a matching `stop()` leaks into every later test in the process.
 - **The default runner executes tests sequentially in one process**, so parallelism is not the default hazard here; ordering and leaked global state are. Verify independence by running a single test in isolation (`python -m unittest module.Class.test_name`).
+
+## Helpers and temp directories
+
+Shared arrange helpers are methods on a base `TestCase` subclass that the test classes inherit; keep test methods off the base class, because loading a module collects it as a test case. Per-test filesystem state: `self.enterContext(tempfile.TemporaryDirectory())` (Python 3.11 and later) creates a directory and removes it when the test ends; it returns the directory's path.
 
 ## Non-deterministic calls to flag
 

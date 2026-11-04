@@ -2,7 +2,7 @@
 
 A test runner that ships neither assertions nor test doubles: Mocha structures and executes, Chai (or another assertion library) asserts, and Sinon (or equivalent) supplies spies, stubs, and fake timers. Every rule below that mentions an assertion assumes Chai's `expect` interface; adapt the call, not the rule, if the project uses a different library.
 
-**Pin the majors.** Mocha and Chai ship breaking majors on an irregular cadence — historically near-annual, more recently multi-year gaps — and Chai's move to ESM-only in a recent major breaks CommonJS suites outright. Check both constraints in `package.json` before applying a version-gated rule.
+**Written against Mocha 12.x and Chai 6.x.** Mocha and Chai ship breaking majors on an irregular cadence — historically near-annual, more recently multi-year gaps — and Chai's move to ESM-only in a recent major breaks CommonJS suites outright. Check both constraints in `package.json` before applying a version-gated rule.
 
 ## Test shape
 
@@ -61,6 +61,10 @@ The explicit `expect.fail` is mandatory: without it, a call that unexpectedly re
 - **Nothing is reset between tests.** Mocha has no mock, spy, or timer state of its own, so every double the test installs must be restored in `afterEach` — with Sinon, a per-test sandbox restored in `afterEach` is the reliable shape, since a forgotten manual restore leaks a stub into every later test in the process.
 - Variables declared in a `describe` body are shared by that block's tests: assign them in `beforeEach` rather than at declaration.
 - Arrow-function test bodies cannot reach Mocha's context; a test needing a longer timeout must be a `function` expression.
+
+## Helpers and temp directories
+
+Setup shared by every file goes in a root hook plugin: a module loaded with `--require` that exports `mochaHooks`, which also works in parallel mode. Arrange helpers are plain exported functions in a module the tests import. Per-test filesystem state: create a directory with `fs.mkdtemp` under `os.tmpdir()` in `beforeEach` and remove it in `afterEach` with `fs.rm(dir, { recursive: true, force: true })`.
 
 ## Non-deterministic calls to flag
 

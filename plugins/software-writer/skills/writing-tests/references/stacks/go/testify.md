@@ -47,6 +47,10 @@ require.ErrorAs(t, err, &pathErr)
 
 `testify/mock` and generated mocks make it easy to write change-detector tests. Asserting that a mock was called verifies the implementation, not the behavior — reach for a mock only at a genuine boundary, and assert on the observable result rather than on the interaction. When a project generates interface mocks, the maintained module is `go.uber.org/mock`; the older `golang/mock` is archived.
 
+## Helpers and temp directories
+
+Helpers follow the stdlib reference: `t.Helper()` first, and `t.TempDir()` for per-test filesystem state. On a `suite.Suite`, a helper is a method on the suite struct.
+
 ## Suites
 
 `suite.Suite` offers xUnit-style `SetupTest` / `TearDownTest` / `SetupSuite` / `TearDownSuite` hooks as an alternative to `t.Cleanup`. It is a stylistic choice, not a capability: prefer plain functions plus `t.Cleanup` unless the project already standardizes on suites, since suite state is shared across the suite's methods and reintroduces the ordering coupling `t.Cleanup` avoids.

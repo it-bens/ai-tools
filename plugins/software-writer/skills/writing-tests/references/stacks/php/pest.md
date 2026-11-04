@@ -2,7 +2,7 @@
 
 A closure-based test framework with its own CLI, configuration file (`Pest.php`), and plugin ecosystem, executing on PHPUnit underneath. Apply this file to files written in Pest's function style. Both styles can coexist in one suite, so a project running Pest may still hold `TestCase` classes — select the framework per file being edited rather than per project.
 
-**Written against Pest 4.x.** Each Pest major raises the PHPUnit major it requires, so a Pest upgrade inherits PHPUnit's breaking changes on top of its own — when a rule here depends on the underlying PHPUnit behavior, check both constraints in `composer.json`.
+**Written against Pest 5.x, which runs on PHPUnit 13** (Pest 4 ran on PHPUnit 12). Each Pest major raises the PHPUnit major it requires, so a Pest upgrade inherits PHPUnit's breaking changes on top of its own — when a rule here depends on the underlying PHPUnit behavior, check both constraints in `composer.json`.
 
 ## Test shape
 
@@ -49,6 +49,10 @@ The class alone passes on any exception of that class, a test double's included;
 - **`beforeEach()` / `afterEach()` run per test in the file; `beforeAll()` / `afterAll()` run once per file.** `$this` is not available inside `beforeAll()` / `afterAll()`, so those hooks cannot build per-test instance state — anything a test mutates belongs in `beforeEach()`.
 - **State assigned to `$this` in a closure is per test**, but state captured in a file-level variable or a static is shared across the file's tests and leaks in declaration order.
 - The underlying PHPUnit constraints still apply: nothing restores globals or static properties between tests by default, and dataset callables are evaluated before any per-test setup, so a dataset cannot depend on state a hook creates.
+
+## Helpers and temp directories
+
+`tests/Pest.php` is loaded automatically and binds shared setup: `pest()->extend(Tests\TestCase::class)->in('Feature')` attaches a base test case to a folder, `pest()->use(SomeTrait::class)->in(...)` attaches a trait, and `public` or `protected` methods on the base case are callable as `$this->helper()` inside a test closure. Plain helper functions go in `tests/Pest.php`, `tests/Helpers.php`, or a `tests/Helpers` directory. Per-test filesystem state: create a unique directory under `sys_get_temp_dir()` in `beforeEach()` and remove it in `afterEach()`.
 
 ## Non-deterministic calls to flag
 

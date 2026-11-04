@@ -19,7 +19,7 @@ Consultation is not required for: builtins (`len`, `append`, `cap`, `make`, `del
 
 Scan every written line against these; apply them even when nearby code does not.
 
-- **Unchecked error returns and error shadowing.** Every returned error is handled or explicitly propagated; a `:=` inside a block that shadows an outer `err` silently drops the outer check.
+- **Unchecked error returns and error shadowing.** Every returned error is handled or explicitly propagated; never discard one with `_ =`, and on a file opened for writing check the `Close` error instead of a bare `defer f.Close()`; a `:=` inside a block that shadows an outer `err` silently drops the outer check.
 - **Nil-map writes.** Reading a nil map is safe; writing panics. Initialize with `make` or a literal before any write path can reach the map.
 - **Slice aliasing and append sharing.** A subslice shares the backing array; `append` on one alias can overwrite the other's elements or, past capacity, silently diverge. Copy when the callee keeps the slice.
 - **Defer in a loop.** Deferred calls run at function exit, not iteration end — resources pile up across iterations. Extract the loop body into a function or release explicitly.

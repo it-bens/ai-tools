@@ -31,7 +31,7 @@ digraph writing_code {
     "Step 5: Stack footgun check" [shape=box];
     "Comment or doc comment proposed, kept, or edited?" [shape=diamond];
     "Step 6: Classify each comment" [shape=box];
-    "Comment contradicts the code?" [shape=diamond];
+    "Comment contradicts the code, or a claim it makes about the language, interpreter, or tool fails when run?" [shape=diamond];
     "Correct the comment or the code" [shape=box];
     "Apply the classified action" [shape=box];
     "More to write or edit?" [shape=diamond];
@@ -52,9 +52,9 @@ digraph writing_code {
     "Step 5: Stack footgun check" -> "Comment or doc comment proposed, kept, or edited?";
     "Comment or doc comment proposed, kept, or edited?" -> "Step 6: Classify each comment" [label="yes"];
     "Comment or doc comment proposed, kept, or edited?" -> "More to write or edit?" [label="no"];
-    "Step 6: Classify each comment" -> "Comment contradicts the code?";
-    "Comment contradicts the code?" -> "Correct the comment or the code" [label="yes"];
-    "Comment contradicts the code?" -> "Apply the classified action" [label="no"];
+    "Step 6: Classify each comment" -> "Comment contradicts the code, or a claim it makes about the language, interpreter, or tool fails when run?";
+    "Comment contradicts the code, or a claim it makes about the language, interpreter, or tool fails when run?" -> "Correct the comment or the code" [label="yes"];
+    "Comment contradicts the code, or a claim it makes about the language, interpreter, or tool fails when run?" -> "Apply the classified action" [label="no"];
     "Correct the comment or the code" -> "More to write or edit?";
     "Apply the classified action" -> "More to write or edit?";
     "More to write or edit?" -> "Adding a new package dependency?" [label="yes"];
@@ -84,7 +84,7 @@ Skip consultation when the call mechanically repeats an idiom already establishe
 
 Before writing logic, search for an existing helper that does it and call it. Write the call or edit the line.
 
-**No silent fallback.** Refuse an unrecognized or invalid input with a message before any fallback runs: a parse failure on a user-supplied file, an argument type no branch handles, an empty value where one is required. Logging and then falling back is allowed only where the fallback is the documented behavior. A documented default for an absent optional value is not such a fallback.
+**No silent fallback.** Refuse an unrecognized or invalid input with a message before any fallback runs: a parse failure on a user-supplied file, an argument type no branch handles, an empty value where one is required. Logging and then falling back is allowed only where the fallback is the documented behavior. A documented default for an absent optional value is not such a fallback. When an edit makes a function fail where it used to return a value, search its callers for a fallback (`|| x='{}'`, `?? default`) that was unreachable before and now runs.
 
 **Validate before the first side effect.** In entry points and functions with side effects, validate every argument before the first bootstrap, write, spawn, or network call. For streaming or incremental input, validate each unit before acting on it.
 
@@ -112,6 +112,6 @@ Comments split into two tiers, and visibility decides which one applies rather t
 
 **Implementation comments** default to none. Write or keep one only when it carries point-of-use *why* — a hidden constraint, subtle invariant, bug workaround, or deliberate tradeoff the reader cannot infer from the code and types. When deleting code, delete its why-comment too; an orphaned why is dead weight.
 
-Check each comment against the code first: a comment that contradicts what the code does is corrected, never left standing and never deleted to resolve the mismatch. Then load `references/comments.md`, classify the comment against its table, and apply the bucket's action. The reference also carries the load-bearing-why worked shape, the negative-invariant shape, the regex exception, marker discipline, and the banned patterns.
+Check each comment against the code first: a comment that contradicts what the code does is corrected, never left standing and never deleted to resolve the mismatch. Run any claim the comment makes about the language, the interpreter, or a tool before keeping it, then load `references/comments.md`, classify the comment against its table, and apply the bucket's action. The reference also carries the load-bearing-why worked shape, the negative-invariant shape, the regex exception, marker discipline, and the banned patterns.
 
 Skip any comment carrying a marker in `comments.exemption_markers`; default if not otherwise stated: none. Always keep a comment matching `comments.preserve_patterns`; default if not otherwise stated: none. Hold every `TODO`/`FIXME` written or touched to `todo.ticket_format`; default if not otherwise stated: an owner plus a tracking reference. Never swap a term listed in `domain.terms` for a near-synonym while rewriting a comment; default if not otherwise stated: none registered. When `docs.surfaces` is assigned, a comment restating what a listed surface owns is cut to its local why plus a stable identifier instead of duplicating the surface; default if not otherwise stated: comments are judged on their own merits.

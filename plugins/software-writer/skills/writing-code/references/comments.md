@@ -54,7 +54,7 @@ def escape_literal(text: str) -> str:
 
 Without the comment, the missing double-quote escape reads as an oversight; with it, the omission is a documented decision.
 
-Every construct that reads as a mistake and is not belongs to this shape, and the comment is what separates the two: an intentional switch fall-through, a deliberately empty catch block, a discarded return value kept for its side effect, a statement not folded into the one below it. Write the comment when producing such a construct, and keep it when editing around one — several linters and style guides only suppress their diagnostic because the comment is there.
+Every construct that reads as a mistake and is not belongs to this shape, and the comment is what separates the two: an intentional switch fall-through, a deliberately empty catch block (the comment names which failures it swallows and why discarding each is safe), a discarded return value kept for its side effect, a statement not folded into the one below it. Write the comment when producing such a construct, and keep it when editing around one — several linters and style guides only suppress their diagnostic because the comment is there.
 
 ## The explains-what exception: regular expressions
 
