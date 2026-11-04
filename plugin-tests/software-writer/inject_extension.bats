@@ -245,7 +245,6 @@ Run the project's dead-code target only."
     local extension="${CLAUDE_PROJECT_DIR}/.claude/extensions/software-writer/writing-tests.md"
     chmod 000 "$extension"
     run_post_tool_use "software-writer:writing-tests"
-    chmod 644 "$extension"
     assert_failure 1
     assert_output --partial "extension file exists but is not readable"
 }

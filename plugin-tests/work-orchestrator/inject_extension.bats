@@ -294,7 +294,6 @@ List the project gates before stating the strategy."
     local extension="${CLAUDE_PROJECT_DIR}/${EXTENSION_REL}"
     chmod 000 "$extension"
     run_post_tool_use "$SKILL"
-    chmod 644 "$extension"
     assert_failure 1
     assert_output --partial "extension file exists but is not readable"
 }

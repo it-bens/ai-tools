@@ -4,7 +4,7 @@
 
 ## Table idiom
 
-BATS has no parametrize construct, and a `for` loop around `@test` registers one test per `@test` line, not per iteration, and a loop of two or more iterations aborts the file with `Duplicate test name(s) in file`. For a fixed case table, write one helper that runs the act and asserts, and call it from one thin `@test` per case, with the distinguishing input in the test name, so each case reports as its own test and a failure names its input.
+BATS has no parametrize construct, and a `for` loop around `@test` runs only with one iteration: with two or more the file aborts with `Duplicate test name(s) in file` before any test runs, even when the name uses the loop variable, because names are fixed at preprocessing. For a fixed case table, write one helper that runs the act and asserts, and call it from one thin `@test` per case, with the distinguishing input in the test name, so each case reports as its own test and a failure names its input.
 
 ```bash
 assert_quote() {
@@ -46,7 +46,7 @@ Two `@test` names, or two `bats_test_function` calls with the same function and 
 }
 ```
 
-- `run -0 cmd` adds nothing over calling `cmd` directly, since the body runs under `set -e`; write it only to assert on `$output` afterwards.
+- For an external command, `run -0 cmd` adds nothing over calling `cmd` directly, since the body runs under `set -e`; write it only to assert on `$output` afterwards. For a function, `run` suppresses errexit inside it, so `run -0 f` can pass where a direct `f` fails; use it on a function only for an assertion on `$output`, and do not read the pass as proof that every command in `f` succeeded.
 - A missing command passes `refute nosuchcmd`, `run ! nosuchcmd`, and `run nosuchcmd; assert_failure`, because 127 is non-zero. Assert the exact status with `run -<N>`; bats warns BW01 on a bare `run` that exits 127.
 - Without `--separate-stderr`, `$output` and `${lines[@]}` merge both streams. `run --separate-stderr` (1.5.0) fills `$output` with stdout only and `$stderr` and `${stderr_lines[@]}` with stderr; `assert_stderr`, `refute_stderr`, `assert_stderr_line`, and `refute_stderr_line` need bats-assert 2.2.0 and that flag.
 
@@ -76,7 +76,7 @@ assert_equal "$code" 0
 - **Restore through `teardown` and `teardown_file`.** They run after the test even when it fails, so put every restore of state outside the temporary directories there, never as the last line of the body, where a failed assertion skips it.
 - **Use the temporary directories bats provides** (1.4.0 and later): `BATS_TEST_TMPDIR` is per test, `BATS_FILE_TMPDIR` is shared by the tests of one file, so writes there couple them by order, and `BATS_SUITE_TMPDIR` is shared across files. bats removes them after the run unless `--no-tempdir-cleanup` is passed.
 - **From `setup_file` and `setup_suite`, only exported variables reach the tests**; a non-exported assignment is unset in them. `setup_suite` (1.7.0 and later) lives in `setup_suite.bash` beside the test files, and bats warns BW03 when a `.bats` file defines it.
-- **Parallel runs.** `--jobs N` needs GNU parallel or rush (without one, `parallel: command not found`, no test runs, and the run fails), and also `flock` or `shlock` (macOS ships `shlock`) for any N above 1, even with `--no-parallelize-within-files`. Order is not guaranteed under `--jobs`. A file whose tests share state opts out with `export BATS_NO_PARALLELIZE_WITHIN_FILE=true` in `setup_file` or at file level; `--no-parallelize-within-files` does the same for every file from the command line, and `--no-parallelize-across-files` runs the files one after another.
+- **Parallel runs.** `--jobs N` needs `flock` or `shlock` (macOS ships `shlock`) for any N above 1, and GNU parallel or rush as well unless `--no-parallelize-across-files` is passed (without one, `parallel: command not found`, no test runs, and the run fails). With `--no-parallelize-across-files` the files run one after another and a file's tests run in parallel under bats' own lock. Order is not guaranteed under `--jobs`. A file whose tests share state opts out with `export BATS_NO_PARALLELIZE_WITHIN_FILE=true` in `setup_file` or at file level; `--no-parallelize-within-files` does the same for every file from the command line.
 - **Never set an `EXIT` trap in the test shell.** A test body or `setup` that sets `trap … EXIT` and then fails prints neither `ok` nor `not ok`, and the run ends with `Executed N-1 instead of expected N tests`. Run trap-setting code in `( … )`, under `run`, or in a separate script; a trap in `teardown` or `setup_file` is harmless.
 - **A test that makes a write fail with file modes is wrong as root.** A write to a `chmod 444` file and a removal from a `chmod 555` directory succeed for root. Make the write fail another way (a directory at the target path fails with `Is a directory` for root too), or `if (( EUID == 0 )); then skip "root ignores file modes"; fi`.
 - **Never `source` a file that sets shell options (`set -euo pipefail`) into the bats process.** The options stay set for the rest of the test and its `teardown`. Source it inside `run bash -c "source '<file>'; <function> <args>"`, a separate Bash process whose options end with it.
