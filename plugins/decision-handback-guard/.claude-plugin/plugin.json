@@ -1,0 +1,11 @@
+{
+  "name": "decision-handback-guard",
+  "version": "1.0.0",
+  "description": "Stops the main agent from handing the user decisions that the request, the code, the project rules, or earlier instructions already settle. A Stop prompt hook turns a decision asked in prose into an AskUserQuestion call; a PreToolUse agent hook judges every AskUserQuestion call and denies the questions the agent can derive itself, with the derived answer and its source.",
+  "author": {
+    "name": "Martin Bens",
+    "email": "martin.bens@it-bens.de"
+  },
+  "license": "MIT",
+  "keywords": ["hooks", "guardrails", "decisions", "AskUserQuestion", "autonomy"]
+}

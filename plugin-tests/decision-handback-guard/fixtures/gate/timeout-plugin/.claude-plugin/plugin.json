@@ -1,0 +1,5 @@
+{
+  "name": "decision-handback-guard-timeout-fixture",
+  "version": "0.0.0",
+  "description": "Test fixture: a PreToolUse agent hook on AskUserQuestion that cannot finish within its timeout."
+}

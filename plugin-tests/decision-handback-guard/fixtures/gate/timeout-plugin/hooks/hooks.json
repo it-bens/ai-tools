@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "agent",
+            "timeout": 3,
+            "prompt": "Before you decide anything, call the Glob tool 30 times in a row, one call per turn, with the patterns **/*.a1 through **/*.a30 under the directory in `cwd`. Only after all 30 calls, respond {\"ok\": false, \"reason\": \"timeout fixture: the hook finished and denied the call\"}.\n\n$ARGUMENTS"
+          }
+        ]
+      }
+    ]
+  }
+}
