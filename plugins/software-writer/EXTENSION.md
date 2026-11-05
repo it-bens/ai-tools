@@ -126,13 +126,12 @@ Every claim in an extension file is a fact about the current codebase, and drift
 | `code.di_pattern` | parameter or constructor injection | Names the project's concrete dependency-injection pattern for the Step 4 entry-shape check. |
 | `code.export_conventions` | (none) | Project rules for new exported symbols, such as a package-index re-export surface. |
 | `code.dead_code_check` | (none) | A project command that reports unused code. Step 4 runs it after the orphaned-symbol search and handles its findings in the edited scope. |
-| `code.footgun_additions` | (none) | Project-specific entries appended to the stack's footgun catalog in Step 5. |
+| `code.footgun_additions` | (none) | The only footgun source: the entries Step 5 scans each written line against. With none registered, Step 5 passes without a check. |
 | `code.comment_enforcement` | (none) | Lint rules that require doc comments; comments they cover are never deleted. |
-| `comments.preserve_patterns` | (none) | Markers or patterns for existing comments that Step 6 keeps out of classification and out of every rewrite rule, `todo.ticket_format` and `docs.surfaces` included. Step 6 still corrects a contradiction or a refuted claim in such a comment, and deletes it together with the code it describes, naming the deletion in the report. A comment the edit writes is not covered. Use `comments.exemption_markers` to leave a comment untouched; it takes literal markers, so a pattern that is not one has no untouched equivalent. |
-| `comments.exemption_markers` | (none) | Markers whose comments Step 6 skips entirely, neither classified nor edited. |
+| `comments.preserve_patterns` | (none) | Markers or patterns for comments; Step 6 skips a matching comment that existed before the edit entirely. |
 | `todo.ticket_format` | an owner plus a tracking reference | The shape a `TODO`/`FIXME` must take; every marker written or touched is held to it. |
 | `domain.terms` | (none registered) | Project vocabulary that must survive a comment rewrite verbatim rather than being replaced by a near-synonym. |
-| `docs.surfaces` | (built-in taxonomy) | Shared with `writing-docs`. In Step 6 it identifies the surfaces that own facts, so a comment restating one is cut to its local why plus a stable identifier. |
+| `docs.surfaces` | comments are judged on their own merits | Shared with `writing-docs`. In Step 6 it identifies the surfaces that own facts, so a comment restating one is cut to its local why plus a stable identifier. |
 
 ### writing-tests
 
@@ -140,7 +139,7 @@ Every claim in an extension file is a fact about the current codebase, and drift
 |---|---|---|
 | `project.stacks` | (detect from files and project signals) | Overrides stack detection; names the stacks in play. |
 | `tests.frameworks` | (detect from project configuration and existing tests) | Names the project's test frameworks and runners. |
-| `tests.fixture_sources` | (universal source list only) | Project fixture helpers added to the Step 3 arrange-data source list. |
+| `tests.fixture_sources` | (universal source list only) | Project fixture helpers that count as arrange-data sources in Step 3 alongside the universal list. |
 | `tests.parallelism` | (none stated) | Project parallel-execution facts, such as the suite running under a parallel runner. Without it, independence is guarded as if tests could run in any order and concurrently. |
 | `tests.scale_gating` | (none) | Names the project's production-scale gated-test pattern. Without it, no gated tier is invented. |
 
@@ -152,7 +151,7 @@ Every claim in an extension file is a fact about the current codebase, and drift
 | `docs.pointer_file` | `CLAUDE.md` | Names the LLM pointer-file convention (`AGENTS.md` as alternative; `none` disables the pointer branch). |
 | `docs.jargon_home` | `docs/architecture.md` | The surface where project jargon is defined once. |
 | `docs.diagrams` | (table-first) | Diagram stance; the default adds a diagram only when a table cannot express the relationship. |
-| `docs.style` | (house targets) | Overrides the writing-style targets (sentence lengths, FK band). |
+| `docs.style` | sentences ≤25 words averaging 12-17; paragraphs ≤4 sentences; active voice predominant; a number stays only when replacing it with "several" would lose information | Replaces these style targets. |
 | `docs.changelog` | (none) | Registers a changelog surface maintained with Keep a Changelog discipline. |
 
 ### sweeping-dead-code
@@ -160,14 +159,14 @@ Every claim in an extension file is a fact about the current codebase, and drift
 | Name | Default | Effect |
 |---|---|---|
 | `project.stacks` | (detect from files and project signals) | Overrides stack detection; names the stacks in play. |
-| `sweep.exclude` | dependency and build directories (`vendor/`, `node_modules/`, `.venv/`, `venv/`, `dist/`, `build/`, `target/`) and files whose header marks them as generated | Paths Step 1 never enumerates. |
+| `sweep.exclude` | dependency and build directories (`vendor/`, `node_modules/`, `.venv/`, `venv/`, `dist/`, `build/`, `target/`) and files whose header marks them as generated | Paths Step 1 never enumerates; the bash and python file-list commands also take each entry as an exclude pathspec. |
 | `sweep.tools` | (the commands in the tool reference) | Replaces or adds tool commands per stack. Step 4 rejects a command carrying a never-pass flag or a shell operator, and runs each remaining command only after the user approves it. |
 | `sweep.entry_points` | (none) | Names Step 5 treats as published roots, alongside the built-in entry points. |
 | `sweep.refutation_batch_size` | 10 | Rows per refutation subagent in Step 6. |
 
 ## Example: Registering a Code Framework
 
-A framework such as Symfony sits on top of a language the plugin already carries a reference for. The language reference keeps owning language-level footguns and doc-tool queries; the framework's own conventions enter through `.claude/extensions/software-writer/writing-code.md`.
+A framework such as Symfony sits on top of a language the plugin already carries a reference for. The language reference keeps owning the language's documentation sources and doc-comment convention; the framework's own conventions enter through `.claude/extensions/software-writer/writing-code.md`.
 
 What each name carries for a framework of this shape:
 
@@ -177,7 +176,7 @@ What each name carries for a framework of this shape:
 - `code.di_pattern` = <the container's wiring model, and where the composition root actually is — service configuration rather than an entry-point function>
 - `code.export_conventions` = <what counts as a public surface here: a class registered as a service, an event listener the framework discovers, a route the router binds>
 - `code.footgun_additions` =
-  <one row per trap the language reference cannot know: lifetime mismatches between request-scoped and long-lived services, ORM state after a failed transaction, framework calls whose behavior differs between the CLI and HTTP contexts>
+  <one row per trap the project's code can hit, framework-level or language-level: lifetime mismatches between request-scoped and long-lived services, ORM state after a failed transaction, framework calls whose behavior differs between the CLI and HTTP contexts>
 - `code.primitives` =
   <one row per wrapper the project maintains over a framework or standard-library primitive, with the invariant each wrapper exists to carry>
 - `code.comment_enforcement` = <the static-analysis rules that require doc blocks, so the comment step never strips them>
@@ -185,9 +184,9 @@ What each name carries for a framework of this shape:
 
 Add a workflow position only for a check the named values cannot express, for example a `## Post-Step-4` that constrains how framework-discovered classes receive their collaborators, beyond the universal entry-shape rule Step 4 already applies.
 
-Two rules the framework case makes easy to get wrong. `code.footgun_additions` appends to the language catalog rather than replacing it, so the language entries still apply to framework code. And a framework whose test integration changes isolation or fixture behavior belongs in the `writing-tests` extension file under `tests.frameworks` and `tests.parallelism` as well. The two extension files do not see each other.
+Two rules the framework case makes easy to get wrong. `code.footgun_additions` is the only footgun source, so a language-level trap the project wants checked goes into it too. And a framework whose test integration changes isolation or fixture behavior belongs in the `writing-tests` extension file under `tests.frameworks` and `tests.parallelism` as well. The two extension files do not see each other.
 
-A framework that needs a full footgun catalog and doc-tool query table rather than a handful of rows has outgrown inline extension content; register the catalog as a project documentation surface and cite it (see §Reference-Like Extensions), or propose it as a plugin-side reference file.
+When footgun entries outgrow a few lines each, register the catalog as a project documentation surface and cite it from the `code.footgun_additions` assignment (see §Reference-Like Extensions).
 
 ## Example: Extending the Documentation Surface Map
 
