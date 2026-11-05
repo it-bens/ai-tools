@@ -1,42 +1,11 @@
 # PHP Code Stack
 
-## Doc consultation: CLI reflection
+## Documentation sources
 
-The PHP CLI answers signature questions from the installed runtime. Pick the narrowest query:
+- CLI reflection: `php --rf <function>`, `php --rc <ClassName>`, `php --re <extension>`.
+- Composer dependencies: the installed source under `vendor/<vendor>/<package>/`.
+- The official PHP manual: `https://www.php.net/<function>`.
 
-| Need | Command |
-|---|---|
-| One function's signature and parameters | `php --rf <function>` |
-| A class with its methods and properties | `php --rc <ClassName>` |
-| An extension's classes and functions | `php --re <extension>` |
-| An extension's configuration | `php --ri <extension>` |
+## Doc-comment convention
 
-For Composer dependencies, read the installed package source under `vendor/<vendor>/<package>/` — the version the lockfile pins is the contract, not the latest documentation. Escalate to the official manual or the package's documentation when the behavior in question is semantic (return-value edge cases, error modes) rather than a signature.
-
-Consultation is not required for: everyday language constructs (`foreach`, `isset`, `count`, string interpolation); a call that already runs with a passing test exercising it; mechanically repeating an idiom established in the same file.
-
-## Footgun catalog
-
-Scan every written line against these; apply them even when nearby code does not.
-
-- **Loose `==` comparisons.** `==` type-juggles (`"1" == 1`, `"abc" == 0` on old majors, `null == false`). Use `===` / `!==` everywhere; a loose comparison is acceptable only with a why-comment naming the coercion it deliberately exploits.
-- **Unhandled `false`/`null` returns from the standard library.** Many stdlib functions signal failure through their return value (`strpos`, `file_get_contents`, `preg_match`). Check the failure value explicitly with `===` before using the result — `strpos` returning `0` is a match at position zero, not a failure. `json_decode` returns `null` both on malformed input and for the valid document `null`, so pass `JSON_THROW_ON_ERROR` instead of testing the result. The `@` operator hides the call's warning, not the failure, so it never replaces the check.
-- **Missing `declare(strict_types=1);`.** Every new file starts with it. Without strict types, scalar type declarations coerce silently and a `"5"` satisfies an `int` parameter.
-- **String-built SQL.** Bind parameters via prepared statements; never concatenate or interpolate values into a statement.
-- **`str_starts_with` on a bare root is not a path-boundary match.** `str_starts_with($p, $root)` matches `/a/box-extras` against the root `/a/box`. Match a path to a root by equality or by a prefix that ends in the separator, never a bare substring or unanchored prefix. Canonicalize both first with `$root = realpath($root); $p = realpath($p);`, which resolves `..` and symlinks so `/a/box/../etc` is not inside `/a/box`, and returns `false` for a path that does not exist: stop when either is `false`. Hold `root` without a trailing separator (`$root = rtrim($root, '/');`), then match with `$p === $root || str_starts_with($p, $root . '/')` (PHP 8.0+).
-- **Array-vs-null ambiguity.** A function returning `array|null` (or `array|false`) forces every caller to branch; returning an empty array for "none" and reserving exceptions for failures keeps call sites linear. When consuming such a function, handle the non-array case explicitly — `foreach (null)` emits a warning and runs on, and `count(false)` fatals.
-
-## Doc-comment convention: PHPDoc DocBlock
-
-A DocBlock is a `/** ... */` comment immediately preceding the structural element it documents. With full native parameter and return types, tags that restate the types are noise; the DocBlock carries only what the signature cannot say — array value shapes, throw behavior, side effects. Minimal-correct example:
-
-```php
-/**
- * Load the manifest for the directory, applying the project's override chain.
- *
- * @throws ManifestNotFoundException when the directory has no manifest file.
- */
-public function resolveManifest(string $directory): Manifest
-```
-
-Use `@param`/`@return` tags only where they add information beyond the native types — for example `@param list<string> $paths` to narrow a native `array`.
+PHPDoc DocBlock: a `/** ... */` comment immediately preceding the element, with tags only where they add information beyond the native types.
