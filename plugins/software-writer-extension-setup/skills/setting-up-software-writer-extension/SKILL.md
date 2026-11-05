@@ -60,7 +60,7 @@ Probe checklists:
 
 - **Stacks:** build and configuration files, languages present, an extension-to-stack map.
 - **Tests:** frameworks and runners; parallelism configuration; fixture helpers and conventions; shared test-utility modules and their promotion points; e2e or property-test layers; CI test invocations.
-- **Code:** in-repo wrapper helpers over standard-library primitives in risk domains (path handling, user-owned config files, untrusted input, database access); the dependency-injection and composition pattern; export-surface conventions; lint rules that enforce comment or doc-comment conventions; comment conventions already in force — markers that must be preserved or left untouched, the `TODO`/`FIXME` format the codebase uses, and domain vocabulary that must survive a comment rewrite intact.
+- **Code:** in-repo wrapper helpers over standard-library primitives in risk domains (path handling, user-owned config files, untrusted input, database access); the dependency-injection and composition pattern; export-surface conventions; lint rules that enforce comment or doc-comment conventions; comment conventions already in force — markers or patterns of comments that must be preserved, the `TODO`/`FIXME` format the codebase uses, and domain vocabulary that must survive a comment rewrite intact.
 - **Dead code:** the dead-code tools the project already has (knip, staticcheck, deadcode, vulture, ruff, pylint, shipmonk/dead-code-detector, Psalm, ShellCheck), with their configuration and the project's own dead-code commands; paths a sweep must never enumerate (dependency, build, and generated paths outside the defaults); entry-point conventions — names a framework, router, CLI, or configuration calls with no static caller in code.
 - **Docs:** surfaces present and their shapes; the pointer-file convention; a changelog; the jargon home; surfaces that intentionally duplicate (exempt-duplication candidates); surfaces that already document conventions a writing skill needs (reference-extension candidates).
 
@@ -91,7 +91,7 @@ Work one skill family at a time, in the order tests → code → docs → dead c
 - Confirm or prune the fixture sources.
 - Accept or reject each proposed `code.primitives` row, each with its evidence.
 - Accept or reject each proposed reference-like entry, each with the cited surface and section.
-- Confirm the comment conventions: preserved markers, exempt markers, the `TODO`/`FIXME` format, and the domain terms a rewrite must not paraphrase.
+- Confirm the comment conventions: preserved markers or patterns, the `TODO`/`FIXME` format, and the domain terms a rewrite must not paraphrase.
 - Confirm the docs surface map, pointer-file convention, jargon home, and diagrams stance. Settle `docs.surfaces` with this family and mirror the agreed assignment into the `writing-code` file, which reads the same name.
 - Confirm the dead-code sweep settings: excluded paths (`sweep.exclude`), project tool commands (`sweep.tools`), and entry points (`sweep.entry_points`). Copy the agreed `project.stacks` assignment verbatim into the `sweeping-dead-code` file.
 - Ask which universal opinions the project wants to tune within the extension contract (style targets, changelog).

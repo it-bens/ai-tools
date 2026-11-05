@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Step 2's code probe and Step 5's comment-convention confirmation ask for markers or patterns of comments that must be preserved, and no longer ask for exempt markers. This matches `software-writer`'s retirement of `comments.exemption_markers`; `comments.preserve_patterns` takes the preserved markers or patterns.
+
 ## [2.2.0] - 2026-11-03
 
 ### Added

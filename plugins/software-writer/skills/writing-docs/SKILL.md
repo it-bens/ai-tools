@@ -6,7 +6,7 @@ description: Use when writing or editing a repository documentation surface — 
 
 # Writing Docs
 
-This skill prescribes what good repository documentation looks like. It is a guide for improving docs, not a description of what the docs currently are. Where an existing surface diverges from a rule below, the rule wins — fix the surface, do not copy the divergence.
+Where an existing surface diverges from a rule below, the rule wins — fix the surface, do not copy the divergence.
 
 The governing invariant: **every fact has exactly one owning surface**. Other surfaces point at it — `§Heading` by name — they do not restate it. Surfaces registered as exempt-duplication via `docs.surfaces` are the only exception.
 
@@ -57,9 +57,9 @@ digraph writing_docs {
 
 Name the single surface the content belongs on. The default taxonomy — `docs.surfaces` replaces or extends the whole map, including per-surface exemptions from the single-owner invariant; default if not otherwise stated: the built-in taxonomy below.
 
-- **Root README** — pitch, install, usage, pointers into deeper docs. Delegates; never re-explains module contracts.
-- **Module README** — Purpose / Public API / Contracts / Quirks / Tests. Short shape (Purpose / Public API / Tests) when the module owns no invariant; no padded "none" sections.
-- **Architecture document** (`docs/architecture.md`) — cross-module narrative plus the invariant-to-owner index; cross-cutting policies only when no single module owns the invariant.
+- **Root README** — pitch, install, usage, pointers into deeper docs.
+- **Module README** — one module's purpose, public API, contracts, quirks and tests.
+- **Architecture document** (`docs/architecture.md`) — cross-module narrative plus the invariant-to-owner index.
 - **LLM pointer file** — named by `docs.pointer_file`; default if not otherwise stated: `CLAUDE.md` (alternative `AGENTS.md`; `none` disables the pointer branch entirely).
 - **Changelog** — only when `docs.changelog` registers one; default if not otherwise stated: none — do not create a changelog surface.
 
@@ -67,15 +67,15 @@ Code comments, commit messages, PR descriptions, and procedural plans or specs a
 
 ### Step 2: Apply the surface shape
 
-**Prose branch.** Load `references/surface-shapes.md` for the fixed shape of the target surface: the README shapes, the Handled / Refused / Not covered contracts skeleton, the §Limitations anti-pattern, the architecture-document layout, and the changelog discipline. The shape is not yours to refine mid-edit.
+**Prose branch.** Load `references/surface-shapes.md` for the fixed shape of the target surface. The shape is not yours to refine mid-edit.
 
-**Pointer branch.** The existence gate comes first: the module must own at least one hard cross-cutting constraint an editor must know before changing code. A ceremonial pointer file is noise that erodes trust in every pointer file — a module without such a constraint gets no pointer file (STOP). Load `references/pointer-file.md` for the skeleton, the bullet discipline, the per-bullet decision test, and the worked pairs. When the project maintains both the `CLAUDE.md` and `AGENTS.md` conventions, apply the companion-file rule (one file owns the content, the other is a one-line include; the reference carries it); the project's extension content names which file owns the content.
+**Pointer branch.** Load `references/pointer-file.md` for the existence gate, the skeleton, the per-bullet decision test and the companion-file rule. Apply the existence gate first: a module that fails it gets no pointer file (STOP). When the project maintains both the `CLAUDE.md` and `AGENTS.md` conventions, apply the companion-file rule.
 
 ### Step 3: Write the content
 
-**Prose branch.** Apply while writing, not retroactively: sentences ≤25 words averaging 12-17; paragraphs ≤4 sentences; active voice predominant; headings predict their content (vague headings rot `§` cross-refs); project jargon defined once at `docs.jargon_home` — default if not otherwise stated: `docs/architecture.md` — and never re-defined; stack and standard-library vocabulary left undefined; numbers earn their place (delete when "several" loses nothing). `docs.style` overrides the style targets; default if not otherwise stated: the house targets above. `docs.diagrams` sets the diagram stance; default if not otherwise stated: add a diagram only when a table cannot express the relationship. Load `references/writing-style.md` for the keep-vs-strip examples and decision tests.
+**Prose branch.** Apply while writing, not retroactively. `docs.style` sets the style targets; default if not otherwise stated: sentences ≤25 words averaging 12-17; paragraphs ≤4 sentences; active voice predominant. A number stays only when replacing it with "several" would lose information. `docs.jargon_home` names the surface where project jargon is defined; default if not otherwise stated: `docs/architecture.md`. `docs.diagrams` sets the diagram stance; default if not otherwise stated: add a diagram only when a table cannot express the relationship. Load `references/writing-style.md` for the heading rule, jargon discipline and diagram stance.
 
-**Pointer branch.** Write pointer bullets, not prose, per the discipline loaded in Step 2: ≤30 lines total, 3-8 bullets per section, every `## Before editing` bullet ends with `(README §Heading)`, no motivation in bullets, front-load by stakes, identifiers mirror the code.
+**Pointer branch.** Write pointer bullets, not prose, within the skeleton's ceilings: every `## Before editing` bullet ends with `(README §Heading)`, a root-level pointer file naming the target file path in place of `README`; no motivation in bullets; front-load by stakes; identifiers mirror the code.
 
 ### Step 4: Anti-slop pass
 
