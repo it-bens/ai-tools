@@ -28,7 +28,7 @@ Without project-specific additions, the skills run on universal defaults: stack 
 
 **Triggers:** authoring, editing, or reviewing an automated test — any change to a test file or its fixtures.
 
-**Behavior:** identifies the single behavior under test, stops and reports to the caller when the subject has no production caller, the arrange needs a state no caller produces, or removing the code under test changes no output on any input, takes the classicist position (state verification through the public API, real collaborators, test doubles only at genuine boundaries), sources arrange data so the test is self-explanatory, structures bodies as AAA or the framework's table construct, guards order/parallel independence, and runs a final gate for case redundancy, guard-clause isolation, falsifiability (the test fails when the behavior is removed), and coverage of every guard, refusal, option, default, and blocking rule the edit adds or changes.
+**Behavior:** identifies the single behavior under test, stops and reports to the caller when the subject has no production caller, the arrange needs a state no caller produces, or removing the code under test changes no output on any input, takes the classicist position (state verification through the public API, real collaborators, test doubles only at genuine boundaries), sources arrange data so the test is self-explanatory, structures bodies as AAA or the framework's table construct, guards order/parallel independence, and runs a final gate for case redundancy, guard-clause isolation, falsifiability (the test fails when the behavior is removed, and a realistic change can make it fail), and coverage of every guard, refusal, option, default, and blocking rule the edit adds or changes.
 
 ### Writing Docs
 
