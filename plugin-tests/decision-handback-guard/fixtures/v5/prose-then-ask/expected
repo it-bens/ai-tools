@@ -1,0 +1,3 @@
+no-checklist: deny
+checklist: deny
+requires: stop-continuation-before-ask
