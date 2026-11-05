@@ -16,17 +16,18 @@ Tests verify observable behavior of the public API.
 - Calls into dependencies. The return value or observable effect already proves the call happened.
 - Private/internal helpers via a dedicated test when the public API covers the behavior.
 - Internal call order or algorithmic decomposition.
-- Logic-free constructors and value-object round-trips. Test a constructor when it validates or transforms input.
+- Logic-free constructors, value-object round-trips, and read-backs of what a config file or manifest states. Test a constructor when it validates or transforms input.
 - Accessors that return a field directly; test when the accessor computes a derived value.
 - Setters that only assign; test when the setter validates or has side effects.
 - Trivial type or enum assertions; test the behavior the type drives instead.
+- Behavior a type checker, linter, or release gate already enforces.
 - Pure delegation: a wrapper that forwards to a dependency without transforming input or output. Test when the wrapper transforms or branches.
 
 ### Carve-outs
 
 - **Validating constructors.** A constructor that rejects bad input or normalizes its arguments has behavior; test the rejection and the normalization.
 - **Error-path tests where the expectation is the act.** An expect-raises block wrapping the call *is* the act phase of an error-path test, not a structural violation.
-- **Drift-guard registry-parity tests.** A test that iterates two registries and asserts index-alignment or set-equality is a valid behavior test of the registry contract. Assert through the public registry surface, not internal state.
+- **Drift-guard registry-parity tests.** A test that iterates two registries that change independently and asserts index-alignment or set-equality is a valid behavior test of the registry contract when no other gate already enforces that parity. Assert through the public registry surface, not internal state.
 
 ## Seam patterns when the behavior is not observable
 

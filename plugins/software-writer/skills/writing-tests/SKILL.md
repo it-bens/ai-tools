@@ -60,7 +60,7 @@ digraph writing_tests {
     "Removing the code under test leaves every output unchanged on every input?" -> "Stop: report the dead- or redundant-code candidate to the caller" [label="yes"];
     "Removing the code under test leaves every output unchanged on every input?" -> "All checks pass?" [label="no"];
     "All checks pass?" -> "Done" [label="yes"];
-    "All checks pass?" -> "Step 2: Identify the single behavior" [label="no: redundant case or coverage gap"];
+    "All checks pass?" -> "Step 2: Identify the single behavior" [label="no: redundant case, coverage gap, or no realistic change fails the test"];
     "All checks pass?" -> "Step 3: Source the arrange data" [label="no: guard-clause gap or expected value holds before the act"];
     "All checks pass?" -> "Step 4: Structure the body" [label="no: test passes without the behavior or name claim unasserted"];
 }
@@ -126,14 +126,14 @@ Load `references/independence.md` for the leak vectors, the scoped-restore rule,
 
 Run four checks after the body is drafted:
 
-**Redundancy.** Every case (table row, parametrized case) and every top-level test covers a unique code path, boundary value, or regression. Key on why the case exists, not on what the input looks like. Before consolidating a case, run the preservation check against the indicator table in `references/behavior.md`; a case with any listed indicator stays. When a case or test is deleted, delete the data provider, fixture, or helper only it referenced; `references/stacks/<stack>/<framework>-referenced-by-name.md` lists the forms that reference test code by name.
+**Redundancy.** Every case (table row, parametrized case) and every top-level test covers a unique code path, boundary value, or a regression a later change can reintroduce through the public behavior. Key on why the case exists, not on what the input looks like. Before consolidating a case, run the preservation check against the indicator table in `references/behavior.md`; a case with any listed indicator stays when the regression it cites can come back through the public behavior. When a case or test is deleted, delete the data provider, fixture, or helper only it referenced; `references/stacks/<stack>/<framework>-referenced-by-name.md` lists the forms that reference test code by name.
 
 **Guard-clause isolation.** When the test targets one early-return in a function with multiple sequential guards, run the guard-clause procedure in `references/behavior.md`.
 
-**Falsifiability.** The test fails when the behavior is removed: save the output of `git diff -- <file>` for the production file, delete the guard or revert the line under test, run the test, expect a failure, restore the code, and confirm that `git diff -- <file>` matches the saved output before continuing; when it does not, stop and report the failed restore to the user, or to the invoking workflow, naming the file. The expected value does not already hold before the act. Every claim in the test name is asserted.
+**Falsifiability.** The test fails when the behavior is removed: save the output of `git diff -- <file>` for the production file, delete the guard or revert the line under test, run the test, expect a failure, restore the code, and confirm that `git diff -- <file>` matches the saved output before continuing; when it does not, stop and report the failed restore to the user, or to the invoking workflow, naming the file. The expected value does not already hold before the act. Every claim in the test name is asserted. A realistic change, not only a deliberate edit of the asserted value or a bug in the underlying tool, can make the test fail.
 
 When removing the code under test leaves every observable output unchanged on every input the code can receive — not only the inputs the suite feeds it — write no test: stop and report the code as a redundant-code candidate to the user, or to the workflow that invoked this skill, naming the code path that already produces the same output. The production-code rule in Step 2 applies.
 
 **Coverage.** Every guard, refusal, option, default, and blocking rule the edit adds or changes has a case that triggers it. A test list that mirrors a production registry is enumerated from that registry at run time, never written as a literal list in the test; asserting that two registries stay in sync is the drift-guard registry-parity carve-out in `references/behavior.md`.
 
-On a redundancy failure return to Step 2 (the case may be reframable to a unique branch); on a coverage gap return to Step 2 for each untriggered rule; on a guard-clause failure, or an expected value that holds before the act, return to Step 3 (the arrange needs more or different setup); on a test that passes without the behavior or a name claim left unasserted, return to Step 4.
+On a redundancy failure return to Step 2 (the case may be reframable to a unique branch); on a test no realistic change can fail return to Step 2 (reframe it at behavior a change can break, or delete it); on a coverage gap return to Step 2 for each untriggered rule; on a guard-clause failure, or an expected value that holds before the act, return to Step 3 (the arrange needs more or different setup); on a test that passes without the behavior or a name claim left unasserted, return to Step 4.
