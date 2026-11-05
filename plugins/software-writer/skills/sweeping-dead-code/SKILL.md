@@ -152,7 +152,7 @@ Count ledger rows and rows with a final class. Every row needs a class, and ever
 
 Report in the conversation, in this order:
 
-1. Scope, the untracked files a Path scope leaves unswept (named as not swept), stacks, tools run (with the exact commands) and tools skipped or declined (with the reason), ledger path, both coverage counts with the note that coverage counts the definitions the Step 3 patterns and the tools found — a definition form no pattern matches is not in the ledger — and the note that the write guard does not cover git-ignored files.
+1. Scope, stacks, tools run (with the exact commands) and tools skipped or declined (with the reason), ledger path, both coverage counts with the note that coverage counts the definitions the Step 3 patterns and the tools found — a definition form no pattern matches is not in the ledger — and the note that the write guard does not cover git-ignored files.
 2. `dead` rows: `file:line — kind name — searches that came back empty — tool that flagged it, if any — refutation result`.
 3. `test-only` rows, same columns plus the test files that reference them.
 4. `uncertain` rows with the dynamic form that blocks a verdict.

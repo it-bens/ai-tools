@@ -19,10 +19,6 @@ Do NOT flag:
 
 When a seam can reach the dependency (an injected clock, an injected environment reader), use the seam and leave the global untouched. When a global must be mutated, restore it in the framework's teardown or cleanup hook, registered right after the mutation — never by hand at the end of the test body.
 
-## Non-deterministic inputs
-
-Non-determinism (wall clock, unseeded randomness, generated ids) never feeds an assertion.
-
 ## Hermetic by default
 
 A test depends on nothing outside its own body and its declared fixtures: no network, no shared external services, no shared databases, no reads from the developer's machine state. A test that needs an external resource either injects a fake at a production seam or belongs to an explicitly marked integration tier the project defines. Shared external resources that must be touched (a container daemon, a device) are acquired and released within the test's own scope.

@@ -120,7 +120,7 @@ Ask: would randomized order, running a single test alone, or parallel execution 
 
 `tests.parallelism` states the project's parallel-execution facts; default if not otherwise stated: none stated — guard independence as if tests could run in any order and concurrently.
 
-Load `references/independence.md` for the leak vectors, the scoped-restore rule, the non-determinism rule, and the hermetic rule.
+Load `references/independence.md` for the leak vectors, the scoped-restore rule, and the hermetic rule.
 
 ### Step 6: Final quality gate
 
@@ -136,4 +136,4 @@ When removing the code under test leaves every observable output unchanged on ev
 
 **Coverage.** Every guard, refusal, option, default, and blocking rule the edit adds or changes has a case that triggers it. A test list that mirrors a production registry is enumerated from that registry at run time, never written as a literal list in the test; asserting that two registries stay in sync is the drift-guard registry-parity carve-out in `references/behavior.md`.
 
-The preservation table and the guard-clause procedure live in `references/behavior.md`. On a redundancy failure return to Step 2 (the case may be reframable to a unique branch); on a coverage gap return to Step 2 for each untriggered rule; on a guard-clause failure, or an expected value that holds before the act, return to Step 3 (the arrange needs more or different setup); on a test that passes without the behavior or a name claim left unasserted, return to Step 4.
+On a redundancy failure return to Step 2 (the case may be reframable to a unique branch); on a coverage gap return to Step 2 for each untriggered rule; on a guard-clause failure, or an expected value that holds before the act, return to Step 3 (the arrange needs more or different setup); on a test that passes without the behavior or a name claim left unasserted, return to Step 4.

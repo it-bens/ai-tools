@@ -66,11 +66,6 @@ plugins/software-writer/
 
 This plugin provides:
 
-- **Skill** (`skills/writing-code/`): the implementation-code workflow — API-consultation gate, new-dependency gate, in-repo primitives lookup, no silent fallback, validate before the first side effect, single definition, dependency entry shape, caller scope and orphaned-symbol sweep, footgun check against `code.footgun_additions`, comment check against the code with isolated claim probes, two-tier comment classification.
-- **Skill** (`skills/writing-tests/`): the test-authoring workflow — single behavior, production-caller and redundant-code stops, seam decision, arrange-data sourcing, body shape, independence, redundancy, guard-clause, falsifiability, and coverage gate.
-- **Skill** (`skills/writing-docs/`): the documentation workflow — surface confirmation, fixed surface shapes, style-while-writing, anti-slop subagent dispatch, cross-surface quality gate.
-- **Skill** (`skills/sweeping-dead-code/`): the report-only dead-code sweep — scope resolution (path, repository, branch), definition ledger, read-only tool runs behind a write guard, evidence collection, reachability classification, independent refutation subagents, coverage check.
-
 - **Hooks** (`hooks/`): Claude Code extension delivery — a `PostToolUse` hook (matcher `Skill`) and a `UserPromptSubmit` hook run `inject-extension.sh`, which delivers a project's `.claude/extensions/software-writer/<skill>.md` wrapped in the `<project_extension>` envelope and stays silent for every other skill, prompt, or project.
 
 **No commands, agents, or MCP servers.** The `sweeping-dead-code` refutation step spawns fresh subagents from its own prompt, `references/refutation-prompt.md`. The `writing-docs` anti-slop step dispatches the `human-author:ai-slop-writing-fixer` subagent, which requires the `human-author` plugin on Claude Code and the matching custom agent from `codex-subagents/` on Codex. The companion `software-writer-extension-setup` plugin writes project extension files.

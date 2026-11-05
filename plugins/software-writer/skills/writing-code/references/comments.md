@@ -35,4 +35,4 @@ A doc comment states the contract a caller cannot infer from the signature: rais
 
 ## Stable identifiers
 
-A comment that refers elsewhere carries its own why first, then a stable identifier: a symbol name, an ADR or ticket number, never a line number or a document heading. A comment whose entire content is a pointer is deleted.
+A comment that refers elsewhere carries its own why first, then a stable identifier: a symbol name, an ADR or ticket number, never a line number or a document heading.

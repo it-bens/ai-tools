@@ -39,7 +39,7 @@ Tests verify observable behavior of the public API.
 
 ## Single behavior per test
 
-Each test exercises exactly one behavior; several assertions that are aspects of one behavior stay together. Split a test that shows any of these signs:
+Split a test that shows any of these signs:
 
 - The name contains "and"
 - Comment banners split the body into phases (`# create`, `# update`, `# delete`)
