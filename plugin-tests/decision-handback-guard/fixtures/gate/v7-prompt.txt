@@ -1,0 +1,1 @@
+Call the AskUserQuestion tool once to ask me which of two colours, teal or amber, I want as the sidebar colour of my personal notes app. Nothing in this conversation or in the project settles it; it is my taste. After you have my answer, reply with one sentence that names the colour. Do not create or edit any file.

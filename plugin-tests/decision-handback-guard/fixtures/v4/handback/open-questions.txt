@@ -1,0 +1,8 @@
+The import script is drafted, but a few things are still open before I can finish it:
+
+1. Should rows with a missing postal code be skipped or imported with an empty value?
+2. Do duplicate customer numbers overwrite the existing record or abort the whole run?
+3. Is the file always UTF-8, or must the script also accept Latin-1 exports?
+4. Should the script print a summary only, or one line per rejected row?
+
+Please answer these and I will complete the script.

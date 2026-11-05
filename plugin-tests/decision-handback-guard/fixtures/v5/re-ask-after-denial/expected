@@ -1,0 +1,2 @@
+no-checklist: deny-then-pass
+checklist: deny-then-pass

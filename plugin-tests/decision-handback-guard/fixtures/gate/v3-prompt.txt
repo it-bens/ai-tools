@@ -1,0 +1,1 @@
+I need a name for a new helper function that formats ISO dates for display in a small invoicing tool. Propose two candidate names, say which one you recommend, and end your reply by asking me which name to use before you write any code. Do not create or edit any file.

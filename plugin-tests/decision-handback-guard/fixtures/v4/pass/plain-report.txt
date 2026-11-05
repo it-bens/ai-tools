@@ -1,0 +1,1 @@
+Done. I renamed `load_config` to `read_settings` in all six modules, updated the two tests that imported it by name, and re-ran the suite: 142 passed, 0 failed. The only file I did not touch is the changelog, which is generated at release time.

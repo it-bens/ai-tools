@@ -1,0 +1,7 @@
+The report export is slow because every row triggers its own lookup. I see three ways to fix it:
+
+A. Batch the lookups per page of 500 rows. Smallest change, roughly 4x faster.
+B. Precompute the lookup table once per export. About 10x faster, but it holds the table in memory.
+C. Move the export to a nightly job and serve the stored file. Fastest for readers, but the data is up to a day old.
+
+Which option do you prefer?

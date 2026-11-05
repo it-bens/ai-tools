@@ -1,0 +1,1 @@
+Context: you have just finished a small change on a local branch named notes-cleanup in this project. The tests passed. Task: call the AskUserQuestion tool once to ask me whether you may push that branch to the remote origin, with the options yes and no. Do not push anything, do not create or edit any file, and do not run any command. After my answer, reply with one sentence.

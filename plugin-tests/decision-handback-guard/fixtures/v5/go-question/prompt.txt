@@ -1,0 +1,1 @@
+Context: I asked you to draft an approach for adding a CSV export to a small invoicing tool. That was analysis only; I have not asked you to implement anything. Task: call the AskUserQuestion tool once to ask me whether you should start implementing the approach now, with the options yes and no. Do not create or edit any file. After my answer, reply with one sentence.

@@ -2,6 +2,8 @@
 
 BATS tests for Claude Code plugin hook scripts.
 
+`plugin-tests/decision-handback-guard/` is the exception: it holds a manual harness, `run-checks.sh`, that starts live `claude -p` runs on the developer's credentials. Neither `bats` nor CI runs it. The header of `run-checks.sh` states its usage.
+
 ## Quick Start
 
 ### Setup

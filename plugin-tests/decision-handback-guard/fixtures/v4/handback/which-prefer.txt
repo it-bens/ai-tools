@@ -1,0 +1,1 @@
+The settings loader now reads both YAML and TOML files, and both pass the loader tests. Which format do you prefer as the documented default for new projects, YAML or TOML?

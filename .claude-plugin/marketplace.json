@@ -61,6 +61,11 @@
       "category": "guardrails"
     },
     {
+      "name": "decision-handback-guard",
+      "source": "./plugins/decision-handback-guard",
+      "category": "guardrails"
+    },
+    {
       "name": "project-communication",
       "source": "./plugins/project-communication",
       "category": "productivity"
