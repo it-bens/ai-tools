@@ -14,6 +14,6 @@ Run each command from the repository root over the scope paths. The patterns ove
 
 ### ShellCheck
 
-- **Run:** `shellcheck -i SC2034,SC2317,SC2329 -x -f json1 <files>`, where `<files>` are the listed files passed through `xargs -0`.
+- **Run:** `shellcheck -i SC2034,SC2317,SC2329 -x -f json1 -- <files>`, where `<files>` are the listed files passed through `xargs -0`.
 - **Never pass:** no flags listed.
 - **Read findings:** SC2034, SC2317 and SC2329 are the dead-code findings.

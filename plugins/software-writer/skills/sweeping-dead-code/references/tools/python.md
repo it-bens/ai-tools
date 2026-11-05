@@ -14,18 +14,18 @@ Run each command from the repository root over the scope paths. The patterns ove
 
 ### vulture
 
-- **Run:** `vulture <files>`, where `<files>` are the listed files passed through `xargs -0`. Read `[tool.vulture]` in `pyproject.toml` before the run; it can change `paths`, `exclude`, `min_confidence` and `make_whitelist`. Report which settings applied.
+- **Run:** `vulture -- <files>`, where `<files>` are the listed files passed through `xargs -0`. Read `[tool.vulture]` in `pyproject.toml` before the run; it can change `paths`, `exclude`, `min_confidence` and `make_whitelist`. Report which settings applied.
 - **Never pass:** no flags listed.
 - **Read findings:** stdout lines of the form `file:line: unused <kind> 'name' (NN% confidence)` are the dead-code findings; any other line is not.
 
 ### ruff
 
-- **Run:** `ruff check --isolated --no-cache --select F401,F841 --output-format json <files>`, where `<files>` are the listed files passed through `xargs -0`. This is the isolated form; use it whatever the project configuration sets.
+- **Run:** `ruff check --isolated --no-cache --select F401,F841 --output-format json -- <files>`, where `<files>` are the listed files passed through `xargs -0`. This is the isolated form; use it whatever the project configuration sets.
 - **Never pass:** `--fix`, `--unsafe-fixes`, `--fix-only`.
 - **Read findings:** F401 (unused import) and F841 (unused local variable) entries of the JSON are the dead-code findings; any other entry is not.
 
 ### pylint
 
-- **Run:** `pylint --disable=all --enable=unused-import,unused-variable,unused-argument,unused-private-member --output-format=json2 <files>`, where `<files>` are the listed files passed through `xargs -0`.
+- **Run:** `pylint --disable=all --enable=unused-import,unused-variable,unused-argument,unused-private-member --output-format=json2 <files>`, where `<files>` are the listed files, each prefixed with `./`, passed through `xargs -0`.
 - **Never pass:** no flags listed.
 - **Read findings:** the JSON also carries pylint's own messages (syntax-error, parse-error, fatal), which `--disable=all` does not suppress; they are not evidence. Keep only the four enabled symbols.
