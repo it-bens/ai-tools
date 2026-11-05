@@ -92,7 +92,7 @@ Write the ledger as JSON Lines to `${TMPDIR:-/tmp}/sweeping-dead-code-<timestamp
 | `references` | empty list |
 | `evidence` | empty list of strings |
 
-Each stack gets the `file` rows its tool reference defines. State the ledger path in the conversation.
+Each stack gets the `file` rows its tool reference defines; an executable file gets no `file` row. State the ledger path in the conversation.
 
 ### Step 4: Run installed tools read-only
 
@@ -108,7 +108,7 @@ Before each run:
 
 After each run, record the fingerprint again. When the two differ, stop the sweep: report the tool, the command, and the paths that changed, and run no further tool. Restore nothing; the user decides. The guard does not cover git-ignored files.
 
-Read findings from the tool's parsed output, never from its exit code. Treat a tool finding as evidence for a ledger row, never as a verdict. Add a row for a finding in a listed file with no matching row; a finding in any other file is not a row.
+Read findings from the tool's parsed output, never from its exit code. Treat a tool finding as evidence for a ledger row, never as a verdict. Add a row for a finding with no matching row only when the definition it names is one Step 3 gives a row to in the scope Step 1 sets; any other finding is not a row.
 
 ### Step 5: Collect evidence and classify
 
