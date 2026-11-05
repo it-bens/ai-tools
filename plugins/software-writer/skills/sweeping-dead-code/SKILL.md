@@ -54,7 +54,7 @@ Take one of three scopes from the request:
 
 - **Path**: the tracked files under one or more named directories or files. Name the untracked files under those paths, outside `sweep.exclude`, in the report as not swept.
 - **Repository**: every tracked source file, minus `sweep.exclude`.
-- **Branch**: the changes since the merge base, `git diff <base>...HEAD` (base default `main`). The ledger holds every definition that encloses an added or changed line of that diff — the nearest Step 3 pattern match above that line in the same file whose body extends past the line; when the extent is unclear, include the definition — plus every definition elsewhere in the repository whose name appears on a removed line of that diff.
+- **Branch**: the changes since the merge base, `git diff <base>...HEAD` (base default `main`). The ledger holds every definition that encloses an added or changed line of that diff — the nearest Step 3 pattern match above that line in the same file whose body extends past the line; when the extent is unclear, include the definition — plus every definition elsewhere in the repository whose name appears on a removed line of that diff. The commands that take scope paths run over the whole repository; only the definitions this rule names become rows.
 
 When the request names no scope, ask which one; never default silently.
 
@@ -108,7 +108,7 @@ Before each run:
 
 After each run, record the fingerprint again. When the two differ, stop the sweep: report the tool, the command, and the paths that changed, and run no further tool. Restore nothing; the user decides. The guard does not cover git-ignored files.
 
-Read findings from the tool's parsed output, never from its exit code. Treat a tool finding as evidence for a ledger row, never as a verdict. Add a row for a finding with no matching row only when the definition it names is one Step 3 gives a row to in the scope Step 1 sets; any other finding is not a row.
+Read findings from the tool's parsed output, never from its exit code. Treat a tool finding as evidence for a ledger row, never as a verdict. A finding with no matching row is not a row.
 
 ### Step 5: Collect evidence and classify
 
@@ -152,7 +152,7 @@ Count ledger rows and rows with a final class. Every row needs a class, and ever
 
 Report in the conversation, in this order:
 
-1. Scope, stacks, tools run (with the exact commands) and tools skipped or declined (with the reason), ledger path, both coverage counts with the note that coverage counts the definitions the Step 3 patterns and the tools found — a definition form no pattern matches is not in the ledger — and the note that the write guard does not cover git-ignored files.
+1. Scope, stacks, tools run (with the exact commands) and tools skipped or declined (with the reason), ledger path, both coverage counts with the note that coverage counts the definitions the Step 3 patterns found — a definition form no pattern matches is not in the ledger — and the note that the write guard does not cover git-ignored files.
 2. `dead` rows: `file:line — kind name — searches that came back empty — tool that flagged it, if any — refutation result`.
 3. `test-only` rows, same columns plus the test files that reference them.
 4. `uncertain` rows with the dynamic form that blocks a verdict.
