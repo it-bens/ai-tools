@@ -9,16 +9,14 @@ A reader of only this test can tell what the inputs are and where they came from
 - Fresh temporary filesystem state the test creates itself (the framework's per-test temp-directory mechanism).
 - A committed fixture file in the test tree's fixture location, for inputs of roughly 10 lines or more and for parser/scanner/importer subjects that deserve a representative on-disk shape.
 - An inline literal, for single-line inputs, narrow units, and malformed-shape cases.
-- A project fixture helper registered via `tests.fixture_sources`.
 
 ### Flag
 
-- Absolute paths (`/home/user/data.json`, `/tmp/some-fixture`).
+- Absolute paths.
 - Source-tree access at test time (opening production source files as test input).
 - Cross-module or cross-package fixture borrowing — each test tree owns its fixtures.
 - Dynamic globs over an unbounded directory.
 - Reads from the developer's home directory.
-- Network calls in unit or integration tests.
 
 ## Stubs of external tools
 
@@ -26,7 +24,7 @@ A fixture or stub that stands in for an external tool whose output the code unde
 
 ## Data and helpers
 
-Test data stays inline and readable. Only arrange code repeated across tests is extracted into a helper.
+Test data stays readable at the point of use, inline where the source rules above allow it. Only arrange code repeated across tests is extracted into a helper.
 
 ## Production-scale gating
 

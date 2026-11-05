@@ -151,7 +151,7 @@ Every claim in an extension file is a fact about the current codebase, and drift
 | `docs.pointer_file` | `CLAUDE.md` | Names the LLM pointer-file convention (`AGENTS.md` as alternative; `none` disables the pointer branch). |
 | `docs.jargon_home` | `docs/architecture.md` | The surface where project jargon is defined once. |
 | `docs.diagrams` | (table-first) | Diagram stance; the default adds a diagram only when a table cannot express the relationship. |
-| `docs.style` | sentences ≤25 words averaging 12-17; paragraphs ≤4 sentences; active voice predominant; a number stays only when replacing it with "several" would lose information | Replaces these style targets. |
+| `docs.style` | sentences ≤25 words averaging 12-17; paragraphs ≤4 sentences; active voice predominant | Replaces these style targets. |
 | `docs.changelog` | (none) | Registers a changelog surface maintained with Keep a Changelog discipline. |
 
 ### sweeping-dead-code
@@ -159,7 +159,7 @@ Every claim in an extension file is a fact about the current codebase, and drift
 | Name | Default | Effect |
 |---|---|---|
 | `project.stacks` | (detect from files and project signals) | Overrides stack detection; names the stacks in play. |
-| `sweep.exclude` | dependency and build directories (`vendor/`, `node_modules/`, `.venv/`, `venv/`, `dist/`, `build/`, `target/`) and files whose header marks them as generated | Paths Step 1 never enumerates; the bash and python file-list commands also take each entry as an exclude pathspec. |
+| `sweep.exclude` | dependency and build directories (`vendor/`, `node_modules/`, `.venv/`, `venv/`, `dist/`, `build/`, `target/`) and files whose header marks them as generated | Paths Step 1 never enumerates. The file-list command of every stack applies each directory entry as the exclude pathspec `':(exclude,glob)**/<entry>/**'` and each file-pattern entry as `':(exclude,glob)**/<entry>'`. Step 1 applies an entry that is not a path, such as the generated-header default, for the whole sweep: the files it describes get no ledger row, and their tool findings are not evidence. |
 | `sweep.tools` | (the commands in the tool reference) | Replaces or adds tool commands per stack. Step 4 rejects a command carrying a never-pass flag or a shell operator, and runs each remaining command only after the user approves it. |
 | `sweep.entry_points` | (none) | Names Step 5 treats as published roots, alongside the built-in entry points. |
 | `sweep.refutation_batch_size` | 10 | Rows per refutation subagent in Step 6. |

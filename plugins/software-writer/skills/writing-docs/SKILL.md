@@ -69,11 +69,11 @@ Code comments, commit messages, PR descriptions, and procedural plans or specs a
 
 **Prose branch.** Load `references/surface-shapes.md` for the fixed shape of the target surface. The shape is not yours to refine mid-edit.
 
-**Pointer branch.** Load `references/pointer-file.md` for the existence gate, the skeleton, the per-bullet decision test and the companion-file rule. Apply the existence gate first: a module that fails it gets no pointer file (STOP). When the project maintains both the `CLAUDE.md` and `AGENTS.md` conventions, apply the companion-file rule; the project's extension content names which file owns the content.
+**Pointer branch.** Load `references/pointer-file.md` for the existence gate, the skeleton, the per-bullet decision test and the companion-file rule. Apply the existence gate first: a module that fails it gets no pointer file (STOP). When the project maintains both the `CLAUDE.md` and `AGENTS.md` conventions, apply the companion-file rule.
 
 ### Step 3: Write the content
 
-**Prose branch.** Apply while writing, not retroactively. `docs.style` sets the style targets; default if not otherwise stated: sentences ≤25 words averaging 12-17; paragraphs ≤4 sentences; active voice predominant; a number stays only when replacing it with "several" would lose information. `docs.jargon_home` names the surface where project jargon is defined; default if not otherwise stated: `docs/architecture.md`. `docs.diagrams` sets the diagram stance; default if not otherwise stated: add a diagram only when a table cannot express the relationship. Load `references/writing-style.md` for the heading rule, jargon discipline and diagram stance.
+**Prose branch.** Apply while writing, not retroactively. `docs.style` sets the style targets; default if not otherwise stated: sentences ≤25 words averaging 12-17; paragraphs ≤4 sentences; active voice predominant. A number stays only when replacing it with "several" would lose information. `docs.jargon_home` names the surface where project jargon is defined; default if not otherwise stated: `docs/architecture.md`. `docs.diagrams` sets the diagram stance; default if not otherwise stated: add a diagram only when a table cannot express the relationship. Load `references/writing-style.md` for the heading rule, jargon discipline and diagram stance.
 
 **Pointer branch.** Write pointer bullets, not prose, within the skeleton's ceilings: every `## Before editing` bullet ends with `(README §Heading)`, a root-level pointer file naming the target file path in place of `README`; no motivation in bullets; front-load by stakes; identifiers mirror the code.
 

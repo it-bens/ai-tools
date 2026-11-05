@@ -4,17 +4,17 @@
 
 Run each command from the repository root over the scope paths. The patterns over-match on purpose: drop a match that is not a definition when its row is read in Step 5.
 
-- Python files command: `git ls-files -z -- <scope paths> ':(exclude)<entry>' | while IFS= read -r -d '' f; do [ -f "$f" ] && [ ! -L "$f" ] && printf '%s\0' "$f"; done | xargs -0 awk 'BEGIN { for (i = 1; i < ARGC; i++) { n = split(ARGV[i], p, "/"); b = p[n]; if (b ~ /\.py$/) emit(ARGV[i]); if (b ~ /\./) ARGV[i] = "" } } FNR == 1 { if ($0 ~ /^#![[:space:]]*(\/[^[:space:]]*\/)?(env[[:space:]]+(-[^[:space:]]+[[:space:]]+)*)?python[0-9.]*([[:space:]]|$)/) emit(FILENAME); nextfile } function emit(s) { printf "%s%c", s, 0 }'`. Repeat the `':(exclude)<entry>'` pathspec for each `sweep.exclude` entry. The output is the NUL-separated list of tracked Python files, called the listed files below.
+- Python files command: `git ls-files -z -- <scope paths> <exclude pathspecs> | while IFS= read -r -d '' f; do [ -f "$f" ] && [ ! -L "$f" ] && printf '%s\0' "$f"; done | xargs -0 awk 'BEGIN { for (i = 1; i < ARGC; i++) { n = split(ARGV[i], p, "/"); b = p[n]; if (b ~ /\.py$/) emit(ARGV[i]); if (b ~ /\./) ARGV[i] = "" } } FNR == 1 { if ($0 ~ /^#![[:space:]]*(\/[^[:space:]]*\/)?(env[[:space:]]+(-[^[:space:]]+[[:space:]]+)*)?python[0-9.]*([[:space:]]|$)/) emit(FILENAME); nextfile } function emit(s) { printf "%s%c", s, 0 }'`. Replace `<exclude pathspecs>` with `':(exclude,glob)**/<entry>/**'` for each `sweep.exclude` entry that names a directory and `':(exclude,glob)**/<entry>'` for each entry that names a file pattern. The output is the NUL-separated list of tracked Python files, called the listed files below.
 - Functions: `<Python files command> | xargs -0 grep -nHE '^[[:space:]]*(async[[:space:]]+)?def [A-Za-z_]'`. Indented under a class makes the match a `method`.
 - Types: `<Python files command> | xargs -0 grep -nHE '^[[:space:]]*class [A-Za-z_]'`
 - Module-level constants and variables: `<Python files command> | xargs -0 grep -nHE '^[A-Za-z_][A-Za-z0-9_]*[[:space:]]*(:[^=]*)?='`
-- Files: add a `file` row for every listed file.
+- Files: add a `file` row for every listed file that is not executable.
 
 ## Tools
 
 ### vulture
 
-- **Run:** `vulture <paths>`.
+- **Run:** `vulture <paths>`. Read `[tool.vulture]` in `pyproject.toml` before the run; it can change `paths`, `exclude`, `min_confidence` and `make_whitelist`. Report which settings applied.
 - **Never pass:** no flags listed.
 - **Read findings:** stdout lines of the form `file:line: unused <kind> 'name' (NN% confidence)` are the dead-code findings; any other line is not.
 

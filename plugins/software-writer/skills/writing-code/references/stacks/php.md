@@ -5,6 +5,7 @@
 - CLI reflection: `php --rf <function>`, `php --rc <ClassName>`, `php --re <extension>`.
 - Composer dependencies: the installed source under `vendor/<vendor>/<package>/`.
 - The official PHP manual: `https://www.php.net/<function>`.
+- The package's own documentation.
 
 ## Doc-comment convention
 

@@ -10,7 +10,7 @@
 | **Explains-what** (paraphrases the identifier or the code below) | Remove, except the regex case below |
 | **Tutorial / novice-facing** (narrates the language, the standard library, or control flow) | Remove or compress sharply |
 | **Over-specified why** (five lines where one would do) | Tighten, down to the floor below |
-| **Load-bearing why** (names the failure mode the code guards against, or carries content from the list below) | **Keep verbatim**; write a new why-comment to name the failure mode, give a concrete instance, and state what the code does to prevent it |
+| **Load-bearing why** (names the failure mode the code guards against, or carries content from the list below) | **Keep verbatim**; a new why-comment names the failure mode, gives a concrete instance, and states what the code does to prevent it |
 | **Public doc comment** (the API contract on an exported symbol) | Keep, under the doc-comment rules of Step 6 and the contract below |
 
 ## Load-bearing by construction

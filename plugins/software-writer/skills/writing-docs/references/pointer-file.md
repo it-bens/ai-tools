@@ -36,4 +36,4 @@ Both pass → keep. No provenance → do not add the rule. Invisible violation �
 
 ## Companion-file rule
 
-When the project maintains both pointer-file conventions, `AGENTS.md` owns the content and `CLAUDE.md` is a one-line include of it (`@AGENTS.md`). Never the reverse: Codex reads `@path` includes as literal strings. Create and delete the pair together; never author content in both.
+When the project maintains both pointer-file conventions, `AGENTS.md` owns the content and `CLAUDE.md` is a one-line include of it (`@AGENTS.md`). Never the reverse. Create and delete the pair together; never author content in both.

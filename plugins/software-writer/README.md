@@ -62,6 +62,7 @@ The opinions the skills own, with their honest status:
 | Default no implementation comment; API doc comments are the contract | A two-tier synthesis of the two major comment-philosophy positions, which disagree on exactly this point. |
 | Every fact has one owning surface | Aligned with the docs-DRY "define once" principle; stricter than ARID; per-surface exemptions supported via `docs.surfaces`. |
 | Pointer file ≤30 lines, pointer-only, existence-gated | House style for context economy; the public AGENTS.md convention sets no ceiling and trends verbose. |
+| Sentence-length targets | House numbers; near, not identical to, industry consensus. |
 | No symbol without a non-test caller: new exports need one, symbols an edit orphans are deleted | Speculative Generality diagnostic plus YAGNI, sharpened by Hyrum's Law; the orphan rule is the same diagnostic applied to removals. |
 
 ## License

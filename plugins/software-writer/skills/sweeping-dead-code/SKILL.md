@@ -58,7 +58,7 @@ Take one of three scopes from the request:
 
 When the request names no scope, ask which one; never default silently.
 
-Never enumerate a path in `sweep.exclude`; default if not otherwise stated: dependency and build directories (`vendor/`, `node_modules/`, `.venv/`, `venv/`, `dist/`, `build/`, `target/`) and files whose header marks them as generated.
+Never enumerate a path in `sweep.exclude`; default if not otherwise stated: dependency and build directories (`vendor/`, `node_modules/`, `.venv/`, `venv/`, `dist/`, `build/`, `target/`) and files whose header marks them as generated. Apply a `sweep.exclude` entry that is not a path, such as the generated-header default, for the whole sweep: the files it describes get no ledger row, and their tool findings are not evidence.
 
 ### Step 2: Detect stacks and load references
 
@@ -92,7 +92,7 @@ Write the ledger as JSON Lines to `${TMPDIR:-/tmp}/sweeping-dead-code-<timestamp
 | `references` | empty list |
 | `evidence` | empty list of strings |
 
-Module-based stacks (TypeScript, Python, PHP) also get one `file` row per source file. State the ledger path in the conversation.
+Each stack gets the `file` rows its tool reference defines. State the ledger path in the conversation.
 
 ### Step 4: Run installed tools read-only
 
@@ -108,7 +108,7 @@ Before each run:
 
 After each run, record the fingerprint again. When the two differ, stop the sweep: report the tool, the command, and the paths that changed, and run no further tool. Restore nothing; the user decides. The guard does not cover git-ignored files.
 
-Read findings from the tool's parsed output, never from its exit code. Treat a tool finding as evidence for a ledger row, never as a verdict. Add a row for a finding with no matching row.
+Read findings from the tool's parsed output, never from its exit code. Treat a tool finding as evidence for a ledger row, never as a verdict. Add a row for a finding in a listed file with no matching row; a finding in any other file is not a row.
 
 ### Step 5: Collect evidence and classify
 
@@ -118,7 +118,7 @@ For every row without a final class, search the scope and the whole repository f
 - every form in the stack's indirect-references file;
 - non-code files: configuration, manifests, templates, CI workflows, documentation that a tool consumes.
 
-Record each reference in the row's `references` list as `{file, line, side, from}`. `side` is `production` or `test`; the framework's referenced-by-name file lists the test-side forms. `from` is the `id` of the innermost ledger row whose definition encloses the reference — for top-level code in a module-based stack, that file's `file` row — or `root` when no ledger row encloses it (configuration, templates, CI, top-level code of an executable script, files outside the scope).
+Record each reference in the row's `references` list as `{file, line, side, from}`. `side` is `production` or `test`; the framework's referenced-by-name file lists the test-side forms. `from` is the `id` of the innermost ledger row whose definition encloses the reference — for top-level code in a file that has a `file` row, that row — or `root` when no ledger row encloses it (configuration, templates, CI, top-level code of an executable script, files outside the scope).
 
 Mark first, then classify.
 
@@ -152,7 +152,7 @@ Count ledger rows and rows with a final class. Every row needs a class, and ever
 
 Report in the conversation, in this order:
 
-1. Scope, stacks, tools run (with the exact commands) and tools skipped or declined (with the reason), ledger path, both coverage counts with the note that coverage counts the definitions the Step 3 patterns and the tools found — a definition form no pattern matches is not in the ledger — and the note that the write guard does not cover git-ignored files.
+1. Scope, the untracked files a Path scope leaves unswept (named as not swept), stacks, tools run (with the exact commands) and tools skipped or declined (with the reason), ledger path, both coverage counts with the note that coverage counts the definitions the Step 3 patterns and the tools found — a definition form no pattern matches is not in the ledger — and the note that the write guard does not cover git-ignored files.
 2. `dead` rows: `file:line — kind name — searches that came back empty — tool that flagged it, if any — refutation result`.
 3. `test-only` rows, same columns plus the test files that reference them.
 4. `uncertain` rows with the dynamic form that blocks a verdict.

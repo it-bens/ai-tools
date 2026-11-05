@@ -16,7 +16,7 @@ Not violations:
 
 | Pattern | Why |
 |---|---|
-| An expect-raises / expect-error construct for error paths | Idiomatic dispatch for error-vs-success. Bounded, single shape. |
+| An expect-raises / expect-error construct for error paths | — |
 | The loop that drives table-driven cases | Each case must report as its own test: a loop that registers one test per case satisfies this, a loop that asserts inside a single test body does not. Use the table construct the framework reference names. |
 | A platform or environment skip at the top of the test | Environment gate, not assertion logic. |
 | A precondition check that aborts the test before the act | Not an author-written conditional on expectations. |

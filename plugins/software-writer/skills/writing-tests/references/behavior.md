@@ -35,7 +35,7 @@ Tests verify observable behavior of the public API.
 | Writer / output parameter | The function takes an output stream or writer parameter instead of writing to the process's stdout; the live caller wires the real stream. | The test passes an in-memory buffer and asserts on its contents. |
 | Constructor-field injection | Ambient dependencies (clock, environment reader, process lister) enter as constructor parameters or fields; the composition site supplies the live implementations. | The test constructs the unit with fakes: a fixed clock, a canned environment. |
 | Exported pure helper | Inline logic is extracted into a public pure function that the production caller and the test both invoke. | The test exercises the helper directly without staging the surrounding pipeline. |
-| Swappable function indirection | A module-level function variable or attribute that production calls through (a deletion function, a clock function). | The test swaps the function and restores it in the framework's teardown or cleanup hook. |
+| Swappable function indirection | A module-level function variable or attribute that production calls through (a deletion function, a clock function). | The test swaps the function |
 
 ## Single behavior per test
 
@@ -46,8 +46,6 @@ Each test exercises exactly one behavior; several assertions that are aspects of
 - Multiple unrelated assertions follow distinct act steps
 
 ## Preservation check
-
-Before consolidating a case as redundant, scan for preservation indicators. If one is present, keep the case.
 
 | Indicator | Pattern |
 |---|---|

@@ -24,7 +24,7 @@ digraph writing_code {
     "100% certain of signature and semantics?" [shape=diamond];
     "Step 2: Confirm the API call" [shape=box];
     "Step 3: Write the line" [shape=box];
-    "New dependency, new export, or a caller removed?" [shape=diamond];
+    "New dependency, new export, removed call or reference, replaced implementation, or changed signature?" [shape=diamond];
     "Step 4: Confirm dependencies and surface scope" [shape=box];
     "Step 5: Footgun check" [shape=box];
     "Comment or doc comment written, edited, or kept on the lines being written or edited?" [shape=diamond];
@@ -46,9 +46,9 @@ digraph writing_code {
     "100% certain of signature and semantics?" -> "Step 3: Write the line" [label="yes"];
     "100% certain of signature and semantics?" -> "Step 2: Confirm the API call" [label="no"];
     "Step 2: Confirm the API call" -> "Step 3: Write the line";
-    "Step 3: Write the line" -> "New dependency, new export, or a caller removed?";
-    "New dependency, new export, or a caller removed?" -> "Step 4: Confirm dependencies and surface scope" [label="yes"];
-    "New dependency, new export, or a caller removed?" -> "Step 5: Footgun check" [label="no"];
+    "Step 3: Write the line" -> "New dependency, new export, removed call or reference, replaced implementation, or changed signature?";
+    "New dependency, new export, removed call or reference, replaced implementation, or changed signature?" -> "Step 4: Confirm dependencies and surface scope" [label="yes"];
+    "New dependency, new export, removed call or reference, replaced implementation, or changed signature?" -> "Step 5: Footgun check" [label="no"];
     "Step 4: Confirm dependencies and surface scope" -> "Step 5: Footgun check";
     "Step 5: Footgun check" -> "Comment or doc comment written, edited, or kept on the lines being written or edited?";
     "Comment or doc comment written, edited, or kept on the lines being written or edited?" -> "Step 6: Comment matches `comments.preserve_patterns` and existed before the edit?" [label="yes"];
@@ -101,7 +101,7 @@ Before writing logic, search for an existing helper that does it and call it. Wr
 
 **Caller scope.** Every new exported/public symbol needs at least one non-test caller within the same coordinated unit of work — the smallest closed change that ships together. Delete a symbol whose only callers are tests, keep it module-local, or hold the export until the caller is part of the same coordinated change. `code.export_conventions` adds project rules such as a package-index re-export surface; default if not otherwise stated: none.
 
-**Orphaned symbols.** Caller scope runs in reverse when the edit removes a call, replaces an implementation, or changes a signature. Every symbol that lost a reference — the replaced function, its helpers, imports, parameters, types, constants, configuration keys, files — keeps at least one non-test reference, or it is deleted in this edit together with the tests whose only subject it was; deleting such a test stays in this skill, while editing a surviving test belongs to `writing-tests`. Search the plain name, the forms listed in `references/stacks/<stack>-indirect-references.md`, and non-code files (configuration, manifests, templates, CI). Repeat the search for whatever a deletion orphans until a pass deletes nothing. A replaced implementation is deleted in the same change; keep it only when the user asked for it. A symbol on a published surface — a library's public API, a documented CLI flag or route — is reported to the user, not deleted. `code.dead_code_check` names a project command that reports unused code; default if not otherwise stated: none. When it is set, run it after the search and handle its findings in the edited scope the same way.
+**Orphaned symbols.** Caller scope runs in reverse when the edit removes a call or reference, replaces an implementation, or changes a signature. Every symbol that lost a reference — the replaced function, its helpers, imports, parameters, types, constants, configuration keys, files — keeps at least one non-test reference, or it is deleted in this edit together with the tests whose only subject it was; deleting such a test stays in this skill, while editing a surviving test belongs to `writing-tests`. Search the plain name, the forms listed in `references/stacks/<stack>-indirect-references.md`, and non-code files (configuration, manifests, templates, CI). Repeat the search for whatever a deletion orphans until a pass deletes nothing. A replaced implementation is deleted in the same change; keep it only when the user asked for it. A symbol on a published surface — a library's public API, a documented CLI flag or route — is reported to the user, not deleted. `code.dead_code_check` names a project command that reports unused code; default if not otherwise stated: none. When it is set, run it after the search and handle its findings in the edited scope the same way.
 
 ### Step 5: Footgun check
 

@@ -6,7 +6,7 @@ description: Use when authoring, editing, or reviewing an automated test — any
 
 # Writing Tests
 
-This skill prescribes what good tests look like. It is a guide for improving tests, not a description of what the tests currently are. Where an existing test diverges from a rule below, the rule wins — fix the test, do not copy the divergence.
+Where an existing test diverges from a rule below, the rule wins — fix the test, do not copy the divergence.
 
 ## Workflow
 
@@ -108,7 +108,7 @@ Load `references/data.md` for the acceptable and flagged sources, the external-t
 
 ### Step 4: Structure the body
 
-Pick the shape: an arrange/act/assert body, or a table-driven / parametrized case (the table construct the framework reference names). Write the body without conditional logic that picks between assertions.
+Pick the shape: an arrange/act/assert body, or a table-driven / parametrized case (the table construct the framework reference names).
 
 Assertion scope: multiple assertions are acceptable only when they verify one logical behavior — unrelated claims in one body are Assertion Roulette. Assertion strength: assert the behavior, not volatile exact counts or generated-output snapshots; exact values that are part of a specification stay exact.
 
@@ -126,7 +126,7 @@ Load `references/independence.md` for the leak vectors, the scoped-restore rule,
 
 Run four checks after the body is drafted:
 
-**Redundancy.** Every case (table row, parametrized case) and every top-level test covers a unique code path, boundary value, or regression. Key on why the case exists, not on what the input looks like. Before consolidating a case, run the preservation check for regression markers in its name, id, or nearby comments; a marked case stays. When a case or test is deleted, delete the data provider, fixture, or helper only it referenced; `references/stacks/<stack>/<framework>-referenced-by-name.md` lists the forms that reference test code by name.
+**Redundancy.** Every case (table row, parametrized case) and every top-level test covers a unique code path, boundary value, or regression. Key on why the case exists, not on what the input looks like. Before consolidating a case, run the preservation check against the indicator table in `references/behavior.md`; a case with any listed indicator stays. When a case or test is deleted, delete the data provider, fixture, or helper only it referenced; `references/stacks/<stack>/<framework>-referenced-by-name.md` lists the forms that reference test code by name.
 
 **Guard-clause isolation.** When the test targets one early-return in a function with multiple sequential guards, run the guard-clause procedure in `references/behavior.md`.
 

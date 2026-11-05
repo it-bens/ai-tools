@@ -4,12 +4,13 @@
 
 Run each command from the repository root over the scope paths. The patterns over-match on purpose: drop a match that is not a definition when its row is read in Step 5.
 
-- Types: `grep -rnE '^[[:space:]]*(final[[:space:]]+|abstract[[:space:]]+|readonly[[:space:]]+)*(class|interface|trait|enum)[[:space:]]+[A-Za-z_]' --include='*.php'`
-- Functions and methods: `grep -rnE '^[[:space:]]*((public|protected|private|static|final|abstract)[[:space:]]+)*function[[:space:]]+&?[A-Za-z_]' --include='*.php'`
-- Constants: `grep -rnE '^[[:space:]]*((public|protected|private|final)[[:space:]]+)*const[[:space:]]+' --include='*.php'`
-- Enum cases, as members: `grep -rnE '^[[:space:]]*case[[:space:]]+[A-Za-z_]' --include='*.php'`; keep only matches inside enums.
-- Properties, as members: `grep -rnE '^[[:space:]]*(public|protected|private)[[:space:]]+(static[[:space:]]+|readonly[[:space:]]+)*(\??[A-Za-z_\\|]+[[:space:]]+)?\$[A-Za-z_]' --include='*.php'`
-- Files: add a `file` row for every `*.php` file.
+- PHP files command: `git ls-files -z -- <scope paths> <exclude pathspecs> | while IFS= read -r -d '' f; do [ -f "$f" ] && [ ! -L "$f" ] && case "$f" in *.php) printf '%s\0' "$f";; esac; done`. Replace `<exclude pathspecs>` with `':(exclude,glob)**/<entry>/**'` for each `sweep.exclude` entry that names a directory and `':(exclude,glob)**/<entry>'` for each entry that names a file pattern. The output is the NUL-separated list of tracked PHP files, called the listed files below.
+- Types: `<PHP files command> | xargs -0 grep -nHE '^[[:space:]]*(final[[:space:]]+|abstract[[:space:]]+|readonly[[:space:]]+)*(class|interface|trait|enum)[[:space:]]+[A-Za-z_]'`
+- Functions and methods: `<PHP files command> | xargs -0 grep -nHE '^[[:space:]]*((public|protected|private|static|final|abstract)[[:space:]]+)*function[[:space:]]+&?[A-Za-z_]'`
+- Constants: `<PHP files command> | xargs -0 grep -nHE '^[[:space:]]*((public|protected|private|final)[[:space:]]+)*const[[:space:]]+'`
+- Enum cases, as members: `<PHP files command> | xargs -0 grep -nHE '^[[:space:]]*case[[:space:]]+[A-Za-z_]'`; keep only matches inside enums.
+- Properties, as members: `<PHP files command> | xargs -0 grep -nHE '^[[:space:]]*(public|protected|private)[[:space:]]+(static[[:space:]]+|readonly[[:space:]]+)*(\??[A-Za-z_\\|]+[[:space:]]+)?\$[A-Za-z_]'`
+- Files: add a `file` row for every listed file.
 
 ## Tools
 
@@ -22,7 +23,7 @@ Run each command from the repository root over the scope paths. The patterns ove
 
 ### Psalm
 
-- **Run:** `vendor/bin/psalm --find-unused-code --output-format=json --no-progress --no-cache`
+- **Run:** `vendor/bin/psalm --find-unused-code --output-format=json --no-progress --no-cache`. Unused-code detection is off when `psalm.xml` sets `findUnusedCode` to false; report that setting.
 - **Never pass:** `--alter`, `--init`, `--set-baseline`, `--update-baseline`, `--generate-json-map`, `--generate-stubs`, `--report`. Never run the `psalter` binary.
 - **Cache:** `--no-cache` keeps Psalm from writing its cache directory.
 - **Read findings:** the dead-code findings are the issue types UnusedClass, UnusedMethod, PossiblyUnusedMethod, UnusedProperty, PossiblyUnusedProperty and UnusedParam; every other issue type is not.
