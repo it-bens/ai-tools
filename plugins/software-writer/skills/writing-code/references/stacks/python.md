@@ -4,7 +4,7 @@
 
 - `pydoc`, run through the project's environment runner so its pinned versions answer: `uv run python -m pydoc <pkg>.<Symbol>`, or `python -m pydoc <pkg>.<Symbol>` in an activated venv.
 - Installed package source, located with `python -c "import <pkg>; print(<pkg>.__file__)"` through the same runner.
-- The changelog of the version the project pins.
+- The changelog of the version the project pins: `CHANGELOG.md` in the installed package directory, or the release notes page at the pinned tag.
 
 ## Doc-comment convention
 

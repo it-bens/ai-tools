@@ -52,7 +52,7 @@ digraph sweeping_dead_code {
 
 Take one of three scopes from the request:
 
-- **Path**: the tracked files under one or more named directories or files. Name the untracked files under those paths in the report as not swept.
+- **Path**: the tracked files under one or more named directories or files. Name the untracked files under those paths, outside `sweep.exclude`, in the report as not swept.
 - **Repository**: every tracked source file, minus `sweep.exclude`.
 - **Branch**: the changes since the merge base, `git diff <base>...HEAD` (base default `main`). The ledger holds every definition that encloses an added or changed line of that diff — the nearest Step 3 pattern match above that line in the same file whose body extends past the line; when the extent is unclear, include the definition — plus every definition elsewhere in the repository whose name appears on a removed line of that diff.
 

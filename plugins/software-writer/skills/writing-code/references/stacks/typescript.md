@@ -4,8 +4,8 @@
 
 - Bundled declarations: the package's `.d.ts` under `node_modules/<pkg>/`, entry named by its `types` or `exports` field; `node_modules/@types/<pkg>/` for a package without bundled types.
 - The package's README: `node_modules/<pkg>/README.md`.
-- The package's implementation under `node_modules/<pkg>/` (its compiled output), for behavior the types cannot express.
-- The package's official documentation site.
+- The package's implementation: the compiled output under `node_modules/<pkg>/` that its `main` or `exports` field names, for behavior the types cannot express.
+- The package's official documentation site: the page for the API in question, at the pinned version.
 
 ## Doc-comment convention
 
