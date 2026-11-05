@@ -26,4 +26,4 @@ Run each command from the repository root over the scope paths. The patterns ove
 - **Run:** `vendor/bin/psalm --find-unused-code --output-format=json --no-progress --no-cache`. Unused-code detection is off when `psalm.xml` sets `findUnusedCode` to false; report that setting.
 - **Never pass:** `--alter`, `--init`, `--set-baseline`, `--update-baseline`, `--generate-json-map`, `--generate-stubs`, `--report`. Never run the `psalter` binary.
 - **Cache:** `--no-cache` keeps Psalm from writing its cache directory.
-- **Read findings:** the dead-code findings are the issue types UnusedClass, UnusedMethod, PossiblyUnusedMethod, UnusedProperty, PossiblyUnusedProperty and UnusedParam; every other issue type is not.
+- **Read findings:** the dead-code findings are the issue types UnusedClass, UnusedMethod, PossiblyUnusedMethod, UnusedProperty and PossiblyUnusedProperty; every other issue type is not.

@@ -7,7 +7,7 @@ Run each command from the repository root over the scope paths. The patterns ove
 - Shell files command: `git ls-files -z -- <scope paths> <exclude pathspecs> | while IFS= read -r -d '' f; do [ -f "$f" ] && [ ! -L "$f" ] && printf '%s\0' "$f"; done | xargs -0 env LC_ALL=C awk 'BEGIN { for (i = 1; i < ARGC; i++) { n = split(ARGV[i], p, "/"); b = p[n]; if (b ~ /\.(sh|bash|bats)$/) emit(ARGV[i]); if (b ~ /\./) ARGV[i] = "" } } FNR == 1 { if ($0 ~ /^#![[:space:]]*(\/[^[:space:]]*\/)?(env[[:space:]]+(-[^[:space:]]+[[:space:]]+)*)?(ba)?sh([[:space:]]|$)/) emit(FILENAME); nextfile } function emit(s) { printf "%s%c", s, 0 }'`. Replace `<exclude pathspecs>` with `':(exclude,glob)**/<entry>/**'` for each `sweep.exclude` entry that names a directory and `':(exclude,glob)**/<entry>'` for each entry that names a file pattern. The output is the NUL-separated list of tracked shell files, called the listed files below.
 - Functions: `<Shell files command> | xargs -0 grep -nHE '^[[:space:]]*(function[[:space:]]+[A-Za-z_][A-Za-z0-9_:.-]*|[A-Za-z_][A-Za-z0-9_:.-]*[[:space:]]*\(\))' --`
 - Variables: `<Shell files command> | xargs -0 grep -nHE '^[[:space:]]*((declare|typeset|readonly|export|local)([[:space:]]+-[A-Za-z]+)*[[:space:]]+)?[A-Za-z_][A-Za-z0-9_]*=' --`
-- Files: add a `file` row for every listed file that is not a test file and not executable. A `source`, `.`, `load` or `bats_load_library` line naming it is a reference to it.
+- Files: add a `file` row for every listed file that is not a test file. A `source`, `.`, `load` or `bats_load_library` line naming it is a reference to it.
 - A bats test file is a `.bats` file, or another file under a directory that holds `.bats` files, unless production code sources or runs it.
 
 ## Tools
