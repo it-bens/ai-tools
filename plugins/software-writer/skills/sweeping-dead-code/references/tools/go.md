@@ -14,14 +14,10 @@ Run each command from the repository root over the scope paths. The patterns ove
 
 - **Run:** `staticcheck -checks U1000 -f json ./...`
 - **Never pass:** no flags listed.
-- **Test handling:** tests are analyzed by default, so test-only use counts as use. Run again with `-tests=false` to find test-only code.
-- **Read findings:** the output is one JSON object per problem, a stream, not an array. Diagnostics of category `compile` and `config` are still reported; ignore them as dead-code evidence. With default options, exported package-level identifiers, exported methods of used types, and exported struct fields count as used; U1000 reports unexported identifiers and what sits beneath an unused type. Read the stream, not the exit code: 1 when it reports problems from checks in `-fail` (default all), 2 on usage, config, or matrix errors, 0 when clean.
-- **Limits:** a caller in a file excluded by the build configuration makes the callee look unused. Pass `-tags` for the project's tags, or `-matrix` with the build configurations on stdin — never both. Suppressions in the project: `//lint:ignore U1000 <reason>` directly above a declaration, `//lint:file-ignore U1000 <reason>` for the whole file.
+- **Read findings:** the output is a stream of JSON objects, one per problem. Entries of check U1000 are the dead-code findings; diagnostics of category `compile` and `config` are not evidence.
 
 ### deadcode
 
-- **Run:** `deadcode -json ./...` for programs. It reports functions unreachable from `main` and `init` of the `main` packages. Without a `main` package it fails with `no main packages`.
+- **Run:** `deadcode -json ./...` for programs.
 - **Never pass:** no flags listed.
-- **Test handling:** with `-test`, test executables are roots and a finding means "unreachable from the tests", which is not the same as dead.
-- **Read findings:** read stdout. It exits 0 even with findings, 1 on load errors and fatal conditions, 2 on usage. `-whylive=<pkgpath.Func>` explains why a function is live; the qualified name is required.
-- **Limits:** it does not understand `//go:linkname` aliasing. Results hold for one GOOS/GOARCH/`-tags` configuration.
+- **Read findings:** read stdout. Every function it lists is a dead-code finding, unreachable from `main` and `init` of the `main` packages.

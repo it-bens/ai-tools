@@ -6,7 +6,7 @@ description: Use when the user explicitly asks to find, list, audit, or sweep un
 
 # Sweeping Dead Code
 
-This skill finds unused code in a stated scope and reports it. Never edit, delete, stage, or format a project file. Run only tool commands that are read-only by construction (the tool references' commands) or that the user approved for this sweep (`sweep.tools` commands, Step 4). Write the ledger in the system temporary directory, outside the repository. Code orphaned by an edit in progress belongs to `writing-code`; this sweep is the retrospective pass.
+This skill finds unused code in a stated scope and reports it. Never edit, delete, stage, or format a project file. Run only tool commands that are read-only by construction (the tool references' commands) or that the user approved for this sweep (`sweep.tools` commands, Step 4). Write the ledger in the system temporary directory, outside the repository.
 
 ## Workflow
 
@@ -52,9 +52,9 @@ digraph sweeping_dead_code {
 
 Take one of three scopes from the request:
 
-- **Path**: one or more directories or files.
+- **Path**: the tracked files under one or more named directories or files. Name the untracked files under those paths in the report as not swept.
 - **Repository**: every tracked source file, minus `sweep.exclude`.
-- **Branch**: the changes since the merge base, `git diff <base>...HEAD` (base default `main`). The ledger holds every definition that encloses an added or changed line of that diff — the nearest Step 3 pattern match above that line in the same file whose body extends past the line (to the matching closing brace, the end of the indented block in Python, or the closing `}` of a shell function); when the extent is unclear, include the definition, since an extra row only costs a search — plus every definition elsewhere in the repository whose name appears on a removed line (lines starting with `-`) of that diff.
+- **Branch**: the changes since the merge base, `git diff <base>...HEAD` (base default `main`). The ledger holds every definition that encloses an added or changed line of that diff — the nearest Step 3 pattern match above that line in the same file whose body extends past the line; when the extent is unclear, include the definition — plus every definition elsewhere in the repository whose name appears on a removed line of that diff.
 
 When the request names no scope, ask which one; never default silently.
 
@@ -62,7 +62,7 @@ Never enumerate a path in `sweep.exclude`; default if not otherwise stated: depe
 
 ### Step 2: Detect stacks and load references
 
-Detect the stacks in scope from file extensions and manifests. `project.stacks` overrides detection; default if not otherwise stated: detect from files and project signals.
+Detect the stacks in scope from file extensions and manifests. Detect `bash` from `.sh`, `.bash` and `.bats` files and from extensionless files whose first line is a `#!` naming `sh` or `bash`; a `.bats` file also detects the `bats` framework. Detect `python` from `*.py` files and from extensionless files whose first line is a `#!` naming `python`. `project.stacks` overrides detection; default if not otherwise stated: detect from files and project signals.
 
 For each stack (`bash`, `go`, `php`, `python`, `typescript`), load `references/tools/<stack>.md` and `references/stacks/<stack>/indirect-references.md`. For each detected test framework, load `references/stacks/<stack>/<framework>-referenced-by-name.md`:
 
@@ -103,12 +103,12 @@ Run each tool listed in the stack's tool reference only when the project already
 Before each run:
 
 - Use the exact command from the tool reference or `sweep.tools`, and never pass a flag the reference lists under "Never pass".
-- Read the project's configuration for that tool. When it sets a write mode the reference names (for example ruff `fix-only`, PHPStan `errorFormat: removeDeadCode`), use the reference's isolated form of the command or skip the tool and say why.
+- Read the project's configuration for that tool. When it sets a write mode the reference names, use the reference's isolated form of the command or skip the tool and say why.
 - Record the write-guard fingerprint: `{ git status --porcelain=v1 --untracked-files=all; git diff HEAD --binary; git ls-files -o --exclude-standard -z | xargs -0 shasum; } | shasum`.
 
-After each run, record the fingerprint again. When the two differ, stop the sweep: report the tool, the command, and the paths that changed, and run no further tool. Restore nothing; the user decides. The guard does not cover git-ignored files, where tool caches live.
+After each run, record the fingerprint again. When the two differ, stop the sweep: report the tool, the command, and the paths that changed, and run no further tool. Restore nothing; the user decides. The guard does not cover git-ignored files.
 
-Read findings from the tool's parsed output, never from its exit code; several tools exit 0 with findings or non-zero for unrelated messages. Treat a tool finding as evidence for a ledger row, never as a verdict. Add a row for a finding with no matching row.
+Read findings from the tool's parsed output, never from its exit code. Treat a tool finding as evidence for a ledger row, never as a verdict. Add a row for a finding with no matching row.
 
 ### Step 5: Collect evidence and classify
 
@@ -142,7 +142,7 @@ Then assign one class per row:
 
 Send every `dead` and `test-only` row to an independent refutation before it can be reported. Spawn one fresh subagent per batch of `sweep.refutation_batch_size` rows (default if not otherwise stated: 10) with the prompt from `references/refutation-prompt.md`, filled in with the rows, the stack's indirect-references file content, and the framework's referenced-by-name file content. Do not pass the evidence collected in Step 5. When the host cannot spawn subagents, run the refutation in the session and mark every row refuted in the session "refutation not independent" in the report.
 
-For a row the refutation shows reachable, add the reference to its `references`, set its `class` to null, and set every other row's `class` to null too, because one new reference can make other rows reachable; then return to Step 5, which re-marks reachability from the roots. Rows already refuted keep their refutation result and are not sent to refutation again unless their class changes. A row that survives keeps its class and records "refutation: none found" in `evidence`.
+For a row the refutation shows reachable, add the reference to its `references`, set its `class` to null, and set every other row's `class` to null too; then return to Step 5, which re-marks reachability from the roots. Rows already refuted keep their refutation result and are not sent to refutation again unless their class changes. A row that survives keeps its class and records "refutation: none found" in `evidence`.
 
 ### Step 7: Check coverage
 
