@@ -1,0 +1,1 @@
+I traced the slow dashboard to the order query running once per table row. I recommend batching it into a single query with an IN clause, which takes the page from 41 queries down to 2 and leaves the template untouched. Want me to go ahead with that?

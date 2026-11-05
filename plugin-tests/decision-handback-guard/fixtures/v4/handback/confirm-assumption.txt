@@ -1,0 +1,1 @@
+Before I write the migration, I am assuming the `legacy_orders` table can be dropped once its rows are copied, because nothing in the codebase reads it anymore. Can you confirm that assumption so I can continue?
