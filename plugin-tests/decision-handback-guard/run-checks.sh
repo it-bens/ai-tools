@@ -8,10 +8,19 @@
 # Usage:
 #   DHG_WORK_DIR=<absolute dir> plugin-tests/decision-handback-guard/run-checks.sh [v1|v2|v3|v4|v5|v6|v7]
 #
-# Without an argument all checks run in order. Each check prints one summary
-# line, `V<n> PASS|FAIL <evidence>`. The exit status is non-zero when any
-# implemented check fails. A failed `claude` run or missing evidence aborts the
-# harness with the offending value.
+# Without an argument all checks run in order. Each check ends with one summary
+# line, `V<n> PASS|FAIL <evidence>`; V4 and V5 print one line per fixture or run
+# before it. The exit status is non-zero when any check fails. A failed `claude`
+# run or missing evidence aborts the harness with the offending value.
+#
+# The checks:
+#   V1  both hooks load from the plugin and run
+#   V2  a Step 2 denial blocks AskUserQuestion and returns the reason
+#   V3  at most one Stop-hook continuation, with and without AskUserQuestion offered
+#   V4  Step 1 classifies hand-back and non-hand-back final messages
+#   V5  Step 2 verdicts with and without a project checklist
+#   V6  a Step 2 denial is visible in the transcript, so a re-ask passes
+#   V7  a timed-out Step 2 hook lets the call proceed
 #
 # DHG_WORK_DIR receives one directory per harness run, holding for every
 # `claude` run its throwaway project directory, debug log, JSON result,
@@ -31,8 +40,8 @@
 #   each run's cwd is a fresh `git init` directory under DHG_WORK_DIR, so no
 #   repository instructions, settings or git status of this repository reach
 #   the run.
-# Every run asserts from its debug log that only the expected plugin hooks
-# were registered. The harness never passes --bare: bare mode skips the hooks
+# Every run asserts from its debug log that the expected number of plugin hooks
+# was registered (the `Registered <n> hooks from` line). The harness never passes --bare: bare mode skips the hooks
 # of plugins loaded with --plugin-dir.
 #
 # Checks that need AskUserQuestion run with a permission host: print mode
@@ -149,6 +158,18 @@ count_continuations() {
         and (.message.content | startswith("Stop hook feedback:")))] | length' "${TRANSCRIPT}"
 }
 
+# One line per PreToolUse agent hook start in the debug log, in call order: `met`
+# (ok:true), `not-met` (ok:false) or `none` (no verdict, as after a timeout).
+agent_hook_verdicts() {
+    awk '
+        /Processing agent hook with prompt:/ { if (open) print "none"; open = 1; next }
+        open && /Hooks: Agent hook condition was met/ { print "met"; open = 0; next }
+        open && /Hooks: Agent hook condition was not met/ { print "not-met"; open = 0; next }
+        open && /Hooks: Agent hook did not return structured output/ { print "none"; open = 0; next }
+        END { if (open) print "none" }
+    ' "${DEBUG_LOG}"
+}
+
 # Number of prompts the user typed (turns) in the transcript.
 count_user_turns() {
     jq -s '[.[] | select(.type == "user" and (.message.content | type) == "string"
@@ -202,7 +223,8 @@ check_v1() {
 check_v2() {
     run_claude v2 "${PLUGIN_DIR}" 2 yes "${FIXTURES}/v2-prompt.txt"
     local first host_asks
-    first="$(ask_results | head -n 1)"
+    first="$(ask_results)"
+    first="${first%%$'\n'*}"
     host_asks="$(host_ask_count)"
     [[ -n "${first}" ]] || { report V2 FAIL "no AskUserQuestion call in ${TRANSCRIPT}"; return; }
     if [[ "$(jq -r '.is_error' <<<"${first}")" == true ]] &&
@@ -215,7 +237,7 @@ check_v2() {
 }
 
 check_v3() {
-    local host continuations turns evidence="" verdict=PASS
+    local host continuations turns host_asks evidence="" verdict=PASS
     for host in no yes; do
         run_claude "v3-host-${host}" "${PLUGIN_DIR}" 2 "${host}" "${FIXTURES}/v3-prompt.txt"
         continuations="$(count_continuations)"
@@ -225,7 +247,10 @@ check_v3() {
         [[ "${continuations}" -eq 1 ]] || verdict=FAIL
         evidence+="host=${host}: ${continuations} continuation(s) in 1 turn"
         if [[ "${host}" == yes ]]; then
-            evidence+=", permission host received $(host_ask_count) AskUserQuestion request(s)"
+            host_asks="$(host_ask_count)"
+            # The host-yes run must offer AskUserQuestion; a run that never reached the host proves nothing.
+            [[ "${host_asks}" -ge 1 ]] || verdict=FAIL
+            evidence+=", permission host received ${host_asks} AskUserQuestion request(s)"
         fi
         evidence+=", transcript ${TRANSCRIPT}; "
     done
@@ -234,7 +259,8 @@ check_v3() {
 
 check_v4() {
     # A fixture's expected verdict is its directory: handback/ files must be blocked by
-    # Step 1 (one continuation), pass/ files must not (no continuation). Each fixture is the
+    # Step 1 (one continuation, first Stop verdict not met), pass/ files must not (no
+    # continuation, first Stop verdict met); a run without a Stop verdict is unjudged. Each fixture is the
     # message the main agent is told to reproduce as its whole reply, so the Stop hook
     # judges that message. Runs have no permission host: the run cannot ask, and the
     # headless path is the one under test.
@@ -252,9 +278,15 @@ check_v4() {
             | select(.type == "text") | .text] | first // empty' "${TRANSCRIPT}"
     }
 
+    # v4_first_stop_verdict: `met` or `not met` for the first Stop prompt hook run, empty when
+    # the debug log holds none. Runs without a tool call never start the PreToolUse agent hook.
+    v4_first_stop_verdict() {
+        grep -o -E 'Hooks: Prompt hook condition was (met|not met)' "${DEBUG_LOG}" | sed -n '1s/.*was //p' || true
+    }
+
     local -a mismatches=()
     local total=0 blocked=0 passed=0
-    local expectation file name run_name prompt_file continuations turns reply observed expected
+    local expectation file name run_name prompt_file continuations turns reply observed expected first_verdict
     for expectation in handback pass; do
         local -a files=()
         mapfile -t files < <(find "${fixtures_dir}/${expectation}" -maxdepth 1 -name '*.txt' -type f | sort)
@@ -274,15 +306,18 @@ check_v4() {
             [[ "${turns}" -eq 1 ]] || die "run ${run_name}: expected one user turn, found ${turns} in ${TRANSCRIPT}"
             continuations="$(count_continuations)"
             reply="$(v4_first_reply)"
+            first_verdict="$(v4_first_stop_verdict)"
             if [[ "$(v4_normalize <<<"${reply}")" != "$(v4_normalize <"${file}")" ]]; then
                 # The Stop hook judged something other than the fixture, so the run proves nothing.
                 observed="echo-mismatch (first reply: $(v4_normalize <<<"${reply}" | cut -c 1-120))"
-            elif [[ "${continuations}" -eq 0 ]]; then
+            elif [[ -z "${first_verdict}" ]]; then
+                observed="unjudged (no Stop prompt hook verdict in ${DEBUG_LOG})"
+            elif [[ "${continuations}" -eq 0 && "${first_verdict}" == met ]]; then
                 observed="passed (0 continuations)"
-            elif [[ "${continuations}" -eq 1 ]]; then
+            elif [[ "${continuations}" -eq 1 && "${first_verdict}" == "not met" ]]; then
                 observed="blocked (1 continuation)"
             else
-                observed="${continuations} continuations"
+                observed="${continuations} continuation(s), first Stop verdict ${first_verdict}"
             fi
             if [[ "${expectation}" == handback ]]; then
                 expected="blocked (1 continuation)"
@@ -308,29 +343,44 @@ check_v4() {
 check_v5() {
     # Each case directory holds prompt.txt and expected, whose two lines `no-checklist: <verdict>`
     # and `checklist: <verdict>` give the verdict for a run without and with the checklist. A
-    # verdict is the sequence of AskUserQuestion outcomes in the run: `pass` (no hook error and
-    # the permission host received the call) or `deny` (the documented hook-error tool result
-    # with the deny tag), joined by `-then-`.
+    # verdict is the sequence of AskUserQuestion outcomes in the run: `pass` (no hook error and a
+    # Step 2 verdict of ok:true for the call in the debug log) or `deny` (the documented
+    # hook-error tool result with the deny tag), joined by `-then-`. A call that proceeded
+    # without a Step 2 verdict, such as after a hook timeout, is `unjudged`.
+    # A case whose setup is part of what it tests adds `requires: <precondition>` lines to
+    # `expected`, each asserted from the transcript before the first AskUserQuestion call:
+    # `stop-continuation-before-ask` (at least one Stop-hook continuation) and
+    # `tool-calls-before-ask>=<N>` (at least N tool calls). A run that misses one observes
+    # `setup-not-met (<detail>)` for both conditions, which never equals a verdict.
     local fixtures_dir="${SCRIPT_DIR}/fixtures/v5"
     [[ -f "${fixtures_dir}/checklist.md" ]] || die "V5 checklist fixture missing: ${fixtures_dir}/checklist.md"
 
     # v5_observed: the AskUserQuestion outcomes of the current run, "no-ask" when there is none.
-    # A pass count that differs from the permission host's request count is reported as such.
+    # A proceeded-call count that differs from the permission host's request count, or a
+    # verdict count that differs from the call count, is reported as such.
     v5_observed() {
         local results_json
         results_json="$(ask_results)"
         [[ -n "${results_json}" ]] || { echo "no-ask"; return; }
         local -a results=()
         local -a outcomes=()
-        local result passes=0 host_asks
+        local -a verdicts=()
+        local result passes=0 host_asks i verdict
         mapfile -t results <<<"${results_json}"
-        for result in "${results[@]}"; do
+        mapfile -t verdicts < <(agent_hook_verdicts)
+        for i in "${!results[@]}"; do
+            result="${results[$i]}"
+            verdict="${verdicts[$i]:-none}"
             if jq -e --arg tag "${DENY_TAG}" '.is_error == true
                 and (.text | startswith("PreToolUse:AskUserQuestion hook error:") and contains($tag))' <<<"${result}" >/dev/null; then
                 outcomes+=(deny)
             elif jq -e '.is_error == false' <<<"${result}" >/dev/null; then
-                outcomes+=(pass)
                 passes=$((passes + 1))
+                case "${verdict}" in
+                    met) outcomes+=(pass) ;;
+                    none) outcomes+=(unjudged) ;;
+                    *) outcomes+=("proceeded-after-${verdict}-verdict") ;;
+                esac
             else
                 outcomes+=("unrecognised-result:$(jq -c '{line, is_error, text: (.text // "" | .[0:120])}' <<<"${result}")")
             fi
@@ -341,9 +391,57 @@ check_v5() {
             joined+="-then-${outcome}"
         done
         if [[ "${host_asks}" -ne "${passes}" ]]; then
-            joined+=" (permission host received ${host_asks} request(s) for ${passes} passed call(s))"
+            joined+=" (permission host received ${host_asks} request(s) for ${passes} proceeded call(s))"
+        fi
+        if [[ "${#verdicts[@]}" -ne "${#results[@]}" ]]; then
+            joined+=" (${#verdicts[@]} Step 2 verdict(s) for ${#results[@]} call(s))"
         fi
         echo "${joined}"
+    }
+
+    # v5_setup_unmet <expected file>: prints the first unmet `requires:` precondition of the
+    # current run, nothing when all hold.
+    v5_setup_unmet() {
+        local -a requires=()
+        mapfile -t requires < <(sed -n 's/^requires: //p' "$1")
+        [[ "${#requires[@]}" -gt 0 ]] || return 0
+        local state require minimum tool_calls
+        state="$(jq -c -s '
+            reduce .[] as $e ({continuations: 0, tools: [], asked: false};
+                if .asked then .
+                elif $e.type == "user" and ($e.message.content | type) == "string"
+                    and ($e.message.content | startswith("Stop hook feedback:")) then .continuations += 1
+                elif $e.type == "assistant" then
+                    reduce ($e.message.content[]? | select(.type == "tool_use")) as $use (.;
+                        if .asked then .
+                        elif $use.name == "AskUserQuestion" then .asked = true
+                        else .tools += [$use.id] end)
+                else . end)
+            | {continuations, tool_calls: (.tools | unique | length), asked}' "${TRANSCRIPT}")"
+        if [[ "$(jq -r '.asked' <<<"${state}")" != true ]]; then
+            echo "no AskUserQuestion call in the transcript"
+            return 0
+        fi
+        tool_calls="$(jq -r '.tool_calls' <<<"${state}")"
+        for require in "${requires[@]}"; do
+            case "${require}" in
+                stop-continuation-before-ask)
+                    if [[ "$(jq -r '.continuations' <<<"${state}")" -lt 1 ]]; then
+                        echo "no Stop-hook continuation before the first AskUserQuestion call"
+                        return 0
+                    fi
+                    ;;
+                tool-calls-before-ask\>=*)
+                    minimum="${require#tool-calls-before-ask>=}"
+                    [[ "${minimum}" =~ ^[0-9]+$ ]] || die "V5: bad precondition '${require}' in ${1}"
+                    if [[ "${tool_calls}" -lt "${minimum}" ]]; then
+                        echo "${tool_calls} tool call(s) before the first AskUserQuestion call, need at least ${minimum}"
+                        return 0
+                    fi
+                    ;;
+                *) die "V5: unknown precondition '${require}' in ${1}" ;;
+            esac
+        done
     }
 
     local -a case_dirs=()
@@ -351,7 +449,7 @@ check_v5() {
     [[ "${#case_dirs[@]}" -ge 5 ]] || die "V5 needs at least 5 case directories in ${fixtures_dir}, found ${#case_dirs[@]}"
 
     local -a mismatches=()
-    local total=0 case_dir name condition expected run_name observed checklist_dir
+    local total=0 case_dir name condition expected run_name observed unmet checklist_dir
     for case_dir in "${case_dirs[@]}"; do
         name="$(basename "${case_dir}")"
         [[ -f "${case_dir}/prompt.txt" ]] || die "V5 case ${name}: prompt.txt missing"
@@ -366,6 +464,8 @@ check_v5() {
             fi
             run_claude "${run_name}" "${PLUGIN_DIR}" 2 yes "${case_dir}/prompt.txt"
             observed="$(v5_observed)"
+            unmet="$(v5_setup_unmet "${case_dir}/expected")"
+            [[ -z "${unmet}" ]] || observed="setup-not-met (${unmet})"
             total=$((total + 1))
             echo "  V5 case ${name} [${condition}]: expected ${expected}, observed ${observed}, transcript ${TRANSCRIPT}"
             [[ "${observed}" == "${expected}" ]] || mismatches+=("${name} [${condition}] (expected ${expected}, observed ${observed})")
@@ -408,7 +508,8 @@ check_v6() {
 check_v7() {
     run_claude v7 "${TIMEOUT_PLUGIN_DIR}" 1 yes "${FIXTURES}/v7-prompt.txt"
     local first host_asks
-    first="$(ask_results | head -n 1)"
+    first="$(ask_results)"
+    first="${first%%$'\n'*}"
     host_asks="$(host_ask_count)"
     [[ -n "${first}" ]] || { report V7 FAIL "no AskUserQuestion call in ${TRANSCRIPT}"; return; }
     # A timed-out agent hook logs "did not return structured output"; a finished one logs
