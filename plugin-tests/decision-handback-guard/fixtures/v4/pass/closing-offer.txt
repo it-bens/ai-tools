@@ -1,0 +1,1 @@
+The logging cleanup is finished: all 18 debug statements are gone, the remaining log calls use the shared logger, and the suite passes. If you later want the same cleanup applied to the export module, I can do that in a separate pass. Nothing in this change depends on it.

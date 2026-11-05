@@ -1,0 +1,1 @@
+I replaced the silent catch around the sync call. Who would want a sync job that reports success after it lost half the records? Nobody, so the job now rethrows after the third failed attempt and the scheduler marks the run as failed. The two affected tests assert exactly that, and both pass.

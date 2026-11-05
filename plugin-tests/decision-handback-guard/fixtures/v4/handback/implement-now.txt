@@ -1,0 +1,3 @@
+I read through the retry module and the three call sites. My recommendation is to give the HTTP client a single retry policy object (three attempts, exponential backoff, jitter) and let the call sites pass it in, instead of the copy-pasted loops they have now. The change touches four files and leaves the public interface alone.
+
+Implement now?

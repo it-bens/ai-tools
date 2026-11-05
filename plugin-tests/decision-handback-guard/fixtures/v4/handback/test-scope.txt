@@ -1,0 +1,1 @@
+The new currency-rounding helper is written and passes my quick manual checks. For the tests I could stop at unit tests for the helper alone, or also extend the invoice integration suite that runs against the sample ledger. The second takes longer to write and to run. Tell me which scope you want and I will write the tests that way.

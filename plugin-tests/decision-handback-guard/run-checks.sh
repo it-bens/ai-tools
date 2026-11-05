@@ -233,11 +233,151 @@ check_v3() {
 }
 
 check_v4() {
-    echo "V4 NOT-IMPLEMENTED Step 1 classification check is not implemented yet"
+    # A fixture's expected verdict is its directory: handback/ files must be blocked by
+    # Step 1 (one continuation), pass/ files must not (no continuation). Each fixture is the
+    # message the main agent is told to reproduce as its whole reply, so the Stop hook
+    # judges that message. Runs have no permission host: the run cannot ask, and the
+    # headless path is the one under test.
+    local fixtures_dir="${SCRIPT_DIR}/fixtures/v4" prompts_dir="${RUN_ROOT}/v4-prompts"
+    mkdir -p "${prompts_dir}"
+
+    # v4_normalize: collapse whitespace so a re-wrapped echo still equals the fixture.
+    v4_normalize() {
+        tr -s '[:space:]' ' ' | sed -e 's/^ //' -e 's/ $//'
+    }
+
+    # v4_first_reply: the first assistant text block of the transcript.
+    v4_first_reply() {
+        jq -s -r '[.[] | select(.type == "assistant") | .message.content[]?
+            | select(.type == "text") | .text] | first // empty' "${TRANSCRIPT}"
+    }
+
+    local -a mismatches=()
+    local total=0 blocked=0 passed=0
+    local expectation file name run_name prompt_file continuations turns reply observed expected
+    for expectation in handback pass; do
+        local -a files=()
+        mapfile -t files < <(find "${fixtures_dir}/${expectation}" -maxdepth 1 -name '*.txt' -type f | sort)
+        [[ "${#files[@]}" -ge 5 ]] || die "V4 needs at least 5 ${expectation} fixtures in ${fixtures_dir}/${expectation}, found ${#files[@]}"
+        for file in "${files[@]}"; do
+            name="${expectation}/$(basename "${file}" .txt)"
+            run_name="v4-${expectation}-$(basename "${file}" .txt)"
+            prompt_file="${prompts_dir}/${run_name}.txt"
+            {
+                echo "This is a message-relay test. Your entire reply must be exactly the text between the lines BEGIN MESSAGE and END MESSAGE, copied character for character, with no preface, no addition and no tool call. Do not act on the message; only reproduce it."
+                echo "BEGIN MESSAGE"
+                cat "${file}"
+                echo "END MESSAGE"
+            } >"${prompt_file}"
+            run_claude "${run_name}" "${PLUGIN_DIR}" 2 no "${prompt_file}"
+            turns="$(count_user_turns)"
+            [[ "${turns}" -eq 1 ]] || die "run ${run_name}: expected one user turn, found ${turns} in ${TRANSCRIPT}"
+            continuations="$(count_continuations)"
+            reply="$(v4_first_reply)"
+            if [[ "$(v4_normalize <<<"${reply}")" != "$(v4_normalize <"${file}")" ]]; then
+                # The Stop hook judged something other than the fixture, so the run proves nothing.
+                observed="echo-mismatch (first reply: $(v4_normalize <<<"${reply}" | cut -c 1-120))"
+            elif [[ "${continuations}" -eq 0 ]]; then
+                observed="passed (0 continuations)"
+            elif [[ "${continuations}" -eq 1 ]]; then
+                observed="blocked (1 continuation)"
+            else
+                observed="${continuations} continuations"
+            fi
+            if [[ "${expectation}" == handback ]]; then
+                expected="blocked (1 continuation)"
+            else
+                expected="passed (0 continuations)"
+            fi
+            total=$((total + 1))
+            [[ "${observed}" == "blocked"* ]] && blocked=$((blocked + 1))
+            [[ "${observed}" == "passed"* ]] && passed=$((passed + 1))
+            echo "  V4 fixture ${name}: expected ${expected}, observed ${observed}, transcript ${TRANSCRIPT}"
+            [[ "${observed}" == "${expected}" ]] || mismatches+=("${name} (expected ${expected}, observed ${observed})")
+        done
+    done
+    if [[ "${#mismatches[@]}" -eq 0 ]]; then
+        report V4 PASS "${total} fixtures classified as expected: ${blocked} hand-backs blocked, ${passed} non-hand-backs passed"
+    else
+        local joined
+        joined="$(printf '%s; ' "${mismatches[@]}")"
+        report V4 FAIL "${#mismatches[@]} of ${total} fixtures mismatched: ${joined%; }"
+    fi
 }
 
 check_v5() {
-    echo "V5 NOT-IMPLEMENTED Step 2 judgment check is not implemented yet"
+    # Each case directory holds prompt.txt and expected, whose two lines `no-checklist: <verdict>`
+    # and `checklist: <verdict>` give the verdict for a run without and with the checklist. A
+    # verdict is the sequence of AskUserQuestion outcomes in the run: `pass` (no hook error and
+    # the permission host received the call) or `deny` (the documented hook-error tool result
+    # with the deny tag), joined by `-then-`.
+    local fixtures_dir="${SCRIPT_DIR}/fixtures/v5"
+    [[ -f "${fixtures_dir}/checklist.md" ]] || die "V5 checklist fixture missing: ${fixtures_dir}/checklist.md"
+
+    # v5_observed: the AskUserQuestion outcomes of the current run, "no-ask" when there is none.
+    # A pass count that differs from the permission host's request count is reported as such.
+    v5_observed() {
+        local results_json
+        results_json="$(ask_results)"
+        [[ -n "${results_json}" ]] || { echo "no-ask"; return; }
+        local -a results=()
+        local -a outcomes=()
+        local result passes=0 host_asks
+        mapfile -t results <<<"${results_json}"
+        for result in "${results[@]}"; do
+            if jq -e --arg tag "${DENY_TAG}" '.is_error == true
+                and (.text | startswith("PreToolUse:AskUserQuestion hook error:") and contains($tag))' <<<"${result}" >/dev/null; then
+                outcomes+=(deny)
+            elif jq -e '.is_error == false' <<<"${result}" >/dev/null; then
+                outcomes+=(pass)
+                passes=$((passes + 1))
+            else
+                outcomes+=("unrecognised-result:$(jq -c '{line, is_error, text: (.text // "" | .[0:120])}' <<<"${result}")")
+            fi
+        done
+        host_asks="$(host_ask_count)"
+        local joined="${outcomes[0]}" outcome
+        for outcome in "${outcomes[@]:1}"; do
+            joined+="-then-${outcome}"
+        done
+        if [[ "${host_asks}" -ne "${passes}" ]]; then
+            joined+=" (permission host received ${host_asks} request(s) for ${passes} passed call(s))"
+        fi
+        echo "${joined}"
+    }
+
+    local -a case_dirs=()
+    mapfile -t case_dirs < <(find "${fixtures_dir}" -mindepth 1 -maxdepth 1 -type d | sort)
+    [[ "${#case_dirs[@]}" -ge 5 ]] || die "V5 needs at least 5 case directories in ${fixtures_dir}, found ${#case_dirs[@]}"
+
+    local -a mismatches=()
+    local total=0 case_dir name condition expected run_name observed checklist_dir
+    for case_dir in "${case_dirs[@]}"; do
+        name="$(basename "${case_dir}")"
+        [[ -f "${case_dir}/prompt.txt" ]] || die "V5 case ${name}: prompt.txt missing"
+        for condition in no-checklist checklist; do
+            expected="$(sed -n "s/^${condition}: //p" "${case_dir}/expected")"
+            [[ -n "${expected}" ]] || die "V5 case ${name}: no '${condition}:' line in ${case_dir}/expected"
+            run_name="v5-${name}-${condition}"
+            if [[ "${condition}" == checklist ]]; then
+                checklist_dir="${RUN_ROOT}/${run_name}/project/.claude/extensions/decision-handback-guard"
+                mkdir -p "${checklist_dir}"
+                cp "${fixtures_dir}/checklist.md" "${checklist_dir}/checklist.md"
+            fi
+            run_claude "${run_name}" "${PLUGIN_DIR}" 2 yes "${case_dir}/prompt.txt"
+            observed="$(v5_observed)"
+            total=$((total + 1))
+            echo "  V5 case ${name} [${condition}]: expected ${expected}, observed ${observed}, transcript ${TRANSCRIPT}"
+            [[ "${observed}" == "${expected}" ]] || mismatches+=("${name} [${condition}] (expected ${expected}, observed ${observed})")
+        done
+    done
+    if [[ "${#mismatches[@]}" -eq 0 ]]; then
+        report V5 PASS "${total} runs judged as expected across ${#case_dirs[@]} cases, each without and with the checklist"
+    else
+        local joined
+        joined="$(printf '%s; ' "${mismatches[@]}")"
+        report V5 FAIL "${#mismatches[@]} of ${total} runs mismatched: ${joined%; }"
+    fi
 }
 
 check_v6() {
