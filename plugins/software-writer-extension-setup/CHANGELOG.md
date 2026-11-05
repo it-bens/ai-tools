@@ -5,6 +5,7 @@
 ### Changed
 
 - Step 2's code probe and Step 5's comment-convention confirmation ask for markers or patterns of comments that must be preserved, and no longer ask for exempt markers. This matches `software-writer`'s retirement of `comments.exemption_markers`; `comments.preserve_patterns` takes the preserved markers or patterns.
+- The plugin requires `software-writer` 3.0.0 or later, because 3.0.0 reads `comments.preserve_patterns` differently from 2.4.0.
 - The dead-code tool list in the codebase exploration no longer names ruff, which `software-writer`'s `sweeping-dead-code` no longer runs.
 
 ## [2.2.0] - 2026-11-03

@@ -6,7 +6,7 @@ description: Use when the user explicitly asks to set up, install, configure, wi
 
 # Setting Up the software-writer Extension
 
-Create the canonical extension setup for the `software-writer` skills (`writing-code`, `writing-tests`, `writing-docs`, `sweeping-dead-code`) in the current project. Both hosts share one extension file per skill under `.claude/extensions/software-writer/`; on Claude Code the `software-writer` plugin (2.4.0 or later) picks these files up with no per-project configuration, while Codex discovers them through a committed root `AGENTS.override.md`. Re-sync mode audits existing extension files against the current codebase, turns stale rows into update proposals, and migrates v1 setups (`.claude/hook-contexts/` files plus project-settings hook entries) to this layout.
+Create the canonical extension setup for the `software-writer` skills (`writing-code`, `writing-tests`, `writing-docs`, `sweeping-dead-code`) in the current project. Both hosts share one extension file per skill under `.claude/extensions/software-writer/`; on Claude Code the `software-writer` plugin (3.0.0 or later) picks these files up with no per-project configuration, while Codex discovers them through a committed root `AGENTS.override.md`. Re-sync mode audits existing extension files against the current codebase, turns stale rows into update proposals, and migrates v1 setups (`.claude/hook-contexts/` files plus project-settings hook entries) to this layout.
 
 ## Workflow
 
@@ -124,7 +124,7 @@ Verify after writing: every section in each file is one of the three template se
 
 ### Step 7: Provision Codex delivery and migrate v1 setups
 
-**Claude Code.** No delivery configuration is written: the `software-writer` plugin (2.4.0 or later) delivers extension files itself.
+**Claude Code.** No delivery configuration is written: the `software-writer` plugin (3.0.0 or later) delivers extension files itself.
 
 **v1 migration** (only when Step 1 recorded v1 artifacts; requires the user's explicit approval before editing settings):
 
